@@ -1,10 +1,16 @@
 import 'dart:ui';
-
+import 'package:ems_direct/pages/login_student.dart';
+import 'package:ems_direct/pages/login_ems.dart';
 import 'package:flutter/material.dart';
 
 void main() => runApp(MaterialApp(
   
-  home: Home(),
+  initialRoute: '/login_student',
+  routes: {
+    '/' : (context) => Home(),
+    '/login_student' : (context) => LoginStudent(),
+    '/login_ems' : (context) => Loginems(),
+  },
 
 ));
 
