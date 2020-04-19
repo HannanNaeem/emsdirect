@@ -107,7 +107,49 @@ class _MFRHomeState extends State<MFRHome> {
                           ),
                           color: Colors.cyan[800],
                           onPressed: () {
-                            print('logout');
+                            showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                    title: Text(
+                                      "Are you sure?",
+                                      style: TextStyle(
+                                        fontFamily: 'HelveticaNeueMedium',
+                                        fontSize: 20,
+                                        color: Colors.grey[600],
+                                      ),
+                                    ),
+                                    actions: <Widget>[
+                                      FlatButton(
+                                        child: Text(
+                                          'YES',
+                                          style: TextStyle(
+                                            fontFamily: 'HelveticaNeueMedium',
+                                            fontSize: 20,
+                                            color: Colors.green[800],
+                                          ),
+                                        ),
+                                        onPressed: () {
+                                          //navigation to login screen
+                                        },
+                                      ),
+                                      FlatButton(
+                                        child: Text(
+                                          'NO',
+                                          style: TextStyle(
+                                            fontFamily: 'HelveticaNeueMedium',
+                                            fontSize: 20,
+                                            color: Colors.red[800],
+                                          ),
+                                        ),
+                                        onPressed: () {
+                                          Navigator.of(context).pop();
+                                        },
+                                      ),
+                                    ],
+                                  );
+                                });
+                            //print('logout');
                           },
                         ),
                         Text(
