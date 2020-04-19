@@ -55,18 +55,16 @@
 //  }
 //}
 
-
 import 'dart:ui';
 import 'OpsRecords.dart';
 import 'package:flutter/material.dart';
+import 'package:ems_direct/records.dart';
 
 void main() => runApp(MaterialApp(
-
-  initialRoute: 'OpsRecords.dart',
-  routes: {
-    '/' : (context) => Home(),
+      initialRoute: '/records',
+      routes: {
+        '/records': (context) => Records(),
 //    '/login_student' : (context) => LoginStudent(),
 //    '/login_ems' : (context) => Loginems(),
-  },
-
-));
+      },
+    ));
