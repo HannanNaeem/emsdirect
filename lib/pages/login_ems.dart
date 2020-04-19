@@ -170,7 +170,7 @@ class _LoginemsState extends State<Loginems> {
                                 letterSpacing: 3.0,
                                 )
                         ),
-                        color: Colors.cyan,
+                        color: const Color(0xFF73CDE8),
                         shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(5),
                                 ),
@@ -188,10 +188,10 @@ class _LoginemsState extends State<Loginems> {
     
     return Scaffold(
       
-      backgroundColor: Colors.cyan[800],
+      backgroundColor: const Color(0xFF3596B5),
 
       appBar: AppBar(
-        backgroundColor: Colors.cyan[800] ,
+        backgroundColor: const Color(0xFF3596B5) ,
         elevation: 0.0,
       ),
 

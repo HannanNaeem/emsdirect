@@ -299,7 +299,7 @@ class _LoginStudentState extends State<LoginStudent> {
                                 letterSpacing: 3.0,
                                 )
                         ),
-                        color: Colors.cyan,
+                        color: const Color(0xFF73CDE8),
                         shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(5),
                                 ),
@@ -365,7 +365,7 @@ class _LoginStudentState extends State<LoginStudent> {
                               letterSpacing: 3.0,
                               )
                       ),
-                      color: Colors.cyan,
+                      color: const Color(0xFF73CDE8),
                       shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(5),
                               ),
@@ -384,7 +384,7 @@ class _LoginStudentState extends State<LoginStudent> {
 
     return Scaffold(
  
-      backgroundColor: Colors.cyan[800],
+      backgroundColor: const Color(0xFF3596B5),
 
       appBar: AppBar(
         backgroundColor: Colors.transparent,
@@ -410,7 +410,7 @@ class _LoginStudentState extends State<LoginStudent> {
 
                         Center(
                           child: ToggleButtons(
-                            borderColor: Colors.cyan[800],
+                            borderColor: const Color(0xFF3596B5),
                             selectedColor: Colors.grey[400],
                             splashColor: Colors.grey[500],
                             fillColor: Colors.transparent,

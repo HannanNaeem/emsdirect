@@ -20,10 +20,10 @@ class Home extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       
-      backgroundColor: Colors.cyan[800],
+      backgroundColor: const Color(0xFF3596B5),
 
       // appBar: AppBar(
-      //   backgroundColor: Colors.cyan[800],
+      //   backgroundColor: const Color(0xFF3596B5),
       //   title: Text('Ems Direct',
       //     style: TextStyle(
           
@@ -53,7 +53,7 @@ class Home extends StatelessWidget {
 
       // floatingActionButton: FloatingActionButton(
       //   onPressed: () {},
-      //   backgroundColor: Colors.cyan[300],
+      //   backgroundColor: const Color(0xFF73CDE8),
       //   child: Text("Tap"),
       // ),
 
