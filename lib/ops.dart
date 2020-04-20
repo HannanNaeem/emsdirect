@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:ems_direct/records.dart';
 import 'package:ems_direct/map.dart';
+import 'package:ems_direct/notifications.dart';
 
 class Ops extends StatefulWidget {
   @override
@@ -11,7 +12,7 @@ class AppState extends State<Ops> {
   int _selectedPage = 2;
   final _pageOptions = [
     Center(child: Text('Log')),
-    Center(child: Text('Notifications')),
+    Notifications(),
     OpsMap(),
     Records(),
   ];
@@ -34,6 +35,7 @@ class AppState extends State<Ops> {
             fontFamily: 'HelveticaNeue',
             fontWeight: FontWeight.bold,
             color: Colors.white,
+            letterSpacing: 2,
           ),
         ),
         centerTitle: true,
