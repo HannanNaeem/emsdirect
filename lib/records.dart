@@ -1,14 +1,45 @@
 import 'package:flutter/material.dart';
 
 class Records extends StatelessWidget {
+  //This functions makes the cards on the screen since each card follows the same template
+  Widget _GenerateCard(String title, String imageFileName, var height) {
+    return Card(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(15),
+      ),
+      elevation: 10,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          IconButton(
+            icon: Image(
+              image: AssetImage(imageFileName),
+            ),
+            onPressed: () {
+              print(title);
+            },
+            iconSize: height / 9,
+          ),
+          Text(
+            title,
+            style: TextStyle(
+              color: const Color(0xff3596b5),
+              fontSize: 20,
+              fontFamily: 'HelveticaNeue',
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     var screenSize = MediaQuery.of(context).size;
     var width = screenSize.width;
     final height = screenSize.height;
-
-    print(height);
-    print(width);
 
     return Scaffold(
       drawer: Drawer(),
@@ -44,38 +75,8 @@ class Records extends StatelessWidget {
                         child: AspectRatio(
                           aspectRatio: 2 / 2.25,
                           child: Container(
-                            child: Card(
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(15),
-                              ),
-                              elevation: 10,
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: <Widget>[
-                                  IconButton(
-                                    icon: Image(
-                                      image:
-                                          AssetImage('assets/emergencies.png'),
-                                    ),
-                                    onPressed: () {
-                                      print('Emergencies');
-                                    },
-                                    iconSize: height / 9,
-                                  ),
-                                  Text(
-                                    'Emergencies',
-                                    style: TextStyle(
-                                      color: const Color(0xff3596b5),
-                                      fontSize: 20,
-                                      fontFamily: 'HelveticaNeue',
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
+                              child: _GenerateCard('Emergencies',
+                                  'assets/emergencies.png', height)),
                         ),
                       ),
                     ),
@@ -88,37 +89,8 @@ class Records extends StatelessWidget {
                         child: AspectRatio(
                           aspectRatio: 2 / 2.25,
                           child: Container(
-                            child: Card(
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(15),
-                              ),
-                              elevation: 10,
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: <Widget>[
-                                  IconButton(
-                                    icon: Image(
-                                      image: AssetImage('assets/bags.png'),
-                                    ),
-                                    onPressed: () {
-                                      print('Equipment bags');
-                                    },
-                                    iconSize: height / 9,
-                                  ),
-                                  Text(
-                                    'Equipment Bags',
-                                    style: TextStyle(
-                                      color: const Color(0xff3596b5),
-                                      fontSize: 20,
-                                      fontFamily: 'HelveticaNeue',
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
+                              child: _GenerateCard(
+                                  'Equipment bags', 'assets/bags.png', height)),
                         ),
                       ),
                     ),
@@ -141,37 +113,8 @@ class Records extends StatelessWidget {
                         child: AspectRatio(
                           aspectRatio: 2 / 2.25,
                           child: Container(
-                            child: Card(
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(15),
-                              ),
-                              elevation: 10,
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: <Widget>[
-                                  IconButton(
-                                    icon: Image(
-                                      image: AssetImage('assets/profile.png'),
-                                    ),
-                                    onPressed: () {
-                                      print('Profiles');
-                                    },
-                                    iconSize: height / 10,
-                                  ),
-                                  Text(
-                                    'MFR Profiles',
-                                    style: TextStyle(
-                                      color: const Color(0xff3596b5),
-                                      fontSize: 20,
-                                      fontFamily: 'HelveticaNeue',
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
+                              child: _GenerateCard(
+                                  'Profiles', 'assets/profile.png', height)),
                         ),
                       ),
                     ),
@@ -182,40 +125,10 @@ class Records extends StatelessWidget {
                       child: Align(
                         alignment: Alignment.topCenter,
                         child: AspectRatio(
-                          aspectRatio: 2 / 2.25,
-                          child: Container(
-                            child: Card(
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(15),
-                              ),
-                              elevation: 10,
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: <Widget>[
-                                  IconButton(
-                                    icon: Image(
-                                      image: AssetImage('assets/inventory.png'),
-                                    ),
-                                    onPressed: () {
-                                      print('Inventory');
-                                    },
-                                    iconSize: height / 9,
-                                  ),
-                                  Text(
-                                    'Inventory',
-                                    style: TextStyle(
-                                      color: const Color(0xff3596b5),
-                                      fontSize: 20,
-                                      fontFamily: 'HelveticaNeue',
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
+                            aspectRatio: 2 / 2.25,
+                            child: Container(
+                                child: _GenerateCard('Inventory',
+                                    'assets/inventory.png', height))),
                       ),
                     ),
                   ),
