@@ -1,41 +1,27 @@
 import 'dart:ui';
 import 'package:ems_direct/pages/login_student.dart';
 import 'package:ems_direct/pages/login_ems.dart';
+import 'SplashScreen.dart';
 import 'package:flutter/material.dart';
 
-void main() => runApp(MaterialApp(
-  
-  initialRoute: '/login_student',
-  routes: {
-    '/' : (context) => Home(),
-    '/login_student' : (context) => LoginStudent(),
-    '/login_ems' : (context) => Loginems(),
-  },
+void main() => runApp(MyApp());
 
-));
 
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(home: SplashScreen(),);
+  }
+}
 
 class Home extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      
-      backgroundColor: const Color(0xff343842),
 
-      // appBar: AppBar(
-      //   backgroundColor: const Color(0xff343842),
-      //   title: Text('Ems Direct',
-      //     style: TextStyle(
-          
-      //       color:Colors.white,
-      //       fontSize: 23.0,
-      //       fontFamily: 'HelveticaNeueLight',
 
-      //     )
-      //   ),
-      //   centerTitle: true,
+      backgroundColor: Colors.cyan[800],
 
-      // ),
 
       body: 
         Center(
@@ -43,19 +29,12 @@ class Home extends StatelessWidget {
             Image.asset(
                 
                 'assets/ems_logo.png',
-                scale:2.3,
+                scale:1,
               
             ),
           
         ),
 
-      
-
-      // floatingActionButton: FloatingActionButton(
-      //   onPressed: () {},
-      //   backgroundColor: const Color(0xFF73CDE8),
-      //   child: Text("Tap"),
-      // ),
 
     );
   }
