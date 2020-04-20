@@ -42,22 +42,20 @@ class Records extends StatelessWidget {
     final height = screenSize.height;
 
     return Scaffold(
-      drawer: Drawer(
-        elevation: 20.0,
-      ),
-      appBar: AppBar(
-        backgroundColor: const Color(0xff3596b5),
-        title: Text(
-          'Records',
-          style: TextStyle(
-            fontSize: 20,
-            fontFamily: 'HelveticaNeue',
-            fontWeight: FontWeight.bold,
-            color: Colors.white,
-          ),
-        ),
-        centerTitle: true,
-      ),
+      // appBar: AppBar(
+      //   backgroundColor: const Color(0xff3596b5),
+      //   title: Text(
+      //     'Records',
+      //     style: TextStyle(
+      //       fontSize: 20,
+      //       fontFamily: 'HelveticaNeue',
+      //       fontWeight: FontWeight.bold,
+      //       color: Colors.white,
+      //     ),
+      //   ),
+      //   centerTitle: true,
+      // ),
+      // drawer: Drawer(),
       body: Column(
         //crossAxisAlignment: CrossAxisAlignment.stretch,
         //mainAxisAlignment: MainAxisAlignment.center,

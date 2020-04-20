@@ -15,11 +15,26 @@ class AppState extends State<Ops> {
     Center(child: Text('Map')),
     Records(),
   ];
+  List<String> _headerNames = ['Emergency Log', 'Notifications', 'Map', 'Records'];
 
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: const Color(0xff3596b5),
+        title: Text(
+          _headerNames[_selectedPage],
+          style: TextStyle(
+            fontSize: 20,
+            fontFamily: 'HelveticaNeue',
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
+        ),
+        centerTitle: true,
+      ),
+      drawer: Drawer(),
       body: _pageOptions[_selectedPage],
       bottomNavigationBar: BottomNavigationBar(
         elevation: 0.0,
