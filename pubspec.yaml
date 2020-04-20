@@ -55,33 +55,33 @@ flutter:
   # "family" key with the font family name, and a "fonts" key with a
   # list giving the asset and other descriptors for the font. For
   # example:
-fonts:
+  fonts:
 
-  - family: HelveticaNeue
-    fonts:
-      - asset: fonts/HelveticaNeue.ttf
-      - asset: fonts/HelveticaNeueIt.ttf
-        style: italic
+    - family: HelveticaNeue
+      fonts:
+        - asset: fonts/HelveticaNeue.ttf
+        - asset: fonts/HelveticaNeueIt.ttf
+          style: italic
 
-  - family: HelveticaNeueMedium
-    fonts:
-      - asset: fonts/HelveticaNeueMedium.ttf
-  
-  - family: HelveticaNeueThin
-    fonts:
-      - asset: fonts/HelveticaNeueThin.ttf
+    - family: HelveticaNeueMedium
+      fonts:
+        - asset: fonts/HelveticaNeueMedium.ttf
+    
+    - family: HelveticaNeueThin
+      fonts:
+        - asset: fonts/HelveticaNeueThin.ttf
 
-  - family: HelveticaNeueBold
-    fonts:
-      - asset: fonts/HelveticaNeueBold.ttf
+    - family: HelveticaNeueBold
+      fonts:
+        - asset: fonts/HelveticaNeueBold.ttf
 
-  - family: HelveticaNeueHeavy
-    fonts:
-      - asset: fonts/HelveticaNeueHv.ttf
+    - family: HelveticaNeueHeavy
+      fonts:
+        - asset: fonts/HelveticaNeueHv.ttf
 
-  - family: HelveticaNeueLight
-    fonts:
-      - asset: fonts/HelveticaNeueLight.ttf
+    - family: HelveticaNeueLight
+      fonts:
+        - asset: fonts/HelveticaNeueLight.ttf
 
 
   #

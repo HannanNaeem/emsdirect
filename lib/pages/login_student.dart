@@ -48,7 +48,7 @@ class _LoginStudentState extends State<LoginStudent> with SingleTickerProviderSt
                           ),
                         errorStyle: TextStyle(
                           color: Colors.amber,
-                          fontFamily: 'Helveticaneue',
+                          fontFamily: 'HelveticaNeue',
                           letterSpacing: 1.0,
                           ),            
                         fillColor: Colors.grey[200],
@@ -92,7 +92,7 @@ class _LoginStudentState extends State<LoginStudent> with SingleTickerProviderSt
                           ),
                         errorStyle: TextStyle(
                           color: Colors.amber,
-                          fontFamily: 'Helveticaneue',
+                          fontFamily: 'HelveticaNeue',
                           letterSpacing: 1.0,
                           ),            
                         fillColor: Colors.grey[200],
@@ -156,7 +156,7 @@ class _LoginStudentState extends State<LoginStudent> with SingleTickerProviderSt
                           ),
                         errorStyle: TextStyle(
                           color: Colors.amber,
-                          fontFamily: 'Helveticaneue',
+                          fontFamily: 'HelveticaNeue',
                           letterSpacing: 1.0,
                           ),            
                         fillColor: Colors.grey[200],
@@ -194,7 +194,7 @@ class _LoginStudentState extends State<LoginStudent> with SingleTickerProviderSt
                           ),
                         errorStyle: TextStyle(
                           color: Colors.amber,
-                          fontFamily: 'Helveticaneue',
+                          fontFamily: 'HelveticaNeue',
                           letterSpacing: 1.0,
                           ),            
                         fillColor: Colors.grey[200],
@@ -235,7 +235,7 @@ class _LoginStudentState extends State<LoginStudent> with SingleTickerProviderSt
                           ),
                         errorStyle: TextStyle(
                           color: Colors.amber,
-                          fontFamily: 'Helveticaneue',
+                          fontFamily: 'HelveticaNeue',
                           letterSpacing: 1.0,
                           ),            
                         fillColor: Colors.grey[200],
@@ -436,12 +436,33 @@ class _LoginStudentState extends State<LoginStudent> with SingleTickerProviderSt
 
                           TabBar(
                             controller: _controller,
+                            indicatorColor: Colors.white,
                             tabs: <Widget>[
-                              Tab(text: 'Login'),
-                              Tab(text: 'Signup'),
+                              Tab(
+                              child: 
+                                Text( 'LOGIN',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontFamily: 'HelveticaNeueLight',
+                                    fontSize: 18.0,
+                                    letterSpacing: 4.0,
+                                    )
+                                )
+                              ),
+                              Tab(
+                                child: 
+                                Text( 'SIGNUP',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontFamily: 'HelveticaNeueLight',
+                                    fontSize: 18.0,
+                                    letterSpacing: 4.0,
+                                    )
+                                )
+                                ),
                             ],
                           ),
-
+                          SizedBox(height: 5),
                           Container(
                             height:355,
                             width:500,

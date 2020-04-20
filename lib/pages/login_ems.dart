@@ -29,7 +29,7 @@ class _LoginemsState extends State<Loginems> {
                           ),
                         errorStyle: TextStyle(
                           color: Colors.amber,
-                          fontFamily: 'Helveticaneue',
+                          fontFamily: 'HelveticaNeue',
                           letterSpacing: 1.0,
                           ),            
                         fillColor: Colors.grey[200],
@@ -73,7 +73,7 @@ class _LoginemsState extends State<Loginems> {
                           ),
                         errorStyle: TextStyle(
                           color: Colors.amber,
-                          fontFamily: 'Helveticaneue',
+                          fontFamily: 'HelveticaNeue',
                           letterSpacing: 1.0,
                           ),            
                         fillColor: Colors.grey[200],
@@ -223,7 +223,7 @@ class _LoginemsState extends State<Loginems> {
                                     style: TextStyle(
                                       color: Colors.white,
                                       letterSpacing: 8.0,
-                                      fontFamily: 'HelveticaNeueBold',
+                                      fontFamily: 'HelveticaNeue',
                                       fontSize: 20,
                                       
                                       ),
