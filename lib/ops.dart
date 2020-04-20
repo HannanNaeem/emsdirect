@@ -1,31 +1,28 @@
 import 'package:flutter/material.dart';
+import 'package:ems_direct/records.dart';
 
-class Home extends StatefulWidget {
-
+class Ops extends StatefulWidget {
   @override
-  _HomeState createState() => _HomeState();
+  State<StatefulWidget> createState() => AppState();
 }
 
-class _HomeState extends State<Home> {
+class AppState extends State<Ops> {
+
   int _selectedPage = 2;
   final _pageOptions = [
     Center(child: Text('Log')),
     Center(child: Text('Notifications')),
     Center(child: Text('Map')),
-    Center(child: Text('Records')),
+    Records(),
   ];
+
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Records'),
-        centerTitle: true,
-        backgroundColor: Colors.cyan[800],
-        elevation: 0.0,
-      ),
       body: _pageOptions[_selectedPage],
       bottomNavigationBar: BottomNavigationBar(
+        elevation: 0.0,
         currentIndex: _selectedPage,
         onTap: (int index) {
           setState(() {
@@ -34,10 +31,10 @@ class _HomeState extends State<Home> {
         },
         showUnselectedLabels: true,
         type: BottomNavigationBarType.fixed,
-        backgroundColor: Colors.cyan[800],
+        backgroundColor: const Color(0xff3596b5),
         selectedItemColor: Colors.white,
         selectedFontSize: 15,
-        unselectedItemColor: Colors.cyan[300],
+        unselectedItemColor: const Color(0xff73cde8),
         iconSize: 30,
         items: [
           BottomNavigationBarItem(
@@ -60,4 +57,7 @@ class _HomeState extends State<Home> {
       ),
     );
   }
+  
+
+
 }
