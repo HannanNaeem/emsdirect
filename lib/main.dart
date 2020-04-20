@@ -7,7 +7,7 @@ void main() => runApp(MyApp());
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(home: EmergencyReport(),);
+    return MaterialApp(home: SplashScreen(),);
   }
 }
 class Home extends StatelessWidget {
