@@ -59,11 +59,13 @@ import 'dart:ui';
 import 'OpsRecords.dart';
 import 'package:flutter/material.dart';
 import 'package:ems_direct/records.dart';
+import 'package:ems_direct/notifications.dart';
 
 void main() => runApp(MaterialApp(
-      initialRoute: '/records',
+      initialRoute: '/notifications',
       routes: {
         '/records': (context) => Records(),
+        '/notifications': (context) => Notifications(),
 //    '/login_student' : (context) => LoginStudent(),
 //    '/login_ems' : (context) => Loginems(),
       },

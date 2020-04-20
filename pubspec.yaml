@@ -17,6 +17,7 @@ environment:
   sdk: ">=2.1.0 <3.0.0"
 
 dependencies:
+  material_design_icons_flutter: ^4.0.5145
   functional_widget_annotation: ^0.5.0
   flutter:
     sdk: flutter
@@ -59,7 +60,6 @@ flutter:
   # list giving the asset and other descriptors for the font. For
   # example:
 fonts:
-
   - family: HelveticaNeue
     fonts:
       - asset: fonts/HelveticaNeue.ttf

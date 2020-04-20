@@ -48,10 +48,11 @@ class Records extends StatelessWidget {
         title: Text(
           'Records',
           style: TextStyle(
-            fontSize: 20,
+            fontSize: 26,
             fontFamily: 'HelveticaNeue',
             fontWeight: FontWeight.bold,
             color: Colors.white,
+            letterSpacing: 2,
           ),
         ),
         centerTitle: true,
