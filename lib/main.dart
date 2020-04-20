@@ -1,6 +1,5 @@
 import 'dart:ui';
-//import 'SplashScreen.dart';
-import 'EmergencyReport.dart';
+import 'SplashScreen.dart';
 import 'package:flutter/material.dart';
 void main() => runApp(MyApp());
 
