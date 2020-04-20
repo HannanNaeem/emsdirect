@@ -14,7 +14,74 @@ class _LiveStatusState extends State<LiveStatus> {
     var width = screenSize.width;
     var height = screenSize.height;
     return Scaffold(
-      drawer: Drawer(),
+      drawer: Container(
+        child: Drawer(
+          child: Drawer(
+            child: Column(
+              //this column contains the drawer header, the option to view profile/emergency numbers/available MFRs list
+              //also has the option to logout
+              children: <Widget>[
+                DrawerHeader(
+                  //only the ems logo
+                  child: Container(
+                    child: Image.asset("assets/ems_logo.png"),
+                  ),
+                ),
+                ExpansionTile(
+                  leading: Icon(
+                    Icons.account_circle,
+                  ),
+                  title: Text(
+                    'Harum Naseem',
+                    style: TextStyle(
+                      fontSize: 15,
+                      fontFamily: 'HelveticaNeue',
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 2.0,
+                    ),
+                  ),
+                  children: <Widget>[
+                    Text(
+                      "Contact: 0362-2613598",
+                      style: TextStyle(
+                        fontSize: 15,
+                        fontFamily: 'HelveticaNeue',
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 2.0,
+                      ),
+                    ),
+                    Text(
+                      'Email: 2100118@lums.edu.pk',
+                      style: TextStyle(
+                        fontSize: 15,
+                        fontFamily: 'HelveticaNeue',
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 2.0,
+                      ),
+                    ),
+                  ],
+                ),
+                ListTile(
+                  //the option to view emergency numbers - takes you to dummy page
+                  title: Text(
+                    'Emergency Numbers',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontFamily: 'HelveticaNeue',
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 2.0,
+                    ),
+                  ),
+                  onTap: () {
+                    Navigator.of(context).pushNamed('/emergencyNumbers');
+                    //print('Emergency numbers');
+                  },
+                ),
+              ],
+            ),
+          ),
+        )
+      ),
       appBar: AppBar(
         backgroundColor: const Color(0xff3596b5),
         title: Text(

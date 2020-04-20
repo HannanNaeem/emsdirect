@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 
+
+
 class StudentHome extends StatefulWidget {
   @override
   _StudentHomeState createState() => _StudentHomeState();
 }
+
 
 class _StudentHomeState extends State<StudentHome> {
   List<bool> _selections = List.generate(4, (_) => false);
@@ -11,13 +14,162 @@ class _StudentHomeState extends State<StudentHome> {
   int _gender = 0;
   int _severityLevel = 0;
   bool _emergency = false;
+
   @override
   Widget build(BuildContext context) {
     var screenSize = MediaQuery.of(context).size;
     var width = screenSize.width;
     var height = screenSize.height;
     return Scaffold(
-        drawer: Drawer(),
+        drawer: Container(
+          width: width*0.8, //drawer covers 80% of the screen
+          child: Drawer(
+            child: Column(
+              //this column contains the drawer header, the option to view profile/emergency numbers/available MFRs list
+              //also has the option to logout
+              children: <Widget>[
+                DrawerHeader(
+                  //only the ems logo
+                  child: Container(
+                    child: Image.asset("assets/ems_logo.png"),
+                  ),
+                ),
+                ExpansionTile(
+                  leading: Icon(
+                      Icons.account_circle,
+                  ),
+                  title: Text(
+                    'Harum Naseem',
+                    style: TextStyle(
+                      fontSize: 15,
+                      fontFamily: 'HelveticaNeue',
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 2.0,
+                    ),
+                  ),
+                  children: <Widget>[
+                    Text(
+                      "Contact: 0362-2613598",
+                      style: TextStyle(
+                        fontSize: 15,
+                        fontFamily: 'HelveticaNeue',
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 2.0,
+                      ),
+                    ),
+                    Text(
+                      'Email: 2100118@lums.edu.pk',
+                      style: TextStyle(
+                        fontSize: 15,
+                        fontFamily: 'HelveticaNeue',
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 2.0,
+                      ),
+                    ),
+                  ],
+                ),
+                ListTile(
+                  //the option to view emergency numbers - takes you to dummy page
+                  title: Text(
+                    'Emergency Numbers',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontFamily: 'HelveticaNeue',
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 2.0,
+                    ),
+                  ),
+                  onTap: () {
+                    Navigator.of(context).pushNamed('/emergencyNumbers');
+                    //print('Emergency numbers');
+                  },
+                ),
+                Expanded(
+                  //the option to logout (bottom center aligned)
+                  child: Align(
+                    alignment: Alignment.bottomCenter,
+                    child: Padding(
+                      padding:
+                      EdgeInsets.fromLTRB(width * 0.8 * 0.24, 0, 0, 10.0),
+                      child: Row(
+                        //has the icon and text
+                        children: <Widget>[
+                          IconButton(
+                            icon: Image(
+                              image: AssetImage('assets/logout.png'),
+                              fit: BoxFit.fill,
+                              color: const Color(0xff3596b5),
+                            ),
+                            color: const Color(0xff3596b5),
+                            onPressed: () {
+                              showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return AlertDialog(
+                                      title: Text(
+                                        "Are you sure?",
+                                        style: TextStyle(
+                                          fontFamily: 'HelveticaNeue',
+                                          fontWeight: FontWeight.bold,
+                                          letterSpacing: 2.0,
+                                          fontSize: 20,
+                                          color: Colors.grey[600],
+                                        ),
+                                      ),
+                                      actions: <Widget>[
+                                        FlatButton(
+                                          child: Text(
+                                            'YES',
+                                            style: TextStyle(
+                                              fontFamily: 'HelveticaNeue',
+                                              fontWeight: FontWeight.bold,
+                                              letterSpacing: 3.0,
+                                              fontSize: 20,
+                                              color: const Color(0xff1a832a),
+                                            ),
+                                          ),
+                                          onPressed: () {
+                                            //navigation to login screen
+                                          },
+                                        ),
+                                        FlatButton(
+                                          child: Text(
+                                            'NO',
+                                            style: TextStyle(
+                                              fontFamily: 'HelveticaNeue',
+                                              fontWeight: FontWeight.bold,
+                                              letterSpacing: 2.5,
+                                              fontSize: 20,
+                                              color: const Color(0xffee0000),
+                                            ),
+                                          ),
+                                          onPressed: () {
+                                            Navigator.of(context).pop();
+                                          },
+                                        ),
+                                      ],
+                                    );
+                                  });
+                              //print('logout');
+                            },
+                          ),
+                          Text(
+                            'LOGOUT',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontFamily: 'HelveticaNeueBold',
+                              color: const Color(0xff3596b5),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
         appBar: AppBar(
           title: Text(
             'Home',
