@@ -42,21 +42,6 @@ class Records extends StatelessWidget {
     final height = screenSize.height;
 
     return Scaffold(
-      drawer: Drawer(),
-      appBar: AppBar(
-        backgroundColor: const Color(0xff3596b5),
-        title: Text(
-          'Records',
-          style: TextStyle(
-            fontSize: 26,
-            fontFamily: 'HelveticaNeue',
-            fontWeight: FontWeight.bold,
-            color: Colors.white,
-            letterSpacing: 2,
-          ),
-        ),
-        centerTitle: true,
-      ),
       body: Column(
         //crossAxisAlignment: CrossAxisAlignment.stretch,
         //mainAxisAlignment: MainAxisAlignment.center,
