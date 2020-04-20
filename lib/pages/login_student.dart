@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 
+
 class LoginStudent extends StatefulWidget {
   @override
   _LoginStudentState createState() => _LoginStudentState();
 }
 
-class _LoginStudentState extends State<LoginStudent> {
+class _LoginStudentState extends State<LoginStudent> with SingleTickerProviderStateMixin {
 
   String _email;
   String _password;
@@ -14,10 +15,23 @@ class _LoginStudentState extends State<LoginStudent> {
   String _rollno;
   String _contact;
 
-  List<bool> _isSelected = [true,false];
 
   final GlobalKey<FormState> _loginformKey = GlobalKey<FormState>();
   final GlobalKey<FormState> _signupformKey = GlobalKey<FormState>();
+
+  TabController _controller;
+
+  @override
+  void initState(){
+    super.initState();
+    _controller = new TabController(length: 2, vsync: this);
+  }
+
+  @override
+  void dispose(){
+    _controller.dispose();
+    super.dispose();
+  }
 
   Widget _buildEmail() {
     return Padding(
@@ -248,9 +262,9 @@ class _LoginStudentState extends State<LoginStudent> {
   }
 
 
-  Widget _buildForm(){
+  Widget _buildForm(int index){
     
-    if(_isSelected[0]== true)
+    if(index == 0)
     {
     return  Container(
           height:355,
@@ -311,7 +325,7 @@ class _LoginStudentState extends State<LoginStudent> {
               ),
     );
     }
-    else if(_isSelected[1] == true)
+    else if(index == 1)
       return Form(
               key: _signupformKey,
               child: Column(
@@ -383,104 +397,90 @@ class _LoginStudentState extends State<LoginStudent> {
     
 
     return Scaffold(
- 
-      backgroundColor: const Color(0xFF3596B5),
+      
+      backgroundColor: Colors.transparent,
 
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
+        backgroundColor: const Color(0xff142850),
         bottomOpacity: 0,
         elevation: 0.0,
       ),
 
-      body: SafeArea(
-              child: SingleChildScrollView(
-                child: Center(
-                  child: Padding(
-                    padding: const EdgeInsets.fromLTRB(30, 0, 30, 0),
-                    child: Column(
-                      
-                      children: <Widget>[
-                        
-                        Image.asset(
-                          'assets/ems_logo.png',
-                          scale: 3.2,
-                          ),
-
-                        SizedBox(height: 40),
-
-                        Center(
-                          child: ToggleButtons(
-                            borderColor: const Color(0xFF3596B5),
-                            selectedColor: Colors.grey[400],
-                            splashColor: Colors.grey[500],
-                            fillColor: Colors.transparent,
-                            
-                            children: <Widget>[
-                              Padding(
-                                padding: EdgeInsets.fromLTRB(56, 5, 56, 5),
-                                  child: Text('LOGIN',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    letterSpacing: 2.0,
-                                    fontFamily: 'HelveticaNeueBold',
-                                    fontWeight: FontWeight.bold,
-                                    ),
-                                ),
-                              ),
-                              Padding(
-                                padding: EdgeInsets.fromLTRB(45, 5, 45, 5),
-                                  child: Text('SIGN UP',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    letterSpacing: 2.0,
-                                    fontFamily: 'HelveticaNeueBold',
-                                    fontWeight: FontWeight.bold,
-                                    ),
-                                ),
-                              ),
-                            ],
-
-                            selectedBorderColor: Colors.white,
-
-                            isSelected: _isSelected,
-
-                            onPressed: (int index) {
-                              setState(() {
-                                _isSelected[(index+1)%2] = false;
-                                _isSelected[index] = true;
-                                
-                              });
-                            }
-
-                          ),
-                        ),
-
-
-                        
-                          _buildForm(),
-
-                        SizedBox(height: 40,),
-                        
-
-                        Padding(
-                          padding: const EdgeInsets.fromLTRB(0,0,0,30),
-                          child: Text(
-                            'EMS Direct',
-                            style: TextStyle(
-                              color: Colors.white,
-                              letterSpacing: 5.0,
-                              fontSize: 15,
-                              fontFamily: 'HelveticaNeue',
-                            ),
-                            ),
-                        ),
-
-                      
-
-
-              ],),
+      body: Container(
+        constraints:BoxConstraints.expand(),
+        decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.bottomCenter,
+                  end: Alignment.topCenter,
+                  colors: [const Color(0xff00a8cc),const Color(0xff142850) ],
+                  
+                  
                   ),
+              ),
+        child: SafeArea(
+          child: SingleChildScrollView(
+                   child: Center(
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(30, 0, 30, 0),
+                      child: Column(
+                        
+                        children: <Widget>[
+                          
+                          Image.asset(
+                            'assets/ems_logo.png',
+                            scale: 3.2,
+                            ),
+
+                          SizedBox(height: 40),
+
+
+                          TabBar(
+                            controller: _controller,
+                            tabs: <Widget>[
+                              Tab(text: 'Login'),
+                              Tab(text: 'Signup'),
+                            ],
+                          ),
+
+                          Container(
+                            height:355,
+                            width:500,
+                            child: TabBarView(
+                              controller: _controller,
+                              children: <Widget>[
+                                _buildForm(0),
+                                SingleChildScrollView(
+                                  child: _buildForm(1),
+                                ),
+                              ],
+                            ),
+                          ),
+                          
+                            //_buildForm(),
+
+                          SizedBox(height: 40,),
+                          
+
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(0,0,0,30),
+                            child: Text(
+                              'EMS Direct',
+                              style: TextStyle(
+                                color: Colors.white,
+                                letterSpacing: 5.0,
+                                fontSize: 15,
+                                fontFamily: 'HelveticaNeue',
+                              ),
+                              ),
+                          ),
+
+                        
+
+
+                ],),
+                    ),
             ),
+        ),
         ),
       )
       

@@ -188,57 +188,71 @@ class _LoginemsState extends State<Loginems> {
     
     return Scaffold(
       
-      backgroundColor: const Color(0xFF3596B5),
+      backgroundColor: Colors.transparent,
 
       appBar: AppBar(
-        backgroundColor: const Color(0xFF3596B5) ,
+        backgroundColor: const Color(0xff142850) ,
         elevation: 0.0,
       ),
 
-      body: SingleChildScrollView(
-              child: Padding(
-                padding: EdgeInsets.fromLTRB(30, 0, 30, 0),
-                child: Center(
-                  child: Column(children: <Widget>[
-                      
-                      Image.asset(
-                        'assets/ems_logo.png',
-                        scale: 3.2,
-                        ),
+      body: Container(
+        constraints:BoxConstraints.expand(),
+        decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.bottomCenter,
+                  end: Alignment.topCenter,
+                  colors: [const Color(0xff00a8cc),const Color(0xff142850) ],
+                  
+                  
+                  ),
+              ),
+              child: SafeArea(
+                child: SingleChildScrollView(
+                  child: Padding(
+                    padding: EdgeInsets.fromLTRB(30, 0, 30, 0),
+                    child: Center(
+                      child: Column(children: <Widget>[
+                          
+                          Image.asset(
+                            'assets/ems_logo.png',
+                            scale: 3.2,
+                            ),
 
-                      SizedBox(height: 40),
-                      Text('EMS LOGIN',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  letterSpacing: 8.0,
-                                  fontFamily: 'HelveticaNeueBold',
-                                  fontSize: 20,
-                                  
+                          SizedBox(height: 40),
+                          Text('EMS LOGIN',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      letterSpacing: 8.0,
+                                      fontFamily: 'HelveticaNeueBold',
+                                      fontSize: 20,
+                                      
+                                      ),
                                   ),
-                              ),
-                      
-
-
-                      _buildForm(),
-
-                      SizedBox(height: 40,),
                           
 
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(0,0,0,30),
-                        child: Text(
-                          'EMS Direct',
-                          style: TextStyle(
-                            color: Colors.white,
-                            letterSpacing: 5.0,
-                            fontSize: 15,
-                            fontFamily: 'HelveticaNeue',
+
+                          _buildForm(),
+
+                          SizedBox(height: 40,),
+                              
+
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(0,0,0,30),
+                            child: Text(
+                              'EMS Direct',
+                              style: TextStyle(
+                                color: Colors.white,
+                                letterSpacing: 5.0,
+                                fontSize: 15,
+                                fontFamily: 'HelveticaNeue',
+                              ),
+                              ),
                           ),
-                          ),
-                      ),
 
 
-            ],),
+                ],),
+              ),
+            ),
           ),
         ),
       )

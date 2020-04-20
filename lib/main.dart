@@ -20,10 +20,10 @@ class Home extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       
-      backgroundColor: const Color(0xFF3596B5),
+      backgroundColor: const Color(0xff343842),
 
       // appBar: AppBar(
-      //   backgroundColor: const Color(0xFF3596B5),
+      //   backgroundColor: const Color(0xff343842),
       //   title: Text('Ems Direct',
       //     style: TextStyle(
           
