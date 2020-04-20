@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ems_direct/records.dart';
+import 'package:ems_direct/map.dart';
 
 class Ops extends StatefulWidget {
   @override
@@ -12,7 +13,7 @@ class AppState extends State<Ops> {
   final _pageOptions = [
     Center(child: Text('Log')),
     Center(child: Text('Notifications')),
-    Center(child: Text('Map')),
+    OpsMap(),
     Records(),
   ];
   List<String> _headerNames = ['Emergency Log', 'Notifications', 'Map', 'Records'];
