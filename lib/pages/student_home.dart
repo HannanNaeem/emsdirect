@@ -17,6 +17,7 @@ class _StudentHomeState extends State<StudentHome> {
     var width = screenSize.width;
     var height = screenSize.height;
     return Scaffold(
+        drawer: Drawer(),
         appBar: AppBar(
           title: Text(
             'Home',
@@ -181,9 +182,13 @@ class _StudentHomeState extends State<StudentHome> {
                 ),
                 SizedBox(height: 20.0),
                 RawMaterialButton(
-                    onLongPress: () {
-                      //Navigator.of(context).pushNamed('/live_status');
+                  onPressed: (){
+                    setState(() {
                       _emergency = true;
+                    });
+                  },
+                    onLongPress: () {
+                      Navigator.of(context).pushNamed('/live_status');
                       print("emergency initiated");
                     },
                     fillColor: Colors.red[400],
