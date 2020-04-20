@@ -5,31 +5,34 @@ class Records extends StatelessWidget {
   Widget build(BuildContext context) {
     var screenSize = MediaQuery.of(context).size;
     var width = screenSize.width;
-    var height = screenSize.height;
+    final height = screenSize.height;
 
     print(height);
     print(width);
 
     return Scaffold(
+      drawer: Drawer(),
       appBar: AppBar(
-        backgroundColor: Colors.cyan[800],
+        backgroundColor: const Color(0xff3596b5),
         title: Text(
           'Records',
           style: TextStyle(
             fontSize: 20,
-            fontFamily: 'HelveticaNeueBold',
+            fontFamily: 'HelveticaNeue',
+            fontWeight: FontWeight.bold,
             color: Colors.white,
           ),
         ),
+        centerTitle: true,
       ),
       body: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
+        //crossAxisAlignment: CrossAxisAlignment.stretch,
         //mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           Expanded(
             child: Container(
               width: width,
-              color: Colors.cyan[300],
+              //color: Colors.cyan[300],
               child: Row(
                 //mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[
@@ -42,23 +45,34 @@ class Records extends StatelessWidget {
                           aspectRatio: 2 / 2.25,
                           child: Container(
                             child: Card(
-                              child: AspectRatio(
-                                aspectRatio: 2 / 2.25,
-                                child: Container(
-                                  child: ConstrainedBox(
-                                    constraints: BoxConstraints.expand(),
-                                    child: Ink.image(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(15),
+                              ),
+                              elevation: 10,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: <Widget>[
+                                  IconButton(
+                                    icon: Image(
                                       image:
                                           AssetImage('assets/emergencies.png'),
-                                      fit: BoxFit.cover,
-                                      child: InkWell(
-                                        onTap: () {
-                                          print('emergencies');
-                                        },
-                                      ),
+                                    ),
+                                    onPressed: () {
+                                      print('Emergencies');
+                                    },
+                                    iconSize: height / 9,
+                                  ),
+                                  Text(
+                                    'Emergencies',
+                                    style: TextStyle(
+                                      color: const Color(0xff3596b5),
+                                      fontSize: 20,
+                                      fontFamily: 'HelveticaNeue',
+                                      fontWeight: FontWeight.bold,
                                     ),
                                   ),
-                                ),
+                                ],
                               ),
                             ),
                           ),
@@ -75,7 +89,34 @@ class Records extends StatelessWidget {
                           aspectRatio: 2 / 2.25,
                           child: Container(
                             child: Card(
-                              child: Text('Card 2'),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(15),
+                              ),
+                              elevation: 10,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: <Widget>[
+                                  IconButton(
+                                    icon: Image(
+                                      image: AssetImage('assets/bags.png'),
+                                    ),
+                                    onPressed: () {
+                                      print('Equipment bags');
+                                    },
+                                    iconSize: height / 9,
+                                  ),
+                                  Text(
+                                    'Equipment Bags',
+                                    style: TextStyle(
+                                      color: const Color(0xff3596b5),
+                                      fontSize: 20,
+                                      fontFamily: 'HelveticaNeue',
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                         ),
@@ -88,7 +129,7 @@ class Records extends StatelessWidget {
           ),
           Expanded(
             child: Container(
-              color: Colors.cyan[100],
+              //color: Colors.cyan[100],
               child: Row(
                 //mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[
@@ -101,7 +142,34 @@ class Records extends StatelessWidget {
                           aspectRatio: 2 / 2.25,
                           child: Container(
                             child: Card(
-                              child: Text('Card 1'),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(15),
+                              ),
+                              elevation: 10,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: <Widget>[
+                                  IconButton(
+                                    icon: Image(
+                                      image: AssetImage('assets/profile.png'),
+                                    ),
+                                    onPressed: () {
+                                      print('Profiles');
+                                    },
+                                    iconSize: height / 10,
+                                  ),
+                                  Text(
+                                    'MFR Profiles',
+                                    style: TextStyle(
+                                      color: const Color(0xff3596b5),
+                                      fontSize: 20,
+                                      fontFamily: 'HelveticaNeue',
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                         ),
@@ -117,7 +185,34 @@ class Records extends StatelessWidget {
                           aspectRatio: 2 / 2.25,
                           child: Container(
                             child: Card(
-                              child: Text('Card 2'),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(15),
+                              ),
+                              elevation: 10,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: <Widget>[
+                                  IconButton(
+                                    icon: Image(
+                                      image: AssetImage('assets/inventory.png'),
+                                    ),
+                                    onPressed: () {
+                                      print('Inventory');
+                                    },
+                                    iconSize: height / 9,
+                                  ),
+                                  Text(
+                                    'Inventory',
+                                    style: TextStyle(
+                                      color: const Color(0xff3596b5),
+                                      fontSize: 20,
+                                      fontFamily: 'HelveticaNeue',
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                         ),
