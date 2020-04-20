@@ -24,28 +24,42 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build( BuildContext context ) {
     return Scaffold(
-      backgroundColor: Colors.cyan[800],
-        body: Stack(
-          children: <Widget>[
-            Align(
-              alignment: Alignment(0,-0.3),
-              child: Image.asset(
-               'assets/ems_logo.png',
-                scale: 2.8,
+      backgroundColor: Colors.transparent,
+        body: Container(
+        constraints:BoxConstraints.expand(),
+        decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.bottomCenter,
+                  end: Alignment.topCenter,
+                  colors: [const Color(0xff00a8cc),const Color(0xff142850) ],
+                  
+                  
+                  ),
+          ),
+          
+          child: Stack(
+            children: <Widget>[
+              Align(
+                alignment: Alignment(0,-0.3),
+                child: Image.asset(
+                 'assets/ems_logo.png',
+                  scale: 2.3,
+                ),
               ),
-            ),
-            Align(
-              alignment: Alignment(0,0.2),
-              child: Text(
-                "EMS DIRECT",
-                style: TextStyle(
-                fontSize: 18.0,
-                color: Colors.white,
-                fontFamily: 'HelveticalNeueBold',
-                )
+              Align(
+                alignment: Alignment(0,0.4),
+                child: Text(
+                  "EMS DIRECT",
+                  style: TextStyle(
+                  fontSize: 20.0,
+                  color: Colors.white,
+                  fontFamily: 'HelveticalNeue',
+                  letterSpacing: 5.0,
+                  )
+                ),
               ),
-            ),
-          ]
+            ]
+          ),
         )
     );
   }

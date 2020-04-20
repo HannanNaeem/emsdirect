@@ -16,20 +16,6 @@ class Home extends StatelessWidget {
 
       backgroundColor: Colors.cyan[800],
 
-      // appBar: AppBar(
-      //   backgroundColor: Colors.cyan[800],
-      //   title: Text('Ems Direct',
-      //     style: TextStyle(
-          
-      //       color:Colors.white,
-      //       fontSize: 23.0,
-      //       fontFamily: 'HelveticaNeueLight',
-
-      //     )
-      //   ),
-      //   centerTitle: true,
-
-      // ),
 
       body: 
         Center(
@@ -42,14 +28,6 @@ class Home extends StatelessWidget {
             ),
           
         ),
-
-      
-
-      // floatingActionButton: FloatingActionButton(
-      //   onPressed: () {},
-      //   backgroundColor: Colors.cyan[300],
-      //   child: Text("Tap"),
-      // ),
 
     );
   }
