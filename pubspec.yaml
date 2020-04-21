@@ -25,6 +25,8 @@ dependencies:
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^0.1.2
+  firebase_auth: ^0.16.0
+  cloud_firestore: ^0.13.5
 
 dev_dependencies:
   functional_widget: ^0.6.0
@@ -47,7 +49,6 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - assets/
-
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
 
@@ -59,32 +60,36 @@ flutter:
   # "family" key with the font family name, and a "fonts" key with a
   # list giving the asset and other descriptors for the font. For
   # example:
-fonts:
-  - family: HelveticaNeue
-    fonts:
-      - asset: fonts/HelveticaNeue.ttf
-      - asset: fonts/HelveticaNeueIt.ttf
-        style: italic
 
-  - family: HelveticaNeueMedium
-    fonts:
-      - asset: fonts/HelveticaNeueMedium.ttf
-  
-  - family: HelveticaNeueThin
-    fonts:
-      - asset: fonts/HelveticaNeueThin.ttf
+  fonts:
 
-  - family: HelveticaNeueBold
-    fonts:
-      - asset: fonts/HelveticaNeueBold.ttf
+    - family: HelveticaNeue
+      fonts:
+        - asset: fonts/HelveticaNeue.ttf
+        - asset: fonts/HelveticaNeueIt.ttf
+          style: italic
 
-  - family: HelveticaNeueHeavy
-    fonts:
-      - asset: fonts/HelveticaNeueHv.ttf
+    - family: HelveticaNeueMedium
+      fonts:
+        - asset: fonts/HelveticaNeueMedium.ttf
 
-  - family: HelveticaNeueLight
-    fonts:
-      - asset: fonts/HelveticaNeueLight.ttf
+    
+    - family: HelveticaNeueThin
+      fonts:
+        - asset: fonts/HelveticaNeueThin.ttf
+
+    - family: HelveticaNeueBold
+      fonts:
+        - asset: fonts/HelveticaNeueBold.ttf
+
+    - family: HelveticaNeueHeavy
+      fonts:
+        - asset: fonts/HelveticaNeueHv.ttf
+
+    - family: HelveticaNeueLight
+      fonts:
+        - asset: fonts/HelveticaNeueLight.ttf
+
 
 
   #
