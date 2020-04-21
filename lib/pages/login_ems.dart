@@ -25,11 +25,11 @@ class _LoginemsState extends State<Loginems> {
                         hintStyle: TextStyle(
                           color: Colors.grey[700],
                           fontFamily: 'HelveticaNeue',
+                          fontWeight: FontWeight.bold,
                           letterSpacing: 2.0,
                           ),
                         errorStyle: TextStyle(
                           color: Colors.amber,
-                          fontFamily: 'HelveticaNeue',
                           letterSpacing: 1.0,
                           ),            
                         fillColor: Colors.grey[200],
@@ -69,11 +69,11 @@ class _LoginemsState extends State<Loginems> {
                         hintStyle: TextStyle(
                           color: Colors.grey[700],
                           fontFamily: 'HelveticaNeue',
+                          fontWeight: FontWeight.bold,
                           letterSpacing: 2.0,
                           ),
                         errorStyle: TextStyle(
                           color: Colors.amber,
-                          fontFamily: 'HelveticaNeue',
                           letterSpacing: 1.0,
                           ),            
                         fillColor: Colors.grey[200],
@@ -124,7 +124,7 @@ class _LoginemsState extends State<Loginems> {
 
   Widget _buildForm(){
     return  Container(
-      height:355,
+      height:367,
       child: Form(
                 key: _formKey,
                 child: Column(
@@ -166,7 +166,7 @@ class _LoginemsState extends State<Loginems> {
                           'LOGIN',
                           style: TextStyle(
                                 color: Colors.white, 
-                                fontFamily: 'HelveticaNeue',
+                                fontFamily: 'HelveticaNeueBold',
                                 letterSpacing: 3.0,
                                 )
                         ),
@@ -218,16 +218,19 @@ class _LoginemsState extends State<Loginems> {
                             scale: 3.2,
                             ),
 
-                          SizedBox(height: 40),
-                          Text('EMS LOGIN',
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      letterSpacing: 8.0,
-                                      fontFamily: 'HelveticaNeue',
-                                      fontSize: 20,
-                                      
-                                      ),
-                                  ),
+                          
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(0, 50, 0, 0),
+                            child: Text('EMS LOGIN',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        letterSpacing: 8.0,
+                                        fontFamily: 'HelveticaNeueLight',
+                                        fontSize: 24,
+                                        
+                                        ),
+                                    ),
+                          ),
                           
 
 
@@ -239,12 +242,13 @@ class _LoginemsState extends State<Loginems> {
                           Padding(
                             padding: const EdgeInsets.fromLTRB(0,0,0,30),
                             child: Text(
-                              'EMS Direct',
+                              'EMS DIRECT',
                               style: TextStyle(
                                 color: Colors.white,
                                 letterSpacing: 5.0,
                                 fontSize: 15,
-                                fontFamily: 'HelveticaNeue',
+                                fontFamily: 'HelveticaNeueLight',
+                                
                               ),
                               ),
                           ),

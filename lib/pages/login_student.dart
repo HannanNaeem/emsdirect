@@ -44,11 +44,11 @@ class _LoginStudentState extends State<LoginStudent> with SingleTickerProviderSt
                         hintStyle: TextStyle(
                           color: Colors.grey[700],
                           fontFamily: 'HelveticaNeue',
+                          fontWeight: FontWeight.bold,
                           letterSpacing: 2.0,
                           ),
                         errorStyle: TextStyle(
                           color: Colors.amber,
-                          fontFamily: 'HelveticaNeue',
                           letterSpacing: 1.0,
                           ),            
                         fillColor: Colors.grey[200],
@@ -88,11 +88,11 @@ class _LoginStudentState extends State<LoginStudent> with SingleTickerProviderSt
                         hintStyle: TextStyle(
                           color: Colors.grey[700],
                           fontFamily: 'HelveticaNeue',
+                          fontWeight: FontWeight.bold,
                           letterSpacing: 2.0,
                           ),
                         errorStyle: TextStyle(
                           color: Colors.amber,
-                          fontFamily: 'HelveticaNeue',
                           letterSpacing: 1.0,
                           ),            
                         fillColor: Colors.grey[200],
@@ -152,11 +152,11 @@ class _LoginStudentState extends State<LoginStudent> with SingleTickerProviderSt
                         hintStyle: TextStyle(
                           color: Colors.grey[700],
                           fontFamily: 'HelveticaNeue',
+                          fontWeight: FontWeight.bold,
                           letterSpacing: 2.0,
                           ),
                         errorStyle: TextStyle(
                           color: Colors.amber,
-                          fontFamily: 'HelveticaNeue',
                           letterSpacing: 1.0,
                           ),            
                         fillColor: Colors.grey[200],
@@ -190,11 +190,11 @@ class _LoginStudentState extends State<LoginStudent> with SingleTickerProviderSt
                         hintStyle: TextStyle(
                           color: Colors.grey[700],
                           fontFamily: 'HelveticaNeue',
+                          fontWeight: FontWeight.bold,
                           letterSpacing: 2.0,
                           ),
                         errorStyle: TextStyle(
                           color: Colors.amber,
-                          fontFamily: 'HelveticaNeue',
                           letterSpacing: 1.0,
                           ),            
                         fillColor: Colors.grey[200],
@@ -231,11 +231,11 @@ class _LoginStudentState extends State<LoginStudent> with SingleTickerProviderSt
                         hintStyle: TextStyle(
                           color: Colors.grey[700],
                           fontFamily: 'HelveticaNeue',
+                          fontWeight: FontWeight.bold,
                           letterSpacing: 2.0,
                           ),
                         errorStyle: TextStyle(
                           color: Colors.amber,
-                          fontFamily: 'HelveticaNeue',
                           letterSpacing: 1.0,
                           ),            
                         fillColor: Colors.grey[200],
@@ -309,7 +309,7 @@ class _LoginStudentState extends State<LoginStudent> with SingleTickerProviderSt
                           'LOGIN',
                           style: TextStyle(
                                 color: Colors.white, 
-                                fontFamily: 'HelveticaNeue',
+                                fontFamily: 'HelveticaNeueBold',
                                 letterSpacing: 3.0,
                                 )
                         ),
@@ -375,7 +375,7 @@ class _LoginStudentState extends State<LoginStudent> with SingleTickerProviderSt
                         'SIGN UP',
                         style: TextStyle(
                               color: Colors.white, 
-                              fontFamily: 'HelveticaNeue',
+                              fontFamily: 'HelveticaNeueBold',                   
                               letterSpacing: 3.0,
                               )
                       ),
@@ -485,12 +485,13 @@ class _LoginStudentState extends State<LoginStudent> with SingleTickerProviderSt
                           Padding(
                             padding: const EdgeInsets.fromLTRB(0,0,0,30),
                             child: Text(
-                              'EMS Direct',
+                              'EMS DIRECT',
                               style: TextStyle(
                                 color: Colors.white,
                                 letterSpacing: 5.0,
                                 fontSize: 15,
-                                fontFamily: 'HelveticaNeue',
+                                fontFamily: 'HelveticaNeueLight',
+                               
                               ),
                               ),
                           ),

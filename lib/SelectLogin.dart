@@ -23,7 +23,7 @@ class _SelectLoginScreenState extends State<SelectLogin> {
             child: Stack(
               children: <Widget>[
                 Align(
-                  alignment: Alignment(0,-0.7),
+                  alignment: Alignment(0,-0.75),
                   child: Image.asset(
                       'assets/ems_logo.png',
                       scale: 3.2,
@@ -47,7 +47,9 @@ class _SelectLoginScreenState extends State<SelectLogin> {
                         width: 180,
                         height: 45,
                         child: RaisedButton(
-                            onPressed: () {}, //add later
+                            onPressed: () {
+                              Navigator.pushNamed((context), '/login_student');
+                            }, 
                             textColor: Colors.cyan[500],
                             color: Colors.white,
                             child: Text (
@@ -70,7 +72,9 @@ class _SelectLoginScreenState extends State<SelectLogin> {
                         width: 180,
                         height: 45,
                         child: RaisedButton(
-                            onPressed: () {}, //add later
+                            onPressed: () {
+                              Navigator.pushNamed(context, '/login_ems');
+                            }, //add later
                             textColor: Colors.cyan[500],
                             color: Colors.white,
                             child: Text (
@@ -93,7 +97,9 @@ class _SelectLoginScreenState extends State<SelectLogin> {
                         width: 180,
                         height: 45,
                         child: RaisedButton(
-                            onPressed: () {}, //add later
+                            onPressed: () {
+                              Navigator.pushNamed(context, '/login_ems');
+                            }, //add later
                             textColor: Colors.cyan[500],
                             color: Colors.white,
                             child: Text (
@@ -117,7 +123,7 @@ class _SelectLoginScreenState extends State<SelectLogin> {
                       style: TextStyle(
                         fontSize: 15.0,
                         color: Colors.white,
-                        fontFamily: 'HelveticalNeue',
+                        fontFamily: 'HelveticalNeueLight',
                         letterSpacing: 5.0,
                       )
                   ),
