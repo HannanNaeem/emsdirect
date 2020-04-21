@@ -14,6 +14,9 @@ class _StudentHomeState extends State<StudentHome> {
   int _gender = 0;
   int _severityLevel = 0;
   bool _emergency = false;
+  int _rollnumber = 21100118;
+  int _contact = 03362356254;
+  String _email = '21100118@lums.edu.pk';
 
   @override
   Widget build(BuildContext context) {
@@ -44,26 +47,88 @@ class _StudentHomeState extends State<StudentHome> {
                       fontSize: 15,
                       fontFamily: 'HelveticaNeue',
                       fontWeight: FontWeight.bold,
-                      letterSpacing: 2.0,
+                      letterSpacing: 1.0,
                     ),
                   ),
                   children: <Widget>[
-                    Text(
-                      "Contact: 0362-2613598",
-                      style: TextStyle(
-                        fontSize: 15,
-                        fontFamily: 'HelveticaNeue',
-                        fontWeight: FontWeight.bold,
-                        letterSpacing: 2.0,
+                    Container(
+                      constraints: BoxConstraints(maxWidth: width*0.75),
+                      child: Row(
+                        children: <Widget>[
+                          Text(
+                            'Rollnumber:',
+                            style: TextStyle(
+                              fontSize: 15,
+                              fontFamily: 'HelveticaNeue',
+                              fontWeight: FontWeight.bold,
+                              letterSpacing: 1.0,
+                            ),
+                          ),
+                          SizedBox(width: 2.0),
+                          Text(
+                              '$_rollnumber',
+                            style: TextStyle(
+                              fontSize: 15,
+                              fontFamily: 'HelveticaNeue',
+                              fontWeight: FontWeight.bold,
+                              letterSpacing: 1.0,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                    Text(
-                      'Email: 2100118@lums.edu.pk',
-                      style: TextStyle(
-                        fontSize: 15,
-                        fontFamily: 'HelveticaNeue',
-                        fontWeight: FontWeight.bold,
-                        letterSpacing: 2.0,
+                    SizedBox(height: 10.0),
+                    Container(
+                      constraints: BoxConstraints(maxWidth: width*0.75),
+                      child: Row(
+                        children: <Widget>[
+                          Text(
+                            'Email:',
+                            style: TextStyle(
+                              fontSize: 15,
+                              fontFamily: 'HelveticaNeue',
+                              fontWeight: FontWeight.bold,
+                              letterSpacing: 1.0,
+                            ),
+                          ),
+                          SizedBox(width: 2.0),
+                          Text(
+                            _email,
+                            style: TextStyle(
+                              fontSize: 15,
+                              fontFamily: 'HelveticaNeue',
+                              fontWeight: FontWeight.bold,
+                              letterSpacing: 1.0,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(height: 10.0),
+                    Container(
+                      constraints: BoxConstraints(maxWidth: width*0.75),
+                      child: Row(
+                        children: <Widget>[
+                          Text(
+                            'Contact:',
+                            style: TextStyle(
+                              fontSize: 15,
+                              fontFamily: 'HelveticaNeue',
+                              fontWeight: FontWeight.bold,
+                              letterSpacing: 1.0,
+                            ),
+                          ),
+                          SizedBox(width: 1.0),
+                          Text(
+                            '$_contact',
+                            style: TextStyle(
+                              fontSize: 15,
+                              fontFamily: 'HelveticaNeue',
+                              fontWeight: FontWeight.bold,
+                              letterSpacing: 1.0,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ],
@@ -202,9 +267,10 @@ class _StudentHomeState extends State<StudentHome> {
                 ),
                 SizedBox(height: 10.0),
                 ToggleButtons(
+                  constraints: BoxConstraints(maxWidth: width/1.1),
                   children: <Widget>[
                     Padding(
-                      padding: const EdgeInsets.fromLTRB(22, 20, 22, 20),
+                      padding:  EdgeInsets.fromLTRB(22, 20, 22, 20),
                       child: Text(
                           "Low",
                         style: TextStyle(
@@ -215,7 +281,7 @@ class _StudentHomeState extends State<StudentHome> {
                       ),
                     ),
                     Padding(
-                      padding: const EdgeInsets.fromLTRB(10, 20, 10, 20),
+                      padding:  EdgeInsets.fromLTRB(10, 20, 10, 20),
                       child: Text(
                           "Medium",
                         style: TextStyle(
@@ -226,7 +292,7 @@ class _StudentHomeState extends State<StudentHome> {
                       ),
                     ),
                     Padding(
-                      padding: const EdgeInsets.fromLTRB(21, 20, 21, 20),
+                      padding:  EdgeInsets.fromLTRB(21, 20, 21, 20),
                       child: Text(
                           "High",
                         style: TextStyle(
@@ -237,7 +303,7 @@ class _StudentHomeState extends State<StudentHome> {
                       ),
                     ),
                     Padding(
-                      padding: const EdgeInsets.fromLTRB(12, 20, 12, 20),
+                      padding:  EdgeInsets.fromLTRB(12, 20, 12, 20),
                       child: Text(
                           "Critical",
                         style: TextStyle(
@@ -279,9 +345,10 @@ class _StudentHomeState extends State<StudentHome> {
                 ),
                 SizedBox(height: 10.0),
                 ToggleButtons(
+                  constraints: BoxConstraints(maxWidth: width/1.1),
                   children: <Widget>[
                     Padding(
-                      padding: const EdgeInsets.fromLTRB(18, 20, 18, 20),
+                      padding:  EdgeInsets.fromLTRB(18, 20, 18, 20),
                       child: Text(
                           "N/A",
                         style: TextStyle(
@@ -292,7 +359,7 @@ class _StudentHomeState extends State<StudentHome> {
                       ),
                     ),
                     Padding(
-                      padding: const EdgeInsets.fromLTRB(17, 20, 17, 20),
+                      padding:  EdgeInsets.fromLTRB(17, 20, 17, 20),
                       child: Text(
                           "Male",
                         style: TextStyle(
@@ -303,7 +370,7 @@ class _StudentHomeState extends State<StudentHome> {
                       ),
                     ),
                     Padding(
-                      padding: const EdgeInsets.fromLTRB(11, 20, 11, 20),
+                      padding:  EdgeInsets.fromLTRB(11, 20, 11, 20),
                       child: Text(
                           "Female",
                         style: TextStyle(
@@ -342,10 +409,12 @@ class _StudentHomeState extends State<StudentHome> {
                     onLongPress: () {
                       Navigator.of(context).pushNamed('/live_status');
                       print("emergency initiated");
+                      print(width);
+                      print(height);
                     },
                     fillColor: Colors.red[400],
                     elevation: 10.0,
-                    constraints: BoxConstraints(minHeight: 200, minWidth: 200),
+                    constraints: BoxConstraints(minHeight: width/1.8, minWidth: width/1.8),
                     child: Text(
                       'SOS',
                       style: TextStyle(
@@ -357,7 +426,7 @@ class _StudentHomeState extends State<StudentHome> {
                       ),
                     ),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(200),
+                      borderRadius: BorderRadius.circular(width/1.8),
                     )
                 ),
                 SizedBox(height: 10),

@@ -13,6 +13,9 @@ class _LiveStatusState extends State<LiveStatus> {
     var screenSize = MediaQuery.of(context).size;
     var width = screenSize.width;
     var height = screenSize.height;
+    int _rollnumber = 21100118;
+    int _contact = 03362356254;
+    String _email = '21100118@lums.edu.pk';
     return Scaffold(
       drawer: Container(
         child: Drawer(
@@ -37,26 +40,88 @@ class _LiveStatusState extends State<LiveStatus> {
                       fontSize: 15,
                       fontFamily: 'HelveticaNeue',
                       fontWeight: FontWeight.bold,
-                      letterSpacing: 2.0,
+                      letterSpacing: 1.0,
                     ),
                   ),
                   children: <Widget>[
-                    Text(
-                      "Contact: 0362-2613598",
-                      style: TextStyle(
-                        fontSize: 15,
-                        fontFamily: 'HelveticaNeue',
-                        fontWeight: FontWeight.bold,
-                        letterSpacing: 2.0,
+                    Container(
+                      constraints: BoxConstraints(maxWidth: width*0.75),
+                      child: Row(
+                        children: <Widget>[
+                          Text(
+                            'Rollnumber:',
+                            style: TextStyle(
+                              fontSize: 15,
+                              fontFamily: 'HelveticaNeue',
+                              fontWeight: FontWeight.bold,
+                              letterSpacing: 1.0,
+                            ),
+                          ),
+                          SizedBox(width: 2.0),
+                          Text(
+                            '$_rollnumber',
+                            style: TextStyle(
+                              fontSize: 15,
+                              fontFamily: 'HelveticaNeue',
+                              fontWeight: FontWeight.bold,
+                              letterSpacing: 1.0,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                    Text(
-                      'Email: 2100118@lums.edu.pk',
-                      style: TextStyle(
-                        fontSize: 15,
-                        fontFamily: 'HelveticaNeue',
-                        fontWeight: FontWeight.bold,
-                        letterSpacing: 2.0,
+                    SizedBox(height: 10.0),
+                    Container(
+                      constraints: BoxConstraints(maxWidth: width*0.75),
+                      child: Row(
+                        children: <Widget>[
+                          Text(
+                            'Email:',
+                            style: TextStyle(
+                              fontSize: 15,
+                              fontFamily: 'HelveticaNeue',
+                              fontWeight: FontWeight.bold,
+                              letterSpacing: 1.0,
+                            ),
+                          ),
+                          SizedBox(width: 2.0),
+                          Text(
+                            _email,
+                            style: TextStyle(
+                              fontSize: 15,
+                              fontFamily: 'HelveticaNeue',
+                              fontWeight: FontWeight.bold,
+                              letterSpacing: 1.0,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(height: 10.0),
+                    Container(
+                      constraints: BoxConstraints(maxWidth: width*0.75),
+                      child: Row(
+                        children: <Widget>[
+                          Text(
+                            'Contact:',
+                            style: TextStyle(
+                              fontSize: 15,
+                              fontFamily: 'HelveticaNeue',
+                              fontWeight: FontWeight.bold,
+                              letterSpacing: 1.0,
+                            ),
+                          ),
+                          SizedBox(width: 1.0),
+                          Text(
+                            '$_contact',
+                            style: TextStyle(
+                              fontSize: 15,
+                              fontFamily: 'HelveticaNeue',
+                              fontWeight: FontWeight.bold,
+                              letterSpacing: 1.0,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ],
@@ -83,7 +148,7 @@ class _LiveStatusState extends State<LiveStatus> {
         )
       ),
       appBar: AppBar(
-        backgroundColor: const Color(0xff3596b5),
+        backgroundColor: Colors.cyan[800],
         title: Text(
           'Live Status',
           style: TextStyle(
