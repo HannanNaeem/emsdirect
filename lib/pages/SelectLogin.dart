@@ -32,15 +32,17 @@ class _SelectLoginScreenState extends State<SelectLogin> {
                 Align(
                   alignment: Alignment(0,-0.13),
                   child: Text(
-                      "LOGIN AS",
-                      style: TextStyle(
-                              fontSize: 20.0,
-                              color: Colors.white,
-                              fontFamily: 'HelveticalNeueThin',
-                              letterSpacing: 8.0,
-                              )
-                      ),
+                    'LOGIN AS',
+                    style: TextStyle(
+                      color:Colors.white,
+                      fontSize: 24.0,
+                      letterSpacing: 8.0,
+                      fontFamily: 'HelveticaNeueLight',
+                    ),
+
+                  ),
                 ),
+                
                 Align(
                     alignment: Alignment(0, 0.1),
                     child: SizedBox (
@@ -52,13 +54,15 @@ class _SelectLoginScreenState extends State<SelectLogin> {
                             }, 
                             textColor: Colors.cyan[500],
                             color: Colors.white,
-                            child: Text (
-                                'STUDENT',
-                                style: TextStyle (
-                                  fontSize: 16.0,
-                                  fontFamily: 'HelveticalNeue',
-                                  letterSpacing: 3.0,
-                                )
+                            child: Text(
+                              'STUDENT',
+                              style: TextStyle(
+                                color:Colors.cyan[500],
+                                fontSize: 16.0,
+                                letterSpacing: 3.0,
+                                fontFamily: 'HelveticaNeueBold',
+                              ),
+
                             ),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(5),
@@ -77,13 +81,15 @@ class _SelectLoginScreenState extends State<SelectLogin> {
                             }, //add later
                             textColor: Colors.cyan[500],
                             color: Colors.white,
-                            child: Text (
-                                'OPS',
-                                style: TextStyle (
-                                  fontSize: 16.0,
-                                  fontFamily: 'HelveticalNeue',
-                                  letterSpacing: 3.0,
-                                )
+                            child: Text(
+                              'OPS',
+                              style: TextStyle(
+                                color:Colors.cyan[500],
+                                fontSize: 16.0,
+                                letterSpacing: 3.0,
+                                fontFamily: 'HelveticaNeueBold',
+                              ),
+
                             ),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(5),
@@ -102,13 +108,15 @@ class _SelectLoginScreenState extends State<SelectLogin> {
                             }, //add later
                             textColor: Colors.cyan[500],
                             color: Colors.white,
-                            child: Text (
-                                'MFR',
-                                style: TextStyle (
-                                  fontSize: 16.0,
-                                  fontFamily: 'HelveticalNeue',
-                                  letterSpacing: 3.0,
-                                )
+                            child: Text(
+                              'MFR',
+                              style: TextStyle(
+                                color:Colors.cyan[500],
+                                fontSize: 16.0,
+                                letterSpacing: 3.0,
+                                fontFamily: 'HelveticaNeueBold',
+                              ),
+
                             ),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(5),
@@ -119,13 +127,14 @@ class _SelectLoginScreenState extends State<SelectLogin> {
                 Align(
                   alignment: Alignment(0, 0.9),
                   child: Text(
-                      "EMS DIRECT",
-                      style: TextStyle(
-                        fontSize: 15.0,
-                        color: Colors.white,
-                        fontFamily: 'HelveticalNeueLight',
-                        letterSpacing: 5.0,
-                      )
+                    'EMS DIRECT',
+                    style: TextStyle(
+                      color:Colors.white,
+                      fontSize: 15.0,
+                      letterSpacing: 5.0,
+                      fontFamily: 'HelveticaNeueLight',
+                    ),
+
                   ),
                 ),
               ]

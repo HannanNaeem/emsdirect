@@ -48,15 +48,15 @@ class _SplashScreenState extends State<SplashScreen> {
               ),
               Align(
                 alignment: Alignment(0,0.4),
-                child: Text(
-                  "EMS DIRECT",
-                  style: TextStyle(
-                  fontSize: 20.0,
-                  color: Colors.white,
-                  fontFamily: 'HelveticalNeue',
-                  letterSpacing: 5.0,
-                  )
-                ),
+                  child: Text(
+                    'EMS DIRECT',
+                    style: TextStyle(
+                      color:Colors.white,
+                      fontSize: 24.0,
+                      letterSpacing: 8.0,
+                      fontFamily: 'HelveticaNeueLight',
+                    ),
+                  ),
               ),
             ]
           ),
