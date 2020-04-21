@@ -15,7 +15,11 @@ class _SplashScreenState extends State<SplashScreen> {
         Duration(seconds:2),
             () => Navigator.of(context).pushReplacement(
             MaterialPageRoute(
-                  builder : (BuildContext context) => SelectLogin()
+                  builder : (BuildContext context) {
+
+                    //Go to select login or home screen if authenticated
+                    return SelectLogin();
+                  }
             )
             )
     );
