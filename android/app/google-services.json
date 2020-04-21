@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "939106854347",
+    "firebase_url": "https://ems-direct.firebaseio.com",
+    "project_id": "ems-direct",
+    "storage_bucket": "ems-direct.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:939106854347:android:c28b80be6eb5d8bf84824e",
+        "android_client_info": {
+          "package_name": "com.paranormalactivity.ems_direct"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "939106854347-22h2dqc866h4lamkl13h9vostbk883sc.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAo8311srRAsFDiJGx8GpipNYuUnIaUAMg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "939106854347-22h2dqc866h4lamkl13h9vostbk883sc.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
