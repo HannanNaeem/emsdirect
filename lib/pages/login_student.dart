@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ems_direct/services/auth.dart';
 
 
 class LoginStudent extends StatefulWidget {
@@ -18,6 +19,7 @@ class _LoginStudentState extends State<LoginStudent> with SingleTickerProviderSt
 
   final GlobalKey<FormState> _loginformKey = GlobalKey<FormState>();
   final GlobalKey<FormState> _signupformKey = GlobalKey<FormState>();
+  final AuthService _authStudent = AuthService();
 
   TabController _controller;
 
@@ -293,7 +295,7 @@ class _LoginStudentState extends State<LoginStudent> with SingleTickerProviderSt
 
                         
 
-                        onPressed: () {
+                        onPressed: () async {
                           if(!_loginformKey.currentState.validate()){
                             return;
                           }
@@ -304,6 +306,19 @@ class _LoginStudentState extends State<LoginStudent> with SingleTickerProviderSt
                           print(_email);
                           print(_password);
                           print(_keepSignedin);
+
+                          dynamic result = await _authStudent.signInAnon();
+
+                          if(result == null)
+                          {
+                            print("Error signing in");
+                            
+                          }
+                          else{
+                            print("User signed in!");
+                            print(result.uid);
+                          }
+
                         },
                         child: Text(
                           'LOGIN',
