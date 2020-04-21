@@ -1,5 +1,8 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:ems_direct/pages/student_home.dart';
+import 'package:ems_direct/pages/live_status.dart';
+import 'package:ems_direct/pages/emergency_numbers.dart';
 import 'package:ems_direct/records.dart';
 import 'package:ems_direct/notifications.dart';
 import 'package:ems_direct/ops.dart';
@@ -10,6 +13,7 @@ import 'package:flutter/material.dart';
 import 'package:ems_direct/pages/MFR_home.dart';
 import 'package:ems_direct/pages/emergency_numbers.dart';
 import 'package:ems_direct/pages/available_MFRs.dart';
+
 
 
 void main() => runApp(MyApp());
@@ -23,9 +27,11 @@ class MyApp extends StatelessWidget {
       routes: {
         '/login_student' : (context) => LoginStudent(),
         '/login_ems': (context) => Loginems(),
+        '/student_home' : (context) => StudentHome(),
+        '/live_status' : (context) => LiveStatus(),
+        '/emergencyNumbers' : (context) => EmergencyNumbers(),
       },
     
     );
   }
 }
-
