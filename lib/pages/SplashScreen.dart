@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 //import 'main.dart';
-import "SelectLogin.dart";
+import "package:ems_direct/pages/SelectLogin.dart";
 class SplashScreen extends StatefulWidget {
   @override
   _SplashScreenState createState() => new _SplashScreenState();

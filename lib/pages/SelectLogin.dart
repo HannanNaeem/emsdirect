@@ -9,7 +9,7 @@ class _SelectLoginScreenState extends State<SelectLogin> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Colors.cyan[800],
+        backgroundColor: Colors.transparent,
         body: Container(
           constraints:BoxConstraints.expand(),
           decoration: BoxDecoration(

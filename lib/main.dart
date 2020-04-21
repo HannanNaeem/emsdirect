@@ -1,7 +1,7 @@
 import 'dart:ui';
 import 'package:ems_direct/pages/login_student.dart';
 import 'package:ems_direct/pages/login_ems.dart';
-import 'SplashScreen.dart';
+import 'package:ems_direct/pages/SplashScreen.dart';
 import 'package:flutter/material.dart';
 
 void main() => runApp(MyApp());
