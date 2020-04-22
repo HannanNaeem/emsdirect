@@ -20,25 +20,24 @@ import 'package:ems_direct/models/user.dart';
 
 void main() => runApp(MyApp());
 
-
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return StreamProvider<User>.value(
       value: AuthService().user,
       child: MaterialApp(
-        home: SplashScreen(),
+        home: Ops(),
         routes: {
-          '/login_student' : (context) => LoginStudent(),
+          '/login_student': (context) => LoginStudent(),
           '/login_ems': (context) => Loginems(),
-          '/student_home' : (context) => StudentHome(),
-          '/live_status' : (context) => LiveStatus(),
-          '/emergencyNumbers' : (context) => EmergencyNumbers(),
+          '/student_home': (context) => StudentHome(),
+          '/live_status': (context) => LiveStatus(),
+          '/emergencyNumbers': (context) => EmergencyNumbers(),
           '/select_login': (context) => SelectLogin(),
           '/mfr_home': (context) => MFRHome(),
           '/ops_home': (context) => Ops(),
+          '/availableMFRs': (context) => AvailableMfrs(),
         },
-      
       ),
     );
   }
