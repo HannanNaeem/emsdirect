@@ -195,6 +195,8 @@ class _StudentHomeState extends State<StudentHome> {
                                           ),
                                           onPressed: () {
                                             //navigation to login screen
+                                            //todo signout here
+                                            
                                           },
                                         ),
                                         FlatButton(
