@@ -1,3 +1,4 @@
+import 'package:ems_direct/pages/student_home.dart';
 import 'package:flutter/material.dart';
 import 'package:ems_direct/services/auth.dart';
 
@@ -316,7 +317,11 @@ class _LoginStudentState extends State<LoginStudent> with SingleTickerProviderSt
                           }
                           else{
                             print("User signed in!");
-                            print(result.uid);
+                            //print(result.uid);  
+                            //Navigator.pushReplacementNamed(context,'/student_home');
+                            //todo: add loading stuff too fast right now
+                            Navigator.pushNamedAndRemoveUntil(context, '/student_home', (Route<dynamic> route) => false);
+                           
                           }
 
                         },

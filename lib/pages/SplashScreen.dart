@@ -1,6 +1,9 @@
 import 'dart:async';
+import 'package:ems_direct/pages/student_home.dart';
 import 'package:flutter/material.dart';
+import 'package:ems_direct/models/user.dart';
 //import 'main.dart';
+import 'package:provider/provider.dart';
 import "package:ems_direct/pages/SelectLogin.dart";
 class SplashScreen extends StatefulWidget {
   @override
@@ -18,7 +21,16 @@ class _SplashScreenState extends State<SplashScreen> {
                   builder : (BuildContext context) {
 
                     //Go to select login or home screen if authenticated
-                    return SelectLogin();
+                    //dynamically change screen depending on authentication
+                    final thisUser = Provider.of<User>(context);
+                    print(thisUser);
+
+                    if (thisUser == null){ 
+                      return SelectLogin();
+                     }
+                     else{
+                      return StudentHome();
+                     }
                   }
             )
             )

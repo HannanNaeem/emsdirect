@@ -13,6 +13,19 @@ class AuthService {
 
   }
 
+  // Auth user stream -> listens to firebase auth for changes in auth status
+  Stream<User> get user {
+
+    return _auth.onAuthStateChanged
+    // let us now map FirebaseUser(which has unnecessary info) to our user model and return
+    //.map((FirebaseUser user) => _userFromFirebaseUser(user));
+    
+    //similar implementation below:
+    .map(_userFromFirebaseUser);
+
+
+  }
+
   // sign in anon
   Future signInAnon() async {
 
@@ -42,4 +55,14 @@ class AuthService {
 
 
   // log out
+  Future logOut() async {
+    try{
+      return await _auth.signOut();
+    }
+    catch(e)
+    {
+      print(e.toString());
+      return null;
+    }
+  }
 }

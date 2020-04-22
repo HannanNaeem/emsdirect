@@ -1,3 +1,4 @@
+import 'package:ems_direct/services/auth.dart';
 import 'package:flutter/material.dart';
 
 
@@ -17,6 +18,9 @@ class _StudentHomeState extends State<StudentHome> {
   int _rollnumber = 21100118;
   int _contact = 03362356254;
   String _email = '21100118@lums.edu.pk';
+
+  //instance of auth service
+  final AuthService _auth = AuthService();
 
   @override
   Widget build(BuildContext context) {
@@ -193,8 +197,13 @@ class _StudentHomeState extends State<StudentHome> {
                                               color: const Color(0xff1a832a),
                                             ),
                                           ),
-                                          onPressed: () {
+                                          onPressed: () async {
                                             //navigation to login screen
+                                            //todo signout here                                        
+                                            await _auth.logOut();
+                                            Navigator.of(context).pop();
+                                            Navigator.pushReplacementNamed(context, '/select_login');
+                                            
                                           },
                                         ),
                                         FlatButton(
