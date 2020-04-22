@@ -16,7 +16,7 @@ class NotificationCard extends StatefulWidget {
 }
 
 class _NotificationCardState extends State<NotificationCard> {
-  Color _GenerateColor(String category) {
+  Color GenerateColor(String category) {
     if (category == 'testing') {
       return Colors.green;
     } else {
@@ -26,7 +26,7 @@ class _NotificationCardState extends State<NotificationCard> {
 
   @override
   Widget build(BuildContext context) {
-    Color color = _GenerateColor(widget.category);
+    Color color = GenerateColor(widget.category);
 
     return Card(
       elevation: 6,
@@ -53,11 +53,9 @@ class _NotificationCardState extends State<NotificationCard> {
                       child: Text(
                         widget.text,
                         style: TextStyle(
-                          //color: const Color(0xff3596b5),
+                          color: const Color(0xff142850),
                           fontSize: 17,
-                          fontFamily: 'HelveticaNeue',
-                          //fontWeight: FontWeight.bold,
-                          //letterSpacing: 2,
+                          fontFamily: 'HelveticaNeueLight',
                         ),
                       ),
                     ),

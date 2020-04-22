@@ -24,9 +24,9 @@ class Records extends StatelessWidget {
           Text(
             title,
             style: TextStyle(
-              color: const Color(0xff3596b5),
+              color: const Color(0xff142850),
               fontSize: 20,
-              fontFamily: 'HelveticaNeue',
+              fontFamily: 'HelveticaNeueLight',
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -42,6 +42,7 @@ class Records extends StatelessWidget {
     final height = screenSize.height;
 
     return Scaffold(
+      backgroundColor: const Color(0xff27496d),
       body: Column(
         //crossAxisAlignment: CrossAxisAlignment.stretch,
         //mainAxisAlignment: MainAxisAlignment.center,

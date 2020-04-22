@@ -24,6 +24,8 @@ class _NotificationsState extends State<Notifications> {
     String res = timeOfDay.format(context);
 
     return Scaffold(
+      backgroundColor: const Color(0xff27496d),
+      //!APPBAR HAS TO BE DELETED - ONLY FOR TESTING
       appBar: AppBar(
         title: Text('Hello'),
         leading: IconButton(
