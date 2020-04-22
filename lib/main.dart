@@ -1,4 +1,5 @@
 import 'dart:ui';
+import 'package:ems_direct/pages/SelectLogin.dart';
 import 'package:ems_direct/services/auth.dart';
 import 'package:flutter/material.dart';
 import 'package:ems_direct/pages/student_home.dart';
@@ -33,6 +34,9 @@ class MyApp extends StatelessWidget {
           '/student_home' : (context) => StudentHome(),
           '/live_status' : (context) => LiveStatus(),
           '/emergencyNumbers' : (context) => EmergencyNumbers(),
+          '/select_login': (context) => SelectLogin(),
+          '/mfr_home': (context) => MFRHome(),
+          '/ops_home': (context) => Ops(),
         },
       
       ),
