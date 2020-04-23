@@ -65,10 +65,10 @@ class _LoginStudentState extends State<LoginStudent> with SingleTickerProviderSt
                         if(value.isEmpty)
                           return 'Email is required!';
 
-                        if(!RegExp(r"^[a-zA-Z0-9_.+-]+@(?:(?:[a-zA-Z0-9-]+\.)?[a-zA-Z]+\.)?(lums.edu)\.pk$").hasMatch(value))
-                        {
-                          return 'Please enter a LUMS email address';
-                        }
+                        // if(!RegExp(r"^[a-zA-Z0-9_.+-]+@(?:(?:[a-zA-Z0-9-]+\.)?[a-zA-Z]+\.)?(lums.edu)\.pk$").hasMatch(value))
+                        // {
+                        //   return 'Please enter a LUMS email address';
+                        // }
                       },
 
                       onSaved: (String value) {
