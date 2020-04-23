@@ -27,13 +27,12 @@ class AppState extends State<Ops> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: const Color(0xff3596b5),
+        backgroundColor: const Color(0xff142850),
         title: Text(
           _headerNames[_selectedPage],
           style: TextStyle(
-            fontSize: 20,
-            fontFamily: 'HelveticaNeue',
-            fontWeight: FontWeight.bold,
+            fontSize: 24,
+            fontFamily: 'HelveticaNeueLight',
             color: Colors.white,
             letterSpacing: 2,
           ),
@@ -52,27 +51,48 @@ class AppState extends State<Ops> {
         },
         showUnselectedLabels: true,
         type: BottomNavigationBarType.fixed,
-        backgroundColor: const Color(0xff3596b5),
+        backgroundColor: const Color(0xff142850),
         selectedItemColor: Colors.white,
-        selectedFontSize: 15,
-        unselectedItemColor: const Color(0xff73cde8),
+        selectedFontSize: 14,
+        unselectedFontSize: 12,
+        unselectedItemColor: const Color(0xff27496d),
         iconSize: 30,
         items: [
           BottomNavigationBarItem(
             icon: Icon(Icons.insert_drive_file),
-            title: Text('Log'),
+            title: Text(
+              'Log',
+              style: TextStyle(
+                fontFamily: 'HelveticaNeueLight',
+              )
+            ),
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.notifications),
-            title: Text('Notifications'),
+            title: Text(
+              'Notifications',
+              style: TextStyle(
+                fontFamily: 'HelveticaNeueLight',
+              )
+            ),
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.place),
-            title: Text('Map'),
+            title: Text(
+              'Map',
+              style: TextStyle(
+                fontFamily: 'HelveticaNeueLight',
+              )
+            ),
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.description),
-            title: Text('Records'),
+            title: Text(
+              'Records',
+              style: TextStyle(
+                fontFamily: 'HelveticaNeueLight',
+              )
+            ),
           ),
         ],
       ),
