@@ -377,12 +377,16 @@ class _LoginStudentState extends State<LoginStudent> with SingleTickerProviderSt
 
                       
 
-                      onPressed: () {
+                      onPressed: () async {
                         if(!_signupformKey.currentState.validate()){
                           return;
                         }
 
                         _signupformKey.currentState.save();
+                        
+                        //signup 
+
+                        dynamic result = _authStudent.signUp(_email, _password, _name, _rollno, _contact);
                         
                         //! TESTING
                         print(_name);
@@ -390,6 +394,14 @@ class _LoginStudentState extends State<LoginStudent> with SingleTickerProviderSt
                         print(_contact);
                         print(_email);
                         print(_password);
+
+                        if (result == null){
+                          print("Error signing up!");
+                        }
+                        else{
+                          print("User created!");
+                          _controller.animateTo(0);
+                        }
                         
                       },
                       child: Text(

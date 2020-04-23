@@ -1,4 +1,5 @@
 import 'package:ems_direct/models/user.dart';
+import 'package:ems_direct/services/user_database.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 
@@ -63,10 +64,14 @@ class AuthService {
   }
 
   // register
-  Future signUp(String email, String password) async {
+  Future signUp(String email, String password, String name, String rollNo, String contact) async {
     try{
       AuthResult result = await _auth.createUserWithEmailAndPassword(email: email, password: password);
       FirebaseUser user = result.user;
+
+      //create a document for the user with the uid
+      await UserDatabaseService(uid: user.uid).updateUserData(name, rollNo, contact, email, false);
+
       return user;
     }
     catch(e){
