@@ -15,7 +15,7 @@ class _StudentHomeState extends State<StudentHome> {
   int _gender = 0;
   int _severityLevel = 0;
   bool _emergency = false;
-  int _rollnumber = 21100118;
+  int _rollNumber = 21100118;
   int _contact = 03362356254;
   String _email = '21100118@lums.edu.pk';
 
@@ -27,7 +27,9 @@ class _StudentHomeState extends State<StudentHome> {
     var screenSize = MediaQuery.of(context).size;
     var width = screenSize.width;
     var height = screenSize.height;
+
     return Scaffold(
+      backgroundColor: const Color(0x27496d),
         drawer: Container(
           width: width*0.8, //drawer covers 80% of the screen
           child: Drawer(
@@ -49,8 +51,7 @@ class _StudentHomeState extends State<StudentHome> {
                     'Harum Naseem',
                     style: TextStyle(
                       fontSize: 15,
-                      fontFamily: 'HelveticaNeue',
-                      fontWeight: FontWeight.bold,
+                      fontFamily: 'HelveticaNeueLight',
                       letterSpacing: 1.0,
                     ),
                   ),
@@ -63,18 +64,16 @@ class _StudentHomeState extends State<StudentHome> {
                             'Rollnumber:',
                             style: TextStyle(
                               fontSize: 15,
-                              fontFamily: 'HelveticaNeue',
-                              fontWeight: FontWeight.bold,
+                              fontFamily: 'HelveticaNeueLight',
                               letterSpacing: 1.0,
                             ),
                           ),
                           SizedBox(width: 2.0),
                           Text(
-                              '$_rollnumber',
+                              '$_rollNumber',
                             style: TextStyle(
                               fontSize: 15,
-                              fontFamily: 'HelveticaNeue',
-                              fontWeight: FontWeight.bold,
+                              fontFamily: 'HelveticaNeueLiight',
                               letterSpacing: 1.0,
                             ),
                           ),
@@ -90,8 +89,7 @@ class _StudentHomeState extends State<StudentHome> {
                             'Email:',
                             style: TextStyle(
                               fontSize: 15,
-                              fontFamily: 'HelveticaNeue',
-                              fontWeight: FontWeight.bold,
+                              fontFamily: 'HelveticaNeueLight',
                               letterSpacing: 1.0,
                             ),
                           ),
@@ -100,8 +98,7 @@ class _StudentHomeState extends State<StudentHome> {
                             _email,
                             style: TextStyle(
                               fontSize: 15,
-                              fontFamily: 'HelveticaNeue',
-                              fontWeight: FontWeight.bold,
+                              fontFamily: 'HelveticaNeueLight',
                               letterSpacing: 1.0,
                             ),
                           ),
@@ -117,8 +114,7 @@ class _StudentHomeState extends State<StudentHome> {
                             'Contact:',
                             style: TextStyle(
                               fontSize: 15,
-                              fontFamily: 'HelveticaNeue',
-                              fontWeight: FontWeight.bold,
+                              fontFamily: 'HelveticaNeueLight',
                               letterSpacing: 1.0,
                             ),
                           ),
@@ -127,8 +123,7 @@ class _StudentHomeState extends State<StudentHome> {
                             '$_contact',
                             style: TextStyle(
                               fontSize: 15,
-                              fontFamily: 'HelveticaNeue',
-                              fontWeight: FontWeight.bold,
+                              fontFamily: 'HelveticaNeueLight',
                               letterSpacing: 1.0,
                             ),
                           ),
@@ -143,8 +138,7 @@ class _StudentHomeState extends State<StudentHome> {
                     'Emergency Numbers',
                     style: TextStyle(
                       fontSize: 18,
-                      fontFamily: 'HelveticaNeue',
-                      fontWeight: FontWeight.bold,
+                      fontFamily: 'HelveticaNeueLight',
                       letterSpacing: 2.0,
                     ),
                   ),
@@ -178,8 +172,7 @@ class _StudentHomeState extends State<StudentHome> {
                                       title: Text(
                                         "Are you sure?",
                                         style: TextStyle(
-                                          fontFamily: 'HelveticaNeue',
-                                          fontWeight: FontWeight.bold,
+                                          fontFamily: 'HelveticaNeueLight',
                                           letterSpacing: 2.0,
                                           fontSize: 20,
                                           color: Colors.grey[600],
@@ -190,8 +183,7 @@ class _StudentHomeState extends State<StudentHome> {
                                           child: Text(
                                             'YES',
                                             style: TextStyle(
-                                              fontFamily: 'HelveticaNeue',
-                                              fontWeight: FontWeight.bold,
+                                              fontFamily: 'HelveticaNeueLight',
                                               letterSpacing: 3.0,
                                               fontSize: 20,
                                               color: const Color(0xff1a832a),
@@ -210,8 +202,7 @@ class _StudentHomeState extends State<StudentHome> {
                                           child: Text(
                                             'NO',
                                             style: TextStyle(
-                                              fontFamily: 'HelveticaNeue',
-                                              fontWeight: FontWeight.bold,
+                                              fontFamily: 'HelveticaNeueLight',
                                               letterSpacing: 2.5,
                                               fontSize: 20,
                                               color: const Color(0xffee0000),
@@ -248,84 +239,67 @@ class _StudentHomeState extends State<StudentHome> {
           title: Text(
             'Home',
             style: TextStyle(
-                fontSize: 28.0,
-              fontFamily: 'HelveticaNeue',
+                fontSize: 24.0,
+              fontFamily: 'HelveticaNeueLight',
               letterSpacing: 2.0,
-              fontWeight: FontWeight.bold,
             ),
           ),
           centerTitle: true,
-          backgroundColor: Colors.cyan[800],
+          backgroundColor: const Color(0x142850),
         ),
-        body : Padding(
-          padding: EdgeInsets.fromLTRB(1.0, height/30, 1.0, 0),
-          child: Center(
+        body : Center(
+          child: Container(
+            constraints:BoxConstraints.expand(),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
+                SizedBox(height: height/60),
                 Text(
                   'Severity Level',
                   style: TextStyle(
                       fontSize : 15.0,
-                      fontFamily: 'HelveticaNeue',
-                      color: Colors.cyan[800],
+                      fontFamily: 'HelveticaNeueLight',
+                      color: const Color(0x142850),
                     letterSpacing: 2.0,
-                    fontWeight: FontWeight.bold,
                   ),
                 ),
-                SizedBox(height: 10.0),
+                SizedBox(height: height /76),
                 ToggleButtons(
-                  constraints: BoxConstraints(maxWidth: width/1.1),
+                  constraints: BoxConstraints(minWidth: width/5, minHeight: height/11),
                   children: <Widget>[
-                    Padding(
-                      padding:  EdgeInsets.fromLTRB(22, 20, 22, 20),
-                      child: Text(
-                          "Low",
-                        style: TextStyle(
-                          fontFamily: 'HelveticaNeue',
-                          letterSpacing: 2.0,
-                          fontWeight: FontWeight.bold,
-                        ),
+                    Text(
+                        "Low",
+                      style: TextStyle(
+                        fontFamily: 'HelveticaNeueLight',
+                        letterSpacing: 2.0,
                       ),
                     ),
-                    Padding(
-                      padding:  EdgeInsets.fromLTRB(10, 20, 10, 20),
-                      child: Text(
-                          "Medium",
-                        style: TextStyle(
-                          fontFamily: 'HelveticaNeue',
-                          letterSpacing: 2.0,
-                          fontWeight: FontWeight.bold,
-                        ),
+                    Text(
+                        "Medium",
+                      style: TextStyle(
+                        fontFamily: 'HelveticaNeueLight',
+                        letterSpacing: 2.0,
                       ),
                     ),
-                    Padding(
-                      padding:  EdgeInsets.fromLTRB(21, 20, 21, 20),
-                      child: Text(
-                          "High",
-                        style: TextStyle(
-                          fontFamily: 'HelveticaNeue',
-                          letterSpacing: 2.0,
-                          fontWeight: FontWeight.bold,
-                        ),
+                    Text(
+                        "High",
+                      style: TextStyle(
+                        fontFamily: 'HelveticaNeueLight',
+                        letterSpacing: 2.0,
                       ),
                     ),
-                    Padding(
-                      padding:  EdgeInsets.fromLTRB(12, 20, 12, 20),
-                      child: Text(
-                          "Critical",
-                        style: TextStyle(
-                          fontFamily: 'HelveticaNeue',
-                          letterSpacing: 2.0,
-                          fontWeight: FontWeight.bold,
-                        ),
+                    Text(
+                        "Critical",
+                      style: TextStyle(
+                        fontFamily: 'HelveticaNeueLight',
+                        letterSpacing: 2.0,
                       ),
                     ),
                   ],
-                  color: Colors.cyan[600],
+                  color: const Color(0x142850),
                   selectedColor: Colors.white,
-                  fillColor: Colors.cyan[700],
+                  fillColor: const Color(0x00a8cc),
                   isSelected: _selections,
                   onPressed: (int index){
                     setState((){
@@ -341,58 +315,45 @@ class _StudentHomeState extends State<StudentHome> {
                     });
                   },
                 ),
-                SizedBox(height: 20.0),
+                SizedBox(height: height/30),
                 Text(
                   'Prefered MFR Gender',
                   style: TextStyle(
                       fontSize : 15.0,
-                      color: Colors.cyan[800],
+                      color: const Color(0x142850),
                     letterSpacing: 2.0,
-                    fontFamily: 'HelveticaNeue',
-                    fontWeight: FontWeight.bold,
+                    fontFamily: 'HelveticaNeueLight',
                   ),
                 ),
-                SizedBox(height: 10.0),
+                SizedBox(height: height /76),
                 ToggleButtons(
-                  constraints: BoxConstraints(maxWidth: width/1.1),
+                  constraints: BoxConstraints(minWidth: width/5.5, minHeight: height/11),
                   children: <Widget>[
-                    Padding(
-                      padding:  EdgeInsets.fromLTRB(18, 20, 18, 20),
-                      child: Text(
-                          "N/A",
-                        style: TextStyle(
-                          fontFamily: 'HelveticaNeue',
-                          letterSpacing: 2.0,
-                          fontWeight: FontWeight.bold,
-                        ),
+                    Text(
+                        "N/A",
+                      style: TextStyle(
+                        fontFamily: 'HelveticaNeueLight',
+                        letterSpacing: 2.0,
                       ),
                     ),
-                    Padding(
-                      padding:  EdgeInsets.fromLTRB(17, 20, 17, 20),
-                      child: Text(
-                          "Male",
-                        style: TextStyle(
-                          fontFamily: 'HelveticaNeue',
-                          letterSpacing: 2.0,
-                          fontWeight: FontWeight.bold,
-                        ),
+                    Text(
+                        "Male",
+                      style: TextStyle(
+                        fontFamily: 'HelveticaNeueLight',
+                        letterSpacing: 2.0,
                       ),
                     ),
-                    Padding(
-                      padding:  EdgeInsets.fromLTRB(11, 20, 11, 20),
-                      child: Text(
-                          "Female",
-                        style: TextStyle(
-                          fontFamily: 'HelveticaNeue',
-                          letterSpacing: 2.0,
-                          fontWeight: FontWeight.bold,
-                        ),
+                    Text(
+                        "Female",
+                      style: TextStyle(
+                        fontFamily: 'HelveticaNeueLight',
+                        letterSpacing: 2.0,
                       ),
                     ),
                   ],
-                  color: Colors.cyan[600],
+                  color: const Color(0x142850),
                   selectedColor: Colors.white,
-                  fillColor: Colors.cyan[700],
+                  fillColor: const Color(0x00a8cc),
                   isSelected: _selections2,
                   onPressed: (int index){
                     setState((){
@@ -408,7 +369,7 @@ class _StudentHomeState extends State<StudentHome> {
                     });
                   },
                 ),
-                SizedBox(height: 20.0),
+                SizedBox(height: height/30),
                 RawMaterialButton(
                   onPressed: (){
                     setState(() {
@@ -418,12 +379,10 @@ class _StudentHomeState extends State<StudentHome> {
                     onLongPress: () {
                       Navigator.of(context).pushNamed('/live_status');
                       print("emergency initiated");
-                      print(width);
-                      print(height);
                     },
                     fillColor: Colors.red[400],
                     elevation: 10.0,
-                    constraints: BoxConstraints(minHeight: width/1.8, minWidth: width/1.8),
+                    constraints: BoxConstraints(minHeight: height/3, minWidth: height/3),
                     child: Text(
                       'SOS',
                       style: TextStyle(
@@ -435,29 +394,27 @@ class _StudentHomeState extends State<StudentHome> {
                       ),
                     ),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(width/1.8),
+                      borderRadius: BorderRadius.circular(height/3),
                     )
                 ),
-                SizedBox(height: 10),
+                SizedBox(height: height/60),
                 Text(
                   'TAP AND HOLD FOR 2 SECONDS',
                   style: TextStyle(
                     fontSize : 15.0,
                     color: Colors.red[400],
-                    fontWeight: FontWeight.bold,
-                    fontFamily: 'HelveticaNeue',
+                    fontFamily: 'HelveticaNeueLight',
                     letterSpacing: 2.0,
                   ),
                 ),
-                SizedBox(height: 3.0),
+                SizedBox(height: height/120),
                 Text(
                   'INITIATE EMERGENCY',
                   style: TextStyle(
                     fontSize : 15.0,
                     color: Colors.red[400],
-                    fontFamily: 'HelveticaNeue',
+                    fontFamily: 'HelveticaNeueLight',
                     letterSpacing: 2.0,
-                    fontWeight: FontWeight.bold,
                   ),
                 ),
               ],
