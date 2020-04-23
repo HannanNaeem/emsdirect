@@ -16,8 +16,8 @@ class _StudentHomeState extends State<StudentHome> {
   int _gender = 0;
   int _severityLevel = 0;
   bool _emergency = false;
-  int _rollNumber = 21100118;
-  int _contact = 03362356254;
+  String _rollNumber = '21100118';
+  String _contact = '03362356254';
   String _email = '21100118@lums.edu.pk';
   GeoPoint dummyLocation = GeoPoint(4, 12);
   /////////////////////////////////////////////////////////////////
@@ -39,7 +39,7 @@ class _StudentHomeState extends State<StudentHome> {
   }
 
   void _createPendingEmergencyDocument(GeoPoint location, String genderPref,
-      String severityLevel, int rollNumber) async {
+      String severityLevel, String rollNumber) async {
     await databaseReference
         .collection("PendingEmergencies")
         .document()
@@ -58,8 +58,9 @@ class _StudentHomeState extends State<StudentHome> {
     var screenSize = MediaQuery.of(context).size;
     var width = screenSize.width;
     var height = screenSize.height;
-    var screenRatio = height / width;
+
     return Scaffold(
+        backgroundColor: const Color(0xff27496d),
         drawer: Container(
           width: width * 0.8, //drawer covers 80% of the screen
           child: Drawer(
@@ -76,13 +77,13 @@ class _StudentHomeState extends State<StudentHome> {
                 ExpansionTile(
                   leading: Icon(
                     Icons.account_circle,
+                    color: const Color(0xff142850),
                   ),
                   title: Text(
                     'Harum Naseem',
                     style: TextStyle(
                       fontSize: 15,
-                      fontFamily: 'HelveticaNeue',
-                      fontWeight: FontWeight.bold,
+                      fontFamily: 'HelveticaNeueLight',
                       letterSpacing: 1.0,
                     ),
                   ),
@@ -95,8 +96,7 @@ class _StudentHomeState extends State<StudentHome> {
                             'Rollnumber:',
                             style: TextStyle(
                               fontSize: 15,
-                              fontFamily: 'HelveticaNeue',
-                              fontWeight: FontWeight.bold,
+                              fontFamily: 'HelveticaNeueLight',
                               letterSpacing: 1.0,
                             ),
                           ),
@@ -105,8 +105,7 @@ class _StudentHomeState extends State<StudentHome> {
                             '$_rollNumber',
                             style: TextStyle(
                               fontSize: 15,
-                              fontFamily: 'HelveticaNeue',
-                              fontWeight: FontWeight.bold,
+                              fontFamily: 'HelveticaNeueLiight',
                               letterSpacing: 1.0,
                             ),
                           ),
@@ -122,8 +121,7 @@ class _StudentHomeState extends State<StudentHome> {
                             'Email:',
                             style: TextStyle(
                               fontSize: 15,
-                              fontFamily: 'HelveticaNeue',
-                              fontWeight: FontWeight.bold,
+                              fontFamily: 'HelveticaNeueLight',
                               letterSpacing: 1.0,
                             ),
                           ),
@@ -132,8 +130,7 @@ class _StudentHomeState extends State<StudentHome> {
                             _email,
                             style: TextStyle(
                               fontSize: 15,
-                              fontFamily: 'HelveticaNeue',
-                              fontWeight: FontWeight.bold,
+                              fontFamily: 'HelveticaNeueLight',
                               letterSpacing: 1.0,
                             ),
                           ),
@@ -149,8 +146,7 @@ class _StudentHomeState extends State<StudentHome> {
                             'Contact:',
                             style: TextStyle(
                               fontSize: 15,
-                              fontFamily: 'HelveticaNeue',
-                              fontWeight: FontWeight.bold,
+                              fontFamily: 'HelveticaNeueLight',
                               letterSpacing: 1.0,
                             ),
                           ),
@@ -159,8 +155,7 @@ class _StudentHomeState extends State<StudentHome> {
                             '$_contact',
                             style: TextStyle(
                               fontSize: 15,
-                              fontFamily: 'HelveticaNeue',
-                              fontWeight: FontWeight.bold,
+                              fontFamily: 'HelveticaNeueLight',
                               letterSpacing: 1.0,
                             ),
                           ),
@@ -175,8 +170,7 @@ class _StudentHomeState extends State<StudentHome> {
                     'Emergency Numbers',
                     style: TextStyle(
                       fontSize: 18,
-                      fontFamily: 'HelveticaNeue',
-                      fontWeight: FontWeight.bold,
+                      fontFamily: 'HelveticaNeueLight',
                       letterSpacing: 2.0,
                     ),
                   ),
@@ -199,9 +193,9 @@ class _StudentHomeState extends State<StudentHome> {
                             icon: Image(
                               image: AssetImage('assets/logout.png'),
                               fit: BoxFit.fill,
-                              color: const Color(0xff3596b5),
+                              color: const Color(0xff142850),
                             ),
-                            color: const Color(0xff3596b5),
+                            color: const Color(0xff142850),
                             onPressed: () {
                               showDialog(
                                   context: context,
@@ -210,8 +204,7 @@ class _StudentHomeState extends State<StudentHome> {
                                       title: Text(
                                         "Are you sure?",
                                         style: TextStyle(
-                                          fontFamily: 'HelveticaNeue',
-                                          fontWeight: FontWeight.bold,
+                                          fontFamily: 'HelveticaNeueLight',
                                           letterSpacing: 2.0,
                                           fontSize: 20,
                                           color: Colors.grey[600],
@@ -222,8 +215,7 @@ class _StudentHomeState extends State<StudentHome> {
                                           child: Text(
                                             'YES',
                                             style: TextStyle(
-                                              fontFamily: 'HelveticaNeue',
-                                              fontWeight: FontWeight.bold,
+                                              fontFamily: 'HelveticaNeueLight',
                                               letterSpacing: 3.0,
                                               fontSize: 20,
                                               color: const Color(0xff1a832a),
@@ -244,8 +236,7 @@ class _StudentHomeState extends State<StudentHome> {
                                           child: Text(
                                             'NO',
                                             style: TextStyle(
-                                              fontFamily: 'HelveticaNeue',
-                                              fontWeight: FontWeight.bold,
+                                              fontFamily: 'HelveticaNeueLight',
                                               letterSpacing: 2.5,
                                               fontSize: 20,
                                               color: const Color(0xffee0000),
@@ -266,7 +257,7 @@ class _StudentHomeState extends State<StudentHome> {
                             style: TextStyle(
                               fontSize: 18,
                               fontFamily: 'HelveticaNeueBold',
-                              color: const Color(0xff3596b5),
+                              color: const Color(0xff142850),
                             ),
                           ),
                         ],
@@ -288,7 +279,7 @@ class _StudentHomeState extends State<StudentHome> {
             ),
           ),
           centerTitle: true,
-          backgroundColor: Colors.cyan[800],
+          backgroundColor: const Color(0xff142850),
         ),
         body: Center(
           child: Container(
@@ -297,128 +288,137 @@ class _StudentHomeState extends State<StudentHome> {
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
-                SizedBox(height: height / 60),
+                SizedBox(height: height / 50),
                 Text(
                   'Severity Level',
                   style: TextStyle(
                     fontSize: 15.0,
                     fontFamily: 'HelveticaNeueLight',
-                    color: Colors.cyan[800],
+                    color: Colors.white,
                     letterSpacing: 2.0,
                   ),
                 ),
                 SizedBox(height: height / 76),
-                ToggleButtons(
-                  constraints: BoxConstraints(
-                      minWidth: width / 5, minHeight: height / 11),
-                  children: <Widget>[
-                    Text(
-                      "Low",
-                      style: TextStyle(
-                        fontFamily: 'HelveticaNeueLight',
-                        letterSpacing: 2.0,
+                Card(
+                  color: const Color(0xff00a8cc),
+                  child: ToggleButtons(
+                    constraints: BoxConstraints(
+                        minWidth: width / 5, minHeight: height / 11),
+                    children: <Widget>[
+                      Text(
+                        "Low",
+                        style: TextStyle(
+                          fontFamily: 'HelveticaNeueLight',
+                          letterSpacing: 2.0,
+                        ),
                       ),
-                    ),
-                    Text(
-                      "Medium",
-                      style: TextStyle(
-                        fontFamily: 'HelveticaNeueLight',
-                        letterSpacing: 2.0,
+                      Text(
+                        "Medium",
+                        style: TextStyle(
+                          fontFamily: 'HelveticaNeueLight',
+                          letterSpacing: 2.0,
+                        ),
                       ),
-                    ),
-                    Text(
-                      "High",
-                      style: TextStyle(
-                        fontFamily: 'HelveticaNeueLight',
-                        letterSpacing: 2.0,
+                      Text(
+                        "High",
+                        style: TextStyle(
+                          fontFamily: 'HelveticaNeueLight',
+                          letterSpacing: 2.0,
+                        ),
                       ),
-                    ),
-                    Text(
-                      "Critical",
-                      style: TextStyle(
-                        fontFamily: 'HelveticaNeueLight',
-                        letterSpacing: 2.0,
+                      Text(
+                        "Critical",
+                        style: TextStyle(
+                          fontFamily: 'HelveticaNeueLight',
+                          letterSpacing: 2.0,
+                        ),
                       ),
-                    ),
-                  ],
-                  color: Colors.cyan[600],
-                  selectedColor: Colors.white,
-                  fillColor: Colors.cyan[700],
-                  isSelected: _selections,
-                  onPressed: (int index) {
-                    setState(() {
-                      for (int buttonIndex = 0;
-                          buttonIndex < _selections.length;
-                          buttonIndex++) {
-                        if (buttonIndex == index) {
-                          _selections[buttonIndex] = true;
-                        } else {
-                          _selections[buttonIndex] = false;
+                    ],
+                    color: Colors.white,
+                    selectedColor: Colors.white,
+                    fillColor: Colors.redAccent,
+                    borderColor: Colors.white,
+                    selectedBorderColor: Colors.white,
+                    isSelected: _selections,
+                    onPressed: (int index) {
+                      setState(() {
+                        for (int buttonIndex = 0;
+                            buttonIndex < _selections.length;
+                            buttonIndex++) {
+                          if (buttonIndex == index) {
+                            _selections[buttonIndex] = true;
+                          } else {
+                            _selections[buttonIndex] = false;
+                          }
+                          _severityLevel = index;
                         }
-                        _severityLevel = index;
-                      }
-                      print(_severityLevel);
-                    });
-                  },
+                        print(_severityLevel);
+                      });
+                    },
+                  ),
                 ),
                 SizedBox(height: height / 30),
                 Text(
                   'Prefered MFR Gender',
                   style: TextStyle(
                     fontSize: 15.0,
-                    color: Colors.cyan[800],
+                    color: Colors.white,
                     letterSpacing: 2.0,
                     fontFamily: 'HelveticaNeueLight',
                   ),
                 ),
                 SizedBox(height: height / 76),
-                ToggleButtons(
-                  constraints: BoxConstraints(
-                      minWidth: width / 5.5, minHeight: height / 11),
-                  children: <Widget>[
-                    Text(
-                      "N/A",
-                      style: TextStyle(
-                        fontFamily: 'HelveticaNeueLight',
-                        letterSpacing: 2.0,
+                Card(
+                  color: const Color(0xff00a8cc),
+                  child: ToggleButtons(
+                    constraints: BoxConstraints(
+                        minWidth: width / 5.5, minHeight: height / 11),
+                    children: <Widget>[
+                      Text(
+                        "N/A",
+                        style: TextStyle(
+                          fontFamily: 'HelveticaNeueLight',
+                          letterSpacing: 2.0,
+                        ),
                       ),
-                    ),
-                    Text(
-                      "Male",
-                      style: TextStyle(
-                        fontFamily: 'HelveticaNeueLight',
-                        letterSpacing: 2.0,
+                      Text(
+                        "Male",
+                        style: TextStyle(
+                          fontFamily: 'HelveticaNeueLight',
+                          letterSpacing: 2.0,
+                        ),
                       ),
-                    ),
-                    Text(
-                      "Female",
-                      style: TextStyle(
-                        fontFamily: 'HelveticaNeueLight',
-                        letterSpacing: 2.0,
+                      Text(
+                        "Female",
+                        style: TextStyle(
+                          fontFamily: 'HelveticaNeueLight',
+                          letterSpacing: 2.0,
+                        ),
                       ),
-                    ),
-                  ],
-                  color: Colors.cyan[600],
-                  selectedColor: Colors.white,
-                  fillColor: Colors.cyan[700],
-                  isSelected: _selections2,
-                  onPressed: (int index) {
-                    setState(() {
-                      for (int buttonIndex = 0;
-                          buttonIndex < _selections2.length;
-                          buttonIndex++) {
-                        if (buttonIndex == index) {
-                          _selections2[buttonIndex] = true;
-                        } else {
-                          _selections2[buttonIndex] = false;
+                    ],
+                    color: Colors.white,
+                    selectedColor: Colors.white,
+                    fillColor: Colors.redAccent,
+                    borderColor: Colors.white,
+                    selectedBorderColor: Colors.white,
+                    isSelected: _selections2,
+                    onPressed: (int index) {
+                      setState(() {
+                        for (int buttonIndex = 0;
+                            buttonIndex < _selections2.length;
+                            buttonIndex++) {
+                          if (buttonIndex == index) {
+                            _selections2[buttonIndex] = true;
+                          } else {
+                            _selections2[buttonIndex] = false;
+                          }
+                          print(_gender);
                         }
-                        _gender = index;
-                      }
-                      print(_gender);
-                    });
-                  },
+                      });
+                    },
+                  ),
                 ),
-                SizedBox(height: height / 30),
+                SizedBox(height: height / 35),
                 RawMaterialButton(
                     onPressed: () {
                       setState(() {
@@ -439,9 +439,7 @@ class _StudentHomeState extends State<StudentHome> {
                     fillColor: Colors.red[400],
                     elevation: 10.0,
                     constraints: BoxConstraints(
-                      minHeight: height / 3, //screenRatio * 126,
-                      minWidth: height / 3, //screenRatio * 126
-                    ),
+                        minHeight: height / 2.7, minWidth: height / 2.7),
                     child: Text(
                       'SOS',
                       style: TextStyle(
@@ -453,9 +451,9 @@ class _StudentHomeState extends State<StudentHome> {
                       ),
                     ),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(height / 3),
+                      borderRadius: BorderRadius.circular(height / 2.7),
                     )),
-                SizedBox(height: height / 60),
+                SizedBox(height: height / 45),
                 Text(
                   'TAP AND HOLD FOR 2 SECONDS',
                   style: TextStyle(
