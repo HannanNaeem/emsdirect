@@ -22,7 +22,7 @@ class _MFRHomeState extends State<MFRHome> {
 
     //Defines the whole layout of the homepage
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: const Color(0xff27496d),
       //This contains the widgets seen in the drawer - also has navigation included
       drawer: Container(
         width: width *
@@ -45,7 +45,7 @@ class _MFRHomeState extends State<MFRHome> {
                   children: <Widget>[
                     IconButton(
                       icon: Icon(Icons.account_circle),
-                      color: const Color(0xff3596b5),
+                      color: const Color(0xff142850),
                       onPressed: () {
                         print('MFR personal info');
                       },
@@ -55,8 +55,7 @@ class _MFRHomeState extends State<MFRHome> {
                       'Harum Naseem',
                       style: TextStyle(
                         fontSize: 15,
-                        fontFamily: 'HelveticaNeue',
-                        fontWeight: FontWeight.bold,
+                        fontFamily: 'HelveticaNeueLight',
                         letterSpacing: 2.0,
                       ),
                     ),
@@ -69,8 +68,7 @@ class _MFRHomeState extends State<MFRHome> {
                   'Emergency Numbers',
                   style: TextStyle(
                     fontSize: 18,
-                    fontFamily: 'HelveticaNeue',
-                    fontWeight: FontWeight.bold,
+                    fontFamily: 'HelveticaNeueLight',
                     letterSpacing: 2.0,
                   ),
                 ),
@@ -85,13 +83,12 @@ class _MFRHomeState extends State<MFRHome> {
                   'List of Available MFRs',
                   style: TextStyle(
                     fontSize: 18,
-                    fontFamily: 'HelveticaNeue',
-                    fontWeight: FontWeight.bold,
+                    fontFamily: 'HelveticaNeueLight',
                     letterSpacing: 2.0,
                   ),
                 ),
                 onTap: () {
-                  Navigator.of(context).pushNamed('/availableMfrs');
+                  Navigator.of(context).pushNamed('/availableMFRs');
                   //print('List of Available MFRs');
                 },
               ),
@@ -109,9 +106,9 @@ class _MFRHomeState extends State<MFRHome> {
                           icon: Image(
                             image: AssetImage('assets/logout.png'),
                             fit: BoxFit.fill,
-                            color: const Color(0xff3596b5),
+                            color: const Color(0xff142850),
                           ),
-                          color: const Color(0xff3596b5),
+                          color: const Color(0xff142850),
                           onPressed: () {
                             showDialog(
                                 context: context,
@@ -120,8 +117,7 @@ class _MFRHomeState extends State<MFRHome> {
                                     title: Text(
                                       "Are you sure?",
                                       style: TextStyle(
-                                        fontFamily: 'HelveticaNeue',
-                                        fontWeight: FontWeight.bold,
+                                        fontFamily: 'HelveticaNeueLight',
                                         letterSpacing: 2.0,
                                         fontSize: 20,
                                         color: Colors.grey[600],
@@ -132,8 +128,7 @@ class _MFRHomeState extends State<MFRHome> {
                                         child: Text(
                                           'YES',
                                           style: TextStyle(
-                                            fontFamily: 'HelveticaNeue',
-                                            fontWeight: FontWeight.bold,
+                                            fontFamily: 'HelveticaNeueLight',
                                             letterSpacing: 3.0,
                                             fontSize: 20,
                                             color: const Color(0xff1a832a),
@@ -147,8 +142,7 @@ class _MFRHomeState extends State<MFRHome> {
                                         child: Text(
                                           'NO',
                                           style: TextStyle(
-                                            fontFamily: 'HelveticaNeue',
-                                            fontWeight: FontWeight.bold,
+                                            fontFamily: 'HelveticaNeueLight',
                                             letterSpacing: 2.5,
                                             fontSize: 20,
                                             color: const Color(0xffee0000),
@@ -168,8 +162,8 @@ class _MFRHomeState extends State<MFRHome> {
                           'LOGOUT',
                           style: TextStyle(
                             fontSize: 18,
-                            fontFamily: 'HelveticaNeueBold',
-                            color: const Color(0xff3596b5),
+                            fontFamily: 'HelveticaNeueLightBold',
+                            color: const Color(0xff142850),
                           ),
                         ),
                       ],
@@ -183,14 +177,13 @@ class _MFRHomeState extends State<MFRHome> {
       ),
       //This is the appBar which has the main heading and the drawer option
       appBar: AppBar(
-        backgroundColor: const Color(0xff3596b5),
+        backgroundColor: const Color(0xff142850),
         title: Text(
           'Home',
           style: TextStyle(
-            fontFamily: 'HelveticaNeue',
-            fontWeight: FontWeight.bold,
-            letterSpacing: 3.0,
-            fontSize: 28,
+            fontFamily: 'HelveticaNeueLight',
+            letterSpacing: 2.0,
+            fontSize: 24,
           ),
         ),
         centerTitle: true,
@@ -211,12 +204,11 @@ class _MFRHomeState extends State<MFRHome> {
                     child: Text(
                       'Available',
                       style: TextStyle(
-                        fontFamily: 'HelveticaNeue',
-                        fontWeight: FontWeight.bold,
-                        letterSpacing: 2.0,
-                        fontSize: 28,
-                        color: const Color(0xff3596b5),
-                      ),
+                          fontFamily: 'HelveticaNeueLight',
+                          letterSpacing: 2.0,
+                          fontSize: 24,
+                          color: Colors.white //const Color(0xff142850),
+                          ),
                     ),
                   ),
                   Transform.scale(
@@ -265,10 +257,9 @@ class _MFRHomeState extends State<MFRHome> {
                           'Map',
                           style: TextStyle(
                               fontSize: 22,
-                              fontFamily: 'HelveticaNeue',
-                              fontWeight: FontWeight.bold,
+                              fontFamily: 'HelveticaNeueLight',
                               letterSpacing: 2.0,
-                              color: const Color(0xff3596b5) //Colors.cyan[800],
+                              color: const Color(0xff142850) //Colors.cyan[800],
                               ),
                         ),
                       ),
@@ -309,10 +300,9 @@ class _MFRHomeState extends State<MFRHome> {
                               'Report Emergency',
                               style: TextStyle(
                                 fontSize: 22,
-                                fontFamily: 'HelveticaNeue',
-                                fontWeight: FontWeight.bold,
+                                fontFamily: 'HelveticaNeueLight',
                                 letterSpacing: 2.0,
-                                color: const Color(0xff3596b5),
+                                color: const Color(0xff142850),
                               ),
                             ),
                           ),

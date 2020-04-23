@@ -8,21 +8,18 @@ class EmergencyNumbers extends StatelessWidget {
     var height = screenSize.height;
 
     return Scaffold(
-      appBar: PreferredSize(
-        preferredSize: Size.fromHeight(height / 10),
-        child: AppBar(
-          backgroundColor: const Color(0xff3596b5),
-          title: Text(
-            'Emergency Numbers',
-            style: TextStyle(
-              fontFamily: 'HelveticaNeue',
-              fontWeight: FontWeight.bold,
-              letterSpacing: 3.0,
-              fontSize: 28,
-            ),
+      backgroundColor: const Color(0xff27496d),
+      appBar: AppBar(
+        backgroundColor: const Color(0xff142850),
+        title: Text(
+          'Emergency Numbers',
+          style: TextStyle(
+            fontFamily: 'HelveticaNeueLight',
+            letterSpacing: 2.0,
+            fontSize: 24,
           ),
-          centerTitle: true,
         ),
+        centerTitle: true,
       ),
       body: Center(child: Text('Numbers')),
     );
