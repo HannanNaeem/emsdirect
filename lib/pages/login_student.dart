@@ -308,7 +308,7 @@ class _LoginStudentState extends State<LoginStudent> with SingleTickerProviderSt
                           print(_password);
                           print(_keepSignedin);
 
-                          dynamic result = await _authStudent.signInAnon();
+                          dynamic result = await _authStudent.signIn(_email,_password);
 
                           if(result == null)
                           {
@@ -317,10 +317,11 @@ class _LoginStudentState extends State<LoginStudent> with SingleTickerProviderSt
                           }
                           else{
                             print("User signed in!");
-                            //print(result.uid);  
-                            //Navigator.pushReplacementNamed(context,'/student_home');
-                            //todo: add loading stuff too fast right now
-                            Navigator.pushNamedAndRemoveUntil(context, '/student_home', (Route<dynamic> route) => false);
+                            print("User id: ${result.uid}");
+                            
+                            Navigator.pop(context);
+                            Navigator.pushReplacementNamed(context,'/student_home');
+
                            
                           }
 

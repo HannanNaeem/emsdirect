@@ -24,6 +24,7 @@ class _StudentHomeState extends State<StudentHome> {
 
   //instance of auth service
   final AuthService _auth = AuthService();
+  final AuthService _authStudent = AuthService();
   //an object made to work with firestore
   final databaseReference = Firestore.instance;
 
@@ -232,6 +233,8 @@ class _StudentHomeState extends State<StudentHome> {
                                             //navigation to login screen
                                             //todo signout here
                                             await _auth.logOut();
+                                            //todo signout here
+                                            await _authStudent.logOut();
                                             Navigator.of(context).pop();
                                             Navigator.pushReplacementNamed(
                                                 context, '/select_login');
