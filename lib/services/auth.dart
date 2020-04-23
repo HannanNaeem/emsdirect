@@ -44,15 +44,42 @@ class AuthService {
       String storedEmsType = document.data['emsType'].toString();
 
       print("----------------------STORED EMS TYPE IS $storedEmsType");
-      
-      if(user.isEmailVerified)
+
+      //there are three policies we must enforce
+      // -> student cannot log as someone else => emsType == ''
+      // -> mfr cannot login as ops
+      // -> there is no email verification for ems Members
+
+
+      //handle student
+      //Student trying to login as someone else
+      if(emsType != '' && storedEmsType == '') 
       {
-        return user;
-      }
-      else{
         _auth.signOut();
         return null;
       }
+      //For student check if email is verified
+      if(emsType == '' && !user.isEmailVerified)
+      {
+        _auth.signOut();
+        return null;
+      }
+
+      //Handle MFR
+      //MFR trying to login as ops
+      if(emsType == 'ops' && storedEmsType == 'mfr')
+      {
+        _auth.signOut();
+        return null;
+      }
+
+      //Everything else is okay! Set loggedInAs for ems users
+      if(storedEmsType != '')
+      {
+        await UserDatabaseService(uid: uid).updateLoggedIn(emsType);
+      }
+      return user;
+
     }
     catch(e){
       print(e.toString());
