@@ -26,7 +26,7 @@ class MyApp extends StatelessWidget {
     return StreamProvider<User>.value(
       value: AuthService().user,
       child: MaterialApp(
-        home: Ops(),
+        home: StudentHome(),
         routes: {
           '/login_student': (context) => LoginStudent(),
           '/login_ems': (context) => Loginems(),
