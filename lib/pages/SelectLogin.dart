@@ -7,7 +7,11 @@ class SelectLogin extends StatefulWidget {
 
 class _SelectLoginScreenState extends State<SelectLogin> {
   @override
+
   Widget build(BuildContext context) {
+    var screenSize = MediaQuery.of(context).size;
+    var width = screenSize.width;
+    var height = screenSize.height;
     return Scaffold(
         backgroundColor: Colors.transparent,
         body: Container(
@@ -22,15 +26,15 @@ class _SelectLoginScreenState extends State<SelectLogin> {
 
             child: Stack(
               children: <Widget>[
-                Align(
-                  alignment: Alignment(0,-0.75),
+                Padding(
+                  padding: EdgeInsets.fromLTRB(width  * 0.27, 100.0, 10.0, height*0.2),
                   child: Image.asset(
                       'assets/ems_logo.png',
-                      scale: 3.2,
+                      scale: 0.009*width,
                   ),
                 ),
-                Align(
-                  alignment: Alignment(0,-0.13),
+                Padding(
+                  padding: EdgeInsets.fromLTRB(width  * 0.27, 320.0, 10.0, height*0.2),
                   child: Text(
                     'LOGIN AS',
                     style: TextStyle(
@@ -42,12 +46,12 @@ class _SelectLoginScreenState extends State<SelectLogin> {
 
                   ),
                 ),
-                
-                Align(
-                    alignment: Alignment(0, 0.1),
+
+                Padding(
+                    padding: EdgeInsets.fromLTRB(width  * 0.245, 400.0, 10.0, height*0.2),
                     child: SizedBox (
-                        width: 180,
-                        height: 45,
+                        width: width*0.50,
+                        height: height*0.06,
                         child: RaisedButton(
                             onPressed: () {
                               Navigator.pushNamed((context), '/login_student');
@@ -70,11 +74,11 @@ class _SelectLoginScreenState extends State<SelectLogin> {
                         )
                     )
                 ),
-                Align(
-                    alignment: Alignment(0, 0.3),
+                Padding(
+                    padding: EdgeInsets.fromLTRB(width  * 0.25, 475.0, 10.0, height*0.2),
                     child: SizedBox (
-                        width: 180,
-                        height: 45,
+                        width: width*0.50,
+                        height: height*0.06,
                         child: RaisedButton(
                             onPressed: () {
                               Navigator.pushNamed(context, '/login_ems_ops');
@@ -97,11 +101,11 @@ class _SelectLoginScreenState extends State<SelectLogin> {
                         )
                     )
                 ),
-                Align(
-                    alignment: Alignment(0, 0.5),
+                Padding(
+                    padding: EdgeInsets.fromLTRB(width  * 0.245, 550.0, 10.0, height*0.2),
                     child: SizedBox (
-                        width: 180,
-                        height: 45,
+                        width: width*0.50,
+                        height: height*0.06,
                         child: RaisedButton(
                             onPressed: () {
                               Navigator.pushNamed(context, '/login_ems_mfr');

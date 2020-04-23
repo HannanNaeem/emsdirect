@@ -29,8 +29,12 @@ class _SplashScreenState extends State<SplashScreen> {
     );
   }
 
+
   @override
   Widget build( BuildContext context ) {
+    var screenSize = MediaQuery.of(context).size;
+    var width = screenSize.width;
+    var height = screenSize.height;
     return Scaffold(
       backgroundColor: Colors.transparent,
         body: Container(
@@ -47,15 +51,15 @@ class _SplashScreenState extends State<SplashScreen> {
           
           child: Stack(
             children: <Widget>[
-              Align(
-                alignment: Alignment(0,-0.3),
+              Padding(
+                padding: EdgeInsets.fromLTRB(width  * 0.265, 250.0, 10.0, height*0.1),
                 child: Image.asset(
-                 'assets/ems_logo.png',
-                  scale: 2.3,
+                  'assets/ems_logo.png',
+                  scale: 0.009*width,
                 ),
               ),
-              Align(
-                alignment: Alignment(0,0.4),
+              Padding(
+                padding: EdgeInsets.fromLTRB(width  * 0.23, 500.0, 10.0, height*0.1),
                   child: Text(
                     'EMS DIRECT',
                     style: TextStyle(
