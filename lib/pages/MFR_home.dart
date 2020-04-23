@@ -1,7 +1,94 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:ems_direct/pages/emergency_numbers.dart';
 import 'package:ems_direct/pages/available_MFRs.dart';
+
+class PendingEmergency {
+  GeoPoint location;
+  String genderPreference;
+  String severityLevel;
+  int rollNumber;
+}
+
+class AlertFunction extends StatefulWidget {
+  @override
+  _AlertFunctionState createState() => _AlertFunctionState();
+}
+
+class _AlertFunctionState extends State<AlertFunction> {
+  void showAlert() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(
+          "Are you sure?",
+          style: TextStyle(
+            fontFamily: 'HelveticaNeueLight',
+            letterSpacing: 2.0,
+            fontSize: 20,
+            //color: Colors.grey[600],
+          ),
+        ),
+        actions: <Widget>[
+          FlatButton(
+            child: Text(
+              'YES',
+              style: TextStyle(
+                fontFamily: 'HelveticaNeue',
+                fontWeight: FontWeight.bold,
+                letterSpacing: 3.0,
+                fontSize: 20,
+                color: const Color(0xff1a832a),
+              ),
+            ),
+            onPressed: () {
+              print('yes');
+              //dispose();
+            },
+          ),
+          FlatButton(
+            child: Text(
+              'NO',
+              style: TextStyle(
+                fontFamily: 'HelveticaNeue',
+                fontWeight: FontWeight.bold,
+                letterSpacing: 2.5,
+                fontSize: 20,
+                color: const Color(0xffee0000),
+              ),
+            ),
+            onPressed: () {
+              print('no');
+              Navigator.of(context).pop();
+              dispose();
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) => showAlert());
+  }
+
+  @override
+  void dispose() {
+    print('widget disposed');
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    print('IN THIS FUNCTION');
+    //Future.delayed(Duration.zero, () => showAlert());
+    //WidgetsBinding.instance.addPostFrameCallback((_) => {});
+    return Container(key: UniqueKey());
+  }
+}
 
 //This is the main homepage for any MFR login
 class MFRHome extends StatefulWidget {
@@ -12,13 +99,60 @@ class MFRHome extends StatefulWidget {
 class _MFRHomeState extends State<MFRHome> {
   //Tells whether toggle switch is to be on or off
   bool isAvailable = false;
+  final databaseReference = Firestore.instance;
+
+  /////////////////////////// FUNCTIONS ///////////////////////////
+  void _getData() {
+    databaseReference
+        .collection('OngoingEmergencies')
+        .getDocuments()
+        .then((QuerySnapshot snapshot) {
+      snapshot.documents.forEach(((f) => print('${f.data}')));
+    });
+  }
+
+  void _buildStreamBuilder() {
+    print('In function');
+    StreamBuilder<QuerySnapshot>(
+      stream: databaseReference
+          .collection('PendingEmergencies')
+          .where('severity', isEqualTo: 'low')
+          .snapshots(),
+      builder: (context, snapshot) {
+        if (snapshot.hasError) print('Error');
+        if (snapshot.data != null) print(snapshot.data);
+      },
+    );
+  }
+
+  void showAlert() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(
+          "Are you sure?",
+          style: TextStyle(
+            fontFamily: 'HelveticaNeueLight',
+            letterSpacing: 2.0,
+            fontSize: 20,
+            //color: Colors.grey[600],
+          ),
+        ),
+      ),
+    );
+    //return Container();
+  }
+  /////////////////////////////////////////////////////////////////
 
   @override
   Widget build(BuildContext context) {
+    print('Context rebuit');
+
     //Getting screen dimensions to adjust widgets accordingly
     var screenSize = MediaQuery.of(context).size;
     var width = screenSize.width;
     var height = screenSize.height;
+    var pendingEmergency;
 
     //Defines the whole layout of the homepage
     return Scaffold(
@@ -190,130 +324,148 @@ class _MFRHomeState extends State<MFRHome> {
       ),
       //This is where the toggle option and the two cards (Map and Report Emergency) reside
       body: Center(
-        child: Column(
-          //everything is placed in the column
-          children: <Widget>[
-            Flexible(
-              flex: 3,
-              child: Container(
-                height: height / 5,
-                width: width / 1.5,
-                child: Row(children: <Widget>[
-                  Expanded(
-                    flex: 2,
-                    child: Text(
-                      'Available',
-                      style: TextStyle(
-                          fontFamily: 'HelveticaNeueLight',
-                          letterSpacing: 2.0,
-                          fontSize: 24,
-                          color: Colors.white //const Color(0xff142850),
-                          ),
-                    ),
-                  ),
-                  Transform.scale(
-                    scale: 2.5,
-                    child: Switch(
-                      value: isAvailable,
-                      onChanged: (bool newVal) {
-                        setState(() {
-                          isAvailable = newVal;
-                        });
-                      },
-                      activeTrackColor: Colors.green,
-                      activeColor: Colors.green[50],
-                      inactiveThumbColor: Colors.white,
-                      inactiveTrackColor: Colors.red[200],
-                    ),
-                  ),
-                ]),
-              ),
-            ),
-            Flexible(
-              flex: 4,
-              child: SizedBox(
-                height: height / 4,
-                width: width / 1.5,
-                child: Card(
-                  elevation: 7,
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(15)),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: <Widget>[
-                      IconButton(
-                        icon: Icon(
-                          Icons.location_on,
-                          color: Colors.red[400],
-                          size: height / 9,
-                        ),
-                        onPressed: () {
-                          print('Clicked');
-                        },
-                      ),
-                      Center(
-                        child: Text(
-                          'Map',
-                          style: TextStyle(
-                              fontSize: 22,
-                              fontFamily: 'HelveticaNeueLight',
-                              letterSpacing: 2.0,
-                              color: const Color(0xff142850) //Colors.cyan[800],
-                              ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-            SizedBox(
-              height: height / 16,
-            ),
-            Flexible(
-              flex: 4,
-              child: SizedBox(
-                height: height / 4,
-                width: width / 1.5,
-                child: Card(
-                  elevation: 7,
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(15)),
-                  child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: <Widget>[
-                        IconButton(
-                          icon: Image(
-                            image: AssetImage('assets/report.png'),
-                            fit: BoxFit.fill,
-                          ),
-                          iconSize: height / 9,
-                          onPressed: () {
-                            print('Clicked');
-                          },
-                        ),
-                        Center(
-                          child: Padding(
-                            padding: EdgeInsets.fromLTRB(0, 0, 0, height / 80),
+          child: StreamBuilder<QuerySnapshot>(
+              stream: databaseReference
+                  .collection('PendingEmergencies')
+                  .where('severity', isEqualTo: 'low')
+                  .snapshots(),
+              builder: (context, snapshot) {
+                if (snapshot.hasError) print('Error');
+                if (snapshot.data != null) {
+                  setState() {}
+                  for (int i = 0; i < snapshot.data.documents.length; i++) {
+                    print(snapshot.data.documents[i].data);
+                    //if (true) AlertFunction();
+                  }
+                }
+
+                return Column(
+                  //everything is placed in the column
+                  children: <Widget>[
+                    if (isAvailable) new AlertFunction(), //AlertFunction(),
+                    Flexible(
+                      flex: 3,
+                      child: Container(
+                        height: height / 5,
+                        width: width / 1.5,
+                        child: Row(children: <Widget>[
+                          Expanded(
+                            flex: 2,
                             child: Text(
-                              'Report Emergency',
+                              'Available',
                               style: TextStyle(
-                                fontSize: 22,
-                                fontFamily: 'HelveticaNeueLight',
-                                letterSpacing: 2.0,
-                                color: const Color(0xff142850),
-                              ),
+                                  fontFamily: 'HelveticaNeueLight',
+                                  letterSpacing: 2.0,
+                                  fontSize: 24,
+                                  color: Colors.white //const Color(0xff142850),
+                                  ),
                             ),
                           ),
+                          Transform.scale(
+                            scale: 2.5,
+                            child: Switch(
+                              value: isAvailable,
+                              onChanged: (bool newVal) {
+                                setState(() {
+                                  isAvailable = newVal;
+                                });
+                              },
+                              activeTrackColor: Colors.green,
+                              activeColor: Colors.green[50],
+                              inactiveThumbColor: Colors.white,
+                              inactiveTrackColor: Colors.red[200],
+                            ),
+                          ),
+                        ]),
+                      ),
+                    ),
+                    Flexible(
+                      flex: 4,
+                      child: SizedBox(
+                        height: height / 4,
+                        width: width / 1.5,
+                        child: Card(
+                          elevation: 7,
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(15)),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: <Widget>[
+                              IconButton(
+                                icon: Icon(
+                                  Icons.location_on,
+                                  color: Colors.red[400],
+                                  size: height / 9,
+                                ),
+                                onPressed: () {
+                                  print('Clicked');
+                                },
+                              ),
+                              Center(
+                                child: Text(
+                                  'Map',
+                                  style: TextStyle(
+                                      fontSize: 22,
+                                      fontFamily: 'HelveticaNeueLight',
+                                      letterSpacing: 2.0,
+                                      color: const Color(
+                                          0xff142850) //Colors.cyan[800],
+                                      ),
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
-                      ]),
-                ),
-              ),
-            )
-          ],
-        ),
-      ),
+                      ),
+                    ),
+                    SizedBox(
+                      height: height / 16,
+                    ),
+                    Flexible(
+                      flex: 4,
+                      child: SizedBox(
+                        height: height / 4,
+                        width: width / 1.5,
+                        child: Card(
+                          elevation: 7,
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(15)),
+                          child: Column(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: <Widget>[
+                                IconButton(
+                                  icon: Image(
+                                    image: AssetImage('assets/report.png'),
+                                    fit: BoxFit.fill,
+                                  ),
+                                  iconSize: height / 9,
+                                  onPressed: () {
+                                    print('Clicked');
+                                  },
+                                ),
+                                Center(
+                                  child: Padding(
+                                    padding: EdgeInsets.fromLTRB(
+                                        0, 0, 0, height / 80),
+                                    child: Text(
+                                      'Report Emergency',
+                                      style: TextStyle(
+                                        fontSize: 22,
+                                        fontFamily: 'HelveticaNeueLight',
+                                        letterSpacing: 2.0,
+                                        color: const Color(0xff142850),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ]),
+                        ),
+                      ),
+                    )
+                  ],
+                );
+              })),
     );
   }
 }

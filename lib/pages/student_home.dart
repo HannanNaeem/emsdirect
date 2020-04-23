@@ -1,35 +1,66 @@
 import 'package:ems_direct/services/auth.dart';
 import 'package:flutter/material.dart';
-
-
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class StudentHome extends StatefulWidget {
   @override
   _StudentHomeState createState() => _StudentHomeState();
 }
 
-
 class _StudentHomeState extends State<StudentHome> {
+  /////////////////////////// VARIABLES ///////////////////////////
   List<bool> _selections = List.generate(4, (_) => false);
   List<bool> _selections2 = List.generate(3, (_) => false);
+  List<String> _genderPreferences = ['NA', 'M', 'F'];
+  List<String> _severityLevels = ['low', 'medium', 'high', 'critical'];
   int _gender = 0;
   int _severityLevel = 0;
   bool _emergency = false;
-  int _rollnumber = 21100118;
+  int _rollNumber = 21100118;
   int _contact = 03362356254;
   String _email = '21100118@lums.edu.pk';
+  GeoPoint dummyLocation = GeoPoint(4, 12);
+  /////////////////////////////////////////////////////////////////
 
   //instance of auth service
   final AuthService _auth = AuthService();
+  //an object made to work with firestore
+  final databaseReference = Firestore.instance;
+
+  /////////////////////////// FUNCTIONS ///////////////////////////
+  void _getData() {
+    databaseReference
+        .collection('OngoingEmergencies')
+        .getDocuments()
+        .then((QuerySnapshot snapshot) {
+      snapshot.documents.forEach(((f) => print('${f.data}')));
+    });
+  }
+
+  void _createPendingEmergencyDocument(GeoPoint location, String genderPref,
+      String severityLevel, int rollNumber) async {
+    await databaseReference
+        .collection("PendingEmergencies")
+        .document()
+        .setData({
+      'Location': location,
+      'Gender Preference': genderPref,
+      "Patient roll_no": rollNumber,
+      'Severity': severityLevel,
+      'Declines': 0
+    });
+  }
+  /////////////////////////////////////////////////////////////////
 
   @override
   Widget build(BuildContext context) {
     var screenSize = MediaQuery.of(context).size;
     var width = screenSize.width;
     var height = screenSize.height;
+    var screenRatio = height / width;
     return Scaffold(
         drawer: Container(
-          width: width*0.8, //drawer covers 80% of the screen
+          width: width * 0.8, //drawer covers 80% of the screen
           child: Drawer(
             child: Column(
               //this column contains the drawer header, the option to view profile/emergency numbers/available MFRs list
@@ -43,7 +74,7 @@ class _StudentHomeState extends State<StudentHome> {
                 ),
                 ExpansionTile(
                   leading: Icon(
-                      Icons.account_circle,
+                    Icons.account_circle,
                   ),
                   title: Text(
                     'Harum Naseem',
@@ -56,7 +87,7 @@ class _StudentHomeState extends State<StudentHome> {
                   ),
                   children: <Widget>[
                     Container(
-                      constraints: BoxConstraints(maxWidth: width*0.75),
+                      constraints: BoxConstraints(maxWidth: width * 0.75),
                       child: Row(
                         children: <Widget>[
                           Text(
@@ -70,7 +101,7 @@ class _StudentHomeState extends State<StudentHome> {
                           ),
                           SizedBox(width: 2.0),
                           Text(
-                              '$_rollnumber',
+                            '$_rollNumber',
                             style: TextStyle(
                               fontSize: 15,
                               fontFamily: 'HelveticaNeue',
@@ -83,7 +114,7 @@ class _StudentHomeState extends State<StudentHome> {
                     ),
                     SizedBox(height: 10.0),
                     Container(
-                      constraints: BoxConstraints(maxWidth: width*0.75),
+                      constraints: BoxConstraints(maxWidth: width * 0.75),
                       child: Row(
                         children: <Widget>[
                           Text(
@@ -110,7 +141,7 @@ class _StudentHomeState extends State<StudentHome> {
                     ),
                     SizedBox(height: 10.0),
                     Container(
-                      constraints: BoxConstraints(maxWidth: width*0.75),
+                      constraints: BoxConstraints(maxWidth: width * 0.75),
                       child: Row(
                         children: <Widget>[
                           Text(
@@ -159,7 +190,7 @@ class _StudentHomeState extends State<StudentHome> {
                     alignment: Alignment.bottomCenter,
                     child: Padding(
                       padding:
-                      EdgeInsets.fromLTRB(width * 0.8 * 0.24, 0, 0, 10.0),
+                          EdgeInsets.fromLTRB(width * 0.8 * 0.24, 0, 0, 10.0),
                       child: Row(
                         //has the icon and text
                         children: <Widget>[
@@ -199,11 +230,11 @@ class _StudentHomeState extends State<StudentHome> {
                                           ),
                                           onPressed: () async {
                                             //navigation to login screen
-                                            //todo signout here                                        
+                                            //todo signout here
                                             await _auth.logOut();
                                             Navigator.of(context).pop();
-                                            Navigator.pushReplacementNamed(context, '/select_login');
-                                            
+                                            Navigator.pushReplacementNamed(
+                                                context, '/select_login');
                                           },
                                         ),
                                         FlatButton(
@@ -248,78 +279,62 @@ class _StudentHomeState extends State<StudentHome> {
           title: Text(
             'Home',
             style: TextStyle(
-                fontSize: 28.0,
-              fontFamily: 'HelveticaNeue',
+              fontSize: 24.0,
+              fontFamily: 'HelveticaNeueLight',
               letterSpacing: 2.0,
-              fontWeight: FontWeight.bold,
             ),
           ),
           centerTitle: true,
           backgroundColor: Colors.cyan[800],
         ),
-        body : Padding(
-          padding: EdgeInsets.fromLTRB(1.0, height/30, 1.0, 0),
-          child: Center(
+        body: Center(
+          child: Container(
+            constraints: BoxConstraints.expand(),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
+                SizedBox(height: height / 60),
                 Text(
                   'Severity Level',
                   style: TextStyle(
-                      fontSize : 15.0,
-                      fontFamily: 'HelveticaNeue',
-                      color: Colors.cyan[800],
+                    fontSize: 15.0,
+                    fontFamily: 'HelveticaNeueLight',
+                    color: Colors.cyan[800],
                     letterSpacing: 2.0,
-                    fontWeight: FontWeight.bold,
                   ),
                 ),
-                SizedBox(height: 10.0),
+                SizedBox(height: height / 76),
                 ToggleButtons(
-                  constraints: BoxConstraints(maxWidth: width/1.1),
+                  constraints: BoxConstraints(
+                      minWidth: width / 5, minHeight: height / 11),
                   children: <Widget>[
-                    Padding(
-                      padding:  EdgeInsets.fromLTRB(22, 20, 22, 20),
-                      child: Text(
-                          "Low",
-                        style: TextStyle(
-                          fontFamily: 'HelveticaNeue',
-                          letterSpacing: 2.0,
-                          fontWeight: FontWeight.bold,
-                        ),
+                    Text(
+                      "Low",
+                      style: TextStyle(
+                        fontFamily: 'HelveticaNeueLight',
+                        letterSpacing: 2.0,
                       ),
                     ),
-                    Padding(
-                      padding:  EdgeInsets.fromLTRB(10, 20, 10, 20),
-                      child: Text(
-                          "Medium",
-                        style: TextStyle(
-                          fontFamily: 'HelveticaNeue',
-                          letterSpacing: 2.0,
-                          fontWeight: FontWeight.bold,
-                        ),
+                    Text(
+                      "Medium",
+                      style: TextStyle(
+                        fontFamily: 'HelveticaNeueLight',
+                        letterSpacing: 2.0,
                       ),
                     ),
-                    Padding(
-                      padding:  EdgeInsets.fromLTRB(21, 20, 21, 20),
-                      child: Text(
-                          "High",
-                        style: TextStyle(
-                          fontFamily: 'HelveticaNeue',
-                          letterSpacing: 2.0,
-                          fontWeight: FontWeight.bold,
-                        ),
+                    Text(
+                      "High",
+                      style: TextStyle(
+                        fontFamily: 'HelveticaNeueLight',
+                        letterSpacing: 2.0,
                       ),
                     ),
-                    Padding(
-                      padding:  EdgeInsets.fromLTRB(12, 20, 12, 20),
-                      child: Text(
-                          "Critical",
-                        style: TextStyle(
-                          fontFamily: 'HelveticaNeue',
-                          letterSpacing: 2.0,
-                          fontWeight: FontWeight.bold,
-                        ),
+                    Text(
+                      "Critical",
+                      style: TextStyle(
+                        fontFamily: 'HelveticaNeueLight',
+                        letterSpacing: 2.0,
                       ),
                     ),
                   ],
@@ -327,12 +342,14 @@ class _StudentHomeState extends State<StudentHome> {
                   selectedColor: Colors.white,
                   fillColor: Colors.cyan[700],
                   isSelected: _selections,
-                  onPressed: (int index){
-                    setState((){
-                      for(int buttonIndex = 0; buttonIndex < _selections.length; buttonIndex++){
-                        if(buttonIndex == index){
+                  onPressed: (int index) {
+                    setState(() {
+                      for (int buttonIndex = 0;
+                          buttonIndex < _selections.length;
+                          buttonIndex++) {
+                        if (buttonIndex == index) {
                           _selections[buttonIndex] = true;
-                        } else{
+                        } else {
                           _selections[buttonIndex] = false;
                         }
                         _severityLevel = index;
@@ -341,52 +358,40 @@ class _StudentHomeState extends State<StudentHome> {
                     });
                   },
                 ),
-                SizedBox(height: 20.0),
+                SizedBox(height: height / 30),
                 Text(
                   'Prefered MFR Gender',
                   style: TextStyle(
-                      fontSize : 15.0,
-                      color: Colors.cyan[800],
+                    fontSize: 15.0,
+                    color: Colors.cyan[800],
                     letterSpacing: 2.0,
-                    fontFamily: 'HelveticaNeue',
-                    fontWeight: FontWeight.bold,
+                    fontFamily: 'HelveticaNeueLight',
                   ),
                 ),
-                SizedBox(height: 10.0),
+                SizedBox(height: height / 76),
                 ToggleButtons(
-                  constraints: BoxConstraints(maxWidth: width/1.1),
+                  constraints: BoxConstraints(
+                      minWidth: width / 5.5, minHeight: height / 11),
                   children: <Widget>[
-                    Padding(
-                      padding:  EdgeInsets.fromLTRB(18, 20, 18, 20),
-                      child: Text(
-                          "N/A",
-                        style: TextStyle(
-                          fontFamily: 'HelveticaNeue',
-                          letterSpacing: 2.0,
-                          fontWeight: FontWeight.bold,
-                        ),
+                    Text(
+                      "N/A",
+                      style: TextStyle(
+                        fontFamily: 'HelveticaNeueLight',
+                        letterSpacing: 2.0,
                       ),
                     ),
-                    Padding(
-                      padding:  EdgeInsets.fromLTRB(17, 20, 17, 20),
-                      child: Text(
-                          "Male",
-                        style: TextStyle(
-                          fontFamily: 'HelveticaNeue',
-                          letterSpacing: 2.0,
-                          fontWeight: FontWeight.bold,
-                        ),
+                    Text(
+                      "Male",
+                      style: TextStyle(
+                        fontFamily: 'HelveticaNeueLight',
+                        letterSpacing: 2.0,
                       ),
                     ),
-                    Padding(
-                      padding:  EdgeInsets.fromLTRB(11, 20, 11, 20),
-                      child: Text(
-                          "Female",
-                        style: TextStyle(
-                          fontFamily: 'HelveticaNeue',
-                          letterSpacing: 2.0,
-                          fontWeight: FontWeight.bold,
-                        ),
+                    Text(
+                      "Female",
+                      style: TextStyle(
+                        fontFamily: 'HelveticaNeueLight',
+                        letterSpacing: 2.0,
                       ),
                     ),
                   ],
@@ -394,12 +399,14 @@ class _StudentHomeState extends State<StudentHome> {
                   selectedColor: Colors.white,
                   fillColor: Colors.cyan[700],
                   isSelected: _selections2,
-                  onPressed: (int index){
-                    setState((){
-                      for(int buttonIndex = 0; buttonIndex < _selections2.length; buttonIndex++){
-                        if(buttonIndex == index){
+                  onPressed: (int index) {
+                    setState(() {
+                      for (int buttonIndex = 0;
+                          buttonIndex < _selections2.length;
+                          buttonIndex++) {
+                        if (buttonIndex == index) {
                           _selections2[buttonIndex] = true;
-                        } else{
+                        } else {
                           _selections2[buttonIndex] = false;
                         }
                         _gender = index;
@@ -408,22 +415,30 @@ class _StudentHomeState extends State<StudentHome> {
                     });
                   },
                 ),
-                SizedBox(height: 20.0),
+                SizedBox(height: height / 30),
                 RawMaterialButton(
-                  onPressed: (){
-                    setState(() {
-                      _emergency = true;
-                    });
-                  },
+                    onPressed: () {
+                      setState(() {
+                        _emergency = true;
+                      });
+                    }, //SOS function implemented here
+                    //A 'PendingEmergencies' document is created in the database with relevant attributes set
+                    //Student is taken to the live updates screen for live feedback
                     onLongPress: () {
+                      _createPendingEmergencyDocument(
+                          dummyLocation,
+                          _genderPreferences[_gender],
+                          _severityLevels[_severityLevel],
+                          _rollNumber);
                       Navigator.of(context).pushNamed('/live_status');
                       print("emergency initiated");
-                      print(width);
-                      print(height);
                     },
                     fillColor: Colors.red[400],
                     elevation: 10.0,
-                    constraints: BoxConstraints(minHeight: width/1.8, minWidth: width/1.8),
+                    constraints: BoxConstraints(
+                      minHeight: height / 3, //screenRatio * 126,
+                      minWidth: height / 3, //screenRatio * 126
+                    ),
                     child: Text(
                       'SOS',
                       style: TextStyle(
@@ -435,35 +450,31 @@ class _StudentHomeState extends State<StudentHome> {
                       ),
                     ),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(width/1.8),
-                    )
-                ),
-                SizedBox(height: 10),
+                      borderRadius: BorderRadius.circular(height / 3),
+                    )),
+                SizedBox(height: height / 60),
                 Text(
                   'TAP AND HOLD FOR 2 SECONDS',
                   style: TextStyle(
-                    fontSize : 15.0,
+                    fontSize: 15.0,
                     color: Colors.red[400],
-                    fontWeight: FontWeight.bold,
-                    fontFamily: 'HelveticaNeue',
+                    fontFamily: 'HelveticaNeueLight',
                     letterSpacing: 2.0,
                   ),
                 ),
-                SizedBox(height: 3.0),
+                SizedBox(height: height / 120),
                 Text(
                   'INITIATE EMERGENCY',
                   style: TextStyle(
-                    fontSize : 15.0,
+                    fontSize: 15.0,
                     color: Colors.red[400],
-                    fontFamily: 'HelveticaNeue',
+                    fontFamily: 'HelveticaNeueLight',
                     letterSpacing: 2.0,
-                    fontWeight: FontWeight.bold,
                   ),
                 ),
               ],
             ),
           ),
-        )
-    );
+        ));
   }
 }
