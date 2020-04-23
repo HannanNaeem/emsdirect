@@ -1,6 +1,7 @@
 import 'dart:ui';
 import 'package:ems_direct/pages/SelectLogin.dart';
 import 'package:ems_direct/services/auth.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:ems_direct/pages/student_home.dart';
 import 'package:ems_direct/pages/live_status.dart';
@@ -23,22 +24,20 @@ void main() => runApp(MyApp());
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return StreamProvider<User>.value(
-      value: AuthService().user,
-      child: MaterialApp(
-        home: Ops(),
-        routes: {
-          '/login_student': (context) => LoginStudent(),
-          '/login_ems': (context) => Loginems(),
-          '/student_home': (context) => StudentHome(),
-          '/live_status': (context) => LiveStatus(),
-          '/emergencyNumbers': (context) => EmergencyNumbers(),
-          '/select_login': (context) => SelectLogin(),
-          '/mfr_home': (context) => MFRHome(),
-          '/ops_home': (context) => Ops(),
-          '/availableMFRs': (context) => AvailableMfrs(),
-        },
-      ),
+    return MaterialApp(
+      home: SplashScreen(),
+      routes: {
+        '/login_student' : (context) => LoginStudent(),
+        '/login_ems_mfr' : (context) => LoginEms('mfr'),
+        '/login_ems_ops' : (context) => LoginEms('ops'),
+        '/student_home' : (context) => StudentHome(),
+        '/live_status' : (context) => LiveStatus(),
+        '/emergencyNumbers' : (context) => EmergencyNumbers(),
+        '/select_login' : (context) => SelectLogin(),
+        '/mfr_home' : (context) => MFRHome(),
+        '/ops_home' : (context) => Ops(),
+        '/availableMFRs' : (context) => AvailableMfrs(),
+      },
     );
   }
 }
