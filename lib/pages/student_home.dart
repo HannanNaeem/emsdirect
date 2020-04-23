@@ -20,7 +20,7 @@ class _StudentHomeState extends State<StudentHome> {
   String _email = '21100118@lums.edu.pk';
 
   //instance of auth service
-  final AuthService _auth = AuthService();
+  final AuthService _authStudent = AuthService();
 
   @override
   Widget build(BuildContext context) {
@@ -199,10 +199,8 @@ class _StudentHomeState extends State<StudentHome> {
                                           ),
                                           onPressed: () async {
                                             //navigation to login screen
-                                            //todo signout here                                        
-                                            await _auth.logOut();
-                                            Navigator.of(context).pop();
-                                            Navigator.pushReplacementNamed(context, '/select_login');
+                        //todo signout here                                        
+                                            await _authStudent.logOut();
                                             
                                           },
                                         ),
