@@ -1,13 +1,10 @@
 import 'package:ems_direct/services/auth.dart';
 import 'package:flutter/material.dart';
 
-
-
 class StudentHome extends StatefulWidget {
   @override
   _StudentHomeState createState() => _StudentHomeState();
 }
-
 
 class _StudentHomeState extends State<StudentHome> {
   List<bool> _selections = List.generate(4, (_) => false);
@@ -29,9 +26,9 @@ class _StudentHomeState extends State<StudentHome> {
     var height = screenSize.height;
 
     return Scaffold(
-      backgroundColor: const Color(0xff27496d),
+        backgroundColor: const Color(0xff27496d),
         drawer: Container(
-          width: width*0.8, //drawer covers 80% of the screen
+          width: width * 0.8, //drawer covers 80% of the screen
           child: Drawer(
             child: Column(
               //this column contains the drawer header, the option to view profile/emergency numbers/available MFRs list
@@ -45,7 +42,8 @@ class _StudentHomeState extends State<StudentHome> {
                 ),
                 ExpansionTile(
                   leading: Icon(
-                      Icons.account_circle,
+                    Icons.account_circle,
+                    color: const Color(0xff142850),
                   ),
                   title: Text(
                     'Harum Naseem',
@@ -57,7 +55,7 @@ class _StudentHomeState extends State<StudentHome> {
                   ),
                   children: <Widget>[
                     Container(
-                      constraints: BoxConstraints(maxWidth: width*0.75),
+                      constraints: BoxConstraints(maxWidth: width * 0.75),
                       child: Row(
                         children: <Widget>[
                           Text(
@@ -70,7 +68,7 @@ class _StudentHomeState extends State<StudentHome> {
                           ),
                           SizedBox(width: 2.0),
                           Text(
-                              '$_rollNumber',
+                            '$_rollNumber',
                             style: TextStyle(
                               fontSize: 15,
                               fontFamily: 'HelveticaNeueLiight',
@@ -82,7 +80,7 @@ class _StudentHomeState extends State<StudentHome> {
                     ),
                     SizedBox(height: 10.0),
                     Container(
-                      constraints: BoxConstraints(maxWidth: width*0.75),
+                      constraints: BoxConstraints(maxWidth: width * 0.75),
                       child: Row(
                         children: <Widget>[
                           Text(
@@ -107,7 +105,7 @@ class _StudentHomeState extends State<StudentHome> {
                     ),
                     SizedBox(height: 10.0),
                     Container(
-                      constraints: BoxConstraints(maxWidth: width*0.75),
+                      constraints: BoxConstraints(maxWidth: width * 0.75),
                       child: Row(
                         children: <Widget>[
                           Text(
@@ -153,7 +151,7 @@ class _StudentHomeState extends State<StudentHome> {
                     alignment: Alignment.bottomCenter,
                     child: Padding(
                       padding:
-                      EdgeInsets.fromLTRB(width * 0.8 * 0.24, 0, 0, 10.0),
+                          EdgeInsets.fromLTRB(width * 0.8 * 0.24, 0, 0, 10.0),
                       child: Row(
                         //has the icon and text
                         children: <Widget>[
@@ -161,9 +159,9 @@ class _StudentHomeState extends State<StudentHome> {
                             icon: Image(
                               image: AssetImage('assets/logout.png'),
                               fit: BoxFit.fill,
-                              color: const Color(0xff3596b5),
+                              color: const Color(0xff142850),
                             ),
-                            color: const Color(0xff3596b5),
+                            color: const Color(0xff142850),
                             onPressed: () {
                               showDialog(
                                   context: context,
@@ -191,11 +189,11 @@ class _StudentHomeState extends State<StudentHome> {
                                           ),
                                           onPressed: () async {
                                             //navigation to login screen
-                                            //todo signout here                                        
+                                            //todo signout here
                                             await _authStudent.logOut();
                                             Navigator.of(context).pop();
-                                            Navigator.pushReplacementNamed(context, '/select_login');
-                                            
+                                            Navigator.pushReplacementNamed(
+                                                context, '/select_login');
                                           },
                                         ),
                                         FlatButton(
@@ -223,7 +221,7 @@ class _StudentHomeState extends State<StudentHome> {
                             style: TextStyle(
                               fontSize: 18,
                               fontFamily: 'HelveticaNeueBold',
-                              color: const Color(0xff3596b5),
+                              color: const Color(0xff142850),
                             ),
                           ),
                         ],
@@ -239,7 +237,7 @@ class _StudentHomeState extends State<StudentHome> {
           title: Text(
             'Home',
             style: TextStyle(
-                fontSize: 24.0,
+              fontSize: 24.0,
               fontFamily: 'HelveticaNeueLight',
               letterSpacing: 2.0,
             ),
@@ -247,52 +245,53 @@ class _StudentHomeState extends State<StudentHome> {
           centerTitle: true,
           backgroundColor: const Color(0xff142850),
         ),
-        body : Center(
+        body: Center(
           child: Container(
-            constraints:BoxConstraints.expand(),
+            constraints: BoxConstraints.expand(),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
-                SizedBox(height: height/50),
+                SizedBox(height: height / 50),
                 Text(
                   'Severity Level',
                   style: TextStyle(
-                      fontSize : 15.0,
-                      fontFamily: 'HelveticaNeueLight',
-                      color: Colors.white,
+                    fontSize: 15.0,
+                    fontFamily: 'HelveticaNeueLight',
+                    color: Colors.white,
                     letterSpacing: 2.0,
                   ),
                 ),
-                SizedBox(height: height /76),
+                SizedBox(height: height / 76),
                 Card(
                   color: const Color(0xff00a8cc),
                   child: ToggleButtons(
-                    constraints: BoxConstraints(minWidth: width/5, minHeight: height/11),
+                    constraints: BoxConstraints(
+                        minWidth: width / 5, minHeight: height / 11),
                     children: <Widget>[
                       Text(
-                          "Low",
+                        "Low",
                         style: TextStyle(
                           fontFamily: 'HelveticaNeueLight',
                           letterSpacing: 2.0,
                         ),
                       ),
                       Text(
-                          "Medium",
+                        "Medium",
                         style: TextStyle(
                           fontFamily: 'HelveticaNeueLight',
                           letterSpacing: 2.0,
                         ),
                       ),
                       Text(
-                          "High",
+                        "High",
                         style: TextStyle(
                           fontFamily: 'HelveticaNeueLight',
                           letterSpacing: 2.0,
                         ),
                       ),
                       Text(
-                          "Critical",
+                        "Critical",
                         style: TextStyle(
                           fontFamily: 'HelveticaNeueLight',
                           letterSpacing: 2.0,
@@ -305,12 +304,14 @@ class _StudentHomeState extends State<StudentHome> {
                     borderColor: Colors.white,
                     selectedBorderColor: Colors.white,
                     isSelected: _selections,
-                    onPressed: (int index){
-                      setState((){
-                        for(int buttonIndex = 0; buttonIndex < _selections.length; buttonIndex++){
-                          if(buttonIndex == index){
+                    onPressed: (int index) {
+                      setState(() {
+                        for (int buttonIndex = 0;
+                            buttonIndex < _selections.length;
+                            buttonIndex++) {
+                          if (buttonIndex == index) {
                             _selections[buttonIndex] = true;
-                          } else{
+                          } else {
                             _selections[buttonIndex] = false;
                           }
                           _severityLevel = index;
@@ -320,38 +321,39 @@ class _StudentHomeState extends State<StudentHome> {
                     },
                   ),
                 ),
-                SizedBox(height: height/30),
+                SizedBox(height: height / 30),
                 Text(
                   'Prefered MFR Gender',
                   style: TextStyle(
-                      fontSize : 15.0,
-                      color: Colors.white,
+                    fontSize: 15.0,
+                    color: Colors.white,
                     letterSpacing: 2.0,
                     fontFamily: 'HelveticaNeueLight',
                   ),
                 ),
-                SizedBox(height: height /76),
+                SizedBox(height: height / 76),
                 Card(
                   color: const Color(0xff00a8cc),
                   child: ToggleButtons(
-                    constraints: BoxConstraints(minWidth: width/5.5, minHeight: height/11),
+                    constraints: BoxConstraints(
+                        minWidth: width / 5.5, minHeight: height / 11),
                     children: <Widget>[
                       Text(
-                          "N/A",
+                        "N/A",
                         style: TextStyle(
                           fontFamily: 'HelveticaNeueLight',
                           letterSpacing: 2.0,
                         ),
                       ),
                       Text(
-                          "Male",
+                        "Male",
                         style: TextStyle(
                           fontFamily: 'HelveticaNeueLight',
                           letterSpacing: 2.0,
                         ),
                       ),
                       Text(
-                          "Female",
+                        "Female",
                         style: TextStyle(
                           fontFamily: 'HelveticaNeueLight',
                           letterSpacing: 2.0,
@@ -364,12 +366,14 @@ class _StudentHomeState extends State<StudentHome> {
                     borderColor: Colors.white,
                     selectedBorderColor: Colors.white,
                     isSelected: _selections2,
-                    onPressed: (int index){
-                      setState((){
-                        for(int buttonIndex = 0; buttonIndex < _selections2.length; buttonIndex++){
-                          if(buttonIndex == index){
+                    onPressed: (int index) {
+                      setState(() {
+                        for (int buttonIndex = 0;
+                            buttonIndex < _selections2.length;
+                            buttonIndex++) {
+                          if (buttonIndex == index) {
                             _selections2[buttonIndex] = true;
-                          } else{
+                          } else {
                             _selections2[buttonIndex] = false;
                           }
                           _gender = index;
@@ -379,20 +383,21 @@ class _StudentHomeState extends State<StudentHome> {
                     },
                   ),
                 ),
-                SizedBox(height: height/35),
+                SizedBox(height: height / 35),
                 RawMaterialButton(
-                  onPressed: (){
-                    setState(() {
-                      _emergency = true;
-                    });
-                  },
+                    onPressed: () {
+                      setState(() {
+                        _emergency = true;
+                      });
+                    },
                     onLongPress: () {
                       Navigator.of(context).pushNamed('/live_status');
                       print("emergency initiated");
                     },
                     fillColor: Colors.red[400],
                     elevation: 10.0,
-                    constraints: BoxConstraints(minHeight: height/2.7, minWidth: height/2.7),
+                    constraints: BoxConstraints(
+                        minHeight: height / 2.7, minWidth: height / 2.7),
                     child: Text(
                       'SOS',
                       style: TextStyle(
@@ -404,24 +409,23 @@ class _StudentHomeState extends State<StudentHome> {
                       ),
                     ),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(height/2.7),
-                    )
-                ),
-                SizedBox(height: height/45),
+                      borderRadius: BorderRadius.circular(height / 2.7),
+                    )),
+                SizedBox(height: height / 45),
                 Text(
                   'TAP AND HOLD FOR 2 SECONDS',
                   style: TextStyle(
-                    fontSize : 15.0,
+                    fontSize: 15.0,
                     color: Colors.red[400],
                     fontFamily: 'HelveticaNeueLight',
                     letterSpacing: 2.0,
                   ),
                 ),
-                SizedBox(height: height/120),
+                SizedBox(height: height / 120),
                 Text(
                   'INITIATE EMERGENCY',
                   style: TextStyle(
-                    fontSize : 15.0,
+                    fontSize: 15.0,
                     color: Colors.red[400],
                     fontFamily: 'HelveticaNeueLight',
                     letterSpacing: 2.0,
@@ -430,7 +434,6 @@ class _StudentHomeState extends State<StudentHome> {
               ],
             ),
           ),
-        )
-    );
+        ));
   }
 }
