@@ -1,3 +1,5 @@
+import 'dart:async';
+//import 'dart:html';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -61,7 +63,7 @@ class _AlertFunctionState extends State<AlertFunction> {
             onPressed: () {
               print('no');
               Navigator.of(context).pop();
-              dispose();
+              //dispose();
             },
           ),
         ],
@@ -69,11 +71,11 @@ class _AlertFunctionState extends State<AlertFunction> {
     );
   }
 
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) => showAlert());
-  }
+//  @override
+//  void initState() {
+//    super.initState();
+//    WidgetsBinding.instance.addPostFrameCallback((_) => showAlert());
+//  }
 
   @override
   void dispose() {
@@ -85,7 +87,7 @@ class _AlertFunctionState extends State<AlertFunction> {
   Widget build(BuildContext context) {
     print('IN THIS FUNCTION');
     //Future.delayed(Duration.zero, () => showAlert());
-    //WidgetsBinding.instance.addPostFrameCallback((_) => {});
+    WidgetsBinding.instance.addPostFrameCallback((_) => showAlert());
     return Container(key: UniqueKey());
   }
 }
@@ -100,6 +102,11 @@ class _MFRHomeState extends State<MFRHome> {
   //Tells whether toggle switch is to be on or off
   bool isAvailable = false;
   final databaseReference = Firestore.instance;
+  //StreamController<QuerySnapshot> stream = new StreamController<QuerySnapshot>();
+  //StreamController<int> stream = StreamController<int>();
+  // StreamController stream = StreamController();
+  Stream<QuerySnapshot> _documentStream;
+  var length = 0;
 
   /////////////////////////// FUNCTIONS ///////////////////////////
   void _getData() {
@@ -125,24 +132,68 @@ class _MFRHomeState extends State<MFRHome> {
     );
   }
 
-  void showAlert() {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(
-          "Are you sure?",
-          style: TextStyle(
-            fontFamily: 'HelveticaNeueLight',
-            letterSpacing: 2.0,
-            fontSize: 20,
-            //color: Colors.grey[600],
+  Widget showAlert(bool available, int num) {
+    if (available == true && num > 0) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text(
+            "Are you sure?",
+            style: TextStyle(
+              fontFamily: 'HelveticaNeueLight',
+              letterSpacing: 2.0,
+              fontSize: 20,
+              //color: Colors.grey[600],
+            ),
           ),
+          actions: <Widget>[
+            FlatButton(
+              child: Text(
+                'YES',
+                style: TextStyle(
+                  fontFamily: 'HelveticaNeue',
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: 3.0,
+                  fontSize: 20,
+                  color: const Color(0xff1a832a),
+                ),
+              ),
+              onPressed: () {
+                print('yes');
+                //dispose();
+              },
+            ),
+            FlatButton(
+              child: Text(
+                'NO',
+                style: TextStyle(
+                  fontFamily: 'HelveticaNeue',
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: 2.5,
+                  fontSize: 20,
+                  color: const Color(0xffee0000),
+                ),
+              ),
+              onPressed: () {
+                print('no');
+                Navigator.of(context).pop();
+                //dispose();
+              },
+            ),
+          ],
         ),
-      ),
-    );
-    //return Container();
+      );
+    }
+    return Container(key: UniqueKey());
   }
   /////////////////////////////////////////////////////////////////
+
+  @override
+  void initState() {
+    super.initState();
+    _documentStream = null;
+    //_documentStream = databaseReference.collection('PendingEmergencies').where('severity', isEqualTo: 'low').snapshots();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -325,24 +376,20 @@ class _MFRHomeState extends State<MFRHome> {
       //This is where the toggle option and the two cards (Map and Report Emergency) reside
       body: Center(
           child: StreamBuilder<QuerySnapshot>(
-              stream: databaseReference
-                  .collection('PendingEmergencies')
-                  .where('severity', isEqualTo: 'low')
-                  .snapshots(),
+              stream: _documentStream,
               builder: (context, snapshot) {
                 if (snapshot.hasError) print('Error');
                 if (snapshot.data != null) {
-                  setState() {}
-                  for (int i = 0; i < snapshot.data.documents.length; i++) {
+                  length = snapshot.data.documents.length;
+                  for (int i = 0; i < length; i++) {
                     print(snapshot.data.documents[i].data);
-                    //if (true) AlertFunction();
                   }
                 }
 
                 return Column(
                   //everything is placed in the column
                   children: <Widget>[
-                    if (isAvailable) new AlertFunction(), //AlertFunction(),
+                    showAlert(isAvailable, length), //AlertFunction(),
                     Flexible(
                       flex: 3,
                       child: Container(
@@ -368,6 +415,14 @@ class _MFRHomeState extends State<MFRHome> {
                               onChanged: (bool newVal) {
                                 setState(() {
                                   isAvailable = newVal;
+                                  if (isAvailable == true) {
+                                    _documentStream = databaseReference
+                                        .collection('PendingEmergencies')
+                                        .where('severity', isEqualTo: 'low')
+                                        .snapshots();
+                                  } else {
+                                    _documentStream = null;
+                                  }
                                 });
                               },
                               activeTrackColor: Colors.green,
