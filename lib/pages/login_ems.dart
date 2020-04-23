@@ -1,18 +1,34 @@
+
+import 'package:ems_direct/services/auth.dart';
 import 'package:flutter/material.dart';
 
-class Loginems extends StatefulWidget {
+class LoginEms extends StatefulWidget {
+
+  String _emsType = '';
+
+  LoginEms(String emsType){
+    _emsType = emsType;
+  }
+
   @override
-  _LoginemsState createState() => _LoginemsState();
+  _LoginEmsState createState() => _LoginEmsState(_emsType);
 }
 
-class _LoginemsState extends State<Loginems> {
+class _LoginEmsState extends State<LoginEms> {
 
+  String _emsType = null;
+
+  _LoginEmsState(String emsType){
+    _emsType = emsType;
+  }
+
+  
   String _email;
   String _password;
   bool _keepSignedin = false;
-  List<bool> _isSelected = [true];
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final AuthService _authEms = AuthService();
 
   Widget _buildEmail() {
     return Padding(
@@ -150,17 +166,40 @@ class _LoginemsState extends State<Loginems> {
 
                         
 
-                        onPressed: () {
+                        onPressed: () async {
                           if(!_formKey.currentState.validate()){
                             return;
                           }
 
                           _formKey.currentState.save();
+
+                          // login
+                          dynamic result = await _authEms.signIn(_email, _password);
                           
                           //! TESTING
                           print(_email);
                           print(_password);
                           print(_keepSignedin);
+
+                          if(result == null){
+
+                            print("Error signing in!");
+                          }
+                          else{
+                            print("User signed in!");
+                            print("User id: ${result.uid}");
+                            
+                            Navigator.pop(context);
+                            if(_emsType == 'ops')
+                            {
+                              Navigator.pushReplacementNamed(context,'/ops_home');
+                            }
+                            else if (_emsType == 'mfr')
+                            {
+                              Navigator.pushReplacementNamed(context,'/mfr_home');
+                            }
+
+                          }
                         },
                         child: Text(
                           'LOGIN',
@@ -186,6 +225,7 @@ class _LoginemsState extends State<Loginems> {
   @override
   Widget build(BuildContext context) {
     
+  
     return Scaffold(
       
       backgroundColor: Colors.transparent,
