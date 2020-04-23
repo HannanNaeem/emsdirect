@@ -2,23 +2,30 @@ import 'package:ems_direct/models/user.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 
+// This file contains the auth class, instead on making an instance of firebase auth
+// and using them everywhere, just create an instance of this class and call the 
+// methods that are needed. 
+
+// classified as service.
+
+
 class AuthService {
 
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
 
-  // Auth user stream -> listens to firebase auth for changes in auth status
-  Stream<FirebaseUser> get user {
+  // // Auth user stream -> listens to firebase auth for changes in auth status
+  // Stream<FirebaseUser> get user {
 
-    return _auth.onAuthStateChanged;
-    // let us now map FirebaseUser(which has unnecessary info) to our user model and return
-    //.map((FirebaseUser user) => _userFromFirebaseUser(user));
+  //   return _auth.onAuthStateChanged;
+  //   // let us now map FirebaseUser(which has unnecessary info) to our user model and return
+  //   //.map((FirebaseUser user) => _userFromFirebaseUser(user));
     
-    //similar implementation below:
+  //   //similar implementation below:
   
 
 
-  }
+  // }
 
   // sign in anon
   Future signInAnon() async {

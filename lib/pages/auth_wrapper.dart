@@ -6,6 +6,10 @@ import 'package:ems_direct/pages/SelectLogin.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
+// This a wrapping widget that sits just after the splash screen within the application
+// widget tree. Its sole purpose is to check if the user stored in disk/locally is currently
+// logged in, if yes we intend to show them their homepage directly if not, then show the
+// authentication / select login screen flow.
 
 class Wrapper extends StatelessWidget {
   @override

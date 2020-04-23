@@ -316,14 +316,12 @@ class _LoginStudentState extends State<LoginStudent> with SingleTickerProviderSt
                             
                           }
                           else{
-                            Navigator.pop(context);
                             print("User signed in!");
                             print("User id: ${result.uid}");
-                            //print(result.uid);  
-                            //Navigator.pushReplacementNamed(context,'/student_home');
-                            //todo: add loading stuff too fast right now
                             
-                            // Navigator.pushReplacementNamed(context, '/student_home');
+                            Navigator.pop(context);
+                            Navigator.pushReplacementNamed(context,'/student_home');
+
                            
                           }
 

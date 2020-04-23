@@ -77,7 +77,7 @@ class _SelectLoginScreenState extends State<SelectLogin> {
                         height: 45,
                         child: RaisedButton(
                             onPressed: () {
-                              Navigator.pushNamed(context, '/login_ems');
+                              Navigator.pushNamed(context, '/login_ems_ops');
                             }, //add later
                             textColor: Colors.cyan[500],
                             color: Colors.white,
@@ -104,7 +104,7 @@ class _SelectLoginScreenState extends State<SelectLogin> {
                         height: 45,
                         child: RaisedButton(
                             onPressed: () {
-                              Navigator.pushNamed(context, '/login_ems');
+                              Navigator.pushNamed(context, '/login_ems_mfr');
                             }, //add later
                             textColor: Colors.cyan[500],
                             color: Colors.white,

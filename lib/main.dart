@@ -27,15 +27,16 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       home: SplashScreen(),
       routes: {
-        '/login_student': (context) => LoginStudent(),
-        '/login_ems': (context) => Loginems(),
-        '/student_home': (context) => StudentHome(),
-        '/live_status': (context) => LiveStatus(),
-        '/emergencyNumbers': (context) => EmergencyNumbers(),
-        '/select_login': (context) => SelectLogin(),
-        '/mfr_home': (context) => MFRHome(),
-        '/ops_home': (context) => Ops(),
-        '/availableMFRs': (context) => AvailableMfrs(),
+        '/login_student' : (context) => LoginStudent(),
+        '/login_ems_mfr' : (context) => LoginEms('mfr'),
+        '/login_ems_ops' : (context) => LoginEms('ops'),
+        '/student_home' : (context) => StudentHome(),
+        '/live_status' : (context) => LiveStatus(),
+        '/emergencyNumbers' : (context) => EmergencyNumbers(),
+        '/select_login' : (context) => SelectLogin(),
+        '/mfr_home' : (context) => MFRHome(),
+        '/ops_home' : (context) => Ops(),
+        '/availableMFRs' : (context) => AvailableMfrs(),
       },
     );
   }
