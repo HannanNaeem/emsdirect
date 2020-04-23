@@ -10,15 +10,26 @@ class UserDatabaseService {
   final CollectionReference userCollection = Firestore.instance.collection('UserData');
 
   //utlity to update user data
-  Future updateUserData(String name, String rollNo, String contact, String email, bool isEms) async {
+  Future updateUserData(String name, String rollNo, String contact, String email, String emsType, String loggedInAs) async {
 
       return await userCollection.document(uid).setData({
         'name' : name,
         'rollNo' : rollNo,
         'contact' : contact,
         'email' : email,
-        'isEms' : isEms,
+        'emsType' : emsType,
+        'loggedInAs' : loggedInAs,
       });
+  }
+
+  Future updateLoggedIn(String loggedInAs) async {
+    return await userCollection.document(uid).updateData({
+      'loggedInAs' : loggedInAs,
+    });
+  }
+
+  Future getData() async {
+    return await userCollection.document(uid).get();
   }
 
 

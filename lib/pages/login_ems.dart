@@ -174,7 +174,7 @@ class _LoginEmsState extends State<LoginEms> {
                           _formKey.currentState.save();
 
                           // login
-                          dynamic result = await _authEms.signIn(_email, _password);
+                          dynamic result = await _authEms.signIn(_email, _password, _emsType);
                           
                           //! TESTING
                           print(_email);

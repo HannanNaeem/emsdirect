@@ -20,7 +20,9 @@ class Wrapper extends StatelessWidget {
 
                        if (snapshot.hasData){
                            FirebaseUser user = snapshot.data; // this is your user instance
-                           /// is because there is user already logged
+                           String uid = user.uid;
+                           
+                           
                            return StudentHome();
                         }
                          /// other way there is no user logged.

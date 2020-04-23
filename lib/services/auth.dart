@@ -15,51 +15,42 @@ class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
 
-  // // Auth user stream -> listens to firebase auth for changes in auth status
-  // Stream<FirebaseUser> get user {
-
-  //   return _auth.onAuthStateChanged;
-  //   // let us now map FirebaseUser(which has unnecessary info) to our user model and return
-  //   //.map((FirebaseUser user) => _userFromFirebaseUser(user));
-    
-  //   //similar implementation below:
-  
-
-
-  // }
-
   // sign in anon
   Future signInAnon() async {
-
     try{
-     
      AuthResult result = await _auth.signInAnonymously();
      FirebaseUser user = result.user;
-
      return user;
-
     }
     catch(e)
     {
-
       print(e.toString());
       return null;
-
     }
 
   }
 
 
   // sign in email & password
-  Future signIn(String email, String password) async {
+  Future signIn(String email, String password, String emsType) async {
     try{
       AuthResult result = await _auth.signInWithEmailAndPassword(email: email, password: password);
       FirebaseUser user = result.user;
+
+      //get uid
+      String uid = user.uid;
+      //get firestore emsType
+      var document = await UserDatabaseService(uid: uid).getData();
+      String storedEmsType = document.data['emsType'].toString();
+
+      print("----------------------STORED EMS TYPE IS $storedEmsType");
+      
       if(user.isEmailVerified)
       {
         return user;
       }
       else{
+        _auth.signOut();
         return null;
       }
     }
@@ -85,7 +76,7 @@ class AuthService {
       }
 
       //create a document for the user with the uid
-      await UserDatabaseService(uid: user.uid).updateUserData(name, rollNo, contact, email, false);
+      await UserDatabaseService(uid: user.uid).updateUserData(name, rollNo, contact, email, '','');
 
       return user;
     }
