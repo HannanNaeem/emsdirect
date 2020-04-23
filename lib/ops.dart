@@ -11,7 +11,9 @@ class Ops extends StatefulWidget {
 class AppState extends State<Ops> {
   int _selectedPage = 2;
   final _pageOptions = [
-    Center(child: Text('Log')),
+    Container(
+      color: const Color(0xff27496d),
+    ),
     Notifications(),
     OpsMap(),
     Records(),
@@ -55,7 +57,7 @@ class AppState extends State<Ops> {
         selectedItemColor: Colors.white,
         selectedFontSize: 14,
         unselectedFontSize: 12,
-        unselectedItemColor: const Color(0xff27496d),
+        unselectedItemColor: const Color(0xff47719e),
         iconSize: 30,
         items: [
           BottomNavigationBarItem(
