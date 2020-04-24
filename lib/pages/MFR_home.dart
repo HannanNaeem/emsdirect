@@ -1,3 +1,4 @@
+import 'package:ems_direct/services/auth.dart';
 import 'dart:async';
 //import 'dart:html';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -94,11 +95,26 @@ class _AlertFunctionState extends State<AlertFunction> {
 
 //This is the main homepage for any MFR login
 class MFRHome extends StatefulWidget {
+
+  bool _keepSignedIn = false;
+  MFRHome(bool keepSignedIn){
+    _keepSignedIn = keepSignedIn;
+  }
+
   @override
-  _MFRHomeState createState() => _MFRHomeState();
+  _MFRHomeState createState() => _MFRHomeState(_keepSignedIn);
 }
 
-class _MFRHomeState extends State<MFRHome> {
+class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
+  
+  //keepMeSignedIn vairable passed from login screen if successful
+  bool _keepSignedIn = false;
+
+  // constructor to set keepSignedIn
+  _MFRHomeState(keepSignedIn){
+    _keepSignedIn = keepSignedIn;
+  }
+  
   //Tells whether toggle switch is to be on or off
   bool isAvailable = false;
   final databaseReference = Firestore.instance;
@@ -191,9 +207,36 @@ class _MFRHomeState extends State<MFRHome> {
   @override
   void initState() {
     super.initState();
+
+    //State management for keepsignedin 
+    WidgetsBinding.instance.addObserver(this);
+
+    
     _documentStream = null;
     //_documentStream = databaseReference.collection('PendingEmergencies').where('severity', isEqualTo: 'low').snapshots();
   }
+
+  //adding Firebase auth instance
+  final AuthService _authMfr = AuthService();
+
+  
+  //State management for keepsignedin ----------------------------------
+
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if(_keepSignedIn == false && state == AppLifecycleState.inactive){
+      _authMfr.logOut();
+    }
+  }
+  // ---------------------------------------------------------------------------------
+
 
   @override
   Widget build(BuildContext context) {
@@ -319,8 +362,13 @@ class _MFRHomeState extends State<MFRHome> {
                                             color: const Color(0xff1a832a),
                                           ),
                                         ),
-                                        onPressed: () {
+                                        onPressed: () async {
                                           //navigation to login screen
+                                            //! signout here                                        
+                                          await _authMfr.logOut();
+                                          Navigator.of(context).pop();
+                                          Navigator.pushReplacementNamed(context, '/select_login');
+
                                         },
                                       ),
                                       FlatButton(

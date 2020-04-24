@@ -3,12 +3,27 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class StudentHome extends StatefulWidget {
+
+  bool _keepSignedIn = false;
+  StudentHome(bool keepSignedIn){
+    _keepSignedIn = keepSignedIn;
+  }
+
   @override
-  _StudentHomeState createState() => _StudentHomeState();
+  _StudentHomeState createState() => _StudentHomeState(_keepSignedIn);
 }
 
-class _StudentHomeState extends State<StudentHome> {
-  /////////////////////////// VARIABLES ///////////////////////////
+
+class _StudentHomeState extends State<StudentHome> with WidgetsBindingObserver {
+
+  //keepMeSignedIn vairable passed from login screen if successful
+  bool _keepSignedIn = false;
+
+  // constructor to set keepSignedIn
+  _StudentHomeState(keepSignedIn){
+    _keepSignedIn = keepSignedIn;
+  }
+
   List<bool> _selections = List.generate(4, (_) => false);
   List<bool> _selections2 = List.generate(3, (_) => false);
   List<String> _genderPreferences = ['NA', 'M', 'F'];
@@ -22,9 +37,33 @@ class _StudentHomeState extends State<StudentHome> {
   GeoPoint dummyLocation = GeoPoint(4, 12);
   /////////////////////////////////////////////////////////////////
 
+
+
   //instance of auth service
   final AuthService _auth = AuthService();
   final AuthService _authStudent = AuthService();
+  
+  //State management for keepsignedin ----------------------------------
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if(_keepSignedIn == false && state == AppLifecycleState.inactive){
+      _authStudent.logOut();
+    }
+  }
+  // ---------------------------------------------------------------------------------
+
   //an object made to work with firestore
   final databaseReference = Firestore.instance;
 
@@ -223,9 +262,7 @@ class _StudentHomeState extends State<StudentHome> {
                                           ),
                                           onPressed: () async {
                                             //navigation to login screen
-                                            //todo signout here
-                                            await _auth.logOut();
-                                            //todo signout here
+                                            //! signout here                                        
                                             await _authStudent.logOut();
                                             Navigator.of(context).pop();
                                             Navigator.pushReplacementNamed(

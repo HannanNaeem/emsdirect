@@ -1,4 +1,5 @@
 import 'package:ems_direct/models/user.dart';
+import 'package:ems_direct/services/user_database.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 
@@ -14,47 +15,71 @@ class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
 
-  // // Auth user stream -> listens to firebase auth for changes in auth status
-  // Stream<FirebaseUser> get user {
-
-  //   return _auth.onAuthStateChanged;
-  //   // let us now map FirebaseUser(which has unnecessary info) to our user model and return
-  //   //.map((FirebaseUser user) => _userFromFirebaseUser(user));
-    
-  //   //similar implementation below:
-  
-
-
-  // }
-
   // sign in anon
   Future signInAnon() async {
-
     try{
-     
      AuthResult result = await _auth.signInAnonymously();
      FirebaseUser user = result.user;
-
      return user;
-
     }
     catch(e)
     {
-
       print(e.toString());
       return null;
-
     }
 
   }
 
 
   // sign in email & password
-  Future signIn(String email, String password) async {
+  Future signIn(String email, String password, String emsType) async {
     try{
       AuthResult result = await _auth.signInWithEmailAndPassword(email: email, password: password);
       FirebaseUser user = result.user;
+
+      //get uid
+      String uid = user.uid;
+      //get firestore emsType
+      var document = await UserDatabaseService(uid: uid).getData();
+      String storedEmsType = document.data['emsType'].toString();
+
+      print("----------------------STORED EMS TYPE IS $storedEmsType");
+
+      //there are three policies we must enforce
+      // -> student cannot log as someone else => emsType == ''
+      // -> mfr cannot login as ops
+      // -> there is no email verification for ems Members
+
+
+      //handle student
+      //Student trying to login as someone else
+      if(emsType != '' && storedEmsType == '') 
+      {
+        _auth.signOut();
+        return null;
+      }
+      //For student check if email is verified
+      if(emsType == '' && !user.isEmailVerified)
+      {
+        _auth.signOut();
+        return null;
+      }
+
+      //Handle MFR
+      //MFR trying to login as ops
+      if(emsType == 'ops' && storedEmsType == 'mfr')
+      {
+        _auth.signOut();
+        return null;
+      }
+
+      //Everything else is okay! Set loggedInAs for ems users
+      if(storedEmsType != '')
+      {
+        await UserDatabaseService(uid: uid).updateLoggedIn(emsType);
+      }
       return user;
+
     }
     catch(e){
       print(e.toString());
@@ -63,10 +88,23 @@ class AuthService {
   }
 
   // register
-  Future signUp(String email, String password) async {
+  Future signUp(String email, String password, String name, String rollNo, String contact) async {
     try{
       AuthResult result = await _auth.createUserWithEmailAndPassword(email: email, password: password);
       FirebaseUser user = result.user;
+      
+      try{
+        await user.sendEmailVerification();
+        _auth.signOut();
+      }
+      catch(e)
+      {
+        throw e;
+      }
+
+      //create a document for the user with the uid
+      await UserDatabaseService(uid: user.uid).updateUserData(name, rollNo, contact, email, '','');
+
       return user;
     }
     catch(e){
