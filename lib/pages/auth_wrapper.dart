@@ -46,20 +46,18 @@ class Wrapper extends StatelessWidget {
                         // if processing is done and there is data = user currently logged in   
                         if(snapshot.hasData){
 
-                          //if its a student show them their screen
-                          if(snapshot.data['emsType'] == ''){
-                            return StudentHome();
-                          }
-                          else{ // the user is ems member
-                          
-                            if(snapshot.data['loggedInAs'] == 'ops'){
+                            if(snapshot.data['loggedInAs'] == 'ops'){ // user is logged in as ops
                               return Ops();
                             }
-                            else{ //user is mfr
+                            else if(snapshot.data['loggedInAs'] == 'mfr'){ //user is logged in as mfr
                               return MFRHome();
                             }
-                          }                          
-                        }
+                            else{ // user is logged in as student
+                              return StudentHome();
+                            }
+
+                          }                         
+                        
                         //if there is no data user needs to authenticate
                         else{
                           return SelectLogin();
