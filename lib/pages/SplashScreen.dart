@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'package:ems_direct/pages/auth_wrapper.dart';
 import 'package:ems_direct/pages/student_home.dart';
 import 'package:flutter/material.dart';
 import 'package:ems_direct/models/user.dart';
@@ -21,8 +20,17 @@ class _SplashScreenState extends State<SplashScreen> {
             MaterialPageRoute(
                   builder : (BuildContext context) {
 
+                    //Go to select login or home screen if authenticated
+                    //dynamically change screen depending on authentication
+                    final thisUser = Provider.of<User>(context);
+                    print(thisUser);
 
-                    return Wrapper();
+                    if (thisUser == null){
+                      return SelectLogin();
+                     }
+                     else{
+                      return StudentHome();
+                     }
                   }
             )
             )
@@ -48,23 +56,24 @@ class _SplashScreenState extends State<SplashScreen> {
                   
                   ),
           ),
-          
-          child: Stack(
+          child: Center(
+          child: Column(
             children: <Widget>[
+
               Padding(
-                padding: EdgeInsets.fromLTRB(width  * 0.265, 250.0, 10.0, height*0.1),
+                padding: EdgeInsets.fromLTRB(width*0.35, height*0.25,width*0.35, height*0.1),
                 child: Image.asset(
                   'assets/ems_logo.png',
-                  scale: 0.009*width,
+                  scale: 0.0009*(height+width)
                 ),
               ),
               Padding(
-                padding: EdgeInsets.fromLTRB(width  * 0.23, 500.0, 10.0, height*0.1),
+                padding: EdgeInsets.fromLTRB(width*0.20, 0.4, width*0.16, 10.0),
                   child: Text(
                     'EMS DIRECT',
                     style: TextStyle(
                       color:Colors.white,
-                      fontSize: 24.0,
+                      fontSize: (width)*0.05,
                       letterSpacing: 8.0,
                       fontFamily: 'HelveticaNeueLight',
                     ),
@@ -73,6 +82,7 @@ class _SplashScreenState extends State<SplashScreen> {
             ]
           ),
         )
+    )
     );
   }
 }
