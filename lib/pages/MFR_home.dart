@@ -6,14 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:ems_direct/services/pending_emergency_alert_MFR.dart';
 import 'package:ems_direct/pages/emergency_numbers.dart';
 import 'package:ems_direct/pages/available_MFRs.dart';
-import 'package:ems_direct/services/auth.dart';
-
-class PendingEmergency {
-  GeoPoint location;
-  String genderPreference;
-  String severityLevel;
-  int rollNumber;
-}
 
 //This is the main homepage for any MFR login
 class MFRHome extends StatefulWidget {
@@ -45,6 +37,9 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
   String _rollNumber = '21100118';
   String _contact = '03362356254';
   String _email = '21100118@lums.edu.pk';
+  bool acceptPendingEmergency = false;
+  var updatedDocID = null;
+  bool updatedDeclineDoc = false;
 
   //instance of auth service
   final AuthService _auth = AuthService();
@@ -82,17 +77,41 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
   @override
   void initState() {
     super.initState();
-
     //State management for keepsignedin
     WidgetsBinding.instance.addObserver(this);
-    //initializing stream to null as MFR will always be unavailable unless made available by himself
+    //initializing stream to null as MFR will be unavailable by default
     _documentStream = null;
-    //_documentStream = databaseReference.collection('PendingEmergencies').where('severity', isEqualTo: 'low').snapshots();
+  }
+
+  //callback function to determine if the MFR is busy with an emergency
+  void callback(newVal) {
+    setState(() {
+      acceptPendingEmergency = newVal;
+    });
+  }
+
+  void updateDeclineCount(docID) async {
+    DocumentReference docRef =
+        databaseReference.collection("PendingEmergencies").document(docID);
+    await databaseReference.runTransaction((Transaction tx) async {
+      DocumentSnapshot docSnapshot = await tx.get(docRef);
+      if (docSnapshot.exists) {
+        await tx.update(docRef,
+            <String, dynamic>{'declines': docSnapshot.data['declines'] + 1});
+      }
+    }).then((_) {
+      print("Decline count incremented");
+    }).catchError((onError) {
+      print(onError.message);
+    });
   }
 
   @override
   Widget build(BuildContext context) {
+    //------- TESTING PURPOSES ------------------
     print('Context rebuit');
+    print('Accept status of pending Emergency: $acceptPendingEmergency');
+    //-------------------------------------------
 
     //Getting screen dimensions to adjust widgets accordingly
     var screenSize = MediaQuery.of(context).size;
@@ -336,28 +355,80 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
               //REPLACE _documentStream WITH NULL FOR SIMPLY CHECKING ALERTS
               stream: _documentStream,
               builder: (context, snapshot) {
+                //if there is an emergency record in the PendingEmergencies record in the db
+                //this only gets activated when MFR is available
                 if (snapshot.data != null) {
-                  length = snapshot.data.documents.length;
-                  if (qs == null) {
-                    shouldRender = true;
-                    qs = snapshot.data.documents[0];
-                  } else if (qs == snapshot.data.documents[0]) {
-                    shouldRender = false;
-                  } else {
-                    shouldRender = true;
+                  length = snapshot.data.documents
+                      .length; //recording the number of such emergencies
+                  //---------- TESTING ----------------------------------------
+                  for (int i = 0; i < length; i++) {
+                    print(snapshot.data.documents[i].data);
                   }
-//                  for (int i = 0; i < length; i++) {
-//                    print(snapshot.data.documents[i].data);
-//                  }
+                  if (qs != null) print('qs: {${qs.data}');
+                  print('snapshot data: {${snapshot.data.documents[0].data}');
+                  //-----------------------------------------------------------
+
+                  //if the application has just started,
+                  // the default values of isAvailable and acceptPendingEmergency are false
+                  //if the MFR is not busy and available, he/she should receive alert for the first emergency on record
+                  if (!acceptPendingEmergency) {
+                    //not busy
+                    if (qs == null) {
+                      //very first time toggle button is switched on after the tree is built -> the document snapshot will be empty
+                      //this is purely to deal with repeated calls to build which leads to multiple alerts for the same emergency
+                      shouldRender = true;
+                      qs = snapshot.data.documents[0];
+                    } else if (qs == snapshot.data.documents[0]) {
+                      //repeated build call indicator
+                      shouldRender = false;
+                    } else if (qs != snapshot.data.documents[0]) {
+                      //when a new emergency needs to be alerted once the MFR has previously declared availability
+                      shouldRender = true;
+                    }
+                  } else {
+                    //the MFR is busy and so should not be sent another alert
+                    shouldRender = false;
+
+                    //these conditions are to deal with the re-building problem
+                    //this essentially keeps track of whether the snapshot documents are still the same
+                    //if all the documents are same and the updated bool is set to true, this means that
+                    //the decline count for all the emergencies for this MFR is up to date
+                    if (updatedDocID == snapshot.data.documents[0].documentID &&
+                        updatedDeclineDoc) {
+                      //updating decline count on all the pending emergencies
+                      for (int i = 0; i < length; i++) {
+                        //incase a new emergency comes in, only do decline for that particular emergency
+                        if (updatedDocID ==
+                            snapshot.data.documents[i].documentID) break;
+                        updateDeclineCount(
+                            snapshot.data.documents[i].documentID);
+                      }
+                      //these variables are to deal with the re-building problem
+                      updatedDocID = snapshot.data.documents[0].documentID;
+                      updatedDeclineDoc = true;
+                    }
+                  }
                 }
+
+                //---------- TESTING without stream on ----------------------------------------
+//                if (acceptPendingEmergency) {
+//                  shouldRender = false;
+//                } else {
+//                  shouldRender = true;
+//                }
+                //-----------------------------------------------------------------------------
+
                 return Column(
                   //everything is placed in the column
                   children: <Widget>[
+                    //sends in all parameters into function which returns the alert widget if applicable
+                    //the callback function it to update status of MFR - busy or not
                     AlertFunction(
                         availability: isAvailable,
                         length: length,
-                        render: shouldRender),
-                    //showAlert(isAvailable, length), //AlertFunction(),
+                        render: shouldRender,
+                        documentSnapshot: qs,
+                        callback: callback),
                     Flexible(
                       flex: 3,
                       child: Container(
@@ -386,8 +457,10 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
                                   if (isAvailable == true) {
                                     _documentStream = databaseReference
                                         .collection('PendingEmergencies')
-                                        .where('severity', isEqualTo: 'low')
-                                        .snapshots();
+                                        .where('severity', whereIn: [
+                                      'low',
+                                      'medium'
+                                    ]).snapshots();
                                     shouldRender = true;
                                   } else {
                                     _documentStream = null;

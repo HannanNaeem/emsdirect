@@ -3,9 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class StudentHome extends StatefulWidget {
-
   bool _keepSignedIn = false;
-  StudentHome(bool keepSignedIn){
+  StudentHome(bool keepSignedIn) {
     _keepSignedIn = keepSignedIn;
   }
 
@@ -13,14 +12,12 @@ class StudentHome extends StatefulWidget {
   _StudentHomeState createState() => _StudentHomeState(_keepSignedIn);
 }
 
-
 class _StudentHomeState extends State<StudentHome> with WidgetsBindingObserver {
-
   //keepMeSignedIn vairable passed from login screen if successful
   bool _keepSignedIn = false;
 
   // constructor to set keepSignedIn
-  _StudentHomeState(keepSignedIn){
+  _StudentHomeState(keepSignedIn) {
     _keepSignedIn = keepSignedIn;
   }
 
@@ -35,14 +32,13 @@ class _StudentHomeState extends State<StudentHome> with WidgetsBindingObserver {
   String _contact = '03362356254';
   String _email = '21100118@lums.edu.pk';
   GeoPoint dummyLocation = GeoPoint(4, 12);
-  /////////////////////////////////////////////////////////////////
-
-
 
   //instance of auth service
   final AuthService _auth = AuthService();
   final AuthService _authStudent = AuthService();
-  
+  //an instance of firestore
+  final databaseReference = Firestore.instance;
+
   //State management for keepsignedin ----------------------------------
   @override
   void initState() {
@@ -58,14 +54,11 @@ class _StudentHomeState extends State<StudentHome> with WidgetsBindingObserver {
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    if(_keepSignedIn == false && state == AppLifecycleState.inactive){
+    if (_keepSignedIn == false && state == AppLifecycleState.inactive) {
       _authStudent.logOut();
     }
   }
   // ---------------------------------------------------------------------------------
-
-  //an object made to work with firestore
-  final databaseReference = Firestore.instance;
 
   /////////////////////////// FUNCTIONS ///////////////////////////
   void _getData() {
@@ -83,11 +76,11 @@ class _StudentHomeState extends State<StudentHome> with WidgetsBindingObserver {
         .collection("PendingEmergencies")
         .document()
         .setData({
-      'Location': location,
-      'Gender Preference': genderPref,
-      "Patient roll_no": rollNumber,
-      'Severity': severityLevel,
-      'Declines': 0
+      'location': location,
+      'gender_reference': genderPref,
+      'patient_roll_no': rollNumber,
+      'severity': severityLevel,
+      'declines': 0
     });
   }
   /////////////////////////////////////////////////////////////////
@@ -262,7 +255,7 @@ class _StudentHomeState extends State<StudentHome> with WidgetsBindingObserver {
                                           ),
                                           onPressed: () async {
                                             //navigation to login screen
-                                            //! signout here                                        
+                                            //! signout here
                                             await _authStudent.logOut();
                                             Navigator.of(context).pop();
                                             Navigator.pushReplacementNamed(
