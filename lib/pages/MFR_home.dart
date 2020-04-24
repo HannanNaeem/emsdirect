@@ -1,7 +1,9 @@
+import 'package:ems_direct/services/auth.dart';
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:ems_direct/services/pending_emergency_alert_MFR.dart';
 import 'package:ems_direct/pages/emergency_numbers.dart';
 import 'package:ems_direct/pages/available_MFRs.dart';
 import 'package:ems_direct/services/auth.dart';
@@ -13,115 +15,60 @@ class PendingEmergency {
   int rollNumber;
 }
 
-class AlertFunction extends StatefulWidget {
-  var availability;
-  var length;
-  var render;
-
-  AlertFunction({this.availability, this.length, this.render});
-  @override
-  _AlertFunctionState createState() => _AlertFunctionState();
-}
-
-class _AlertFunctionState extends State<AlertFunction> {
-  void showAlert(bool available, int num, bool render) {
-    num = 1;
-    if (available == true && num > 0 && render) {
-      print(render);
-      print('show dialog');
-      showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-          title: Text(
-            "Are you sure?",
-            style: TextStyle(
-              fontFamily: 'HelveticaNeueLight',
-              letterSpacing: 2.0,
-              fontSize: 20,
-              //color: Colors.grey[600],
-            ),
-          ),
-          actions: <Widget>[
-            FlatButton(
-              child: Text(
-                'YES',
-                style: TextStyle(
-                  fontFamily: 'HelveticaNeue',
-                  fontWeight: FontWeight.bold,
-                  letterSpacing: 3.0,
-                  fontSize: 20,
-                  color: const Color(0xff1a832a),
-                ),
-              ),
-              onPressed: () {
-                print('yes');
-                //dispose();
-              },
-            ),
-            FlatButton(
-              child: Text(
-                'NO',
-                style: TextStyle(
-                  fontFamily: 'HelveticaNeue',
-                  fontWeight: FontWeight.bold,
-                  letterSpacing: 2.5,
-                  fontSize: 20,
-                  color: const Color(0xffee0000),
-                ),
-              ),
-              onPressed: () {
-                print('no');
-                Navigator.of(context).pop();
-                //dispose();
-              },
-            ),
-          ],
-        ),
-      );
-    }
+//This is the main homepage for any MFR login
+class MFRHome extends StatefulWidget {
+  bool _keepSignedIn = false;
+  MFRHome(bool keepSignedIn) {
+    _keepSignedIn = keepSignedIn;
   }
 
   @override
+  _MFRHomeState createState() => _MFRHomeState(_keepSignedIn);
+}
+
+class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
+  //keepMeSignedIn variable passed from login screen if successful
+  bool _keepSignedIn = false;
+
+  // constructor to set keepSignedIn
+  _MFRHomeState(keepSignedIn) {
+    _keepSignedIn = keepSignedIn;
+  }
+
+  //Tells whether toggle switch is to be on or off
+  bool isAvailable = false;
+  final databaseReference = Firestore.instance;
+  Stream<QuerySnapshot> _documentStream;
+  DocumentSnapshot qs = null;
+  bool shouldRender = false;
+  var length = 0;
+  String _rollNumber = '21100118';
+  String _contact = '03362356254';
+  String _email = '21100118@lums.edu.pk';
+
+  //instance of auth service
+  final AuthService _auth = AuthService();
+  final AuthService _authStudent = AuthService();
+  final AuthService _authMfr = AuthService();
+
+  //State management for keepsignedin ----------------------------------
+
+  @override
   void dispose() {
-    print('widget disposed');
+    WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
 
   @override
-  Widget build(BuildContext context) {
-    print('IN THIS FUNCTION');
-    //Future.delayed(Duration.zero, () => showAlert());
-    WidgetsBinding.instance.addPostFrameCallback(
-        (_) => showAlert(widget.availability, widget.length, widget.render));
-    return Container(key: UniqueKey());
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (_keepSignedIn == false && state == AppLifecycleState.inactive) {
+      _authMfr.logOut();
+    }
   }
-}
 
-//This is the main homepage for any MFR login
-class MFRHome extends StatefulWidget {
-  @override
-  _MFRHomeState createState() => _MFRHomeState();
-}
+  // ---------------------------------------------------------------------------------
 
-class _MFRHomeState extends State<MFRHome> {
-  //Tells whether toggle switch is to be on or off
-  bool isAvailable = false;
-  final databaseReference = Firestore.instance;
-  //StreamController<QuerySnapshot> stream = new StreamController<QuerySnapshot>();
-  //StreamController<int> stream = StreamController<int>();
-  // StreamController stream = StreamController();
-  Stream<QuerySnapshot> _documentStream;
-  var length = 0;
-  DocumentSnapshot qs = null;
-  bool shouldRender = false;
-  String _rollNumber = '21100118';
-  String _contact = '03362356254';
-  String _email = '21100118@lums.edu.pk';
-  //instance of auth service
-  final AuthService _auth = AuthService();
-  final AuthService _authStudent = AuthService();
-
-  /////////////////////////// FUNCTIONS ///////////////////////////
+  //Not required but keeping it for testing purposes ----------------------------------
   void _getData() {
     databaseReference
         .collection('OngoingEmergencies')
@@ -130,11 +77,15 @@ class _MFRHomeState extends State<MFRHome> {
       snapshot.documents.forEach(((f) => print('${f.data}')));
     });
   }
-  /////////////////////////////////////////////////////////////////
+  // ---------------------------------------------------------------------------------
 
   @override
   void initState() {
     super.initState();
+
+    //State management for keepsignedin
+    WidgetsBinding.instance.addObserver(this);
+    //initializing stream to null as MFR will always be unavailable unless made available by himself
     _documentStream = null;
     //_documentStream = databaseReference.collection('PendingEmergencies').where('severity', isEqualTo: 'low').snapshots();
   }
@@ -147,7 +98,6 @@ class _MFRHomeState extends State<MFRHome> {
     var screenSize = MediaQuery.of(context).size;
     var width = screenSize.width;
     var height = screenSize.height;
-    var pendingEmergency;
 
     //Defines the whole layout of the homepage
     return Scaffold(
@@ -323,6 +273,11 @@ class _MFRHomeState extends State<MFRHome> {
                                           Navigator.of(context).pop();
                                           Navigator.pushReplacementNamed(
                                               context, '/select_login');
+                                          //! signout here
+                                          await _authMfr.logOut();
+                                          Navigator.of(context).pop();
+                                          Navigator.pushReplacementNamed(
+                                              context, '/select_login');
                                         },
                                       ),
                                       FlatButton(
@@ -378,7 +333,8 @@ class _MFRHomeState extends State<MFRHome> {
       //This is where the toggle option and the two cards (Map and Report Emergency) reside
       body: Center(
           child: StreamBuilder<QuerySnapshot>(
-              stream: null, //_documentStream,
+              //REPLACE _documentStream WITH NULL FOR SIMPLY CHECKING ALERTS
+              stream: _documentStream,
               builder: (context, snapshot) {
                 if (snapshot.data != null) {
                   length = snapshot.data.documents.length;
@@ -400,8 +356,8 @@ class _MFRHomeState extends State<MFRHome> {
                     AlertFunction(
                         availability: isAvailable,
                         length: length,
-                        render:
-                            shouldRender), //showAlert(isAvailable, length), //AlertFunction(),
+                        render: shouldRender),
+                    //showAlert(isAvailable, length), //AlertFunction(),
                     Flexible(
                       flex: 3,
                       child: Container(
@@ -432,8 +388,10 @@ class _MFRHomeState extends State<MFRHome> {
                                         .collection('PendingEmergencies')
                                         .where('severity', isEqualTo: 'low')
                                         .snapshots();
+                                    shouldRender = true;
                                   } else {
                                     _documentStream = null;
+                                    shouldRender = false;
                                   }
                                 });
                               },
