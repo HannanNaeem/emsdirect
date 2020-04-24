@@ -27,6 +27,7 @@ class MFRHome extends StatefulWidget {
 }
 
 class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
+  
   //keepMeSignedIn variable passed from login screen if successful
   bool _keepSignedIn = false;
 
@@ -47,9 +48,9 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
   String _email = '21100118@lums.edu.pk';
 
   //instance of auth service
-  final AuthService _auth = AuthService();
-  final AuthService _authStudent = AuthService();
+
   final AuthService _authMfr = AuthService();
+
 
   //State management for keepsignedin ----------------------------------
 
@@ -266,13 +267,6 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
                                         ),
                                         onPressed: () async {
                                           //navigation to login screen
-                                          //todo signout here
-                                          await _auth.logOut();
-                                          //todo signout here
-                                          await _authStudent.logOut();
-                                          Navigator.of(context).pop();
-                                          Navigator.pushReplacementNamed(
-                                              context, '/select_login');
                                           //! signout here
                                           await _authMfr.logOut();
                                           Navigator.of(context).pop();
