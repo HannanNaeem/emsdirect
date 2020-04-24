@@ -1,5 +1,6 @@
 
 import 'package:ems_direct/services/auth.dart';
+import 'package:ems_direct/shared/loading.dart';
 import 'package:flutter/material.dart';
 
 class LoginEms extends StatefulWidget {
@@ -22,7 +23,7 @@ class _LoginEmsState extends State<LoginEms> {
     _emsType = emsType;
   }
 
-  
+  bool _loading = false;
   String _email;
   String _password;
   bool _keepSignedin = false;
@@ -173,6 +174,10 @@ class _LoginEmsState extends State<LoginEms> {
 
                           _formKey.currentState.save();
 
+                          setState(() {
+                            _loading = true;
+                          });
+
                           // login
                           dynamic result = await _authEms.signIn(_email, _password, _emsType);
                           
@@ -181,7 +186,45 @@ class _LoginEmsState extends State<LoginEms> {
                           print(_password);
                           print(_keepSignedin);
 
+
+
                           if(result == null){
+
+                            setState(() {
+                              _loading = false;
+                            });
+
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  title: Text(
+                                    "Invalid login",
+                                    style: TextStyle(
+                                      fontFamily: 'HelveticaNeueLight',
+                                      letterSpacing: 2.0,
+                                      fontSize: 20,
+                                      color: Colors.grey[600],
+                                    ),
+                                  ),
+                                  actions: <Widget>[
+                                    FlatButton(
+                                      child: Text(
+                                        'TRY AGAIN',
+                                        style: TextStyle(
+                                          fontFamily: 'HelveticaNeueLight',
+                                          letterSpacing: 2.5,
+                                          fontSize: 20,
+                                          color: const Color(0xffee0000),
+                                        ),
+                                      ),
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                      },
+                                    ),
+                                  ],
+                                );
+                              });
 
                             print("Error signing in!");
                           }
@@ -231,7 +274,7 @@ class _LoginEmsState extends State<LoginEms> {
   Widget build(BuildContext context) {
     
   
-    return Scaffold(
+    return _loading ? Loading() : Scaffold(
       
       backgroundColor: Colors.transparent,
 

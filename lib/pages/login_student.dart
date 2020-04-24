@@ -1,4 +1,5 @@
 import 'package:ems_direct/pages/student_home.dart';
+import 'package:ems_direct/shared/loading.dart';
 import 'package:flutter/material.dart';
 import 'package:ems_direct/services/auth.dart';
 
@@ -10,13 +11,15 @@ class LoginStudent extends StatefulWidget {
 
 class _LoginStudentState extends State<LoginStudent> with SingleTickerProviderStateMixin {
 
+  bool _loading = false;
+
   String _email;
   String _password;
   bool _keepSignedin = false;
   String _name;
   String _rollno;
   String _contact;
-
+  
 
   final GlobalKey<FormState> _loginformKey = GlobalKey<FormState>();
   final GlobalKey<FormState> _signupformKey = GlobalKey<FormState>();
@@ -302,6 +305,10 @@ class _LoginStudentState extends State<LoginStudent> with SingleTickerProviderSt
                           }
 
                           _loginformKey.currentState.save();
+
+                          setState(() {
+                            _loading = true;
+                          });
                           
                           //! TESTING
                           print(_email);
@@ -310,8 +317,46 @@ class _LoginStudentState extends State<LoginStudent> with SingleTickerProviderSt
 
                           dynamic result = await _authStudent.signIn(_email,_password, '');
 
+
+
                           if(result == null)
                           {
+                            setState(() {
+                            _loading = false;
+                             });
+                             
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  title: Text(
+                                    "Invalid login",
+                                    style: TextStyle(
+                                      fontFamily: 'HelveticaNeueLight',
+                                      letterSpacing: 2.0,
+                                      fontSize: 20,
+                                      color: Colors.grey[600],
+                                    ),
+                                  ),
+                                  actions: <Widget>[
+                                    FlatButton(
+                                      child: Text(
+                                        'TRY AGAIN',
+                                        style: TextStyle(
+                                          fontFamily: 'HelveticaNeueLight',
+                                          letterSpacing: 2.5,
+                                          fontSize: 20,
+                                          color: const Color(0xffee0000),
+                                        ),
+                                      ),
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                      },
+                                    ),
+                                  ],
+                                );
+                              });
+
                             print("Error signing in");
                             
                           }
@@ -392,8 +437,11 @@ class _LoginStudentState extends State<LoginStudent> with SingleTickerProviderSt
                         _signupformKey.currentState.save();
                         
                         //signup 
+                        setState(() {
+                          _loading = true;
+                        });
 
-                        dynamic result = _authStudent.signUp(_email, _password, _name, _rollno, _contact);
+                        dynamic result = await _authStudent.signUp(_email, _password, _name, _rollno, _contact);
                         
                         //! TESTING
                         print(_name);
@@ -402,12 +450,81 @@ class _LoginStudentState extends State<LoginStudent> with SingleTickerProviderSt
                         print(_email);
                         print(_password);
 
+                        setState(() {
+                          _loading = false;
+                        });
+
                         if (result == null){
+
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  title: Text(
+                                    "Signup failed! User already exists",
+                                    style: TextStyle(
+                                      fontFamily: 'HelveticaNeueLight',
+                                      letterSpacing: 2.0,
+                                      fontSize: 20,
+                                      color: Colors.grey[600],
+                                    ),
+                                  ),
+                                  actions: <Widget>[
+                                    FlatButton(
+                                      child: Text(
+                                        'TRY AGAIN',
+                                        style: TextStyle(
+                                          fontFamily: 'HelveticaNeueLight',
+                                          letterSpacing: 2.5,
+                                          fontSize: 20,
+                                          color: const Color(0xffee0000),
+                                        ),
+                                      ),
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                      },
+                                    ),
+                                  ],
+                                );
+                              });
+
                           print("Error signing up!");
                         }
                         else{
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  title: Text(
+                                    "A verification email has been sent!",
+                                    style: TextStyle(
+                                      fontFamily: 'HelveticaNeueLight',
+                                      letterSpacing: 2.0,
+                                      fontSize: 20,
+                                      color: Colors.grey[600],
+                                    ),
+                                  ),
+                                  actions: <Widget>[
+                                    FlatButton(
+                                      child: Text(
+                                        'OK',
+                                        style: TextStyle(
+                                          fontFamily: 'HelveticaNeueLight',
+                                          letterSpacing: 2.5,
+                                          fontSize: 20,
+                                          color: const Color(0xff1a832a),
+                                        ),
+                                      ),
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                        _controller.animateTo(0);
+                                      },
+                                    ),
+                                  ],
+                                );
+                              });
                           print("User created!");
-                          _controller.animateTo(0);
+                         
                         }
                         
                       },
@@ -435,8 +552,7 @@ class _LoginStudentState extends State<LoginStudent> with SingleTickerProviderSt
   @override
   Widget build(BuildContext context) {
     
-
-    return Scaffold(
+    return _loading ? Loading() :Scaffold(
       
       backgroundColor: Colors.transparent,
 
