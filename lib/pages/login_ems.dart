@@ -196,7 +196,12 @@ class _LoginEmsState extends State<LoginEms> {
                             }
                             else if (_emsType == 'mfr')
                             {
-                              Navigator.pushReplacementNamed(context,'/mfr_home');
+                              if(_keepSignedin){
+                                Navigator.pushReplacementNamed(context,'/mfr_home_keepSignedIn');
+                              }
+                              else{
+                                Navigator.pushReplacementNamed(context,'/mfr_home');
+                              }
                             }
 
                           }

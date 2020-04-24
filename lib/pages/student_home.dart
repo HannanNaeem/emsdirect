@@ -4,12 +4,27 @@ import 'package:flutter/material.dart';
 
 
 class StudentHome extends StatefulWidget {
+
+  bool _keepSignedIn = false;
+  StudentHome(bool keepSignedIn){
+    _keepSignedIn = keepSignedIn;
+  }
+
   @override
-  _StudentHomeState createState() => _StudentHomeState();
+  _StudentHomeState createState() => _StudentHomeState(_keepSignedIn);
 }
 
 
-class _StudentHomeState extends State<StudentHome> {
+class _StudentHomeState extends State<StudentHome> with WidgetsBindingObserver {
+
+  //keepMeSignedIn vairable passed from login screen if successful
+  bool _keepSignedIn = false;
+
+  // constructor to set keepSignedIn
+  _StudentHomeState(keepSignedIn){
+    _keepSignedIn = keepSignedIn;
+  }
+
   List<bool> _selections = List.generate(4, (_) => false);
   List<bool> _selections2 = List.generate(3, (_) => false);
   int _gender = 0;
@@ -19,8 +34,32 @@ class _StudentHomeState extends State<StudentHome> {
   int _contact = 03362356254;
   String _email = '21100118@lums.edu.pk';
 
+
+
   //instance of auth service
   final AuthService _authStudent = AuthService();
+  
+  //State management for keepsignedin ----------------------------------
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if(_keepSignedIn == false && state == AppLifecycleState.inactive){
+      _authStudent.logOut();
+    }
+  }
+  // ---------------------------------------------------------------------------------
+
 
   @override
   Widget build(BuildContext context) {

@@ -6,16 +6,53 @@ import 'package:ems_direct/pages/available_MFRs.dart';
 
 //This is the main homepage for any MFR login
 class MFRHome extends StatefulWidget {
+
+  bool _keepSignedIn = false;
+  MFRHome(bool keepSignedIn){
+    _keepSignedIn = keepSignedIn;
+  }
+
   @override
-  _MFRHomeState createState() => _MFRHomeState();
+  _MFRHomeState createState() => _MFRHomeState(_keepSignedIn);
 }
 
-class _MFRHomeState extends State<MFRHome> {
+class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
+  
+  //keepMeSignedIn vairable passed from login screen if successful
+  bool _keepSignedIn = false;
+
+  // constructor to set keepSignedIn
+  _MFRHomeState(keepSignedIn){
+    _keepSignedIn = keepSignedIn;
+  }
+  
   //Tells whether toggle switch is to be on or off
   bool isAvailable = false;
 
   //adding Firebase auth instance
   final AuthService _authMfr = AuthService();
+
+  
+  //State management for keepsignedin ----------------------------------
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if(_keepSignedIn == false && state == AppLifecycleState.inactive){
+      _authMfr.logOut();
+    }
+  }
+  // ---------------------------------------------------------------------------------
 
 
   @override
