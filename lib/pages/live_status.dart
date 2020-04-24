@@ -13,8 +13,8 @@ class _LiveStatusState extends State<LiveStatus> {
     var screenSize = MediaQuery.of(context).size;
     var width = screenSize.width;
     var height = screenSize.height;
-    int _rollnumber = 21100118;
-    int _contact = 03362356254;
+    String _rollnumber = '21100118';
+    String _contact = '03362356254';
     String _email = '21100118@lums.edu.pk';
     return Scaffold(
       drawer: Container(
@@ -148,7 +148,7 @@ class _LiveStatusState extends State<LiveStatus> {
         )
       ),
       appBar: AppBar(
-        backgroundColor: Colors.cyan[800],
+        backgroundColor: const Color(0xff142850),
         title: Text(
           'Live Status',
           style: TextStyle(
@@ -162,6 +162,7 @@ class _LiveStatusState extends State<LiveStatus> {
         centerTitle: true,
       ),
       body: Container(
+        color: const Color(0xff27496d),
         child: Column(
           mainAxisSize: MainAxisSize.max,
           mainAxisAlignment: MainAxisAlignment.start,
