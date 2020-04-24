@@ -12,7 +12,6 @@ import 'package:ems_direct/ops.dart';
 import 'package:ems_direct/pages/login_student.dart';
 import 'package:ems_direct/pages/login_ems.dart';
 import 'package:ems_direct/pages/SplashScreen.dart';
-import 'package:flutter/material.dart';
 import 'package:ems_direct/pages/MFR_home.dart';
 import 'package:ems_direct/pages/emergency_numbers.dart';
 import 'package:ems_direct/pages/available_MFRs.dart';

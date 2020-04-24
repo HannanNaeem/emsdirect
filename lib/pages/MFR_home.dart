@@ -1,10 +1,10 @@
 import 'dart:async';
-//import 'dart:html';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:ems_direct/pages/emergency_numbers.dart';
 import 'package:ems_direct/pages/available_MFRs.dart';
+import 'package:ems_direct/services/auth.dart';
 
 class PendingEmergency {
   GeoPoint location;
@@ -14,126 +14,21 @@ class PendingEmergency {
 }
 
 class AlertFunction extends StatefulWidget {
+  var availability;
+  var length;
+  var render;
+
+  AlertFunction({this.availability, this.length, this.render});
   @override
   _AlertFunctionState createState() => _AlertFunctionState();
 }
 
 class _AlertFunctionState extends State<AlertFunction> {
-  void showAlert() {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(
-          "Are you sure?",
-          style: TextStyle(
-            fontFamily: 'HelveticaNeueLight',
-            letterSpacing: 2.0,
-            fontSize: 20,
-            //color: Colors.grey[600],
-          ),
-        ),
-        actions: <Widget>[
-          FlatButton(
-            child: Text(
-              'YES',
-              style: TextStyle(
-                fontFamily: 'HelveticaNeue',
-                fontWeight: FontWeight.bold,
-                letterSpacing: 3.0,
-                fontSize: 20,
-                color: const Color(0xff1a832a),
-              ),
-            ),
-            onPressed: () {
-              print('yes');
-              //dispose();
-            },
-          ),
-          FlatButton(
-            child: Text(
-              'NO',
-              style: TextStyle(
-                fontFamily: 'HelveticaNeue',
-                fontWeight: FontWeight.bold,
-                letterSpacing: 2.5,
-                fontSize: 20,
-                color: const Color(0xffee0000),
-              ),
-            ),
-            onPressed: () {
-              print('no');
-              Navigator.of(context).pop();
-              //dispose();
-            },
-          ),
-        ],
-      ),
-    );
-  }
-
-//  @override
-//  void initState() {
-//    super.initState();
-//    WidgetsBinding.instance.addPostFrameCallback((_) => showAlert());
-//  }
-
-  @override
-  void dispose() {
-    print('widget disposed');
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    print('IN THIS FUNCTION');
-    //Future.delayed(Duration.zero, () => showAlert());
-    WidgetsBinding.instance.addPostFrameCallback((_) => showAlert());
-    return Container(key: UniqueKey());
-  }
-}
-
-//This is the main homepage for any MFR login
-class MFRHome extends StatefulWidget {
-  @override
-  _MFRHomeState createState() => _MFRHomeState();
-}
-
-class _MFRHomeState extends State<MFRHome> {
-  //Tells whether toggle switch is to be on or off
-  bool isAvailable = false;
-  final databaseReference = Firestore.instance;
-  //StreamController<QuerySnapshot> stream = new StreamController<QuerySnapshot>();
-  //StreamController<int> stream = StreamController<int>();
-  // StreamController stream = StreamController();
-  Stream<QuerySnapshot> _documentStream;
-  var length = 0;
-
-  /////////////////////////// FUNCTIONS ///////////////////////////
-  void _getData() {
-    databaseReference
-        .collection('OngoingEmergencies')
-        .getDocuments()
-        .then((QuerySnapshot snapshot) {
-      snapshot.documents.forEach(((f) => print('${f.data}')));
-    });
-  }
-
-  void _buildStreamBuilder() {
-    print('In function');
-    StreamBuilder<QuerySnapshot>(
-      stream: databaseReference
-          .collection('PendingEmergencies')
-          .where('severity', isEqualTo: 'low')
-          .snapshots(),
-      builder: (context, snapshot) {
-        if (snapshot.hasError) print('Error');
-        if (snapshot.data != null) print(snapshot.data);
-      },
-    );
-  }
-
-  Widget showAlert(bool available, int num) {
-    if (available == true && num > 0) {
+  void showAlert(bool available, int num, bool render) {
+    num = 1;
+    if (available == true && num > 0 && render) {
+      print(render);
+      print('show dialog');
       showDialog(
         context: context,
         builder: (context) => AlertDialog(
@@ -184,7 +79,56 @@ class _MFRHomeState extends State<MFRHome> {
         ),
       );
     }
+  }
+
+  @override
+  void dispose() {
+    print('widget disposed');
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    print('IN THIS FUNCTION');
+    //Future.delayed(Duration.zero, () => showAlert());
+    WidgetsBinding.instance.addPostFrameCallback(
+        (_) => showAlert(widget.availability, widget.length, widget.render));
     return Container(key: UniqueKey());
+  }
+}
+
+//This is the main homepage for any MFR login
+class MFRHome extends StatefulWidget {
+  @override
+  _MFRHomeState createState() => _MFRHomeState();
+}
+
+class _MFRHomeState extends State<MFRHome> {
+  //Tells whether toggle switch is to be on or off
+  bool isAvailable = false;
+  final databaseReference = Firestore.instance;
+  //StreamController<QuerySnapshot> stream = new StreamController<QuerySnapshot>();
+  //StreamController<int> stream = StreamController<int>();
+  // StreamController stream = StreamController();
+  Stream<QuerySnapshot> _documentStream;
+  var length = 0;
+  DocumentSnapshot qs = null;
+  bool shouldRender = false;
+  String _rollNumber = '21100118';
+  String _contact = '03362356254';
+  String _email = '21100118@lums.edu.pk';
+  //instance of auth service
+  final AuthService _auth = AuthService();
+  final AuthService _authStudent = AuthService();
+
+  /////////////////////////// FUNCTIONS ///////////////////////////
+  void _getData() {
+    databaseReference
+        .collection('OngoingEmergencies')
+        .getDocuments()
+        .then((QuerySnapshot snapshot) {
+      snapshot.documents.forEach(((f) => print('${f.data}')));
+    });
   }
   /////////////////////////////////////////////////////////////////
 
@@ -223,29 +167,95 @@ class _MFRHomeState extends State<MFRHome> {
                   child: Image.asset("assets/ems_logo.png"),
                 ),
               ),
-              Padding(
-                padding: EdgeInsets.fromLTRB(width * 0.8 * 0.2, 0, 0, 0),
-                child: Row(
-                  //only the profile viewing option - an icon and a text
-                  children: <Widget>[
-                    IconButton(
-                      icon: Icon(Icons.account_circle),
-                      color: const Color(0xff142850),
-                      onPressed: () {
-                        print('MFR personal info');
-                      },
-                      iconSize: height / 20,
-                    ),
-                    Text(
-                      'Harum Naseem',
-                      style: TextStyle(
-                        fontSize: 15,
-                        fontFamily: 'HelveticaNeueLight',
-                        letterSpacing: 2.0,
-                      ),
-                    ),
-                  ],
+              ExpansionTile(
+                leading: Icon(
+                  Icons.account_circle,
+                  color: const Color(0xff142850),
                 ),
+                title: Text(
+                  'Harum Naseem',
+                  style: TextStyle(
+                    fontSize: 15,
+                    fontFamily: 'HelveticaNeueLight',
+                    letterSpacing: 1.0,
+                  ),
+                ),
+                children: <Widget>[
+                  Container(
+                    constraints: BoxConstraints(maxWidth: width * 0.75),
+                    child: Row(
+                      children: <Widget>[
+                        Text(
+                          'Rollnumber:',
+                          style: TextStyle(
+                            fontSize: 15,
+                            fontFamily: 'HelveticaNeueLight',
+                            letterSpacing: 1.0,
+                          ),
+                        ),
+                        SizedBox(width: 2.0),
+                        Text(
+                          '$_rollNumber',
+                          style: TextStyle(
+                            fontSize: 15,
+                            fontFamily: 'HelveticaNeueLiight',
+                            letterSpacing: 1.0,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(height: 10.0),
+                  Container(
+                    constraints: BoxConstraints(maxWidth: width * 0.75),
+                    child: Row(
+                      children: <Widget>[
+                        Text(
+                          'Email:',
+                          style: TextStyle(
+                            fontSize: 15,
+                            fontFamily: 'HelveticaNeueLight',
+                            letterSpacing: 1.0,
+                          ),
+                        ),
+                        SizedBox(width: 2.0),
+                        Text(
+                          _email,
+                          style: TextStyle(
+                            fontSize: 15,
+                            fontFamily: 'HelveticaNeueLight',
+                            letterSpacing: 1.0,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(height: 10.0),
+                  Container(
+                    constraints: BoxConstraints(maxWidth: width * 0.75),
+                    child: Row(
+                      children: <Widget>[
+                        Text(
+                          'Contact:',
+                          style: TextStyle(
+                            fontSize: 15,
+                            fontFamily: 'HelveticaNeueLight',
+                            letterSpacing: 1.0,
+                          ),
+                        ),
+                        SizedBox(width: 1.0),
+                        Text(
+                          '$_contact',
+                          style: TextStyle(
+                            fontSize: 15,
+                            fontFamily: 'HelveticaNeueLight',
+                            letterSpacing: 1.0,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
               ListTile(
                 //the option to view emergency numbers - takes you to dummy page
@@ -260,21 +270,6 @@ class _MFRHomeState extends State<MFRHome> {
                 onTap: () {
                   Navigator.of(context).pushNamed('/emergencyNumbers');
                   //print('Emergency numbers');
-                },
-              ),
-              ListTile(
-                //the option to view available MFRs list - takes you to dummy page
-                title: Text(
-                  'List of Available MFRs',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontFamily: 'HelveticaNeueLight',
-                    letterSpacing: 2.0,
-                  ),
-                ),
-                onTap: () {
-                  Navigator.of(context).pushNamed('/availableMFRs');
-                  //print('List of Available MFRs');
                 },
               ),
               Expanded(
@@ -319,8 +314,15 @@ class _MFRHomeState extends State<MFRHome> {
                                             color: const Color(0xff1a832a),
                                           ),
                                         ),
-                                        onPressed: () {
+                                        onPressed: () async {
                                           //navigation to login screen
+                                          //todo signout here
+                                          await _auth.logOut();
+                                          //todo signout here
+                                          await _authStudent.logOut();
+                                          Navigator.of(context).pop();
+                                          Navigator.pushReplacementNamed(
+                                              context, '/select_login');
                                         },
                                       ),
                                       FlatButton(
@@ -347,7 +349,7 @@ class _MFRHomeState extends State<MFRHome> {
                           'LOGOUT',
                           style: TextStyle(
                             fontSize: 18,
-                            fontFamily: 'HelveticaNeueLightBold',
+                            fontFamily: 'HelveticaNeueBold',
                             color: const Color(0xff142850),
                           ),
                         ),
@@ -376,20 +378,30 @@ class _MFRHomeState extends State<MFRHome> {
       //This is where the toggle option and the two cards (Map and Report Emergency) reside
       body: Center(
           child: StreamBuilder<QuerySnapshot>(
-              stream: _documentStream,
+              stream: null, //_documentStream,
               builder: (context, snapshot) {
-                if (snapshot.hasError) print('Error');
                 if (snapshot.data != null) {
                   length = snapshot.data.documents.length;
-                  for (int i = 0; i < length; i++) {
-                    print(snapshot.data.documents[i].data);
+                  if (qs == null) {
+                    shouldRender = true;
+                    qs = snapshot.data.documents[0];
+                  } else if (qs == snapshot.data.documents[0]) {
+                    shouldRender = false;
+                  } else {
+                    shouldRender = true;
                   }
+//                  for (int i = 0; i < length; i++) {
+//                    print(snapshot.data.documents[i].data);
+//                  }
                 }
-
                 return Column(
                   //everything is placed in the column
                   children: <Widget>[
-                    showAlert(isAvailable, length), //AlertFunction(),
+                    AlertFunction(
+                        availability: isAvailable,
+                        length: length,
+                        render:
+                            shouldRender), //showAlert(isAvailable, length), //AlertFunction(),
                     Flexible(
                       flex: 3,
                       child: Container(
