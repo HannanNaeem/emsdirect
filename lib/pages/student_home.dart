@@ -441,6 +441,7 @@ class _StudentHomeState extends State<StudentHome> with WidgetsBindingObserver {
                     isSelected: _selections2,
                     onPressed: (int index) {
                       setState(() {
+                        print(index);
                         for (int buttonIndex = 0;
                             buttonIndex < _selections2.length;
                             buttonIndex++) {
@@ -449,6 +450,7 @@ class _StudentHomeState extends State<StudentHome> with WidgetsBindingObserver {
                           } else {
                             _selections2[buttonIndex] = false;
                           }
+                          _gender = index;
                           print(_gender);
                         }
                       });
@@ -461,15 +463,16 @@ class _StudentHomeState extends State<StudentHome> with WidgetsBindingObserver {
                       setState(() {
                         _emergency = true;
                       });
-                    }, //SOS function implemented here
+                    },
+                    //SOS function implemented here
                     //A 'PendingEmergencies' document is created in the database with relevant attributes set
                     //Student is taken to the live updates screen for live feedback
                     onLongPress: () {
-                      _createPendingEmergencyDocument(
-                          dummyLocation,
-                          _genderPreferences[_gender],
-                          _severityLevels[_severityLevel],
-                          _rollNumber);
+                      //_createPendingEmergencyDocument(dummyLocation, _genderPreferences[_gender], _severityLevels[_severityLevel], _rollNumber);
+                      print(dummyLocation);
+                      print(_genderPreferences[_gender]);
+                      print(_severityLevels[_severityLevel]);
+                      print(_rollNumber);
                       Navigator.of(context).pushNamed('/live_status');
                       print("emergency initiated");
                     },

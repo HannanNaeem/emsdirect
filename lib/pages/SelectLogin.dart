@@ -24,33 +24,33 @@ class _SelectLoginScreenState extends State<SelectLogin> {
                     ),
            ),
 
-            child: Stack(
+          child: Center(
+          child: Column(
               children: <Widget>[
                 Padding(
-                  padding: EdgeInsets.fromLTRB(width  * 0.27, 100.0, 10.0, height*0.2),
+                  padding: EdgeInsets.fromLTRB(width*0.35, height*0.12,width*0.35, height*0.05),
                   child: Image.asset(
                       'assets/ems_logo.png',
-                      scale: 0.009*width,
+                      scale: 0.0009*(height+width)
                   ),
                 ),
                 Padding(
-                  padding: EdgeInsets.fromLTRB(width  * 0.27, 320.0, 10.0, height*0.2),
+                  padding: EdgeInsets.fromLTRB(width*0.16, height*0.03, width*0.16, 10.0),
                   child: Text(
                     'LOGIN AS',
                     style: TextStyle(
                       color:Colors.white,
-                      fontSize: 24.0,
+                      fontSize: (width)*0.04,
                       letterSpacing: 8.0,
                       fontFamily: 'HelveticaNeueLight',
                     ),
-
                   ),
                 ),
 
                 Padding(
-                    padding: EdgeInsets.fromLTRB(width  * 0.245, 400.0, 10.0, height*0.2),
+                    padding: EdgeInsets.fromLTRB(width*0.16, height*0.05, width*0.16, 10.0),
                     child: SizedBox (
-                        width: width*0.50,
+                        width: width*0.35,
                         height: height*0.06,
                         child: RaisedButton(
                             onPressed: () {
@@ -62,7 +62,7 @@ class _SelectLoginScreenState extends State<SelectLogin> {
                               'STUDENT',
                               style: TextStyle(
                                 color:Colors.cyan[500],
-                                fontSize: 16.0,
+                                fontSize: (width)*0.03,
                                 letterSpacing: 3.0,
                                 fontFamily: 'HelveticaNeueBold',
                               ),
@@ -75,13 +75,13 @@ class _SelectLoginScreenState extends State<SelectLogin> {
                     )
                 ),
                 Padding(
-                    padding: EdgeInsets.fromLTRB(width  * 0.25, 475.0, 10.0, height*0.2),
+                    padding: EdgeInsets.fromLTRB(width*0.16, height*0.05, width*0.16, 10.0),
                     child: SizedBox (
-                        width: width*0.50,
+                        width: width*0.35,
                         height: height*0.06,
                         child: RaisedButton(
                             onPressed: () {
-                              Navigator.pushNamed(context, '/login_ems_ops');
+                              Navigator.pushNamed(context, '/login_ems');
                             }, //add later
                             textColor: Colors.cyan[500],
                             color: Colors.white,
@@ -89,7 +89,7 @@ class _SelectLoginScreenState extends State<SelectLogin> {
                               'OPS',
                               style: TextStyle(
                                 color:Colors.cyan[500],
-                                fontSize: 16.0,
+                                fontSize: (width)*0.03,
                                 letterSpacing: 3.0,
                                 fontFamily: 'HelveticaNeueBold',
                               ),
@@ -102,13 +102,13 @@ class _SelectLoginScreenState extends State<SelectLogin> {
                     )
                 ),
                 Padding(
-                    padding: EdgeInsets.fromLTRB(width  * 0.245, 550.0, 10.0, height*0.2),
+                    padding: EdgeInsets.fromLTRB(width*0.16, height*0.05, width*0.16, 10.0),
                     child: SizedBox (
-                        width: width*0.50,
+                        width: width*0.35,
                         height: height*0.06,
                         child: RaisedButton(
                             onPressed: () {
-                              Navigator.pushNamed(context, '/login_ems_mfr');
+                              Navigator.pushNamed(context, '/login_ems');
                             }, //add later
                             textColor: Colors.cyan[500],
                             color: Colors.white,
@@ -116,7 +116,7 @@ class _SelectLoginScreenState extends State<SelectLogin> {
                               'MFR',
                               style: TextStyle(
                                 color:Colors.cyan[500],
-                                fontSize: 16.0,
+                                fontSize: (width)*0.03,
                                 letterSpacing: 3.0,
                                 fontFamily: 'HelveticaNeueBold',
                               ),
@@ -128,13 +128,13 @@ class _SelectLoginScreenState extends State<SelectLogin> {
                         )
                     )
                 ),
-                Align(
-                  alignment: Alignment(0, 0.9),
+                Padding(
+                  padding: EdgeInsets.fromLTRB(width*0.16, height*0.11, width*0.16, 10.0),
                   child: Text(
                     'EMS DIRECT',
                     style: TextStyle(
                       color:Colors.white,
-                      fontSize: 15.0,
+                      fontSize: (width)*0.02,
                       letterSpacing: 5.0,
                       fontFamily: 'HelveticaNeueLight',
                     ),
@@ -142,6 +142,7 @@ class _SelectLoginScreenState extends State<SelectLogin> {
                   ),
                 ),
               ]
+          )
           ),
         )
     );

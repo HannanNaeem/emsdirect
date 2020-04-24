@@ -12,7 +12,6 @@ import 'package:ems_direct/ops.dart';
 import 'package:ems_direct/pages/login_student.dart';
 import 'package:ems_direct/pages/login_ems.dart';
 import 'package:ems_direct/pages/SplashScreen.dart';
-import 'package:flutter/material.dart';
 import 'package:ems_direct/pages/MFR_home.dart';
 import 'package:ems_direct/pages/emergency_numbers.dart';
 import 'package:ems_direct/pages/available_MFRs.dart';
@@ -27,18 +26,18 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       home: Ops(),
       routes: {
-        '/login_student' : (context) => LoginStudent(),
-        '/login_ems_mfr' : (context) => LoginEms('mfr'),
-        '/login_ems_ops' : (context) => LoginEms('ops'),
-        '/student_home_keepSignedIn' : (context) => StudentHome(true),
-        '/student_home' : (context) => StudentHome(false),
-        '/live_status' : (context) => LiveStatus(),
-        '/emergencyNumbers' : (context) => EmergencyNumbers(),
-        '/select_login' : (context) => SelectLogin(),
-        '/mfr_home_keepSignedIn' : (context) => MFRHome(true),
-        '/mfr_home' : (context) => MFRHome(false),
-        '/ops_home' : (context) => Ops(),
-        '/availableMFRs' : (context) => AvailableMfrs(),
+        '/login_student': (context) => LoginStudent(),
+        '/login_ems_mfr': (context) => LoginEms('mfr'),
+        '/login_ems_ops': (context) => LoginEms('ops'),
+        '/student_home_keepSignedIn': (context) => StudentHome(true),
+        '/student_home': (context) => StudentHome(false),
+        '/live_status': (context) => LiveStatus(),
+        '/emergencyNumbers': (context) => EmergencyNumbers(),
+        '/select_login': (context) => SelectLogin(),
+        '/mfr_home_keepSignedIn': (context) => MFRHome(true),
+        '/mfr_home': (context) => MFRHome(false),
+        '/ops_home': (context) => Ops(),
+        '/availableMFRs': (context) => AvailableMfrs(),
       },
     );
   }
