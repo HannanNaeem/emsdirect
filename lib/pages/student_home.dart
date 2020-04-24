@@ -199,7 +199,7 @@ class _StudentHomeState extends State<StudentHome> {
                                           ),
                                           onPressed: () async {
                                             //navigation to login screen
-                                            //todo signout here                                        
+                                            //! signout here                                        
                                             await _authStudent.logOut();
                                             Navigator.of(context).pop();
                                             Navigator.pushReplacementNamed(context, '/select_login');

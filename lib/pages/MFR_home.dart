@@ -1,3 +1,4 @@
+import 'package:ems_direct/services/auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:ems_direct/pages/emergency_numbers.dart';
@@ -12,6 +13,10 @@ class MFRHome extends StatefulWidget {
 class _MFRHomeState extends State<MFRHome> {
   //Tells whether toggle switch is to be on or off
   bool isAvailable = false;
+
+  //adding Firebase auth instance
+  final AuthService _authMfr = AuthService();
+
 
   @override
   Widget build(BuildContext context) {
@@ -134,8 +139,13 @@ class _MFRHomeState extends State<MFRHome> {
                                             color: const Color(0xff1a832a),
                                           ),
                                         ),
-                                        onPressed: () {
+                                        onPressed: () async {
                                           //navigation to login screen
+                                            //! signout here                                        
+                                          await _authMfr.logOut();
+                                          Navigator.of(context).pop();
+                                          Navigator.pushReplacementNamed(context, '/select_login');
+
                                         },
                                       ),
                                       FlatButton(
