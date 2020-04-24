@@ -1,7 +1,6 @@
 import 'package:ems_direct/services/auth.dart';
 import 'package:flutter/material.dart';
-
-
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class StudentHome extends StatefulWidget {
 
@@ -27,16 +26,21 @@ class _StudentHomeState extends State<StudentHome> with WidgetsBindingObserver {
 
   List<bool> _selections = List.generate(4, (_) => false);
   List<bool> _selections2 = List.generate(3, (_) => false);
+  List<String> _genderPreferences = ['NA', 'M', 'F'];
+  List<String> _severityLevels = ['low', 'medium', 'high', 'critical'];
   int _gender = 0;
   int _severityLevel = 0;
   bool _emergency = false;
-  int _rollnumber = 21100118;
-  int _contact = 03362356254;
+  String _rollNumber = '21100118';
+  String _contact = '03362356254';
   String _email = '21100118@lums.edu.pk';
+  GeoPoint dummyLocation = GeoPoint(4, 12);
+  /////////////////////////////////////////////////////////////////
 
 
 
   //instance of auth service
+  final AuthService _auth = AuthService();
   final AuthService _authStudent = AuthService();
   
   //State management for keepsignedin ----------------------------------
@@ -60,15 +64,44 @@ class _StudentHomeState extends State<StudentHome> with WidgetsBindingObserver {
   }
   // ---------------------------------------------------------------------------------
 
+  //an object made to work with firestore
+  final databaseReference = Firestore.instance;
+
+  /////////////////////////// FUNCTIONS ///////////////////////////
+  void _getData() {
+    databaseReference
+        .collection('OngoingEmergencies')
+        .getDocuments()
+        .then((QuerySnapshot snapshot) {
+      snapshot.documents.forEach(((f) => print('${f.data}')));
+    });
+  }
+
+  void _createPendingEmergencyDocument(GeoPoint location, String genderPref,
+      String severityLevel, String rollNumber) async {
+    await databaseReference
+        .collection("PendingEmergencies")
+        .document()
+        .setData({
+      'Location': location,
+      'Gender Preference': genderPref,
+      "Patient roll_no": rollNumber,
+      'Severity': severityLevel,
+      'Declines': 0
+    });
+  }
+  /////////////////////////////////////////////////////////////////
 
   @override
   Widget build(BuildContext context) {
     var screenSize = MediaQuery.of(context).size;
     var width = screenSize.width;
     var height = screenSize.height;
+
     return Scaffold(
+        backgroundColor: const Color(0xff27496d),
         drawer: Container(
-          width: width*0.8, //drawer covers 80% of the screen
+          width: width * 0.8, //drawer covers 80% of the screen
           child: Drawer(
             child: Column(
               //this column contains the drawer header, the option to view profile/emergency numbers/available MFRs list
@@ -82,38 +115,36 @@ class _StudentHomeState extends State<StudentHome> with WidgetsBindingObserver {
                 ),
                 ExpansionTile(
                   leading: Icon(
-                      Icons.account_circle,
+                    Icons.account_circle,
+                    color: const Color(0xff142850),
                   ),
                   title: Text(
                     'Harum Naseem',
                     style: TextStyle(
                       fontSize: 15,
-                      fontFamily: 'HelveticaNeue',
-                      fontWeight: FontWeight.bold,
+                      fontFamily: 'HelveticaNeueLight',
                       letterSpacing: 1.0,
                     ),
                   ),
                   children: <Widget>[
                     Container(
-                      constraints: BoxConstraints(maxWidth: width*0.75),
+                      constraints: BoxConstraints(maxWidth: width * 0.75),
                       child: Row(
                         children: <Widget>[
                           Text(
                             'Rollnumber:',
                             style: TextStyle(
                               fontSize: 15,
-                              fontFamily: 'HelveticaNeue',
-                              fontWeight: FontWeight.bold,
+                              fontFamily: 'HelveticaNeueLight',
                               letterSpacing: 1.0,
                             ),
                           ),
                           SizedBox(width: 2.0),
                           Text(
-                              '$_rollnumber',
+                            '$_rollNumber',
                             style: TextStyle(
                               fontSize: 15,
-                              fontFamily: 'HelveticaNeue',
-                              fontWeight: FontWeight.bold,
+                              fontFamily: 'HelveticaNeueLiight',
                               letterSpacing: 1.0,
                             ),
                           ),
@@ -122,15 +153,14 @@ class _StudentHomeState extends State<StudentHome> with WidgetsBindingObserver {
                     ),
                     SizedBox(height: 10.0),
                     Container(
-                      constraints: BoxConstraints(maxWidth: width*0.75),
+                      constraints: BoxConstraints(maxWidth: width * 0.75),
                       child: Row(
                         children: <Widget>[
                           Text(
                             'Email:',
                             style: TextStyle(
                               fontSize: 15,
-                              fontFamily: 'HelveticaNeue',
-                              fontWeight: FontWeight.bold,
+                              fontFamily: 'HelveticaNeueLight',
                               letterSpacing: 1.0,
                             ),
                           ),
@@ -139,8 +169,7 @@ class _StudentHomeState extends State<StudentHome> with WidgetsBindingObserver {
                             _email,
                             style: TextStyle(
                               fontSize: 15,
-                              fontFamily: 'HelveticaNeue',
-                              fontWeight: FontWeight.bold,
+                              fontFamily: 'HelveticaNeueLight',
                               letterSpacing: 1.0,
                             ),
                           ),
@@ -149,15 +178,14 @@ class _StudentHomeState extends State<StudentHome> with WidgetsBindingObserver {
                     ),
                     SizedBox(height: 10.0),
                     Container(
-                      constraints: BoxConstraints(maxWidth: width*0.75),
+                      constraints: BoxConstraints(maxWidth: width * 0.75),
                       child: Row(
                         children: <Widget>[
                           Text(
                             'Contact:',
                             style: TextStyle(
                               fontSize: 15,
-                              fontFamily: 'HelveticaNeue',
-                              fontWeight: FontWeight.bold,
+                              fontFamily: 'HelveticaNeueLight',
                               letterSpacing: 1.0,
                             ),
                           ),
@@ -166,8 +194,7 @@ class _StudentHomeState extends State<StudentHome> with WidgetsBindingObserver {
                             '$_contact',
                             style: TextStyle(
                               fontSize: 15,
-                              fontFamily: 'HelveticaNeue',
-                              fontWeight: FontWeight.bold,
+                              fontFamily: 'HelveticaNeueLight',
                               letterSpacing: 1.0,
                             ),
                           ),
@@ -182,8 +209,7 @@ class _StudentHomeState extends State<StudentHome> with WidgetsBindingObserver {
                     'Emergency Numbers',
                     style: TextStyle(
                       fontSize: 18,
-                      fontFamily: 'HelveticaNeue',
-                      fontWeight: FontWeight.bold,
+                      fontFamily: 'HelveticaNeueLight',
                       letterSpacing: 2.0,
                     ),
                   ),
@@ -198,7 +224,7 @@ class _StudentHomeState extends State<StudentHome> with WidgetsBindingObserver {
                     alignment: Alignment.bottomCenter,
                     child: Padding(
                       padding:
-                      EdgeInsets.fromLTRB(width * 0.8 * 0.24, 0, 0, 10.0),
+                          EdgeInsets.fromLTRB(width * 0.8 * 0.24, 0, 0, 10.0),
                       child: Row(
                         //has the icon and text
                         children: <Widget>[
@@ -206,9 +232,9 @@ class _StudentHomeState extends State<StudentHome> with WidgetsBindingObserver {
                             icon: Image(
                               image: AssetImage('assets/logout.png'),
                               fit: BoxFit.fill,
-                              color: const Color(0xff3596b5),
+                              color: const Color(0xff142850),
                             ),
-                            color: const Color(0xff3596b5),
+                            color: const Color(0xff142850),
                             onPressed: () {
                               showDialog(
                                   context: context,
@@ -217,8 +243,7 @@ class _StudentHomeState extends State<StudentHome> with WidgetsBindingObserver {
                                       title: Text(
                                         "Are you sure?",
                                         style: TextStyle(
-                                          fontFamily: 'HelveticaNeue',
-                                          fontWeight: FontWeight.bold,
+                                          fontFamily: 'HelveticaNeueLight',
                                           letterSpacing: 2.0,
                                           fontSize: 20,
                                           color: Colors.grey[600],
@@ -229,8 +254,7 @@ class _StudentHomeState extends State<StudentHome> with WidgetsBindingObserver {
                                           child: Text(
                                             'YES',
                                             style: TextStyle(
-                                              fontFamily: 'HelveticaNeue',
-                                              fontWeight: FontWeight.bold,
+                                              fontFamily: 'HelveticaNeueLight',
                                               letterSpacing: 3.0,
                                               fontSize: 20,
                                               color: const Color(0xff1a832a),
@@ -241,16 +265,15 @@ class _StudentHomeState extends State<StudentHome> with WidgetsBindingObserver {
                                             //! signout here                                        
                                             await _authStudent.logOut();
                                             Navigator.of(context).pop();
-                                            Navigator.pushReplacementNamed(context, '/select_login');
-                                            
+                                            Navigator.pushReplacementNamed(
+                                                context, '/select_login');
                                           },
                                         ),
                                         FlatButton(
                                           child: Text(
                                             'NO',
                                             style: TextStyle(
-                                              fontFamily: 'HelveticaNeue',
-                                              fontWeight: FontWeight.bold,
+                                              fontFamily: 'HelveticaNeueLight',
                                               letterSpacing: 2.5,
                                               fontSize: 20,
                                               color: const Color(0xffee0000),
@@ -271,7 +294,7 @@ class _StudentHomeState extends State<StudentHome> with WidgetsBindingObserver {
                             style: TextStyle(
                               fontSize: 18,
                               fontFamily: 'HelveticaNeueBold',
-                              color: const Color(0xff3596b5),
+                              color: const Color(0xff142850),
                             ),
                           ),
                         ],
@@ -287,182 +310,173 @@ class _StudentHomeState extends State<StudentHome> with WidgetsBindingObserver {
           title: Text(
             'Home',
             style: TextStyle(
-                fontSize: 28.0,
-              fontFamily: 'HelveticaNeue',
+              fontSize: 24.0,
+              fontFamily: 'HelveticaNeueLight',
               letterSpacing: 2.0,
-              fontWeight: FontWeight.bold,
             ),
           ),
           centerTitle: true,
-          backgroundColor: Colors.cyan[800],
+          backgroundColor: const Color(0xff142850),
         ),
-        body : Padding(
-          padding: EdgeInsets.fromLTRB(1.0, height/30, 1.0, 0),
-          child: Center(
+        body: Center(
+          child: Container(
+            constraints: BoxConstraints.expand(),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
+                SizedBox(height: height / 50),
                 Text(
                   'Severity Level',
                   style: TextStyle(
-                      fontSize : 15.0,
-                      fontFamily: 'HelveticaNeue',
-                      color: Colors.cyan[800],
+                    fontSize: 15.0,
+                    fontFamily: 'HelveticaNeueLight',
+                    color: Colors.white,
                     letterSpacing: 2.0,
-                    fontWeight: FontWeight.bold,
                   ),
                 ),
-                SizedBox(height: 10.0),
-                ToggleButtons(
-                  constraints: BoxConstraints(maxWidth: width/1.1),
-                  children: <Widget>[
-                    Padding(
-                      padding:  EdgeInsets.fromLTRB(22, 20, 22, 20),
-                      child: Text(
-                          "Low",
+                SizedBox(height: height / 76),
+                Card(
+                  color: const Color(0xff00a8cc),
+                  child: ToggleButtons(
+                    constraints: BoxConstraints(
+                        minWidth: width / 5, minHeight: height / 11),
+                    children: <Widget>[
+                      Text(
+                        "Low",
                         style: TextStyle(
-                          fontFamily: 'HelveticaNeue',
+                          fontFamily: 'HelveticaNeueLight',
                           letterSpacing: 2.0,
-                          fontWeight: FontWeight.bold,
                         ),
                       ),
-                    ),
-                    Padding(
-                      padding:  EdgeInsets.fromLTRB(10, 20, 10, 20),
-                      child: Text(
-                          "Medium",
+                      Text(
+                        "Medium",
                         style: TextStyle(
-                          fontFamily: 'HelveticaNeue',
+                          fontFamily: 'HelveticaNeueLight',
                           letterSpacing: 2.0,
-                          fontWeight: FontWeight.bold,
                         ),
                       ),
-                    ),
-                    Padding(
-                      padding:  EdgeInsets.fromLTRB(21, 20, 21, 20),
-                      child: Text(
-                          "High",
+                      Text(
+                        "High",
                         style: TextStyle(
-                          fontFamily: 'HelveticaNeue',
+                          fontFamily: 'HelveticaNeueLight',
                           letterSpacing: 2.0,
-                          fontWeight: FontWeight.bold,
                         ),
                       ),
-                    ),
-                    Padding(
-                      padding:  EdgeInsets.fromLTRB(12, 20, 12, 20),
-                      child: Text(
-                          "Critical",
+                      Text(
+                        "Critical",
                         style: TextStyle(
-                          fontFamily: 'HelveticaNeue',
+                          fontFamily: 'HelveticaNeueLight',
                           letterSpacing: 2.0,
-                          fontWeight: FontWeight.bold,
                         ),
                       ),
-                    ),
-                  ],
-                  color: Colors.cyan[600],
-                  selectedColor: Colors.white,
-                  fillColor: Colors.cyan[700],
-                  isSelected: _selections,
-                  onPressed: (int index){
-                    setState((){
-                      for(int buttonIndex = 0; buttonIndex < _selections.length; buttonIndex++){
-                        if(buttonIndex == index){
-                          _selections[buttonIndex] = true;
-                        } else{
-                          _selections[buttonIndex] = false;
+                    ],
+                    color: Colors.white,
+                    selectedColor: Colors.white,
+                    fillColor: Colors.redAccent,
+                    borderColor: Colors.white,
+                    selectedBorderColor: Colors.white,
+                    isSelected: _selections,
+                    onPressed: (int index) {
+                      setState(() {
+                        for (int buttonIndex = 0;
+                            buttonIndex < _selections.length;
+                            buttonIndex++) {
+                          if (buttonIndex == index) {
+                            _selections[buttonIndex] = true;
+                          } else {
+                            _selections[buttonIndex] = false;
+                          }
+                          _severityLevel = index;
                         }
-                        _severityLevel = index;
-                      }
-                      print(_severityLevel);
-                    });
-                  },
+                        print(_severityLevel);
+                      });
+                    },
+                  ),
                 ),
-                SizedBox(height: 20.0),
+                SizedBox(height: height / 30),
                 Text(
                   'Prefered MFR Gender',
                   style: TextStyle(
-                      fontSize : 15.0,
-                      color: Colors.cyan[800],
+                    fontSize: 15.0,
+                    color: Colors.white,
                     letterSpacing: 2.0,
-                    fontFamily: 'HelveticaNeue',
-                    fontWeight: FontWeight.bold,
+                    fontFamily: 'HelveticaNeueLight',
                   ),
                 ),
-                SizedBox(height: 10.0),
-                ToggleButtons(
-                  constraints: BoxConstraints(maxWidth: width/1.1),
-                  children: <Widget>[
-                    Padding(
-                      padding:  EdgeInsets.fromLTRB(18, 20, 18, 20),
-                      child: Text(
-                          "N/A",
+                SizedBox(height: height / 76),
+                Card(
+                  color: const Color(0xff00a8cc),
+                  child: ToggleButtons(
+                    constraints: BoxConstraints(
+                        minWidth: width / 5.5, minHeight: height / 11),
+                    children: <Widget>[
+                      Text(
+                        "N/A",
                         style: TextStyle(
-                          fontFamily: 'HelveticaNeue',
+                          fontFamily: 'HelveticaNeueLight',
                           letterSpacing: 2.0,
-                          fontWeight: FontWeight.bold,
                         ),
                       ),
-                    ),
-                    Padding(
-                      padding:  EdgeInsets.fromLTRB(17, 20, 17, 20),
-                      child: Text(
-                          "Male",
+                      Text(
+                        "Male",
                         style: TextStyle(
-                          fontFamily: 'HelveticaNeue',
+                          fontFamily: 'HelveticaNeueLight',
                           letterSpacing: 2.0,
-                          fontWeight: FontWeight.bold,
                         ),
                       ),
-                    ),
-                    Padding(
-                      padding:  EdgeInsets.fromLTRB(11, 20, 11, 20),
-                      child: Text(
-                          "Female",
+                      Text(
+                        "Female",
                         style: TextStyle(
-                          fontFamily: 'HelveticaNeue',
+                          fontFamily: 'HelveticaNeueLight',
                           letterSpacing: 2.0,
-                          fontWeight: FontWeight.bold,
                         ),
                       ),
-                    ),
-                  ],
-                  color: Colors.cyan[600],
-                  selectedColor: Colors.white,
-                  fillColor: Colors.cyan[700],
-                  isSelected: _selections2,
-                  onPressed: (int index){
-                    setState((){
-                      for(int buttonIndex = 0; buttonIndex < _selections2.length; buttonIndex++){
-                        if(buttonIndex == index){
-                          _selections2[buttonIndex] = true;
-                        } else{
-                          _selections2[buttonIndex] = false;
+                    ],
+                    color: Colors.white,
+                    selectedColor: Colors.white,
+                    fillColor: Colors.redAccent,
+                    borderColor: Colors.white,
+                    selectedBorderColor: Colors.white,
+                    isSelected: _selections2,
+                    onPressed: (int index) {
+                      setState(() {
+                        for (int buttonIndex = 0;
+                            buttonIndex < _selections2.length;
+                            buttonIndex++) {
+                          if (buttonIndex == index) {
+                            _selections2[buttonIndex] = true;
+                          } else {
+                            _selections2[buttonIndex] = false;
+                          }
+                          print(_gender);
                         }
-                        _gender = index;
-                      }
-                      print(_gender);
-                    });
-                  },
+                      });
+                    },
+                  ),
                 ),
-                SizedBox(height: 20.0),
+                SizedBox(height: height / 35),
                 RawMaterialButton(
-                  onPressed: (){
-                    setState(() {
-                      _emergency = true;
-                    });
-                  },
+                    onPressed: () {
+                      setState(() {
+                        _emergency = true;
+                      });
+                    }, //SOS function implemented here
+                    //A 'PendingEmergencies' document is created in the database with relevant attributes set
+                    //Student is taken to the live updates screen for live feedback
                     onLongPress: () {
+                      _createPendingEmergencyDocument(
+                          dummyLocation,
+                          _genderPreferences[_gender],
+                          _severityLevels[_severityLevel],
+                          _rollNumber);
                       Navigator.of(context).pushNamed('/live_status');
                       print("emergency initiated");
-                      print(width);
-                      print(height);
                     },
                     fillColor: Colors.red[400],
                     elevation: 10.0,
-                    constraints: BoxConstraints(minHeight: width/1.8, minWidth: width/1.8),
+                    constraints: BoxConstraints(
+                        minHeight: height / 2.7, minWidth: height / 2.7),
                     child: Text(
                       'SOS',
                       style: TextStyle(
@@ -474,35 +488,31 @@ class _StudentHomeState extends State<StudentHome> with WidgetsBindingObserver {
                       ),
                     ),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(width/1.8),
-                    )
-                ),
-                SizedBox(height: 10),
+                      borderRadius: BorderRadius.circular(height / 2.7),
+                    )),
+                SizedBox(height: height / 45),
                 Text(
                   'TAP AND HOLD FOR 2 SECONDS',
                   style: TextStyle(
-                    fontSize : 15.0,
+                    fontSize: 15.0,
                     color: Colors.red[400],
-                    fontWeight: FontWeight.bold,
-                    fontFamily: 'HelveticaNeue',
+                    fontFamily: 'HelveticaNeueLight',
                     letterSpacing: 2.0,
                   ),
                 ),
-                SizedBox(height: 3.0),
+                SizedBox(height: height / 120),
                 Text(
                   'INITIATE EMERGENCY',
                   style: TextStyle(
-                    fontSize : 15.0,
+                    fontSize: 15.0,
                     color: Colors.red[400],
-                    fontFamily: 'HelveticaNeue',
+                    fontFamily: 'HelveticaNeueLight',
                     letterSpacing: 2.0,
-                    fontWeight: FontWeight.bold,
                   ),
                 ),
               ],
             ),
           ),
-        )
-    );
+        ));
   }
 }
