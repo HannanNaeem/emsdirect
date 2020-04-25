@@ -1,4 +1,6 @@
 
+import 'package:ems_direct/ops.dart';
+import 'package:ems_direct/pages/MFR_home.dart';
 import 'package:ems_direct/services/auth.dart';
 import 'package:ems_direct/shared/loading.dart';
 import 'package:flutter/material.dart';
@@ -26,7 +28,7 @@ class _LoginEmsState extends State<LoginEms> {
   bool _loading = false;
   String _email;
   String _password;
-  bool _keepSignedin = false;
+  bool _keepSignedIn = false;
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final AuthService _authEms = AuthService();
@@ -116,13 +118,13 @@ class _LoginEmsState extends State<LoginEms> {
     return Row( children: <Widget> [
       Checkbox(
         
-        value: _keepSignedin,
+        value: _keepSignedIn,
         tristate: false,
         checkColor: Colors.grey[800],
         activeColor: Colors.grey[300],
         onChanged: (bool newValue) {
           setState(() {
-            _keepSignedin = newValue;
+            _keepSignedIn = newValue;
           });
           
         },
@@ -184,7 +186,7 @@ class _LoginEmsState extends State<LoginEms> {
                           //! TESTING
                           print(_email);
                           print(_password);
-                          print(_keepSignedin);
+                          print(_keepSignedIn);
 
 
 
@@ -230,21 +232,19 @@ class _LoginEmsState extends State<LoginEms> {
                           }
                           else{
                             print("User signed in!");
-                            print("User id: ${result.uid}");
                             
                             Navigator.pop(context);
                             if(_emsType == 'ops')
                             {
-                              Navigator.pushReplacementNamed(context,'/ops_home');
+                              Navigator.pushReplacement(context, MaterialPageRoute(
+                                builder: (context) => OpsHome(_keepSignedIn, result),
+                              ));
                             }
                             else if (_emsType == 'mfr')
                             {
-                              if(_keepSignedin){
-                                Navigator.pushReplacementNamed(context,'/mfr_home_keepSignedIn');
-                              }
-                              else{
-                                Navigator.pushReplacementNamed(context,'/mfr_home');
-                              }
+                              Navigator.pushReplacement(context, MaterialPageRoute(
+                                builder: (context) => MFRHome(_keepSignedIn, result),
+                                ));
                             }
 
                           }

@@ -17,22 +17,34 @@ class PendingEmergency {
 
 //This is the main homepage for any MFR login
 class MFRHome extends StatefulWidget {
+
+  //used to transfer data to the first created state
   bool _keepSignedIn = false;
-  MFRHome(bool keepSignedIn) {
+  var _userData;
+
+  MFRHome(bool keepSignedIn, var userData) {
     _keepSignedIn = keepSignedIn;
+    _userData = userData;
   }
 
   @override
-  _MFRHomeState createState() => _MFRHomeState(_keepSignedIn);
+  _MFRHomeState createState() => _MFRHomeState(_keepSignedIn,_userData);
 }
 
 class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
+  
   //keepMeSignedIn variable passed from login screen if successful
   bool _keepSignedIn = false;
 
-  // constructor to set keepSignedIn
-  _MFRHomeState(keepSignedIn) {
+  //user data doc
+  var _userData;
+
+  // constructor to set keepSignedIn and userData
+  _MFRHomeState(bool keepSignedIn, var userData) {
     _keepSignedIn = keepSignedIn;
+    _userData = userData;
+
+    print("--------------got ${_userData.data}");
   }
 
   //Tells whether toggle switch is to be on or off
@@ -42,14 +54,12 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
   DocumentSnapshot qs = null;
   bool shouldRender = false;
   var length = 0;
-  String _rollNumber = '21100118';
-  String _contact = '03362356254';
-  String _email = '21100118@lums.edu.pk';
+
 
   //instance of auth service
-  final AuthService _auth = AuthService();
-  final AuthService _authStudent = AuthService();
+
   final AuthService _authMfr = AuthService();
+
 
   //State management for keepsignedin ----------------------------------
 
@@ -67,11 +77,11 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
   }
 
   // ---------------------------------------------------------------------------------
-
+  // Hannan says get rid of this now ----------------------------------------------- !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   //Not required but keeping it for testing purposes ----------------------------------
   void _getData() {
     databaseReference
-        .collection('OngoingEmergencies')
+        .collection('UserData')
         .getDocuments()
         .then((QuerySnapshot snapshot) {
       snapshot.documents.forEach(((f) => print('${f.data}')));
@@ -123,7 +133,7 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
                   color: const Color(0xff142850),
                 ),
                 title: Text(
-                  'Harum Naseem',
+                  _userData.data['name'].toString(),
                   style: TextStyle(
                     fontSize: 15,
                     fontFamily: 'HelveticaNeueLight',
@@ -145,7 +155,7 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
                         ),
                         SizedBox(width: 2.0),
                         Text(
-                          '$_rollNumber',
+                          _userData.data['rollNo'].toString(),
                           style: TextStyle(
                             fontSize: 15,
                             fontFamily: 'HelveticaNeueLiight',
@@ -170,7 +180,7 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
                         ),
                         SizedBox(width: 2.0),
                         Text(
-                          _email,
+                          _userData.data['email'].toString(),
                           style: TextStyle(
                             fontSize: 15,
                             fontFamily: 'HelveticaNeueLight',
@@ -195,7 +205,7 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
                         ),
                         SizedBox(width: 1.0),
                         Text(
-                          '$_contact',
+                          _userData.data['contact'].toString(),
                           style: TextStyle(
                             fontSize: 15,
                             fontFamily: 'HelveticaNeueLight',
@@ -266,13 +276,6 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
                                         ),
                                         onPressed: () async {
                                           //navigation to login screen
-                                          //todo signout here
-                                          await _auth.logOut();
-                                          //todo signout here
-                                          await _authStudent.logOut();
-                                          Navigator.of(context).pop();
-                                          Navigator.pushReplacementNamed(
-                                              context, '/select_login');
                                           //! signout here
                                           await _authMfr.logOut();
                                           Navigator.of(context).pop();

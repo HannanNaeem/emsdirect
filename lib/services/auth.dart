@@ -78,7 +78,7 @@ class AuthService {
       {
         await UserDatabaseService(uid: uid).updateLoggedIn(emsType);
       }
-      return user;
+      return document;
 
     }
     catch(e){

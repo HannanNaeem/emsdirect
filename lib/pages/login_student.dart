@@ -15,7 +15,7 @@ class _LoginStudentState extends State<LoginStudent> with SingleTickerProviderSt
 
   String _email;
   String _password;
-  bool _keepSignedin = false;
+  bool _keepSignedIn = false;
   String _name;
   String _rollno;
   String _contact;
@@ -124,13 +124,13 @@ class _LoginStudentState extends State<LoginStudent> with SingleTickerProviderSt
     return Row( children: <Widget> [
       Checkbox(
         
-        value: _keepSignedin,
+        value: _keepSignedIn,
         tristate: false,
         checkColor: Colors.grey[800],
         activeColor: Colors.grey[300],
         onChanged: (bool newValue) {
           setState(() {
-            _keepSignedin = newValue;
+            _keepSignedIn = newValue;
           });
           
         },
@@ -313,7 +313,7 @@ class _LoginStudentState extends State<LoginStudent> with SingleTickerProviderSt
                           //! TESTING
                           print(_email);
                           print(_password);
-                          print(_keepSignedin);
+                          print(_keepSignedIn);
 
                           dynamic result = await _authStudent.signIn(_email,_password, '');
 
@@ -362,15 +362,11 @@ class _LoginStudentState extends State<LoginStudent> with SingleTickerProviderSt
                           }
                           else{
                             print("User signed in!");
-                            print("User id: ${result.uid}");
                             
                             Navigator.pop(context);
-                            if(_keepSignedin){
-                              Navigator.pushReplacementNamed(context,'/student_home_keepSignedIn');
-                            }
-                            else{
-                              Navigator.pushReplacementNamed(context,'/student_home');
-                            }
+                            Navigator.pushReplacement(context, MaterialPageRoute(
+                              builder: (context)=> StudentHome(_keepSignedIn, result)
+                            ));
                             
 
 
