@@ -1,9 +1,12 @@
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ems_direct/ops.dart';
 import 'package:ems_direct/pages/MFR_home.dart';
 import 'package:ems_direct/services/auth.dart';
+import 'package:ems_direct/services/ops_database.dart';
 import 'package:ems_direct/shared/loading.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class LoginEms extends StatefulWidget {
 
@@ -237,8 +240,13 @@ class _LoginEmsState extends State<LoginEms> {
                             if(_emsType == 'ops')
                             {
                               Navigator.pushReplacement(context, MaterialPageRoute(
-                                builder: (context) => OpsHome(_keepSignedIn, result),
-                              ));
+
+                                builder: (context) => StreamProvider<QuerySnapshot>.value(
+                                                        value: OpsDatabaseService().pendingStream,
+                                                        child:OpsHome(_keepSignedIn, result),
+                                                      )
+                               )
+                              );
                             }
                             else if (_emsType == 'mfr')
                             {

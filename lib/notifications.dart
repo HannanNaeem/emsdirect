@@ -1,7 +1,9 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ems_direct/notification_card.dart';
 import 'package:flutter/material.dart';
 import 'package:ems_direct/notification_data.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+import 'package:provider/provider.dart';
 
 class Notifications extends StatefulWidget {
   @override
@@ -19,6 +21,9 @@ class _NotificationsState extends State<Notifications> {
     var width = screenSize.width;
     var height = screenSize.height;
     print('triggered');
+
+    
+
 
     TimeOfDay timeOfDay = TimeOfDay.fromDateTime(DateTime.now());
     String res = timeOfDay.format(context);

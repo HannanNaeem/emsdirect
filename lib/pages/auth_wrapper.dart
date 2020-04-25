@@ -3,6 +3,7 @@ import 'package:ems_direct/models/user.dart';
 import 'package:ems_direct/ops.dart';
 import 'package:ems_direct/pages/MFR_home.dart';
 import 'package:ems_direct/services/auth.dart';
+import 'package:ems_direct/services/ops_database.dart';
 import 'package:ems_direct/services/user_database.dart';
 import 'package:ems_direct/shared/loading.dart';
 import 'package:flutter/material.dart';
@@ -47,7 +48,12 @@ class Wrapper extends StatelessWidget {
                         if(snapshot.hasData){
 
                             if(snapshot.data['loggedInAs'] == 'ops'){ // user is logged in as ops
-                              return OpsHome(true,snapshot.data);
+                              
+                              return StreamProvider<QuerySnapshot>.value(
+                                value: OpsDatabaseService().pendingStream,
+                                child: OpsHome(true,snapshot.data)
+                                );
+                            
                             }
                             else if(snapshot.data['loggedInAs'] == 'mfr'){ //user is logged in as mfr
                               return MFRHome(true,snapshot.data);
