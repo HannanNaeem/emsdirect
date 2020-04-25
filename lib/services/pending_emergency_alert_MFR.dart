@@ -1,5 +1,3 @@
-//import 'dart:html';
-
 import 'package:ems_direct/services/auth.dart';
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -7,23 +5,17 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:material_dialog/material_dialog.dart';
 import 'package:ems_direct/pages/MFR_home.dart';
+import 'package:provider/provider.dart';
 
 //This is responsible for alerting MFRs of any pending emergencies with a severity level of low/medium
 class AlertFunction extends StatefulWidget {
   var availability;
-  var length;
-  var render;
-  var documentSnapshot;
-  Function(bool) callback;
+  var occupied;
+  var mfrRollNo;
 
   //the alert is received on the MFRs screens depending on the three variables below
   //decision: only show alert if the MFR is available, there is a pending emergency document and that document is to be rendered
-  AlertFunction(
-      {this.availability,
-      this.length,
-      this.render,
-      this.documentSnapshot,
-      this.callback});
+  AlertFunction({this.availability, this.occupied, this.mfrRollNo});
   @override
   _AlertFunctionState createState() => _AlertFunctionState();
 }
@@ -32,19 +24,40 @@ class _AlertFunctionState extends State<AlertFunction> {
   var databaseReference = Firestore.instance;
 
   //deletes the given docID document
-  void deleteRecord(var docID) {
+  void deleteRecord(var docID) async {
     try {
-      Firestore.instance
+      await Firestore.instance
           .collection('PendingEmergencies')
           .document(docID)
-          .delete();
+          .delete()
+          .then((_) {
+        print('record deleted');
+      }).catchError((onError) {
+        print(onError.message);
+      });
     } catch (e) {
       print(e.toString());
     }
   }
 
-  //updates decline count of MFR
-  void updateDeclineCount(docID) async {
+  //updates occupied status of MFR
+  void updateOccupiedStatus(bool newVal, var docID) async {
+    DocumentReference docRef =
+        databaseReference.collection('Mfr').document(widget.mfrRollNo);
+    await databaseReference.runTransaction((Transaction tx) async {
+      DocumentSnapshot docSnapshot = await tx.get(docRef);
+      if (docSnapshot.exists) {
+        await tx.update(docRef, <String, dynamic>{'isOccupied': newVal});
+      }
+    }).then((_) {
+      print("Occupied status updated");
+    }).catchError((onError) {
+      print(onError.message);
+    });
+  }
+
+  //updates decline count of emergency
+  void updateDeclineCount(var docID) async {
     DocumentReference docRef =
         databaseReference.collection("PendingEmergencies").document(docID);
     await databaseReference.runTransaction((Transaction tx) async {
@@ -60,26 +73,32 @@ class _AlertFunctionState extends State<AlertFunction> {
     });
   }
 
+  //MFR roll number, emergency location, genderpreference, patientrollnumber, reported time, severity
   void createOngoingEmergencyDocument(
-      String mfrName, String contactNo, String severityLevel) async {
+      GeoPoint location,
+      String genderPreference,
+      String patientRollNo,
+      String severityLevel) async {
     await databaseReference
-        .collection("PendingEmergencies")
-        .document()
+        .collection('OngoingEmergencies')
+        .document(patientRollNo)
         .setData({
-      'mfrName': mfrName,
-      'contact': contactNo,
+      'mfr': widget.mfrRollNo,
+      'location': location,
+      'genderPreference': genderPreference,
+      'patientRollNo': patientRollNo,
       'reporting_time': FieldValue.serverTimestamp(),
       'severity': severityLevel,
     });
   }
 
   //main function to show alert
-  void showAlert(bool available, int num, bool render, DocumentSnapshot doc,
-      var width, var height) {
-    num = 1; //FOR TESTING ALERTS BASED ON SITUATIONS WITH A NULL STREAM
-    if (available == true && num > 0 && render) {
+  void showAlert(int num, DocumentSnapshot doc, var width, var height) {
+    num = 0; //FOR TESTING ALERTS BASED ON SITUATIONS WITH A NULL STREAM
+    widget.occupied = true;
+    if (widget.availability == true && num > 0 && !widget.occupied) {
       //-------------- TESTING ------------------------------------
-      print(render);
+      print(widget.occupied);
       print(doc.data);
       print('ID: ${doc.documentID}');
       //-----------------------------------------------------------
@@ -123,12 +142,15 @@ class _AlertFunctionState extends State<AlertFunction> {
                 ),
                 onPressed: () {
                   print('yes');
-                  //TODO: add real name and contact here
+                  //MFR roll number, emergency location, genderpreference, patientrollnumber, reported time, severity
                   createOngoingEmergencyDocument(
-                      "Name", "contactNo", doc.data['severity']);
+                      doc.data['location'],
+                      doc.data['genderPreference'],
+                      doc.data['patientRollNo'],
+                      doc.data['severity']);
                   deleteRecord(doc.documentID);
+                  updateOccupiedStatus(true, doc.documentID);
                   //returns true to make sure MFR does not receive more alerts
-                  widget.callback(true);
                   Navigator.of(context).pop();
                 },
               ),
@@ -148,7 +170,6 @@ class _AlertFunctionState extends State<AlertFunction> {
                 ),
                 onPressed: () {
                   print('no');
-                  widget.callback(false);
                   updateDeclineCount(doc.documentID);
                   Navigator.of(context).pop();
                 },
@@ -160,29 +181,35 @@ class _AlertFunctionState extends State<AlertFunction> {
     }
   }
 
-  //UNSURE OF THIS
-  @override
-  void dispose() {
-    print('widget disposed');
-    super.dispose();
+  void printData(var docs) {
+    if (docs != null)
+      for (int i = 0; i < docs.documents.length; i++) {
+        print(docs.documents[i].data);
+      }
   }
+
+  //UNSURE OF THIS
+//  @override
+//  void dispose() {
+//    print('widget disposed');
+//    super.dispose();
+//  }
 
   @override
   Widget build(BuildContext context) {
     var screenSize = MediaQuery.of(context).size;
     var width = screenSize.width;
     var height = screenSize.height;
-
+    var docs = Provider.of<QuerySnapshot>(context);
     print('IN THIS FUNCTION');
 
     //Calls the show alert function after build is complete to avoid repeated alerts
-    WidgetsBinding.instance.addPostFrameCallback((_) => showAlert(
-        widget.availability,
-        widget.length,
-        widget.render,
-        widget.documentSnapshot,
-        width,
-        height));
-    return Container(key: UniqueKey());
+//    if (widget.availability)
+//      WidgetsBinding.instance.addPostFrameCallback((_) => printData(docs));
+    if (widget.availability)
+      WidgetsBinding.instance.addPostFrameCallback((_) =>
+          showAlert(docs.documents.length, docs.documents[0], width, height));
+
+    return Container();
   }
 }
