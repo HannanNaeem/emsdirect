@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:ems_direct/pages/auth_wrapper.dart';
 import 'package:ems_direct/pages/student_home.dart';
 import 'package:flutter/material.dart';
 import 'package:ems_direct/models/user.dart';
@@ -20,17 +21,7 @@ class _SplashScreenState extends State<SplashScreen> {
             MaterialPageRoute(
                   builder : (BuildContext context) {
 
-                    //Go to select login or home screen if authenticated
-                    //dynamically change screen depending on authentication
-                    final thisUser = Provider.of<User>(context);
-                    print(thisUser);
-
-                    if (thisUser == null){
-                      return SelectLogin();
-                     }
-                     else{
-                      return StudentHome();
-                     }
+                      return Wrapper();
                   }
             )
             )
