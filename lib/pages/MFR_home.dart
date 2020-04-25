@@ -54,9 +54,7 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
   DocumentSnapshot qs = null;
   bool shouldRender = false;
   var length = 0;
-  String _rollNumber = '21100118';
-  String _contact = '03362356254';
-  String _email = '21100118@lums.edu.pk';
+
 
   //instance of auth service
 
@@ -135,7 +133,7 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
                   color: const Color(0xff142850),
                 ),
                 title: Text(
-                  'Harum Naseem',
+                  _userData.data['name'].toString(),
                   style: TextStyle(
                     fontSize: 15,
                     fontFamily: 'HelveticaNeueLight',
@@ -157,7 +155,7 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
                         ),
                         SizedBox(width: 2.0),
                         Text(
-                          '$_rollNumber',
+                          _userData.data['rollNo'].toString(),
                           style: TextStyle(
                             fontSize: 15,
                             fontFamily: 'HelveticaNeueLiight',
@@ -182,7 +180,7 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
                         ),
                         SizedBox(width: 2.0),
                         Text(
-                          _email,
+                          _userData.data['email'].toString(),
                           style: TextStyle(
                             fontSize: 15,
                             fontFamily: 'HelveticaNeueLight',
@@ -207,7 +205,7 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
                         ),
                         SizedBox(width: 1.0),
                         Text(
-                          '$_contact',
+                          _userData.data['contact'].toString(),
                           style: TextStyle(
                             fontSize: 15,
                             fontFamily: 'HelveticaNeueLight',

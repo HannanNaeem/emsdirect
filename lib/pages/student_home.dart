@@ -38,9 +38,6 @@ class _StudentHomeState extends State<StudentHome> with WidgetsBindingObserver {
   int _gender = 0;
   int _severityLevel = 0;
   bool _emergency = false;
-  String _rollNumber = '21100118';
-  String _contact = '03362356254';
-  String _email = '21100118@lums.edu.pk';
   GeoPoint dummyLocation = GeoPoint(4, 12);
   /////////////////////////////////////////////////////////////////
 
@@ -126,7 +123,7 @@ class _StudentHomeState extends State<StudentHome> with WidgetsBindingObserver {
                     color: const Color(0xff142850),
                   ),
                   title: Text(
-                    'Harum Naseem',
+                    _userData.data['name'].toString(),
                     style: TextStyle(
                       fontSize: 15,
                       fontFamily: 'HelveticaNeueLight',
@@ -148,7 +145,7 @@ class _StudentHomeState extends State<StudentHome> with WidgetsBindingObserver {
                           ),
                           SizedBox(width: 2.0),
                           Text(
-                            '$_rollNumber',
+                            _userData.data['rollNo'].toString(),
                             style: TextStyle(
                               fontSize: 15,
                               fontFamily: 'HelveticaNeueLiight',
@@ -173,7 +170,7 @@ class _StudentHomeState extends State<StudentHome> with WidgetsBindingObserver {
                           ),
                           SizedBox(width: 2.0),
                           Text(
-                            _email,
+                            _userData.data['email'].toString(),
                             style: TextStyle(
                               fontSize: 15,
                               fontFamily: 'HelveticaNeueLight',
@@ -198,7 +195,7 @@ class _StudentHomeState extends State<StudentHome> with WidgetsBindingObserver {
                           ),
                           SizedBox(width: 1.0),
                           Text(
-                            '$_contact',
+                            _userData.data['contact'].toString(),
                             style: TextStyle(
                               fontSize: 15,
                               fontFamily: 'HelveticaNeueLight',
@@ -479,7 +476,7 @@ class _StudentHomeState extends State<StudentHome> with WidgetsBindingObserver {
                       print(dummyLocation);
                       print(_genderPreferences[_gender]);
                       print(_severityLevels[_severityLevel]);
-                      print(_rollNumber);
+                      //print(_rollNumber);
                       Navigator.of(context).pushNamed('/live_status');
                       print("emergency initiated");
                     },
