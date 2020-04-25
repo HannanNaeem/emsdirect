@@ -18,12 +18,14 @@ class PendingEmergency {
 //This is the main homepage for any MFR login
 class MFRHome extends StatefulWidget {
   bool _keepSignedIn = false;
-  MFRHome(bool keepSignedIn) {
+  var _userData;
+  MFRHome(bool keepSignedIn, var userData) {
     _keepSignedIn = keepSignedIn;
+    _userData = userData;
   }
 
   @override
-  _MFRHomeState createState() => _MFRHomeState(_keepSignedIn);
+  _MFRHomeState createState() => _MFRHomeState(_keepSignedIn,_userData);
 }
 
 class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
@@ -31,9 +33,15 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
   //keepMeSignedIn variable passed from login screen if successful
   bool _keepSignedIn = false;
 
+  //user data doc
+  var _userData;
+
   // constructor to set keepSignedIn
-  _MFRHomeState(keepSignedIn) {
+  _MFRHomeState(bool keepSignedIn, var userData) {
     _keepSignedIn = keepSignedIn;
+    _userData = userData;
+
+    print("--------------got ${_userData.data}");
   }
 
   //Tells whether toggle switch is to be on or off
@@ -72,7 +80,7 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
   //Not required but keeping it for testing purposes ----------------------------------
   void _getData() {
     databaseReference
-        .collection('OngoingEmergencies')
+        .collection('UserData')
         .getDocuments()
         .then((QuerySnapshot snapshot) {
       snapshot.documents.forEach(((f) => print('${f.data}')));

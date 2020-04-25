@@ -1,4 +1,5 @@
 
+import 'package:ems_direct/pages/MFR_home.dart';
 import 'package:ems_direct/services/auth.dart';
 import 'package:ems_direct/shared/loading.dart';
 import 'package:flutter/material.dart';
@@ -230,7 +231,6 @@ class _LoginEmsState extends State<LoginEms> {
                           }
                           else{
                             print("User signed in!");
-                            print("User id: ${result.uid}");
                             
                             Navigator.pop(context);
                             if(_emsType == 'ops')
@@ -239,12 +239,9 @@ class _LoginEmsState extends State<LoginEms> {
                             }
                             else if (_emsType == 'mfr')
                             {
-                              if(_keepSignedin){
-                                Navigator.pushReplacementNamed(context,'/mfr_home_keepSignedIn');
-                              }
-                              else{
-                                Navigator.pushReplacementNamed(context,'/mfr_home');
-                              }
+                              Navigator.pushReplacement(context, MaterialPageRoute(
+                                builder: (context) => MFRHome(_keepSignedin, result),
+                                ));
                             }
 
                           }

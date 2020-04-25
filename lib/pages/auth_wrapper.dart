@@ -50,10 +50,10 @@ class Wrapper extends StatelessWidget {
                               return Ops();
                             }
                             else if(snapshot.data['loggedInAs'] == 'mfr'){ //user is logged in as mfr
-                              return MFRHome(true);
+                              return MFRHome(true,snapshot.data);
                             }
                             else{ // user is logged in as student
-                              return StudentHome(true);
+                              return StudentHome(true,snapshot.data);
                             }
 
                           }                         

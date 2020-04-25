@@ -5,12 +5,14 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class StudentHome extends StatefulWidget {
 
   bool _keepSignedIn = false;
-  StudentHome(bool keepSignedIn){
+  var _userData;
+  StudentHome(bool keepSignedIn, var userData){
     _keepSignedIn = keepSignedIn;
+    _userData = userData;
   }
 
   @override
-  _StudentHomeState createState() => _StudentHomeState(_keepSignedIn);
+  _StudentHomeState createState() => _StudentHomeState(_keepSignedIn,_userData);
 }
 
 
@@ -18,10 +20,15 @@ class _StudentHomeState extends State<StudentHome> with WidgetsBindingObserver {
 
   //keepMeSignedIn vairable passed from login screen if successful
   bool _keepSignedIn = false;
+  //document for userData
+  var _userData;
 
   // constructor to set keepSignedIn
-  _StudentHomeState(keepSignedIn){
+  _StudentHomeState(bool keepSignedIn, var userData){
     _keepSignedIn = keepSignedIn;
+    _userData = userData;
+
+    print("-----------------------got ${_userData.data}");
   }
 
   List<bool> _selections = List.generate(4, (_) => false);
