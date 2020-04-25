@@ -23,7 +23,6 @@ class MyApp extends StatelessWidget {
         '/live_status': (context) => LiveStatus(),
         '/emergencyNumbers': (context) => EmergencyNumbers(),
         '/select_login': (context) => SelectLogin(),
-        '/ops_home': (context) => Ops(),
         '/availableMFRs': (context) => AvailableMfrs(),
       },
     );

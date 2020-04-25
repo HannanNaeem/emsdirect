@@ -5,13 +5,66 @@ import 'package:ems_direct/notifications.dart';
 import 'package:ems_direct/services/auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class Ops extends StatefulWidget {
+class OpsHome extends StatefulWidget {
+
+  //used to transfer data to the first created state
+  bool _keepSignedIn = false;
+  var _userData;
+
+  OpsHome(bool keepSignedIn, var userData) {
+    _keepSignedIn = keepSignedIn;
+    _userData = userData;
+  }
+
   @override
-  State<StatefulWidget> createState() => AppState();
+  _OpsHomeState createState() => _OpsHomeState(_keepSignedIn,_userData);
 }
 
-class AppState extends State<Ops> {
+class _OpsHomeState extends State<OpsHome> with WidgetsBindingObserver {
+
+  //Authentication service 
+  final AuthService _authOps = AuthService();
+
+  //keepMeSignedIn variable passed from login screen if successful
+  bool _keepSignedIn = false;
+
+  //user data doc
+  var _userData;
+
+  // constructor to set keepSignedIn and userData
+  _OpsHomeState(bool keepSignedIn, var userData) {
+    _keepSignedIn = keepSignedIn;
+    _userData = userData;
+
+    print("--------------got ${_userData.data}");
+  }
+
+
+  //State management for keepsignedin ----------------------------------
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if(_keepSignedIn == false && state == AppLifecycleState.inactive){
+      _authOps.logOut();
+    }
+  }
+  // ---------------------------------------------------------------------------------
+
+
   int _selectedPage = 2;
+
+
   final _pageOptions = [
     Center(child: Text('Log')),
     Notifications(),
@@ -210,11 +263,9 @@ class AppState extends State<Ops> {
                                         ),
                                       ),
                                       onPressed: () async {
-                                        //navigation to login screen
-                                        //todo signout here
-                                        await _auth.logOut();
-                                        //todo signout here
-                                        await _authStudent.logOut();
+
+                                        //signout here
+                                        await _authOps.logOut();
                                         Navigator.of(context).pop();
                                         Navigator.pushReplacementNamed(
                                             context, '/select_login');

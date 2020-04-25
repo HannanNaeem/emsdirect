@@ -17,8 +17,11 @@ class PendingEmergency {
 
 //This is the main homepage for any MFR login
 class MFRHome extends StatefulWidget {
+
+  //used to transfer data to the first created state
   bool _keepSignedIn = false;
   var _userData;
+
   MFRHome(bool keepSignedIn, var userData) {
     _keepSignedIn = keepSignedIn;
     _userData = userData;
@@ -36,7 +39,7 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
   //user data doc
   var _userData;
 
-  // constructor to set keepSignedIn
+  // constructor to set keepSignedIn and userData
   _MFRHomeState(bool keepSignedIn, var userData) {
     _keepSignedIn = keepSignedIn;
     _userData = userData;
@@ -76,7 +79,7 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
   }
 
   // ---------------------------------------------------------------------------------
-
+  // Hannan says get rid of this now ----------------------------------------------- !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   //Not required but keeping it for testing purposes ----------------------------------
   void _getData() {
     databaseReference
