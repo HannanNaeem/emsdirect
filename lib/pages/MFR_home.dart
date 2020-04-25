@@ -9,22 +9,32 @@ import 'package:ems_direct/pages/available_MFRs.dart';
 
 //This is the main homepage for any MFR login
 class MFRHome extends StatefulWidget {
+  //used to transfer data to the first created state
   bool _keepSignedIn = false;
-  MFRHome(bool keepSignedIn) {
+  var _userData;
+
+  MFRHome(bool keepSignedIn, var userData) {
     _keepSignedIn = keepSignedIn;
+    _userData = userData;
   }
 
   @override
-  _MFRHomeState createState() => _MFRHomeState(_keepSignedIn);
+  _MFRHomeState createState() => _MFRHomeState(_keepSignedIn, _userData);
 }
 
 class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
   //keepMeSignedIn variable passed from login screen if successful
   bool _keepSignedIn = false;
 
-  // constructor to set keepSignedIn
-  _MFRHomeState(keepSignedIn) {
+  //user data doc
+  var _userData;
+
+  // constructor to set keepSignedIn and userData
+  _MFRHomeState(bool keepSignedIn, var userData) {
     _keepSignedIn = keepSignedIn;
+    _userData = userData;
+
+    print("--------------got ${_userData.data}");
   }
 
   //Tells whether toggle switch is to be on or off
@@ -34,16 +44,8 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
   DocumentSnapshot qs = null;
   bool shouldRender = false;
   var length = 0;
-  String _rollNumber = '21100118';
-  String _contact = '03362356254';
-  String _email = '21100118@lums.edu.pk';
-  bool acceptPendingEmergency = false;
-  var updatedDocID = null;
-  bool updatedDeclineDoc = false;
 
   //instance of auth service
-  final AuthService _auth = AuthService();
-  final AuthService _authStudent = AuthService();
   final AuthService _authMfr = AuthService();
 
   //State management for keepsignedin ----------------------------------
@@ -61,33 +63,13 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
     }
   }
 
-  // ---------------------------------------------------------------------------------
-
-  //Not required but keeping it for testing purposes ----------------------------------
-  void _getData() {
-    databaseReference
-        .collection('OngoingEmergencies')
-        .getDocuments()
-        .then((QuerySnapshot snapshot) {
-      snapshot.documents.forEach(((f) => print('${f.data}')));
-    });
-  }
-  // ---------------------------------------------------------------------------------
-
   @override
   void initState() {
     super.initState();
     //State management for keepsignedin
     WidgetsBinding.instance.addObserver(this);
-    //initializing stream to null as MFR will be unavailable by default
+    //initializing stream to null as MFR will always be unavailable unless made available by himself
     _documentStream = null;
-  }
-
-  //callback function to determine if the MFR is busy with an emergency
-  void callback(newVal) {
-    setState(() {
-      acceptPendingEmergency = newVal;
-    });
   }
 
   void updateDeclineCount(docID) async {
@@ -110,8 +92,6 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
   Widget build(BuildContext context) {
     //------- TESTING PURPOSES ------------------
     print('Context rebuit');
-    print('Accept status of pending Emergency: $acceptPendingEmergency');
-    //-------------------------------------------
 
     //Getting screen dimensions to adjust widgets accordingly
     var screenSize = MediaQuery.of(context).size;
@@ -142,7 +122,7 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
                   color: const Color(0xff142850),
                 ),
                 title: Text(
-                  'Harum Naseem',
+                  _userData.data['name'].toString(),
                   style: TextStyle(
                     fontSize: 15,
                     fontFamily: 'HelveticaNeueLight',
@@ -164,7 +144,7 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
                         ),
                         SizedBox(width: 2.0),
                         Text(
-                          '$_rollNumber',
+                          _userData.data['rollNo'].toString(),
                           style: TextStyle(
                             fontSize: 15,
                             fontFamily: 'HelveticaNeueLiight',
@@ -189,7 +169,7 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
                         ),
                         SizedBox(width: 2.0),
                         Text(
-                          _email,
+                          _userData.data['email'].toString(),
                           style: TextStyle(
                             fontSize: 15,
                             fontFamily: 'HelveticaNeueLight',
@@ -214,7 +194,7 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
                         ),
                         SizedBox(width: 1.0),
                         Text(
-                          '$_contact',
+                          _userData.data['contact'].toString(),
                           style: TextStyle(
                             fontSize: 15,
                             fontFamily: 'HelveticaNeueLight',
@@ -285,13 +265,6 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
                                         ),
                                         onPressed: () async {
                                           //navigation to login screen
-                                          //todo signout here
-                                          await _auth.logOut();
-                                          //todo signout here
-                                          await _authStudent.logOut();
-                                          Navigator.of(context).pop();
-                                          Navigator.pushReplacementNamed(
-                                              context, '/select_login');
                                           //! signout here
                                           await _authMfr.logOut();
                                           Navigator.of(context).pop();
@@ -388,47 +361,20 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
                   } else {
                     //the MFR is busy and so should not be sent another alert
                     shouldRender = false;
-
-                    //these conditions are to deal with the re-building problem
-                    //this essentially keeps track of whether the snapshot documents are still the same
-                    //if all the documents are same and the updated bool is set to true, this means that
-                    //the decline count for all the emergencies for this MFR is up to date
-                    if (updatedDocID == snapshot.data.documents[0].documentID &&
-                        updatedDeclineDoc) {
-                      //updating decline count on all the pending emergencies
-                      for (int i = 0; i < length; i++) {
-                        //incase a new emergency comes in, only do decline for that particular emergency
-                        if (updatedDocID ==
-                            snapshot.data.documents[i].documentID) break;
-                        updateDeclineCount(
-                            snapshot.data.documents[i].documentID);
-                      }
-                      //these variables are to deal with the re-building problem
-                      updatedDocID = snapshot.data.documents[0].documentID;
-                      updatedDeclineDoc = true;
-                    }
                   }
+                  //for (int i = 0; i < length; i++) {
+//                    print(snapshot.data.documents[i].data);
+//                  }
                 }
-
-                //---------- TESTING without stream on ----------------------------------------
-//                if (acceptPendingEmergency) {
-//                  shouldRender = false;
-//                } else {
-//                  shouldRender = true;
-//                }
-                //-----------------------------------------------------------------------------
 
                 return Column(
                   //everything is placed in the column
                   children: <Widget>[
-                    //sends in all parameters into function which returns the alert widget if applicable
-                    //the callback function it to update status of MFR - busy or not
                     AlertFunction(
                         availability: isAvailable,
                         length: length,
-                        render: shouldRender,
-                        documentSnapshot: qs,
-                        callback: callback),
+                        render: shouldRender),
+                    //showAlert(isAvailable, length), //AlertFunction(),
                     Flexible(
                       flex: 3,
                       child: Container(

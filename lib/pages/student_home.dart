@@ -3,22 +3,32 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class StudentHome extends StatefulWidget {
+
   bool _keepSignedIn = false;
-  StudentHome(bool keepSignedIn) {
+  var _userData;
+  StudentHome(bool keepSignedIn, var userData){
     _keepSignedIn = keepSignedIn;
+    _userData = userData;
   }
 
   @override
-  _StudentHomeState createState() => _StudentHomeState(_keepSignedIn);
+  _StudentHomeState createState() => _StudentHomeState(_keepSignedIn,_userData);
 }
 
+
 class _StudentHomeState extends State<StudentHome> with WidgetsBindingObserver {
+
   //keepMeSignedIn vairable passed from login screen if successful
   bool _keepSignedIn = false;
+  //document for userData
+  var _userData;
 
   // constructor to set keepSignedIn
-  _StudentHomeState(keepSignedIn) {
+  _StudentHomeState(bool keepSignedIn, var userData){
     _keepSignedIn = keepSignedIn;
+    _userData = userData;
+
+    print("-----------------------got ${_userData.data}");
   }
 
   List<bool> _selections = List.generate(4, (_) => false);
@@ -28,17 +38,15 @@ class _StudentHomeState extends State<StudentHome> with WidgetsBindingObserver {
   int _gender = 0;
   int _severityLevel = 0;
   bool _emergency = false;
-  String _rollNumber = '21100118';
-  String _contact = '03362356254';
-  String _email = '21100118@lums.edu.pk';
   GeoPoint dummyLocation = GeoPoint(4, 12);
+  /////////////////////////////////////////////////////////////////
+
+
 
   //instance of auth service
   final AuthService _auth = AuthService();
   final AuthService _authStudent = AuthService();
-  //an instance of firestore
-  final databaseReference = Firestore.instance;
-
+  
   //State management for keepsignedin ----------------------------------
   @override
   void initState() {
@@ -54,11 +62,14 @@ class _StudentHomeState extends State<StudentHome> with WidgetsBindingObserver {
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (_keepSignedIn == false && state == AppLifecycleState.inactive) {
+    if(_keepSignedIn == false && state == AppLifecycleState.inactive){
       _authStudent.logOut();
     }
   }
   // ---------------------------------------------------------------------------------
+
+  //an object made to work with firestore
+  final databaseReference = Firestore.instance;
 
   /////////////////////////// FUNCTIONS ///////////////////////////
   void _getData() {
@@ -76,11 +87,11 @@ class _StudentHomeState extends State<StudentHome> with WidgetsBindingObserver {
         .collection("PendingEmergencies")
         .document()
         .setData({
-      'location': location,
-      'gender_reference': genderPref,
-      'patient_roll_no': rollNumber,
-      'severity': severityLevel,
-      'declines': 0
+      'Location': location,
+      'Gender Preference': genderPref,
+      "Patient roll_no": rollNumber,
+      'Severity': severityLevel,
+      'Declines': 0
     });
   }
   /////////////////////////////////////////////////////////////////
@@ -112,7 +123,7 @@ class _StudentHomeState extends State<StudentHome> with WidgetsBindingObserver {
                     color: const Color(0xff142850),
                   ),
                   title: Text(
-                    'Harum Naseem',
+                    _userData.data['name'].toString(),
                     style: TextStyle(
                       fontSize: 15,
                       fontFamily: 'HelveticaNeueLight',
@@ -134,7 +145,7 @@ class _StudentHomeState extends State<StudentHome> with WidgetsBindingObserver {
                           ),
                           SizedBox(width: 2.0),
                           Text(
-                            '$_rollNumber',
+                            _userData.data['rollNo'].toString(),
                             style: TextStyle(
                               fontSize: 15,
                               fontFamily: 'HelveticaNeueLiight',
@@ -159,7 +170,7 @@ class _StudentHomeState extends State<StudentHome> with WidgetsBindingObserver {
                           ),
                           SizedBox(width: 2.0),
                           Text(
-                            _email,
+                            _userData.data['email'].toString(),
                             style: TextStyle(
                               fontSize: 15,
                               fontFamily: 'HelveticaNeueLight',
@@ -184,7 +195,7 @@ class _StudentHomeState extends State<StudentHome> with WidgetsBindingObserver {
                           ),
                           SizedBox(width: 1.0),
                           Text(
-                            '$_contact',
+                            _userData.data['contact'].toString(),
                             style: TextStyle(
                               fontSize: 15,
                               fontFamily: 'HelveticaNeueLight',
@@ -255,7 +266,7 @@ class _StudentHomeState extends State<StudentHome> with WidgetsBindingObserver {
                                           ),
                                           onPressed: () async {
                                             //navigation to login screen
-                                            //! signout here
+                                            //! signout here                                        
                                             await _authStudent.logOut();
                                             Navigator.of(context).pop();
                                             Navigator.pushReplacementNamed(
@@ -465,7 +476,7 @@ class _StudentHomeState extends State<StudentHome> with WidgetsBindingObserver {
                       print(dummyLocation);
                       print(_genderPreferences[_gender]);
                       print(_severityLevels[_severityLevel]);
-                      print(_rollNumber);
+                      //print(_rollNumber);
                       Navigator.of(context).pushNamed('/live_status');
                       print("emergency initiated");
                     },

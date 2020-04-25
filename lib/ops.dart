@@ -5,13 +5,66 @@ import 'package:ems_direct/notifications.dart';
 import 'package:ems_direct/services/auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class Ops extends StatefulWidget {
+class OpsHome extends StatefulWidget {
+
+  //used to transfer data to the first created state
+  bool _keepSignedIn = false;
+  var _userData;
+
+  OpsHome(bool keepSignedIn, var userData) {
+    _keepSignedIn = keepSignedIn;
+    _userData = userData;
+  }
+
   @override
-  State<StatefulWidget> createState() => AppState();
+  _OpsHomeState createState() => _OpsHomeState(_keepSignedIn,_userData);
 }
 
-class AppState extends State<Ops> {
+class _OpsHomeState extends State<OpsHome> with WidgetsBindingObserver {
+
+  //Authentication service 
+  final AuthService _authOps = AuthService();
+
+  //keepMeSignedIn variable passed from login screen if successful
+  bool _keepSignedIn = false;
+
+  //user data doc
+  var _userData;
+
+  // constructor to set keepSignedIn and userData
+  _OpsHomeState(bool keepSignedIn, var userData) {
+    _keepSignedIn = keepSignedIn;
+    _userData = userData;
+
+    print("--------------got ${_userData.data}");
+  }
+
+
+  //State management for keepsignedin ----------------------------------
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if(_keepSignedIn == false && state == AppLifecycleState.inactive){
+      _authOps.logOut();
+    }
+  }
+  // ---------------------------------------------------------------------------------
+
+
   int _selectedPage = 2;
+
+
   final _pageOptions = [
     Center(child: Text('Log')),
     Notifications(),
@@ -24,9 +77,7 @@ class AppState extends State<Ops> {
     'Map',
     'Records'
   ];
-  String _rollNumber = '21100118';
-  String _contact = '03362356254';
-  String _email = '21100118@lums.edu.pk';
+
   //instance of auth service
   final AuthService _auth = AuthService();
   final AuthService _authStudent = AuthService();
@@ -39,7 +90,7 @@ class AppState extends State<Ops> {
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: const Color(0xff3596b5),
+        backgroundColor: const Color(0xff142850),
         title: Text(
           _headerNames[_selectedPage],
           style: TextStyle(
@@ -69,7 +120,7 @@ class AppState extends State<Ops> {
                 color: const Color(0xff142850),
               ),
               title: Text(
-                'Harum Naseem',
+                _userData.data['name'].toString(),
                 style: TextStyle(
                   fontSize: 15,
                   fontFamily: 'HelveticaNeueLight',
@@ -91,7 +142,7 @@ class AppState extends State<Ops> {
                       ),
                       SizedBox(width: 2.0),
                       Text(
-                        '$_rollNumber',
+                        _userData.data['rollNo'].toString(),
                         style: TextStyle(
                           fontSize: 15,
                           fontFamily: 'HelveticaNeueLiight',
@@ -116,7 +167,7 @@ class AppState extends State<Ops> {
                       ),
                       SizedBox(width: 2.0),
                       Text(
-                        _email,
+                        _userData.data['email'].toString(),
                         style: TextStyle(
                           fontSize: 15,
                           fontFamily: 'HelveticaNeueLight',
@@ -141,7 +192,7 @@ class AppState extends State<Ops> {
                       ),
                       SizedBox(width: 1.0),
                       Text(
-                        '$_contact',
+                        _userData.data['contact'].toString(),
                         style: TextStyle(
                           fontSize: 15,
                           fontFamily: 'HelveticaNeueLight',
@@ -210,11 +261,9 @@ class AppState extends State<Ops> {
                                         ),
                                       ),
                                       onPressed: () async {
-                                        //navigation to login screen
-                                        //todo signout here
-                                        await _auth.logOut();
-                                        //todo signout here
-                                        await _authStudent.logOut();
+
+                                        //signout here
+                                        await _authOps.logOut();
                                         Navigator.of(context).pop();
                                         Navigator.pushReplacementNamed(
                                             context, '/select_login');
@@ -267,10 +316,10 @@ class AppState extends State<Ops> {
         },
         showUnselectedLabels: true,
         type: BottomNavigationBarType.fixed,
-        backgroundColor: const Color(0xff3596b5),
-        selectedItemColor: Colors.white,
+        backgroundColor: const Color(0xff142850),
+        selectedItemColor: Colors.cyan[200],//const Color(0xff73cde8),
         selectedFontSize: 15,
-        unselectedItemColor: const Color(0xff73cde8),
+        unselectedItemColor: Colors.grey[500],
         iconSize: 30,
         items: [
           BottomNavigationBarItem(
