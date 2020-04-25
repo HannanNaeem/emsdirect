@@ -6,6 +6,7 @@ import 'package:ems_direct/ops.dart';
 import 'package:ems_direct/pages/login_student.dart';
 import 'package:ems_direct/pages/login_ems.dart';
 import 'package:ems_direct/pages/SplashScreen.dart';
+import 'package:ems_direct/pages/MapMFR.dart';
 import 'package:ems_direct/pages/available_MFRs.dart';
 
 
@@ -15,7 +16,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: SplashScreen(),
+      home: MapMFR(),
       routes: {
         '/login_student': (context) => LoginStudent(),
         '/login_ems_mfr': (context) => LoginEms('mfr'),
