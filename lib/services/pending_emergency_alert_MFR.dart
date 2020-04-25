@@ -94,8 +94,8 @@ class _AlertFunctionState extends State<AlertFunction> {
 
   //main function to show alert
   void showAlert(int num, DocumentSnapshot doc, var width, var height) {
-    num = 0; //FOR TESTING ALERTS BASED ON SITUATIONS WITH A NULL STREAM
-    widget.occupied = true;
+    num = 1; //FOR TESTING ALERTS BASED ON SITUATIONS WITH A NULL STREAM
+    widget.occupied = false;
     if (widget.availability == true && num > 0 && !widget.occupied) {
       //-------------- TESTING ------------------------------------
       print(widget.occupied);
@@ -142,15 +142,13 @@ class _AlertFunctionState extends State<AlertFunction> {
                 ),
                 onPressed: () {
                   print('yes');
-                  //MFR roll number, emergency location, genderpreference, patientrollnumber, reported time, severity
-                  createOngoingEmergencyDocument(
-                      doc.data['location'],
-                      doc.data['genderPreference'],
-                      doc.data['patientRollNo'],
-                      doc.data['severity']);
-                  deleteRecord(doc.documentID);
-                  updateOccupiedStatus(true, doc.documentID);
-                  //returns true to make sure MFR does not receive more alerts
+//                  createOngoingEmergencyDocument(
+//                      doc.data['location'],
+//                      doc.data['genderPreference'],
+//                      doc.data['patientRollNo'],
+//                      doc.data['severity']);
+//                  deleteRecord(doc.documentID);
+//                  updateOccupiedStatus(true, doc.documentID);
                   Navigator.of(context).pop();
                 },
               ),
@@ -170,7 +168,7 @@ class _AlertFunctionState extends State<AlertFunction> {
                 ),
                 onPressed: () {
                   print('no');
-                  updateDeclineCount(doc.documentID);
+                  //updateDeclineCount(doc.documentID);
                   Navigator.of(context).pop();
                 },
               ),
@@ -184,16 +182,9 @@ class _AlertFunctionState extends State<AlertFunction> {
   void printData(var docs) {
     if (docs != null)
       for (int i = 0; i < docs.documents.length; i++) {
-        print(docs.documents[i].data);
+        print(docs.documents[i].data['declinedBy'][0]);
       }
   }
-
-  //UNSURE OF THIS
-//  @override
-//  void dispose() {
-//    print('widget disposed');
-//    super.dispose();
-//  }
 
   @override
   Widget build(BuildContext context) {
@@ -204,9 +195,9 @@ class _AlertFunctionState extends State<AlertFunction> {
     print('IN THIS FUNCTION');
 
     //Calls the show alert function after build is complete to avoid repeated alerts
-//    if (widget.availability)
-//      WidgetsBinding.instance.addPostFrameCallback((_) => printData(docs));
     if (widget.availability)
+      WidgetsBinding.instance.addPostFrameCallback((_) => printData(docs));
+    if (widget.availability && docs != null)
       WidgetsBinding.instance.addPostFrameCallback((_) =>
           showAlert(docs.documents.length, docs.documents[0], width, height));
 

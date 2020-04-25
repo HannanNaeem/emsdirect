@@ -44,7 +44,7 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
   static final databaseReference = Firestore.instance;
   Stream<QuerySnapshot> _documentStream;
   var isAvailable = false;
-  var isOccupied;
+  var isOccupied = false;
 
   //instance of auth service
   final AuthService _authMfr = AuthService();
@@ -113,6 +113,7 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
           .document(docId)
           .get()
           .then((onVal) {
+        isOccupied = onVal.data['isOccupied'];
         print('done!');
       }).catchError((onError) {
         print(onError.message);
@@ -130,7 +131,7 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
 
   Stream<QuerySnapshot> setStreamValue(bool available) {
     print('getting value');
-    available = false;
+    //available = false;
     if (available) {
       return databaseReference
           .collection('PendingEmergencies')
@@ -387,7 +388,7 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
             children: <Widget>[
               AlertFunction(
                   availability: isAvailable,
-                  occupied: false,
+                  occupied: isOccupied,
                   mfrRollNo: _userData['rollNo']),
               //showAlert(isAvailable, length), //AlertFunction(),
               Flexible(
@@ -419,10 +420,9 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
                                   value: isAvailable,
                                   onChanged: (bool newVal) {
                                     setState(() {
+                                      isAvailable = newVal;
                                       upDateAvailability(
                                           isAvailable, _userData['rollNo']);
-                                      isAvailable = newVal;
-                                      //isOccupied = snapshot.data['isOccupied'];
                                     });
                                   },
                                   activeTrackColor: Colors.green,
@@ -463,6 +463,7 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
                           ),
                           onPressed: () {
                             print('Clicked');
+                            Navigator.of(context).pushNamed('/dummy');
                           },
                         ),
                         Center(

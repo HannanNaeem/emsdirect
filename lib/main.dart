@@ -1,3 +1,4 @@
+import 'package:ems_direct/dummy.dart';
 import 'package:ems_direct/pages/SelectLogin.dart';
 import 'package:flutter/material.dart';
 import 'package:ems_direct/pages/live_status.dart';
@@ -23,6 +24,7 @@ class MyApp extends StatelessWidget {
         '/emergencyNumbers': (context) => EmergencyNumbers(),
         '/select_login': (context) => SelectLogin(),
         '/availableMFRs': (context) => AvailableMfrs(),
+        '/dummy': (context) => DummyPage(),
       },
     );
   }
