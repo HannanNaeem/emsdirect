@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:ems_direct/records.dart';
 import 'package:ems_direct/map.dart';
 import 'package:ems_direct/notifications.dart';
+import 'package:ems_direct/emergency_log.dart';
 import 'package:ems_direct/services/auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -66,9 +67,7 @@ class _OpsHomeState extends State<OpsHome> with WidgetsBindingObserver {
 
 
   final _pageOptions = [
-    Container(
-      color: const Color(0xff27496d),
-    ),
+    EmergencyLog(),
     Notifications(),
     OpsMap(),
     Records(),
