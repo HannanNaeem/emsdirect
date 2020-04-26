@@ -9,8 +9,9 @@ class SevereEmergencyModel {
   final int declines;
   final List declinedBy;
   final String severity;
+  final String patientContactNo;
 
-  SevereEmergencyModel({this.patientRollNo, this.genderPreference, this.location, this.declines, this.declinedBy, this.severity});
+  SevereEmergencyModel({this.patientRollNo, this.genderPreference, this.location, this.declines, this.declinedBy, this.severity, this.patientContactNo});
 }
 
 
@@ -23,8 +24,9 @@ class DeclinedEmergencyModel {
   final int declines;
   final List declinedBy;
   final String severity;
+  final String patientContactNo;
 
-  DeclinedEmergencyModel({this.patientRollNo, this.genderPreference, this.location, this.declines, this.declinedBy, this.severity});
+  DeclinedEmergencyModel({this.patientContactNo,this.patientRollNo, this.genderPreference, this.location, this.declines, this.declinedBy, this.severity});
 }
 
 
@@ -36,8 +38,9 @@ class PendingEmergencyModel {
   final int declines;
   final List declinedBy;
   final String severity;
+  final String patientContactNo;
 
-  PendingEmergencyModel({this.patientRollNo, this.genderPreference, this.location, this.declines, this.declinedBy, this.severity});
+  PendingEmergencyModel({this.patientContactNo,this.patientRollNo, this.genderPreference, this.location, this.declines, this.declinedBy, this.severity});
 }
 
 class OngoingEmergencyModel {
@@ -48,7 +51,8 @@ class OngoingEmergencyModel {
   final String mfr;
   final DateTime reportingTime;
   final String severity;
+  final String patientContactNo;
 
-  OngoingEmergencyModel({this.patientRollNo, this.genderPreference, this.location, this.mfr, this.reportingTime, this.severity});
+  OngoingEmergencyModel({this.patientContactNo,this.patientRollNo, this.genderPreference, this.location, this.mfr, this.reportingTime, this.severity});
 }
 
