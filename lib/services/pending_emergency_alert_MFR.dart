@@ -124,7 +124,7 @@ class _AlertFunctionMfrState extends State<AlertFunctionMfr> {
       'location': location,
       'genderPreference': genderPreference,
       'patientRollNo': patientRollNo,
-      'reporting_time': FieldValue.serverTimestamp(),
+      'reportingTime': FieldValue.serverTimestamp(),
       'severity': severityLevel,
     });
   }
