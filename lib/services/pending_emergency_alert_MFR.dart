@@ -6,12 +6,10 @@ import 'package:flutter/material.dart';
 import 'package:material_dialog/material_dialog.dart';
 import 'package:ems_direct/pages/MFR_home.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 //This is responsible for alerting MFRs of any pending emergencies with a severity level of low/medium
 class AlertFunctionMfr extends StatefulWidget {
-//  var availability;
-//  var occupied;
-//  var mfrRollNo;
   var _userData;
 
   //the alert is received on the MFRs screens depending on the three variables below
@@ -32,11 +30,11 @@ class _AlertFunctionMfrState extends State<AlertFunctionMfr> {
 
     print("--------------got ${_userData.data}");
   }
+
   var databaseReference = Firestore.instance;
   var _isAvailable;
   var _isOccupied;
-
-  var futures = List<Future>();
+  var _gender;
 
   void getInitialData(var docId) {
     try {
@@ -44,6 +42,7 @@ class _AlertFunctionMfrState extends State<AlertFunctionMfr> {
         setState(() {
           _isOccupied = onVal.data['isOccupied'];
           _isAvailable = onVal.data['isActive'];
+          _gender = onVal.data['gender'];
           print('done!');
         });
       }).catchError((onError) {
@@ -89,24 +88,7 @@ class _AlertFunctionMfrState extends State<AlertFunctionMfr> {
     });
   }
 
-  //updates decline count of emergency
-  Future updateDeclineCount(var docID) async {
-    DocumentReference docRef =
-        databaseReference.collection("PendingEmergencies").document(docID);
-    await databaseReference.runTransaction((Transaction tx) async {
-      DocumentSnapshot docSnapshot = await tx.get(docRef);
-      if (docSnapshot.exists) {
-        await tx.update(docRef,
-            <String, dynamic>{'declines': docSnapshot.data['declines'] + 1});
-      }
-    }).then((_) {
-      print("Decline count incremented");
-    }).catchError((onError) {
-      print(onError.message);
-    });
-  }
-
-  //updates declinedBy of emergency
+  //updates field values after rejection
   Future updateDeclineBy(var docID) async {
     DocumentReference docRef =
         databaseReference.collection("PendingEmergencies").document(docID);
@@ -115,9 +97,11 @@ class _AlertFunctionMfrState extends State<AlertFunctionMfr> {
       if (docSnapshot.exists) {
         await tx.update(docRef, <String, dynamic>{
           'declinedBy': FieldValue.arrayUnion([
-            widget._userData['rollNo']
+            widget._userData['rollNo'],
           ]) //docSnapshot.data['declinedBy'].add(widget.mfrRollNo)
         });
+        await tx.update(docRef,
+            <String, dynamic>{'declines': docSnapshot.data['declines'] + 1});
       }
     }).then((_) {
       print("declinedBy updated");
@@ -126,7 +110,7 @@ class _AlertFunctionMfrState extends State<AlertFunctionMfr> {
     });
   }
 
-  //MFR roll number, emergency location, genderpreference, patientrollnumber, reported time, severity
+  //creates a document in OngoingEmergencies after accpetance of a pending emergency
   void createOngoingEmergencyDocument(
       GeoPoint location,
       String genderPreference,
@@ -147,106 +131,120 @@ class _AlertFunctionMfrState extends State<AlertFunctionMfr> {
 
   //main function to show alert
   Future showAlert(var num, DocumentSnapshot doc, var width, var height) async {
-    num = 1; //FOR TESTING ALERTS BASED ON SITUATIONS WITH A NULL STREAM
-    //_isOccupied = true;
+    //------------TESTING---------------------
+    //num = 1; //FOR TESTING ALERTS BASED ON SITUATIONS WITH A NULL STREAM
+//    _isOccupied = false;
+//    _isAvailable = true;
+//    var doc = {
+//      'declines': 0,
+//      'severity': 'low',
+//      'genderPreference': 'F',
+//      'patientRollNo': '21100118',
+//      'declinedBY': [''],
+//      'location': null
+//    };
+    //-----------------------------------------
 
+    //only shows alerts if there is a pending emergency document AND if MFR is available+not occupied
     if (_isAvailable && num > 0 && !_isOccupied) {
       //-------------- TESTING ------------------------------------
       // print(widget.occupied);
       //print(doc.data);
-      print('ID: ${doc.documentID}');
+      //print('ID: ${doc.documentID}');
       //-----------------------------------------------------------
       showDialog(
         context: context,
-        builder: (context) => AlertDialog(
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-          title: Text(
-            "New Emergency!!",
-            style: TextStyle(
-              fontFamily: 'HelveticaNeueLight',
-              letterSpacing: 2.0,
-              fontSize: 20,
-            ),
-          ),
-          content: Text(
-            "Severity level: ${doc.data['severity']}",
-            style: TextStyle(
-              fontFamily: 'HelveticaNeueLight',
-              letterSpacing: 2.0,
-              fontSize: 18,
-              //color: Colors.grey[600],
-            ),
-          ),
-          actions: <Widget>[
-            Padding(
-              //alignment: Alignment.bottomLeft,
-              padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
-              child: FlatButton(
-                child: Text(
-                  'ACCEPT',
-                  style: TextStyle(
-                    fontFamily: 'HelveticaNeueLight',
-                    //fontWeight: FontWeight.bold,
-                    letterSpacing: 2.0,
-                    fontSize: 20,
-                    color: const Color(0xff1a832a),
+        builder: (context) => Container(
+//          height: height / 14,
+//          width: width / 2.7,
+          child: AspectRatio(
+            aspectRatio: 2 / 3,
+            child: AlertDialog(
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20)),
+              title: Text(
+                "New Emergency!!",
+                style: TextStyle(
+                  fontFamily: 'HelveticaNeueLight',
+                  letterSpacing: 2.0,
+                  fontSize: 20,
+                ),
+              ),
+              content: Stack(
+                children: <Widget>[
+                  Text(
+                    "Severity level:${doc.data['severity']}",
+                    style: TextStyle(
+                      fontFamily: 'HelveticaNeueLight',
+                      letterSpacing: 2.0,
+                      fontSize: 18,
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(0, 30, 0, 0),
+                    child: Text(
+                      "Patient: ${doc.data['patientRollNo']}",
+                      style: TextStyle(
+                        fontFamily: 'HelveticaNeueLight',
+                        letterSpacing: 2.0,
+                        fontSize: 18,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              actions: <Widget>[
+                FlatButton(
+                  child: Text(
+                    'ACCEPT',
+                    style: TextStyle(
+                      fontFamily: 'HelveticaNeueLight',
+                      letterSpacing: 2.0,
+                      fontSize: 20,
+                      color: const Color(0xff1a832a),
+                    ),
+                  ),
+                  onPressed: () {
+                    print('yes');
+                    createOngoingEmergencyDocument(
+                        doc.data['location'],
+                        doc.data['genderPreference'],
+                        doc.data['patientRollNo'],
+                        doc.data['severity']);
+                    deleteRecord(doc.documentID);
+                    updateOccupiedStatus(true, doc.documentID);
+                    Navigator.of(context).pop();
+                  },
+                ),
+                SizedBox(width: 10),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(0, 0, 10, 0),
+                  child: FlatButton(
+                    child: Text(
+                      'REJECT',
+                      style: TextStyle(
+                        fontFamily: 'HelveticaNeueLight',
+                        letterSpacing: 2,
+                        fontSize: 20,
+                        color: const Color(0xffee0000),
+                      ),
+                    ),
+                    onPressed: () async {
+                      print('no');
+                      Navigator.of(context).pop();
+                      await updateDeclineBy(doc.documentID);
+                    },
                   ),
                 ),
-                onPressed: () {
-                  print('yes');
-                  createOngoingEmergencyDocument(
-                      doc.data['location'],
-                      doc.data['genderPreference'],
-                      doc.data['patientRollNo'],
-                      doc.data['severity']);
-                  deleteRecord(doc.documentID);
-                  updateOccupiedStatus(true, doc.documentID);
-                  Navigator.of(context).pop();
-                },
-              ),
+              ],
             ),
-            SizedBox(width: 10),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(0, 0, 10, 0),
-              child: FlatButton(
-                child: Text(
-                  'REJECT',
-                  style: TextStyle(
-                    fontFamily: 'HelveticaNeueLight',
-                    letterSpacing: 2,
-                    fontSize: 20,
-                    color: const Color(0xffee0000),
-                  ),
-                ),
-                onPressed: () async {
-                  print('no');
-                  Navigator.of(context).pop();
-                  //await updateDeclineCount(doc.documentID);
-                  //await updateDeclineBy(doc.documentID);
-                  return rejectCalls(doc.documentID);
-                },
-              ),
-            ),
-          ],
+          ),
         ),
       );
     }
   }
 
-  Future rejectCalls(var docID) async {
-    var futures = List<Future>();
-    futures.add(updateDeclineBy(docID));
-    futures.add(updateDeclineBy(docID));
-
-    await Future.wait(futures);
-    print('Reject calls done!');
-  }
-
-  Future completeFutures() async {
-    return await Future.wait(futures);
-  }
-
+  //------------TESTING---------------------
   void printData(var docs) {
     if (docs != null)
       for (int i = 0; i < docs.length; i++) {
@@ -254,66 +252,58 @@ class _AlertFunctionMfrState extends State<AlertFunctionMfr> {
       }
   }
 
+  //----------------------------------------
+
   @override
   void initState() {
     super.initState();
-    //State management for keepsignedin
-    //WidgetsBinding.instance.addObserver(this);
-    //initializing stream to null as MFR will always be unavailable unless made available by himself
-    //_documentStream = null;
-
+    //getting MFRs data on initialization
     WidgetsBinding.instance.addPostFrameCallback(
         (_) => getInitialData(widget._userData['rollNo']));
   }
 
   @override
   Widget build(BuildContext context) {
+    //getting screen size information
     var screenSize = MediaQuery.of(context).size;
     var _width = screenSize.width;
     var _height = screenSize.height;
+    print(_height);
+    print(_width);
     var _docs = Provider.of<QuerySnapshot>(context);
     var num = 0;
     print('IN THIS FUNCTION');
 
-    if (_docs != null) {
+    //handling cases for null values (this can happen in the case of null data being received from the stream)
+    if (_docs != null && _isAvailable != null && _isOccupied != null) {
+      //getting the document list from the snapshot for the purpose of further filtering
       List<DocumentSnapshot> _docList = _docs.documents;
-      if (_docs.documents[0].data != null) {
-        //List<DocumentSnapshot> filtered =
-        _docList.removeWhere((item) =>
-            item.data['declinedBy'].contains(widget._userData['rollNo']));
-        num = _docList.length;
-        print(num);
+      //making sure the alerts received are those which are not already declined by the MFR
+      //if (_docs.documents[0].data != null) {
+      //handling the null value error
+      _docList.removeWhere((item) =>
+          item.data['declinedBy'].contains(widget._userData['rollNo']));
+      _docList.retainWhere(
+          (item) => item.data['genderPreference'].contains(_gender));
+      num = _docList.length;
+      print(num);
+      //}
+      //only call the show alert function if the MFR is available, not occupied and actually has emergencies to tend to
+      if ((_isAvailable) && (_docs != null) && (num > 0) && (!_isOccupied)) {
+        WidgetsBinding.instance
+            .addPostFrameCallback((_) => printData(_docList));
+        WidgetsBinding.instance.addPostFrameCallback((_) async =>
+            await showAlert(
+                _docs.documents.length, _docList[0], _width, _height));
       }
 
-      //Calls the show alert function after build is complete to avoid repeated alerts
-      if (_isAvailable != null || _isOccupied != null) {
-        if ((_isAvailable) && (_docs != null) && (num > 0) && (!_isOccupied)) {
-          WidgetsBinding.instance
-              .addPostFrameCallback((_) => printData(_docList));
-          WidgetsBinding.instance.addPostFrameCallback((_) async =>
-              await showAlert(
-                  _docs.documents.length, _docList[0], _width, _height));
-        }
-      }
+//      if (_isAvailable != null && _isOccupied != null) {
+//        if ((_isAvailable) && (_docs != null) && (num > 0) && (!_isOccupied)) {
+//          WidgetsBinding.instance.addPostFrameCallback((_) => printData(_docList));
+//          WidgetsBinding.instance.addPostFrameCallback((_) async => await showAlert(_docs.documents.length, _docList[0], _width, _height));
+//        }
     }
 
-    Future.delayed(Duration(seconds: 3));
-
-    //return Container();
-
-    return FutureBuilder(
-        future: completeFutures(),
-        builder: (BuildContext context, AsyncSnapshot snapshot) {
-          if (snapshot.connectionState == ConnectionState.done) {
-            return
-          } else {
-            return Container(
-              child: SpinKitPulse(
-                color: Colors.white,
-                size: 50,
-              ),
-            );
-          }
-        });
+    return Container();
   }
 }
