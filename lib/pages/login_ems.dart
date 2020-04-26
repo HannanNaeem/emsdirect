@@ -40,8 +40,7 @@ class _LoginEmsState extends State<LoginEms> {
             hintText: 'Email Address',
             hintStyle: TextStyle(
               color: Colors.grey[700],
-              fontFamily: 'HelveticaNeue',
-              fontWeight: FontWeight.bold,
+              fontFamily: 'HelveticaNeueLight',
               letterSpacing: 2.0,
             ),
             errorStyle: TextStyle(
@@ -79,8 +78,7 @@ class _LoginEmsState extends State<LoginEms> {
             hintText: 'Password',
             hintStyle: TextStyle(
               color: Colors.grey[700],
-              fontFamily: 'HelveticaNeue',
-              fontWeight: FontWeight.bold,
+              fontFamily: 'HelveticaNeueLight',
               letterSpacing: 2.0,
             ),
             errorStyle: TextStyle(
@@ -140,8 +138,8 @@ class _LoginEmsState extends State<LoginEms> {
             _buildKeepSignedIn(),
             SizedBox(height: height / 20),
             ButtonTheme(
-              height: height / 15,
-              minWidth: height / 6,
+              height: height / 14,
+              minWidth: height / 5,
               child: RaisedButton(
                 onPressed: () async {
                   if (!_formKey.currentState.validate()) {
@@ -225,6 +223,7 @@ class _LoginEmsState extends State<LoginEms> {
                 child: Text('LOGIN',
                     style: TextStyle(
                       color: Colors.white,
+                      fontSize: 14,
                       fontFamily: 'HelveticaNeueBold',
                       letterSpacing: 3.0,
                     )),
@@ -265,7 +264,8 @@ class _LoginEmsState extends State<LoginEms> {
               child: SafeArea(
                 child: SingleChildScrollView(
                   child: Padding(
-                    padding: EdgeInsets.fromLTRB(30, 0, 30, 0),
+                    padding:
+                        EdgeInsets.fromLTRB(height / 30, 0, height / 30, 0),
                     child: Center(
                       child: Column(
                         children: <Widget>[
@@ -274,7 +274,7 @@ class _LoginEmsState extends State<LoginEms> {
                             scale: (height) / 200,
                           ),
                           Padding(
-                            padding: const EdgeInsets.fromLTRB(0, 40, 0, 0),
+                            padding: EdgeInsets.fromLTRB(0, height/30, 0, 0),
                             child: Text(
                               'EMS LOGIN',
                               style: TextStyle(
@@ -287,10 +287,10 @@ class _LoginEmsState extends State<LoginEms> {
                           ),
                           _buildForm(height),
                           SizedBox(
-                            height: 40,
+                            height: height/30,
                           ),
                           Padding(
-                            padding: const EdgeInsets.fromLTRB(0, 0, 0, 30),
+                            padding: EdgeInsets.fromLTRB(0, 0, 0, height/40),
                             child: Text(
                               'EMS DIRECT',
                               style: TextStyle(
