@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:ems_direct/models/user.dart';
+import 'package:ems_direct/models/emergency_models.dart';
 import 'package:ems_direct/ops.dart';
 import 'package:ems_direct/pages/MFR_home.dart';
 import 'package:ems_direct/services/auth.dart';
@@ -50,10 +50,10 @@ class Wrapper extends StatelessWidget {
 
                             if(snapshot.data['loggedInAs'] == 'ops'){ // user is logged in as ops
                               
-                              return StreamProvider<QuerySnapshot>.value(
+                              return StreamProvider<List<PendingEmergencyModel>>.value(
                                 value: OpsDatabaseService().pendingStream,
-                                child: OpsWrapper(true,snapshot.data)
-                                );
+                                child:OpsWrapper(true,snapshot.data)
+                                  );
                             
                             }
                             else if(snapshot.data['loggedInAs'] == 'mfr'){ //user is logged in as mfr

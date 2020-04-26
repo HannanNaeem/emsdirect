@@ -1,4 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:ems_direct/models/emergency_models.dart';
+
+
 
 
 class OpsDatabaseService {
@@ -9,15 +12,26 @@ class OpsDatabaseService {
   final CollectionReference pendingEmergencies = Firestore.instance.collection('PendingEmergencies');
 
 
-  //get pending emergencies
-  Stream<QuerySnapshot> get pendingStream {
-    return pendingEmergencies.where('declines',isEqualTo: 4).snapshots();
+
+  //Pending emergency list from snapshot
+  List<PendingEmergencyModel> _pendingEmergencyListFromSnapshot(QuerySnapshot snapshot){
+    return snapshot.documents.map((doc){
+      return PendingEmergencyModel(
+        patientRollNo : doc.data['patientRollNo'],
+        genderPreference : doc.data['genderPreference'],
+        location : doc.data['location'],
+        declines : doc.data['declines'],
+        declinedBy : doc.data['declinedBy'],
+      );
+    }).toList();
   }
 
-  //get severe emergencies
-  // Stream<QuerySnapshot> get severeStream {
-  //   return pendingEmergencies.where('severity',isEqualTo: );
-  // }
+  //get pending emergencies
+  Stream<List<PendingEmergencyModel>> get pendingStream {
+    return pendingEmergencies.snapshots().map(_pendingEmergencyListFromSnapshot);
+  }
+
 
 
 }
+

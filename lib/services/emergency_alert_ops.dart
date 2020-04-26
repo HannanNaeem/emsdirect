@@ -1,7 +1,6 @@
-import 'package:ems_direct/ops.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:ems_direct/models/emergency_models.dart';
 
 
 class AlertOps extends StatefulWidget {
@@ -18,8 +17,9 @@ class _AlertOpsState extends State<AlertOps> {
     var screenSize = MediaQuery.of(context).size;
     var _width = screenSize.width;
     var _height = screenSize.height;
-    var _docs = Provider.of<QuerySnapshot>(context);
-    //print(_docs.documents);
+    var _pendingEmergencyList = Provider.of<List<PendingEmergencyModel>>(context);
+    //print(_ignored.documents);
+    
 
     void _showAlert(){
      
@@ -94,11 +94,17 @@ class _AlertOpsState extends State<AlertOps> {
     
 
     //Calls the show alert function after build is complete to avoid repeated alerts
-    if (_docs != null && _docs.documents.length != 0)
+    if (_pendingEmergencyList != null)
     {
-      print(_docs.documents);
+      _pendingEmergencyList.forEach((emergency){
+        print(emergency.declines);
+        print(emergency.declinedBy);
+        print(emergency.genderPreference);
+        print(emergency.patientRollNo);
+        print(emergency.location);
+      });
       WidgetsBinding.instance.addPostFrameCallback((_) =>
-          _showAlert());//_docs.documents.length, _docs.documents[0], _width, _height));
+          _showAlert());//_ignored.documents.length, _ignored.documents[0], _width, _height));
     }
 
     return Container();

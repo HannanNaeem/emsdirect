@@ -101,7 +101,7 @@ class _OpsHomeState extends State<OpsHome> with WidgetsBindingObserver {
     var width = screenSize.width;
     var height = screenSize.height;
 
-    final ignoredEmergencies = Provider.of<QuerySnapshot>(context);
+    //final ignoredEmergencies = Provider.of<QuerySnapshot>(context);
 
     
 
