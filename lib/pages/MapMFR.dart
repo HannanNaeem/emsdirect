@@ -177,6 +177,17 @@ class MapState extends State<MapMFR> {
                 markers: Set.of((marker!=null) ? [marker] : []),
                 onCameraMove: _onCameraMove,
               ),
+//              Padding(
+//                  padding: EdgeInsets.fromLTRB(width*0.1, height*0.1, width*0.1, 10.0),
+//                  child: Text(
+//                    'Student Number: ',
+//                    style: TextStyle(
+//                      fontFamily: 'HelveticaNeueLight',
+//                      letterSpacing: 2.0,
+//                      fontSize: 0.014*(height+width),
+//                    ),
+//                  )
+//              ),
               Padding(
                   padding: EdgeInsets.fromLTRB(width*0.23, height*0.75, width*0.16, 10.0),
                   child: SizedBox (
