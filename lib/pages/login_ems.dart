@@ -243,9 +243,12 @@ class _LoginEmsState extends State<LoginEms> {
                             {
                               Navigator.pushReplacement(context, MaterialPageRoute(
 
-                                builder: (context) => StreamProvider<List<PendingEmergencyModel>>.value(
-                                  value: OpsDatabaseService().pendingStream,
-                                  child:OpsWrapper(_keepSignedIn, result),
+                                builder: (context) => StreamProvider<List<SevereEmergencyModel>>.value(
+                                  value: OpsDatabaseService().severeStream,
+                                  child: StreamProvider<List<DeclinedEmergencyModel>>.value(
+                                    value: OpsDatabaseService().declinedStream,
+                                    child:OpsWrapper(_keepSignedIn, result),
+                                  ),
                                 )
                                )
                               );

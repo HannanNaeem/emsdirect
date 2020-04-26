@@ -13,22 +13,42 @@ class OpsDatabaseService {
 
 
 
-  //Pending emergency list from snapshot
-  List<PendingEmergencyModel> _pendingEmergencyListFromSnapshot(QuerySnapshot snapshot){
+  //Declined emergency list from snapshot
+  List<DeclinedEmergencyModel> _pendingEmergencyListFromSnapshot(QuerySnapshot snapshot){
     return snapshot.documents.map((doc){
-      return PendingEmergencyModel(
+      return DeclinedEmergencyModel(
         patientRollNo : doc.data['patientRollNo'],
         genderPreference : doc.data['genderPreference'],
         location : doc.data['location'],
         declines : doc.data['declines'],
         declinedBy : doc.data['declinedBy'],
+        severity : doc.data['severity'],
+      );
+    }).toList();
+  }
+
+  //Severe emergency list from snapshot
+  List<SevereEmergencyModel> _severeEmergencyListFromSnapshot(QuerySnapshot snapshot){
+    return snapshot.documents.map((doc){
+      return SevereEmergencyModel(
+        patientRollNo : doc.data['patientRollNo'],
+        genderPreference : doc.data['genderPreference'],
+        location : doc.data['location'],
+        declines : doc.data['declines'],
+        declinedBy : doc.data['declinedBy'],
+        severity : doc.data['severity'],
       );
     }).toList();
   }
 
   //get pending emergencies
-  Stream<List<PendingEmergencyModel>> get pendingStream {
-    return pendingEmergencies.snapshots().map(_pendingEmergencyListFromSnapshot);
+  Stream<List<DeclinedEmergencyModel>> get declinedStream {
+    return pendingEmergencies.where('declines', isGreaterThanOrEqualTo: 4).snapshots().map(_pendingEmergencyListFromSnapshot);
+  }
+
+  //get severe emergencies
+  Stream<List<SevereEmergencyModel>> get severeStream {
+    return pendingEmergencies.where('severity', whereIn: ['high','critical']).snapshots().map(_severeEmergencyListFromSnapshot);
   }
 
 
