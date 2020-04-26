@@ -15,7 +15,6 @@ class SevereEmergencyModel {
 }
 
 
-
 class DeclinedEmergencyModel {
   
   final String patientRollNo;
