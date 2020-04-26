@@ -498,41 +498,50 @@ class _LoginStudentState extends State<LoginStudent>
                   child: Center(
                     child: Padding(
                       padding: EdgeInsets.fromLTRB(height/ 30, 0, height/30, 0),
-                      child: Column(
+                      child: Stack(
                         children: <Widget>[
-                          Image.asset(
-                            'assets/ems_logo.png',
-                            scale: height / 200,
+                          Container(
+                            alignment: Alignment.center,
+                            child: Image.asset(
+                              'assets/ems_logo.png',
+                              scale: height / 200,
+                            ),
                           ),
 
                           SizedBox(height: 40),
 
-                          TabBar(
-                            controller: _controller,
-                            indicatorColor: Colors.white,
-                            tabs: <Widget>[
-                              Tab(
-                                  child: Text('LOGIN',
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontFamily: 'HelveticaNeueLight',
-                                        fontSize: 18.0,
-                                        letterSpacing: 4.0,
-                                      ))),
-                              Tab(
-                                  child: Text('SIGNUP',
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontFamily: 'HelveticaNeueLight',
-                                        fontSize: 18.0,
-                                        letterSpacing: 4.0,
-                                      ))),
-                            ],
+                          Container(
+                            alignment: Alignment.center,
+                            margin: EdgeInsets.only(top: height/3.5),
+                            child: TabBar(
+                              controller: _controller,
+                              indicatorColor: Colors.white,
+                              tabs: <Widget>[
+                                Tab(
+                                    child: Text('LOGIN',
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontFamily: 'HelveticaNeueLight',
+                                          fontSize: 18.0,
+                                          letterSpacing: 4.0,
+                                        ))),
+                                Tab(
+                                    child: Text('SIGNUP',
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontFamily: 'HelveticaNeueLight',
+                                          fontSize: 18.0,
+                                          letterSpacing: 4.0,
+                                        ))),
+                              ],
+                            ),
                           ),
                           SizedBox(height: height / 150),
                           Container(
                             height: height / 2,
                             width: screenSize.width,
+                            alignment: Alignment.center,
+                            margin: EdgeInsets.only(top: height/3),
                             child: TabBarView(
                               controller: _controller,
                               children: <Widget>[
@@ -550,15 +559,19 @@ class _LoginStudentState extends State<LoginStudent>
                             height: height / 30,
                           ),
 
-                          Padding(
-                            padding: EdgeInsets.fromLTRB(0, height/100, 0, 25),
-                            child: Text(
-                              'EMS DIRECT',
-                              style: TextStyle(
-                                color: Colors.white,
-                                letterSpacing: 5.0,
-                                fontSize: 14,
-                                fontFamily: 'HelveticaNeueLight',
+                          Container(
+                            alignment: Alignment.center,
+                            margin: EdgeInsets.only(top: height/1.2),
+                            child: Padding(
+                              padding: EdgeInsets.fromLTRB(0, height/100, 0, 25),
+                              child: Text(
+                                'EMS DIRECT',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  letterSpacing: 5.0,
+                                  fontSize: 14,
+                                  fontFamily: 'HelveticaNeueLight',
+                                ),
                               ),
                             ),
                           ),
