@@ -320,6 +320,7 @@ class _LoginStudentState extends State<LoginStudent>
                         color: Colors.white,
                         fontFamily: 'HelveticaNeueBold',
                         letterSpacing: 3.0,
+                        fontSize: 16,
                       )),
                   color: const Color(0xFF73CDE8),
                   shape: RoundedRectangleBorder(
@@ -454,6 +455,7 @@ class _LoginStudentState extends State<LoginStudent>
                     style: TextStyle(
                       color: Colors.white,
                       fontFamily: 'HelveticaNeueBold',
+                      fontSize: 16,
                       letterSpacing: 3.0,
                     )),
                 color: const Color(0xFF73CDE8),
@@ -495,7 +497,7 @@ class _LoginStudentState extends State<LoginStudent>
                 child: SingleChildScrollView(
                   child: Center(
                     child: Padding(
-                      padding: const EdgeInsets.fromLTRB(30, 0, 30, 0),
+                      padding: EdgeInsets.fromLTRB(height/ 30, 0, height/30, 0),
                       child: Column(
                         children: <Widget>[
                           Image.asset(
@@ -549,13 +551,13 @@ class _LoginStudentState extends State<LoginStudent>
                           ),
 
                           Padding(
-                            padding: EdgeInsets.fromLTRB(0, 0, 0, height / 40),
+                            padding: EdgeInsets.fromLTRB(0, height/100, 0, 25),
                             child: Text(
                               'EMS DIRECT',
                               style: TextStyle(
                                 color: Colors.white,
                                 letterSpacing: 5.0,
-                                fontSize: 16,
+                                fontSize: 14,
                                 fontFamily: 'HelveticaNeueLight',
                               ),
                             ),

@@ -223,7 +223,7 @@ class _LoginEmsState extends State<LoginEms> {
                 child: Text('LOGIN',
                     style: TextStyle(
                       color: Colors.white,
-                      fontSize: 14,
+                      fontSize: 16,
                       fontFamily: 'HelveticaNeueBold',
                       letterSpacing: 3.0,
                     )),
@@ -267,37 +267,52 @@ class _LoginEmsState extends State<LoginEms> {
                     padding:
                         EdgeInsets.fromLTRB(height / 30, 0, height / 30, 0),
                     child: Center(
-                      child: Column(
+                      child: Stack(
                         children: <Widget>[
-                          Image.asset(
-                            'assets/ems_logo.png',
-                            scale: (height) / 200,
+                          Container(
+                            alignment: Alignment.center,
+                            child: Image.asset(
+                              'assets/ems_logo.png',
+                              scale: (height) / 200,
+                            ),
                           ),
-                          Padding(
-                            padding: EdgeInsets.fromLTRB(0, height/30, 0, 0),
-                            child: Text(
-                              'EMS LOGIN',
-                              style: TextStyle(
-                                color: Colors.white,
-                                letterSpacing: 6.0,
-                                fontFamily: 'HelveticaNeueLight',
-                                fontSize: 24,
+                          Container(
+                            alignment: Alignment.center,
+                            margin: EdgeInsets.only(top: height/3.5),
+                            child: Padding(
+                              padding:
+                                  EdgeInsets.fromLTRB(0, height / 30, 0, 0),
+                              child: Text(
+                                'EMS LOGIN',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  letterSpacing: 6.0,
+                                  fontFamily: 'HelveticaNeueLight',
+                                  fontSize: 24,
+                                ),
                               ),
                             ),
                           ),
-                          _buildForm(height),
+                          Container(
+                            alignment: Alignment.center,
+                            margin: EdgeInsets.only(top: height/3),
+                            child: _buildForm(height)),
                           SizedBox(
-                            height: height/30,
+                            height: height / 30,
                           ),
-                          Padding(
-                            padding: EdgeInsets.fromLTRB(0, 0, 0, height/40),
-                            child: Text(
-                              'EMS DIRECT',
-                              style: TextStyle(
-                                color: Colors.white,
-                                letterSpacing: 5.0,
-                                fontSize: 16,
-                                fontFamily: 'HelveticaNeueLight',
+                          Container(
+                            alignment: Alignment.center,
+                            margin: EdgeInsets.only(top: height/1.2),
+                            child: Padding(
+                              padding: EdgeInsets.fromLTRB(0, 0, 0, 25),
+                              child: Text(
+                                'EMS DIRECT',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  letterSpacing: 5.0,
+                                  fontSize: 14,
+                                  fontFamily: 'HelveticaNeueLight',
+                                ),
                               ),
                             ),
                           ),
