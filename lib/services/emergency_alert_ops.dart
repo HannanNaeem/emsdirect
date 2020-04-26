@@ -92,10 +92,13 @@ class _AlertOpsState extends State<AlertOps> {
       );
     }
     
+    List<String> _alertedBuffer = [];
 
     //Calls the show alert function after build is complete to avoid repeated alerts
     if (_pendingEmergencyList != null)
     {
+
+      //to do scan through the emergencies and check for ignored/severe emergencies and alert accordingly
       _pendingEmergencyList.forEach((emergency){
         print(emergency.declines);
         print(emergency.declinedBy);

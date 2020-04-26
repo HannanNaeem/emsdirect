@@ -8,12 +8,6 @@ import 'package:ems_direct/pages/emergency_numbers.dart';
 import 'package:ems_direct/pages/available_MFRs.dart';
 import 'package:ems_direct/services/auth.dart';
 
-class PendingEmergency {
-  GeoPoint location;
-  String genderPreference;
-  String severityLevel;
-  int rollNumber;
-}
 
 //This is the main homepage for any MFR login
 class MFRHome extends StatefulWidget {
