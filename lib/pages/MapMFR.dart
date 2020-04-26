@@ -10,20 +10,21 @@ class MapMFR extends StatefulWidget {
   final String title = "Map";
   @override
   MapState createState() => new MapState();
-
 }
 
 class MapState extends State<MapMFR> {
   GoogleMapController _controller;
-
-  final Set<Marker> _markers = {};
+  static var Zoom = 11.0;
+//  final Set<Marker> _markers = {};
+  static const LatLng _loc = const LatLng(31.4700, 74.4111);
+  LatLng currLoc = _loc;
   LatLng _lastMapPosition = _loc;
   MapType _currentMapType = MapType.normal;
   static Location _locationTracker = Location();
   Marker marker;
   StreamSubscription _locationSubscription;
 
-  static const LatLng _loc = const LatLng(31.4700, 74.4111);
+
 
   _onMapCreated(GoogleMapController controller){
     _controller= controller;
@@ -44,7 +45,7 @@ class MapState extends State<MapMFR> {
 
   static final CameraPosition initialisation = CameraPosition(
     target: LatLng(31.4700, -74.4111),
-    zoom: 11.0,
+    zoom: Zoom,
   );
 
   void updateMarker(LocationData newLocation){
@@ -67,11 +68,40 @@ class MapState extends State<MapMFR> {
     );
   }
 
+  void zoomIn() async {
+    Zoom = Zoom*1.25;
+    _controller.animateCamera(
+        CameraUpdate.newCameraPosition(
+            new CameraPosition(
+                bearing: 192,
+                target: LatLng(currLoc.latitude, currLoc.longitude),
+                tilt: 0,
+                zoom: Zoom
+            )
+        )
+    );
+  }
+
+  void zoomOut() async {
+    Zoom = Zoom*0.75;
+    _controller.animateCamera(
+        CameraUpdate.newCameraPosition(
+            new CameraPosition(
+                bearing: 192,
+                target: LatLng(currLoc.latitude, currLoc.longitude),
+                tilt: 0,
+                zoom: Zoom
+            )
+        )
+    );
+}
+
   void getCurrentLocaion() async {
     try {
       var location = await _locationTracker.getLocation();
 
       updateMarker(location);
+      currLoc = LatLng(location.latitude, location.longitude);
 
       if (_locationSubscription != null) {
         _locationSubscription.cancel();
@@ -79,13 +109,15 @@ class MapState extends State<MapMFR> {
       
       _locationSubscription = _locationTracker.onLocationChanged().listen((newLocation){
         if(_controller != null){
+          currLoc = LatLng(newLocation.latitude, newLocation.longitude);
+
           _controller.animateCamera(
             CameraUpdate.newCameraPosition(
               new CameraPosition(
                   bearing: 192,
                   target: LatLng(newLocation.latitude, newLocation.longitude),
                   tilt: 0,
-                  zoom: 11.0
+                  zoom: Zoom
               )
             )
           );
@@ -112,6 +144,9 @@ class MapState extends State<MapMFR> {
   @override
 
   Widget build(BuildContext context) {
+    var screenSize = MediaQuery.of(context).size;
+    var width = screenSize.width;
+    var height = screenSize.height;
     return MaterialApp(
       home: Scaffold(
           appBar: AppBar(
@@ -142,16 +177,67 @@ class MapState extends State<MapMFR> {
                 markers: Set.of((marker!=null) ? [marker] : []),
                 onCameraMove: _onCameraMove,
               ),
+              Padding(
+                  padding: EdgeInsets.fromLTRB(width*0.23, height*0.75, width*0.16, 10.0),
+                  child: SizedBox (
+                      width: (width+height)*0.20,
+                      height: (width+height)*0.04,
+                      child: RaisedButton(
+                          onPressed: () => Navigator.of(context).pop(),
+                          textColor: Colors.cyan[500],
+                          color: Colors.white,
+                          child: Text(
+                            'End Emergency',
+                            style: TextStyle(
+                              color:Colors.cyan[500],
+                              fontSize: (width+height)*0.012,
+                              letterSpacing: 3.0,
+                              fontFamily: 'HelveticaNeueBold',
+                            ),
 
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(5),
+                          )
+                      )
+                  )
+              ),
             ],
 
           ),
-          floatingActionButton:FloatingActionButton(
-            child: Icon(Icons.location_searching),
-            onPressed: (){
-              getCurrentLocaion();
-            }
-        ),
+          floatingActionButton: Column(
+              children: <Widget>[
+                SizedBox(height: height*0.16),
+                FloatingActionButton(
+                  child: Icon(Icons.map),
+                  onPressed: (){
+                    _onMapTypeButtonPressed();
+                  },
+                ),
+                SizedBox(height: height/3),
+                FloatingActionButton(
+                  child: Icon(Icons.add),
+                  onPressed: (){
+                    zoomIn();
+                  },
+                ),
+                SizedBox(height: 10),
+                FloatingActionButton(
+                  child: Icon(Icons.remove),
+                  onPressed: (){
+                    zoomOut();
+                  },
+                ),
+                SizedBox(height: 10),
+                FloatingActionButton(
+                  child: Icon(Icons.location_searching),
+                  onPressed: (){
+                    getCurrentLocaion();
+                  },
+                ),
+
+              ]
+          ),
       ),
     );
   }
