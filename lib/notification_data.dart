@@ -3,7 +3,7 @@
 class NotificationData {
   static final timeList = ['2:30', '2:30', '2:30', '2:30', '2:30', '2:30'];
 
-  static final Data = [
+  static final data = [
     {
       'text': 'Pool bag needs restocking! Click here to update.',
       'item': '1',

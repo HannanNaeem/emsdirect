@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:ems_direct/records.dart';
 import 'package:ems_direct/map.dart';
 import 'package:ems_direct/notifications.dart';
+import 'package:ems_direct/emergency_log.dart';
 import 'package:ems_direct/services/auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ems_direct/services/ops_database.dart';
@@ -70,7 +71,7 @@ class _OpsHomeState extends State<OpsHome> with WidgetsBindingObserver {
 
 
   final _pageOptions = [
-    Center(child: Text('Log')),
+    EmergencyLog(),
     Notifications(),
     OpsMap(),
     Records(),
@@ -110,9 +111,8 @@ class _OpsHomeState extends State<OpsHome> with WidgetsBindingObserver {
         title: Text(
           _headerNames[_selectedPage],
           style: TextStyle(
-            fontSize: 20,
-            fontFamily: 'HelveticaNeue',
-            fontWeight: FontWeight.bold,
+            fontSize: 24,
+            fontFamily: 'HelveticaNeueLight',
             color: Colors.white,
             letterSpacing: 2,
           ),
@@ -341,26 +341,48 @@ class _OpsHomeState extends State<OpsHome> with WidgetsBindingObserver {
         showUnselectedLabels: true,
         type: BottomNavigationBarType.fixed,
         backgroundColor: const Color(0xff142850),
-        selectedItemColor: Colors.cyan[200],//const Color(0xff73cde8),
-        selectedFontSize: 15,
-        unselectedItemColor: Colors.grey[500],
+        selectedItemColor: Colors.white,
+        selectedFontSize: 14,
+        unselectedFontSize: 12,
+        unselectedItemColor: const Color(0xff47719e),
+
         iconSize: 30,
         items: [
           BottomNavigationBarItem(
             icon: Icon(Icons.insert_drive_file),
-            title: Text('Log'),
+            title: Text(
+              'Log',
+              style: TextStyle(
+                fontFamily: 'HelveticaNeueLight',
+              )
+            ),
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.notifications),
-            title: Text('Notifications'),
+            title: Text(
+              'Notifications',
+              style: TextStyle(
+                fontFamily: 'HelveticaNeueLight',
+              )
+            ),
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.place),
-            title: Text('Map'),
+            title: Text(
+              'Map',
+              style: TextStyle(
+                fontFamily: 'HelveticaNeueLight',
+              )
+            ),
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.description),
-            title: Text('Records'),
+            title: Text(
+              'Records',
+              style: TextStyle(
+                fontFamily: 'HelveticaNeueLight',
+              )
+            ),
           ),
         ],
       ),
