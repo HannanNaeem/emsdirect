@@ -25,7 +25,8 @@ class Records extends StatelessWidget {
             title,
             style: TextStyle(
               color: const Color(0xff142850),
-              fontSize: 20,
+              fontSize: 16,
+              letterSpacing: 1,
               fontFamily: 'HelveticaNeueLight',
               fontWeight: FontWeight.bold,
             ),
