@@ -1,44 +1,48 @@
-import 'package:flutter/material.dart';
 
 class LogData {
-  static final timeList = ['11:30', '10:30', '9:30', '7:30', '5:30', '2:30'];
 
   static final data = [
     {
-      'name': 'Hira Jamshed',
-      'number': '030000000',
+      'mfr': 'Hira Jamshed',
+      'contact': '030000000',
       'gender': 'F',
-      'severity': 'high'
+      'severity': 'high',
+      'reporting_time': '11:30'
     },
     {
-      'name': 'Saba Rehman',
-      'number': '030000000',
+      'mfr': 'Saba Rehman',
+      'contact': '030000000',
       'gender': 'F',
-      'severity': 'low'
+      'severity': 'low',
+      'reporting_time': '10:30'
     },
     {
-      'name': 'Mahnoor Jameel',
-      'number': '030000000',
+      'mfr': 'Mahnoor Jameel',
+      'contact': '030000000',
       'gender': 'F',
-      'severity': 'critical'
+      'severity': 'critical',
+      'reporting_time': '9:30'
     },
     {
-      'name': 'Harum Naseem',
-      'number': '030000000',
+      'mfr': 'Harum Naseem',
+      'contact': '030000000',
       'gender': 'F',
-      'severity': 'medium'
+      'severity': 'medium',
+      'reporting_time': '7:30'
     },
     {
-      'name': 'Hannan Naeem',
-      'number': '030000000',
+      'mfr': 'Hannan Naeem',
+      'contact': '030000000',
       'gender': 'M',
-      'severity': 'critical'
+      'severity': 'critical',
+      'reporting_time': '5:30'
     },
     {
-      'name': 'Hira Jamshed',
-      'number': '030000000',
+      'mfr': 'Hira Jamshed',
+      'contact': '030000000',
       'gender': 'F',
-      'severity': 'high'
+      'severity': 'high',
+      'reporting_time': '2:30'
     }
   ];
 

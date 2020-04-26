@@ -5,14 +5,15 @@ class LogCard extends StatefulWidget {
   String number;
   String gender;
   String severity;
-  String time;
+  String reportingTime;
 
-  LogCard(String name, String number, String gender, String severity, String time) {
+  LogCard(String name, String number, String gender, String severity,
+      String reportingTime) {
     this.name = name;
     this.number = number;
     this.gender = gender;
     this.severity = severity;
-    this.time = time;
+    this.reportingTime = reportingTime;
   }
 
   @override
@@ -20,10 +21,9 @@ class LogCard extends StatefulWidget {
 }
 
 class _LogCardState extends State<LogCard> {
-  
   Color GenerateColor(String severity) {
     if (severity == 'low') {
-      return Colors.yellow[400];
+      return Colors.yellow[300];
     }
     if (severity == 'medium') {
       return Colors.amber[600];
@@ -31,7 +31,7 @@ class _LogCardState extends State<LogCard> {
     if (severity == 'high') {
       return Colors.orange[800];
     } else {
-      return Colors.red;
+      return Colors.red[800];
     }
   }
 
@@ -45,93 +45,70 @@ class _LogCardState extends State<LogCard> {
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          Flexible(
-            flex: 6,
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Padding(
-                  padding: EdgeInsets.fromLTRB(6, 25, 0, 20),
-                  child: Icon(
-                    Icons.fiber_manual_record,
-                    color: color,
-                  ),
-                ),
-                Expanded(
-                  child: Padding(
-                    padding: EdgeInsets.fromLTRB(10, 25, 0, 20),
-                    child: Container(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Text(
-                            'MFR: ' + widget.name,
-                            style: TextStyle(
-                              color: const Color(0xff142850),
-                              fontSize: 14,
-                              fontFamily: 'HelveticaNeueLight',
-                            ),
-                          ),
-                          Text(
-                            'Contact: ' + widget.number,
-                            style: TextStyle(
-                              color: const Color(0xff142850),
-                              fontSize: 14,
-                              fontFamily: 'HelveticaNeueLight',
-                            ),
-                          ),
-                          Text(
-                            'Gender: ' + widget.gender,
-                            style: TextStyle(
-                              color: const Color(0xff142850),
-                              fontSize: 14,
-                              fontFamily: 'HelveticaNeueLight',
-                            ),
-                          ),
-                          Text(
-                            'Severity: ' + widget.severity,
-                            style: TextStyle(
-                              color: const Color(0xff142850),
-                              fontSize: 14,
-                              fontFamily: 'HelveticaNeueLight',
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-              ],
+          Padding(
+            padding: EdgeInsets.fromLTRB(6, 20, 0, 20),
+            child: Icon(
+              Icons.fiber_manual_record,
+              color: color,
             ),
           ),
-          Flexible(
-            flex: 1,
-            child: Align(
-              alignment: Alignment.bottomCenter,
-              child: Text(
-                widget.time,
-                style: TextStyle(
-                  color: const Color(0xff142850),
-                  fontSize: 12,
-                  fontFamily: 'HelveticaNeueLight',
+          Expanded(
+            child: Padding(
+              padding: EdgeInsets.fromLTRB(10, 20, 10, 20),
+              child: Container(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Text(
+                      'MFR: ' + widget.name,
+                      style: TextStyle(
+                        color: const Color(0xff142850),
+                        fontSize: 14,
+                        fontFamily: 'HelveticaNeueLight',
+                        letterSpacing: 1,
+                      ),
+                    ),
+                    Text(
+                      'Contact: ' + widget.number,
+                      style: TextStyle(
+                        color: const Color(0xff142850),
+                        fontSize: 14,
+                        fontFamily: 'HelveticaNeueLight',
+                        letterSpacing: 1,
+                      ),
+                    ),
+                    Text(
+                      'Gender: ' + widget.gender,
+                      style: TextStyle(
+                        color: const Color(0xff142850),
+                        fontSize: 14,
+                        fontFamily: 'HelveticaNeueLight',
+                        letterSpacing: 1,
+                      ),
+                    ),
+                    Text(
+                      'Severity: ' + widget.severity,
+                      style: TextStyle(
+                        color: const Color(0xff142850),
+                        fontSize: 14,
+                        fontFamily: 'HelveticaNeueLight',
+                        letterSpacing: 1,
+                      ),
+                    ),
+                    Text(
+                      'Reporting time: ' + widget.reportingTime,
+                      style: TextStyle(
+                        color: const Color(0xff142850),
+                        fontSize: 14,
+                        fontFamily: 'HelveticaNeueLight',
+                        letterSpacing: 1,
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ),
-
           ),
-//           Flexible(
-//             flex: 1,
-//             child: IconButton(
-//               color: Colors.grey[700],
-//               icon: Icon(Icons.cancel),
-//               onPressed: () {
-//                 print('Delete notification');
-// //                setState(() {
-// //                  data.removeAt(index);
-// //                });
-//               },
-//             ),
-//           ),
         ],
       ),
     );
