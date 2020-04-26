@@ -29,7 +29,7 @@ class _AlertOpsState extends State<AlertOps> {
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
           title: Text(
-            "New Ignored Emergency!",
+            "Ignored Emergency!",
             style: TextStyle(
               fontFamily: 'HelveticaNeueLight',
               letterSpacing: 2.0,
