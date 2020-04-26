@@ -8,20 +8,52 @@ import 'package:ems_direct/pages/MFR_home.dart';
 import 'package:provider/provider.dart';
 
 //This is responsible for alerting MFRs of any pending emergencies with a severity level of low/medium
-class AlertFunction extends StatefulWidget {
-  var availability;
-  var occupied;
-  var mfrRollNo;
+class AlertFunctionMfr extends StatefulWidget {
+//  var availability;
+//  var occupied;
+//  var mfrRollNo;
+  var _userData;
 
   //the alert is received on the MFRs screens depending on the three variables below
   //decision: only show alert if the MFR is available, there is a pending emergency document and that document is to be rendered
-  AlertFunction({this.availability, this.occupied, this.mfrRollNo});
+  AlertFunctionMfr(var userData) {
+    _userData = userData;
+  }
+
   @override
-  _AlertFunctionState createState() => _AlertFunctionState();
+  _AlertFunctionMfrState createState() => _AlertFunctionMfrState(_userData);
 }
 
-class _AlertFunctionState extends State<AlertFunction> {
+class _AlertFunctionMfrState extends State<AlertFunctionMfr> {
+  var _userData;
+
+  _AlertFunctionMfrState(var userData) {
+    _userData = userData;
+
+    print("--------------got ${_userData.data}");
+  }
   var databaseReference = Firestore.instance;
+  var _isAvailable;
+  var _isOccupied;
+
+  var futures = List<Future>();
+
+  void getInitialData(var docId) {
+    try {
+      databaseReference.collection("Mfr").document(docId).get().then((onVal) {
+        setState(() {
+          _isOccupied = onVal.data['isOccupied'];
+          _isAvailable = onVal.data['isActive'];
+          print('done!');
+        });
+      }).catchError((onError) {
+        print(onError.message);
+      });
+    } catch (e) {
+      print(e);
+      return null;
+    }
+  }
 
   //deletes the given docID document
   void deleteRecord(var docID) async {
@@ -42,8 +74,9 @@ class _AlertFunctionState extends State<AlertFunction> {
 
   //updates occupied status of MFR
   void updateOccupiedStatus(bool newVal, var docID) async {
-    DocumentReference docRef =
-        databaseReference.collection('Mfr').document(widget.mfrRollNo);
+    DocumentReference docRef = databaseReference
+        .collection('Mfr')
+        .document(widget._userData['rollNo']);
     await databaseReference.runTransaction((Transaction tx) async {
       DocumentSnapshot docSnapshot = await tx.get(docRef);
       if (docSnapshot.exists) {
@@ -57,7 +90,7 @@ class _AlertFunctionState extends State<AlertFunction> {
   }
 
   //updates decline count of emergency
-  void updateDeclineCount(var docID) async {
+  Future updateDeclineCount(var docID) async {
     DocumentReference docRef =
         databaseReference.collection("PendingEmergencies").document(docID);
     await databaseReference.runTransaction((Transaction tx) async {
@@ -73,6 +106,26 @@ class _AlertFunctionState extends State<AlertFunction> {
     });
   }
 
+  //updates declinedBy of emergency
+  Future updateDeclineBy(var docID) async {
+    DocumentReference docRef =
+        databaseReference.collection("PendingEmergencies").document(docID);
+    return await databaseReference.runTransaction((Transaction tx) async {
+      DocumentSnapshot docSnapshot = await tx.get(docRef);
+      if (docSnapshot.exists) {
+        await tx.update(docRef, <String, dynamic>{
+          'declinedBy': FieldValue.arrayUnion([
+            widget._userData['rollNo']
+          ]) //docSnapshot.data['declinedBy'].add(widget.mfrRollNo)
+        });
+      }
+    }).then((_) {
+      print("declinedBy updated");
+    }).catchError((onError) {
+      print(onError.message);
+    });
+  }
+
   //MFR roll number, emergency location, genderpreference, patientrollnumber, reported time, severity
   void createOngoingEmergencyDocument(
       GeoPoint location,
@@ -83,7 +136,7 @@ class _AlertFunctionState extends State<AlertFunction> {
         .collection('OngoingEmergencies')
         .document(patientRollNo)
         .setData({
-      'mfr': widget.mfrRollNo,
+      'mfr': widget._userData['rollNo'],
       'location': location,
       'genderPreference': genderPreference,
       'patientRollNo': patientRollNo,
@@ -93,16 +146,16 @@ class _AlertFunctionState extends State<AlertFunction> {
   }
 
   //main function to show alert
-  void showAlert(int num, DocumentSnapshot doc, var width, var height) {
+  Future showAlert(var num, DocumentSnapshot doc, var width, var height) async {
     num = 1; //FOR TESTING ALERTS BASED ON SITUATIONS WITH A NULL STREAM
-    widget.occupied = false;
-    if (widget.availability == true && num > 0 && !widget.occupied) {
+    //_isOccupied = true;
+
+    if (_isAvailable && num > 0 && !_isOccupied) {
       //-------------- TESTING ------------------------------------
-      print(widget.occupied);
-      print(doc.data);
+      // print(widget.occupied);
+      //print(doc.data);
       print('ID: ${doc.documentID}');
       //-----------------------------------------------------------
-
       showDialog(
         context: context,
         builder: (context) => AlertDialog(
@@ -142,13 +195,13 @@ class _AlertFunctionState extends State<AlertFunction> {
                 ),
                 onPressed: () {
                   print('yes');
-//                  createOngoingEmergencyDocument(
-//                      doc.data['location'],
-//                      doc.data['genderPreference'],
-//                      doc.data['patientRollNo'],
-//                      doc.data['severity']);
-//                  deleteRecord(doc.documentID);
-//                  updateOccupiedStatus(true, doc.documentID);
+                  createOngoingEmergencyDocument(
+                      doc.data['location'],
+                      doc.data['genderPreference'],
+                      doc.data['patientRollNo'],
+                      doc.data['severity']);
+                  deleteRecord(doc.documentID);
+                  updateOccupiedStatus(true, doc.documentID);
                   Navigator.of(context).pop();
                 },
               ),
@@ -166,10 +219,12 @@ class _AlertFunctionState extends State<AlertFunction> {
                     color: const Color(0xffee0000),
                   ),
                 ),
-                onPressed: () {
+                onPressed: () async {
                   print('no');
-                  //updateDeclineCount(doc.documentID);
                   Navigator.of(context).pop();
+                  //await updateDeclineCount(doc.documentID);
+                  //await updateDeclineBy(doc.documentID);
+                  return rejectCalls(doc.documentID);
                 },
               ),
             ),
@@ -179,28 +234,86 @@ class _AlertFunctionState extends State<AlertFunction> {
     }
   }
 
+  Future rejectCalls(var docID) async {
+    var futures = List<Future>();
+    futures.add(updateDeclineBy(docID));
+    futures.add(updateDeclineBy(docID));
+
+    await Future.wait(futures);
+    print('Reject calls done!');
+  }
+
+  Future completeFutures() async {
+    return await Future.wait(futures);
+  }
+
   void printData(var docs) {
     if (docs != null)
-      for (int i = 0; i < docs.documents.length; i++) {
-        print(docs.documents[i].data['declinedBy'][0]);
+      for (int i = 0; i < docs.length; i++) {
+        print(docs[i].data);
       }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    //State management for keepsignedin
+    //WidgetsBinding.instance.addObserver(this);
+    //initializing stream to null as MFR will always be unavailable unless made available by himself
+    //_documentStream = null;
+
+    WidgetsBinding.instance.addPostFrameCallback(
+        (_) => getInitialData(widget._userData['rollNo']));
   }
 
   @override
   Widget build(BuildContext context) {
     var screenSize = MediaQuery.of(context).size;
-    var width = screenSize.width;
-    var height = screenSize.height;
-    var docs = Provider.of<QuerySnapshot>(context);
+    var _width = screenSize.width;
+    var _height = screenSize.height;
+    var _docs = Provider.of<QuerySnapshot>(context);
+    var num = 0;
     print('IN THIS FUNCTION');
 
-    //Calls the show alert function after build is complete to avoid repeated alerts
-    if (widget.availability)
-      WidgetsBinding.instance.addPostFrameCallback((_) => printData(docs));
-    if (widget.availability && docs != null)
-      WidgetsBinding.instance.addPostFrameCallback((_) =>
-          showAlert(docs.documents.length, docs.documents[0], width, height));
+    if (_docs != null) {
+      List<DocumentSnapshot> _docList = _docs.documents;
+      if (_docs.documents[0].data != null) {
+        //List<DocumentSnapshot> filtered =
+        _docList.removeWhere((item) =>
+            item.data['declinedBy'].contains(widget._userData['rollNo']));
+        num = _docList.length;
+        print(num);
+      }
 
-    return Container();
+      //Calls the show alert function after build is complete to avoid repeated alerts
+      if (_isAvailable != null || _isOccupied != null) {
+        if ((_isAvailable) && (_docs != null) && (num > 0) && (!_isOccupied)) {
+          WidgetsBinding.instance
+              .addPostFrameCallback((_) => printData(_docList));
+          WidgetsBinding.instance.addPostFrameCallback((_) async =>
+              await showAlert(
+                  _docs.documents.length, _docList[0], _width, _height));
+        }
+      }
+    }
+
+    Future.delayed(Duration(seconds: 3));
+
+    //return Container();
+
+    return FutureBuilder(
+        future: completeFutures(),
+        builder: (BuildContext context, AsyncSnapshot snapshot) {
+          if (snapshot.connectionState == ConnectionState.done) {
+            return
+          } else {
+            return Container(
+              child: SpinKitPulse(
+                color: Colors.white,
+                size: 50,
+              ),
+            );
+          }
+        });
   }
 }

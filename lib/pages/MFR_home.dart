@@ -43,8 +43,8 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
   //Tells whether toggle switch is to be on or off
   static final databaseReference = Firestore.instance;
   Stream<QuerySnapshot> _documentStream;
-  var isAvailable = false;
-  var isOccupied = false;
+  var isAvailable;
+  var isOccupied;
 
   //instance of auth service
   final AuthService _authMfr = AuthService();
@@ -106,15 +106,14 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
     });
   }
 
-  Future getInitialData(var docId) async {
+  void getInitialData(var docId) {
     try {
-      return databaseReference
-          .collection('Mfr')
-          .document(docId)
-          .get()
-          .then((onVal) {
-        isOccupied = onVal.data['isOccupied'];
-        print('done!');
+      databaseReference.collection("Mfr").document(docId).get().then((onVal) {
+        setState(() {
+          isOccupied = onVal.data['isOccupied'];
+          isAvailable = onVal.data['isActive'];
+          print('done!');
+        });
       }).catchError((onError) {
         print(onError.message);
       });
@@ -122,17 +121,31 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
       print(e);
       return null;
     }
-//    print('setting values');
-//    var doc = await databaseReference.collection('Mfr').document(docId).get();
-//    isAvailable = doc['isActive'];
-//    isOccupied = doc['isOccupied'];
-//    print('done');
   }
 
-  Stream<QuerySnapshot> setStreamValue(bool available) {
-    print('getting value');
+  Future getInitialData2(var docId) async {
+    try {
+      print(docId);
+      return await databaseReference.collection("Mfr").document(docId).get();
+//          .then((onVal) {
+//        setState(() {
+//          isAvailable = onVal.data['isActive'];
+//        });
+//      }).catchError((onError) {
+//        print(onError.message);
+//      });
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  Stream<QuerySnapshot> setStreamValue(bool available, bool occupied) {
+    //print('getting value');
     //available = false;
-    if (available) {
+    if (available == null || occupied == null) {
+      return null;
+    }
+    if (available && !occupied) {
       return databaseReference
           .collection('PendingEmergencies')
           .where('severity', whereIn: ['low', 'medium']).snapshots();
@@ -156,270 +169,274 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
     var height = screenSize.height;
 
     //Defines the whole layout of the homepage
-    return StreamProvider<QuerySnapshot>.value(
-      value: setStreamValue(isAvailable),
-      child: Scaffold(
-        backgroundColor: const Color(0xff27496d),
-        //This contains the widgets seen in the drawer - also has navigation included
-        drawer: Container(
-          width: width *
-              0.8, //making sure drawer extends to 80% of whatever screen it is
-          child: Drawer(
-            child: Column(
-              //this column contains the drawer header, the option to view profile/emergency numbers/available MFRs list
-              //also has the option to logout
-              children: <Widget>[
-                DrawerHeader(
-                  //only the ems logo
-                  child: Container(
-                    child: Image.asset("assets/ems_logo.png"),
-                  ),
-                ),
-                ExpansionTile(
-                  leading: Icon(
-                    Icons.account_circle,
-                    color: const Color(0xff142850),
-                  ),
-                  title: Text(
-                    _userData.data['name'].toString(),
-                    style: TextStyle(
-                      fontSize: 15,
-                      fontFamily: 'HelveticaNeueLight',
-                      letterSpacing: 1.0,
-                    ),
-                  ),
-                  children: <Widget>[
-                    Container(
-                      constraints: BoxConstraints(maxWidth: width * 0.75),
-                      child: Row(
-                        children: <Widget>[
-                          Text(
-                            'Rollnumber:',
-                            style: TextStyle(
-                              fontSize: 15,
-                              fontFamily: 'HelveticaNeueLight',
-                              letterSpacing: 1.0,
-                            ),
-                          ),
-                          SizedBox(width: 2.0),
-                          Text(
-                            _userData.data['rollNo'].toString(),
-                            style: TextStyle(
-                              fontSize: 15,
-                              fontFamily: 'HelveticaNeueLiight',
-                              letterSpacing: 1.0,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    SizedBox(height: 10.0),
-                    Container(
-                      constraints: BoxConstraints(maxWidth: width * 0.75),
-                      child: Row(
-                        children: <Widget>[
-                          Text(
-                            'Email:',
-                            style: TextStyle(
-                              fontSize: 15,
-                              fontFamily: 'HelveticaNeueLight',
-                              letterSpacing: 1.0,
-                            ),
-                          ),
-                          SizedBox(width: 2.0),
-                          Text(
-                            _userData.data['email'].toString(),
-                            style: TextStyle(
-                              fontSize: 15,
-                              fontFamily: 'HelveticaNeueLight',
-                              letterSpacing: 1.0,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    SizedBox(height: 10.0),
-                    Container(
-                      constraints: BoxConstraints(maxWidth: width * 0.75),
-                      child: Row(
-                        children: <Widget>[
-                          Text(
-                            'Contact:',
-                            style: TextStyle(
-                              fontSize: 15,
-                              fontFamily: 'HelveticaNeueLight',
-                              letterSpacing: 1.0,
-                            ),
-                          ),
-                          SizedBox(width: 1.0),
-                          Text(
-                            _userData.data['contact'].toString(),
-                            style: TextStyle(
-                              fontSize: 15,
-                              fontFamily: 'HelveticaNeueLight',
-                              letterSpacing: 1.0,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-                ListTile(
-                  //the option to view emergency numbers - takes you to dummy page
-                  title: Text(
-                    'Emergency Numbers',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontFamily: 'HelveticaNeueLight',
-                      letterSpacing: 2.0,
-                    ),
-                  ),
-                  onTap: () {
-                    Navigator.of(context).pushNamed('/emergencyNumbers');
-                    //print('Emergency numbers');
-                  },
-                ),
-                Expanded(
-                  //the option to logout (bottom center aligned)
-                  child: Align(
-                    alignment: Alignment.bottomCenter,
-                    child: Padding(
-                      padding:
-                          EdgeInsets.fromLTRB(width * 0.8 * 0.24, 0, 0, 10.0),
-                      child: Row(
-                        //has the icon and text
-                        children: <Widget>[
-                          IconButton(
-                            icon: Image(
-                              image: AssetImage('assets/logout.png'),
-                              fit: BoxFit.fill,
-                              color: const Color(0xff142850),
-                            ),
-                            color: const Color(0xff142850),
-                            onPressed: () {
-                              showDialog(
-                                  context: context,
-                                  builder: (BuildContext context) {
-                                    return AlertDialog(
-                                      title: Text(
-                                        "Are you sure?",
-                                        style: TextStyle(
-                                          fontFamily: 'HelveticaNeueLight',
-                                          letterSpacing: 2.0,
-                                          fontSize: 20,
-                                          color: Colors.grey[600],
-                                        ),
-                                      ),
-                                      actions: <Widget>[
-                                        FlatButton(
-                                          child: Text(
-                                            'YES',
-                                            style: TextStyle(
-                                              fontFamily: 'HelveticaNeueLight',
-                                              letterSpacing: 3.0,
-                                              fontSize: 20,
-                                              color: const Color(0xff1a832a),
-                                            ),
-                                          ),
-                                          onPressed: () async {
-                                            //navigation to login screen
-                                            //! signout here
-                                            await _authMfr.logOut();
-                                            Navigator.of(context).pop();
-                                            Navigator.pushReplacementNamed(
-                                                context, '/select_login');
-                                          },
-                                        ),
-                                        FlatButton(
-                                          child: Text(
-                                            'NO',
-                                            style: TextStyle(
-                                              fontFamily: 'HelveticaNeueLight',
-                                              letterSpacing: 2.5,
-                                              fontSize: 20,
-                                              color: const Color(0xffee0000),
-                                            ),
-                                          ),
-                                          onPressed: () {
-                                            Navigator.of(context).pop();
-                                          },
-                                        ),
-                                      ],
-                                    );
-                                  });
-                              //print('logout');
-                            },
-                          ),
-                          Text(
-                            'LOGOUT',
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontFamily: 'HelveticaNeueBold',
-                              color: const Color(0xff142850),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-        //This is the appBar which has the main heading and the drawer option
-        appBar: AppBar(
-          backgroundColor: const Color(0xff142850),
-          title: Text(
-            'Home',
-            style: TextStyle(
-              fontFamily: 'HelveticaNeueLight',
-              letterSpacing: 2.0,
-              fontSize: 24,
-            ),
-          ),
-          centerTitle: true,
-        ),
-        //This is where the toggle option and the two cards (Map and Report Emergency) reside
-        body: Center(
+    return Scaffold(
+      backgroundColor: const Color(0xff27496d),
+      //This contains the widgets seen in the drawer - also has navigation included
+      drawer: Container(
+        width: width *
+            0.8, //making sure drawer extends to 80% of whatever screen it is
+        child: Drawer(
           child: Column(
-            //everything is placed in the column
+            //this column contains the drawer header, the option to view profile/emergency numbers/available MFRs list
+            //also has the option to logout
             children: <Widget>[
-              AlertFunction(
-                  availability: isAvailable,
-                  occupied: isOccupied,
-                  mfrRollNo: _userData['rollNo']),
-              //showAlert(isAvailable, length), //AlertFunction(),
-              Flexible(
-                flex: 3,
+              DrawerHeader(
+                //only the ems logo
                 child: Container(
-                  height: height / 5,
-                  width: width / 1.5,
-                  child: Row(children: <Widget>[
-                    Expanded(
-                      flex: 2,
-                      child: Text(
-                        'Available',
-                        style: TextStyle(
+                  child: Image.asset("assets/ems_logo.png"),
+                ),
+              ),
+              ExpansionTile(
+                leading: Icon(
+                  Icons.account_circle,
+                  color: const Color(0xff142850),
+                ),
+                title: Text(
+                  _userData.data['name'].toString(),
+                  style: TextStyle(
+                    fontSize: 15,
+                    fontFamily: 'HelveticaNeueLight',
+                    letterSpacing: 1.0,
+                  ),
+                ),
+                children: <Widget>[
+                  Container(
+                    constraints: BoxConstraints(maxWidth: width * 0.75),
+                    child: Row(
+                      children: <Widget>[
+                        Text(
+                          'Rollnumber:',
+                          style: TextStyle(
+                            fontSize: 15,
                             fontFamily: 'HelveticaNeueLight',
-                            letterSpacing: 2.0,
-                            fontSize: 24,
-                            color: Colors.white //const Color(0xff142850),
-                            ),
-                      ),
+                            letterSpacing: 1.0,
+                          ),
+                        ),
+                        SizedBox(width: 2.0),
+                        Text(
+                          _userData.data['rollNo'].toString(),
+                          style: TextStyle(
+                            fontSize: 15,
+                            fontFamily: 'HelveticaNeueLiight',
+                            letterSpacing: 1.0,
+                          ),
+                        ),
+                      ],
                     ),
-                    FutureBuilder(
-                        future: getInitialData(_userData.data['rollNo']),
-                        builder: (context, snapshot) {
-                          if (snapshot.connectionState ==
-                              ConnectionState.done) {
+                  ),
+                  SizedBox(height: 10.0),
+                  Container(
+                    constraints: BoxConstraints(maxWidth: width * 0.75),
+                    child: Row(
+                      children: <Widget>[
+                        Text(
+                          'Email:',
+                          style: TextStyle(
+                            fontSize: 15,
+                            fontFamily: 'HelveticaNeueLight',
+                            letterSpacing: 1.0,
+                          ),
+                        ),
+                        SizedBox(width: 2.0),
+                        Text(
+                          _userData.data['email'].toString(),
+                          style: TextStyle(
+                            fontSize: 15,
+                            fontFamily: 'HelveticaNeueLight',
+                            letterSpacing: 1.0,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(height: 10.0),
+                  Container(
+                    constraints: BoxConstraints(maxWidth: width * 0.75),
+                    child: Row(
+                      children: <Widget>[
+                        Text(
+                          'Contact:',
+                          style: TextStyle(
+                            fontSize: 15,
+                            fontFamily: 'HelveticaNeueLight',
+                            letterSpacing: 1.0,
+                          ),
+                        ),
+                        SizedBox(width: 1.0),
+                        Text(
+                          _userData.data['contact'].toString(),
+                          style: TextStyle(
+                            fontSize: 15,
+                            fontFamily: 'HelveticaNeueLight',
+                            letterSpacing: 1.0,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              ListTile(
+                //the option to view emergency numbers - takes you to dummy page
+                title: Text(
+                  'Emergency Numbers',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontFamily: 'HelveticaNeueLight',
+                    letterSpacing: 2.0,
+                  ),
+                ),
+                onTap: () {
+                  Navigator.of(context).pushNamed('/emergencyNumbers');
+                  //print('Emergency numbers');
+                },
+              ),
+              Expanded(
+                //the option to logout (bottom center aligned)
+                child: Align(
+                  alignment: Alignment.bottomCenter,
+                  child: Padding(
+                    padding:
+                        EdgeInsets.fromLTRB(width * 0.8 * 0.24, 0, 0, 10.0),
+                    child: Row(
+                      //has the icon and text
+                      children: <Widget>[
+                        IconButton(
+                          icon: Image(
+                            image: AssetImage('assets/logout.png'),
+                            fit: BoxFit.fill,
+                            color: const Color(0xff142850),
+                          ),
+                          color: const Color(0xff142850),
+                          onPressed: () {
+                            showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                    title: Text(
+                                      "Are you sure?",
+                                      style: TextStyle(
+                                        fontFamily: 'HelveticaNeueLight',
+                                        letterSpacing: 2.0,
+                                        fontSize: 20,
+                                        color: Colors.grey[600],
+                                      ),
+                                    ),
+                                    actions: <Widget>[
+                                      FlatButton(
+                                        child: Text(
+                                          'YES',
+                                          style: TextStyle(
+                                            fontFamily: 'HelveticaNeueLight',
+                                            letterSpacing: 3.0,
+                                            fontSize: 20,
+                                            color: const Color(0xff1a832a),
+                                          ),
+                                        ),
+                                        onPressed: () async {
+                                          //navigation to login screen
+                                          //! signout here
+                                          await _authMfr.logOut();
+                                          Navigator.of(context).pop();
+                                          Navigator.pushReplacementNamed(
+                                              context, '/select_login');
+                                        },
+                                      ),
+                                      FlatButton(
+                                        child: Text(
+                                          'NO',
+                                          style: TextStyle(
+                                            fontFamily: 'HelveticaNeueLight',
+                                            letterSpacing: 2.5,
+                                            fontSize: 20,
+                                            color: const Color(0xffee0000),
+                                          ),
+                                        ),
+                                        onPressed: () {
+                                          Navigator.of(context).pop();
+                                        },
+                                      ),
+                                    ],
+                                  );
+                                });
+                            //print('logout');
+                          },
+                        ),
+                        Text(
+                          'LOGOUT',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontFamily: 'HelveticaNeueBold',
+                            color: const Color(0xff142850),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+      //This is the appBar which has the main heading and the drawer option
+      appBar: AppBar(
+        backgroundColor: const Color(0xff142850),
+        title: Text(
+          'Home',
+          style: TextStyle(
+            fontFamily: 'HelveticaNeueLight',
+            letterSpacing: 2.0,
+            fontSize: 24,
+          ),
+        ),
+        centerTitle: true,
+      ),
+      //This is where the toggle option and the two cards (Map and Report Emergency) reside
+      body: Center(
+        child: Column(
+          //everything is placed in the column
+          children: <Widget>[
+//              AlertFunctionMfr(
+//                  availability: isAvailable,
+//                  occupied: isOccupied,
+//                  mfrRollNo: _userData['rollNo']),
+            //showAlert(isAvailable, length), //AlertFunction(),
+            Flexible(
+              flex: 3,
+              child: Container(
+                height: height / 5,
+                width: width / 1.5,
+                child: Row(children: <Widget>[
+                  Expanded(
+                    flex: 2,
+                    child: Text(
+                      'Available',
+                      style: TextStyle(
+                          fontFamily: 'HelveticaNeueLight',
+                          letterSpacing: 2.0,
+                          fontSize: 24,
+                          color: Colors.white //const Color(0xff142850),
+                          ),
+                    ),
+                  ),
+                  FutureBuilder(
+                      future: getInitialData2(_userData.data['rollNo']),
+                      builder: (BuildContext context, AsyncSnapshot snapshot) {
+                        if (snapshot.connectionState == ConnectionState.done) {
+                          if (snapshot.hasError) {
+                            return Text('----- ERROR -> ${snapshot.error}');
+                          } else {
+                            //print(snapshot.data['isActive']);
+                            //isAvailable = snapshot.data['isActive'];
                             return Transform.scale(
                                 scale: 2.5,
                                 child: Switch(
-                                  value: isAvailable,
+                                  value: isAvailable, //isAvailable,
                                   onChanged: (bool newVal) {
                                     setState(() {
+                                      //print('newbal: $newVal');
+                                      //print('Current availability val: $isAvailable');
                                       isAvailable = newVal;
                                       upDateAvailability(
                                           isAvailable, _userData['rollNo']);
@@ -430,105 +447,103 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
                                   inactiveThumbColor: Colors.white,
                                   inactiveTrackColor: Colors.red[200],
                                 ));
-                          } else {
-                            return Container(
-                              child: SpinKitPulse(
-                                color: Colors.white,
-                                size: 50,
-                              ),
-                            );
                           }
-                        }),
-                  ]),
+                        } else {
+                          return Container(
+                            child: SpinKitPulse(
+                              color: Colors.white,
+                              size: 50,
+                            ),
+                          );
+                        }
+                      }),
+                ]),
+              ),
+            ),
+            Flexible(
+              flex: 4,
+              child: SizedBox(
+                height: height / 4,
+                width: width / 1.5,
+                child: Card(
+                  elevation: 7,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15)),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: <Widget>[
+                      IconButton(
+                        icon: Icon(
+                          Icons.location_on,
+                          color: Colors.red[400],
+                          size: height / 9,
+                        ),
+                        onPressed: () {
+                          print('Clicked');
+                          Navigator.of(context).pushNamed('/dummy');
+                        },
+                      ),
+                      Center(
+                        child: Text(
+                          'Map',
+                          style: TextStyle(
+                              fontSize: 22,
+                              fontFamily: 'HelveticaNeueLight',
+                              letterSpacing: 2.0,
+                              color: const Color(0xff142850) //Colors.cyan[800],
+                              ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
-              Flexible(
-                flex: 4,
-                child: SizedBox(
-                  height: height / 4,
-                  width: width / 1.5,
-                  child: Card(
-                    elevation: 7,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(15)),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+            ),
+            SizedBox(
+              height: height / 16,
+            ),
+            Flexible(
+              flex: 4,
+              child: SizedBox(
+                height: height / 4,
+                width: width / 1.5,
+                child: Card(
+                  elevation: 7,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15)),
+                  child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: <Widget>[
                         IconButton(
-                          icon: Icon(
-                            Icons.location_on,
-                            color: Colors.red[400],
-                            size: height / 9,
+                          icon: Image(
+                            image: AssetImage('assets/report.png'),
+                            fit: BoxFit.fill,
                           ),
+                          iconSize: height / 9,
                           onPressed: () {
                             print('Clicked');
-                            Navigator.of(context).pushNamed('/dummy');
                           },
                         ),
                         Center(
-                          child: Text(
-                            'Map',
-                            style: TextStyle(
+                          child: Padding(
+                            padding: EdgeInsets.fromLTRB(0, 0, 0, height / 80),
+                            child: Text(
+                              'Report Emergency',
+                              style: TextStyle(
                                 fontSize: 22,
                                 fontFamily: 'HelveticaNeueLight',
                                 letterSpacing: 2.0,
-                                color:
-                                    const Color(0xff142850) //Colors.cyan[800],
-                                ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-              SizedBox(
-                height: height / 16,
-              ),
-              Flexible(
-                flex: 4,
-                child: SizedBox(
-                  height: height / 4,
-                  width: width / 1.5,
-                  child: Card(
-                    elevation: 7,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(15)),
-                    child: Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: <Widget>[
-                          IconButton(
-                            icon: Image(
-                              image: AssetImage('assets/report.png'),
-                              fit: BoxFit.fill,
-                            ),
-                            iconSize: height / 9,
-                            onPressed: () {
-                              print('Clicked');
-                            },
-                          ),
-                          Center(
-                            child: Padding(
-                              padding:
-                                  EdgeInsets.fromLTRB(0, 0, 0, height / 80),
-                              child: Text(
-                                'Report Emergency',
-                                style: TextStyle(
-                                  fontSize: 22,
-                                  fontFamily: 'HelveticaNeueLight',
-                                  letterSpacing: 2.0,
-                                  color: const Color(0xff142850),
-                                ),
+                                color: const Color(0xff142850),
                               ),
                             ),
                           ),
-                        ]),
-                  ),
+                        ),
+                      ]),
                 ),
-              )
-            ],
-          ),
+              ),
+            )
+          ],
         ),
       ),
     );
