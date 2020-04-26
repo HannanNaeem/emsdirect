@@ -194,9 +194,56 @@ class MapState extends State<MapMFR> {
                       width: (width+height)*0.20,
                       height: (width+height)*0.04,
                       child: RaisedButton(
-                          onPressed: () => Navigator.of(context).pop(),
+                          onPressed: () {
+                            showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                    title: Text(
+                                      "Are you sure?",
+                                      style: TextStyle(
+                                        fontFamily: 'HelveticaNeueLight',
+                                        letterSpacing: 2.0,
+                                        fontSize: 20,
+                                        color: Colors.grey[600],
+                                      ),
+                                    ),
+                                    actions: <Widget>[
+                                      FlatButton(
+                                        child: Text(
+                                          'YES',
+                                          style: TextStyle(
+                                            fontFamily: 'HelveticaNeueLight',
+                                            letterSpacing: 3.0,
+                                            fontSize: 20,
+                                            color: const Color(0xff1a832a),
+                                          ),
+                                        ),
+                                        onPressed: () async {
+                                          // todo: add mfr home here
+                                        },
+                                      ),
+                                      FlatButton(
+                                        child: Text(
+                                          'NO',
+                                          style: TextStyle(
+                                            fontFamily: 'HelveticaNeueLight',
+                                            letterSpacing: 2.5,
+                                            fontSize: 20,
+                                            color: const Color(0xffee0000),
+                                          ),
+                                        ),
+                                        onPressed: () {
+                                          Navigator.of(context).pop();
+                                        },
+                                      ),
+                                    ],
+                                  );
+                                });
+                          },
                           textColor: Colors.cyan[500],
                           color: Colors.white,
+                          // todo: update occupied status
                           child: Text(
                             'End Emergency',
                             style: TextStyle(
