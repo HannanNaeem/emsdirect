@@ -1,3 +1,4 @@
+import 'package:ems_direct/services/emergency_alert_ops.dart';
 import 'package:flutter/material.dart';
 import 'package:ems_direct/records.dart';
 import 'package:ems_direct/map.dart';
@@ -81,70 +82,27 @@ class _OpsHomeState extends State<OpsHome> with WidgetsBindingObserver {
     'Records'
   ];
 
+  void setSelectPage(int moveTo){
+    setState(() {
+      _selectedPage = moveTo;
+    });
+  }
+
   // ------------------------------------------------------------
 
   // ------------- Notification handler ------------------------//
-  bool _isNotification = false;
-  var _notificationData = "HAHAHA";
-
-  void _renderNotification(var snapshot){
-
-    showDialog(context: context,
-              builder: (BuildContext context) {
-                return AlertDialog(
-                  title: Text(
-                    "Notification rendered",
-                    style: TextStyle(
-                      fontFamily: 'HelveticaNeueLight',
-                      letterSpacing: 2.0,
-                      fontSize: 20,
-                      color: Colors.grey[600],
-                    ),
-                  ),
-                  actions: <Widget>[
-                    FlatButton(
-                      child: Text(
-                        'TRY AGAIN',
-                        style: TextStyle(
-                          fontFamily: 'HelveticaNeueLight',
-                          letterSpacing: 2.5,
-                          fontSize: 20,
-                          color: const Color(0xffee0000),
-                        ),
-                      ),
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
-                    ),
-                  ],
-                );
-              });
-  }
-
+  
  
-
   @override
   Widget build(BuildContext context) {
+
     var screenSize = MediaQuery.of(context).size;
     var width = screenSize.width;
     var height = screenSize.height;
 
     final ignoredEmergencies = Provider.of<QuerySnapshot>(context);
-    // fetching pending emergencies
+
     
-    // if(ignoredEmergencies != null && ignoredEmergencies.documents != [])
-    // {
-     
-    // _renderNotification(ignoredEmergencies.documents);
-      
-      
-    // }
-    
-    Get.defaultDialog(
-      title:"Ok",
-      content: Text("hi"),
-      cancel: FlatButton(child: Text("clickhere"), onPressed: () => Get.back())
-    );
 
     return Scaffold(
       appBar: AppBar(
@@ -365,7 +323,11 @@ class _OpsHomeState extends State<OpsHome> with WidgetsBindingObserver {
       ),
 
 
-      body: _pageOptions[_selectedPage],
+      body: Stack(
+        children: <Widget>[
+          _pageOptions[_selectedPage],
+        ],
+      ),
 
       
       bottomNavigationBar: BottomNavigationBar(

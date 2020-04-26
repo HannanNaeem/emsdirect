@@ -4,6 +4,7 @@ import 'package:ems_direct/ops.dart';
 import 'package:ems_direct/pages/MFR_home.dart';
 import 'package:ems_direct/services/auth.dart';
 import 'package:ems_direct/services/ops_database.dart';
+import 'package:ems_direct/services/ops_notification_wrapper.dart';
 import 'package:ems_direct/services/user_database.dart';
 import 'package:ems_direct/shared/loading.dart';
 import 'package:flutter/material.dart';
@@ -51,7 +52,7 @@ class Wrapper extends StatelessWidget {
                               
                               return StreamProvider<QuerySnapshot>.value(
                                 value: OpsDatabaseService().pendingStream,
-                                child: OpsHome(true,snapshot.data)
+                                child: OpsWrapper(true,snapshot.data)
                                 );
                             
                             }

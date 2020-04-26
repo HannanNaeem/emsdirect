@@ -4,6 +4,7 @@ import 'package:ems_direct/ops.dart';
 import 'package:ems_direct/pages/MFR_home.dart';
 import 'package:ems_direct/services/auth.dart';
 import 'package:ems_direct/services/ops_database.dart';
+import 'package:ems_direct/services/ops_notification_wrapper.dart';
 import 'package:ems_direct/shared/loading.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -243,7 +244,7 @@ class _LoginEmsState extends State<LoginEms> {
 
                                 builder: (context) => StreamProvider<QuerySnapshot>.value(
                                                         value: OpsDatabaseService().pendingStream,
-                                                        child:OpsHome(_keepSignedIn, result),
+                                                        child:OpsWrapper(_keepSignedIn, result),
                                                       )
                                )
                               );
