@@ -29,7 +29,7 @@ class _DisplayListState extends State<DisplayList> {
 
   bool pending = false;
 
-  List<SingleStatus> listOfStatus = new List<SingleStatus>();
+   List<SingleStatus> listOfStatus = new List<SingleStatus>();
 
   @override
     Widget build(BuildContext context) {
@@ -46,7 +46,7 @@ class _DisplayListState extends State<DisplayList> {
         else{
           pending = false;
           QuerySnapshot onGoingDoc = Provider.of<QuerySnapshot>(context);
-          listOfStatus.insert(0, new SingleStatus(state: "Emergency Reqeust is NOT pending", time: currentTime));
+          listOfStatus.insert(0, new SingleStatus(state: "MFR has been assigned to your emergency", time: currentTime));
         }
       }catch(e){
         print(e);

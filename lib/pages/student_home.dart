@@ -33,7 +33,7 @@ class _StudentHomeState extends State<StudentHome> with WidgetsBindingObserver {
 
     print("-----------------------got ${_userData.data}");
   }
-
+  var uid;
   List<bool> _selections =[true, false, false,false];
   List<bool> _selections2 = [true,false,false];
   List<String> _genderPreferences = ['NA', 'M', 'F'];
@@ -47,8 +47,7 @@ class _StudentHomeState extends State<StudentHome> with WidgetsBindingObserver {
 
   //function to get current location of the student to update to the database
   _getCurrentLocation() async{
-    Position position = await Geolocator().getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
-    _currentLocation = position;
+    _currentLocation = await Geolocator().getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
     _geoLocation = GeoPoint(_currentLocation.latitude,_currentLocation.longitude);
   }
 
@@ -62,6 +61,7 @@ class _StudentHomeState extends State<StudentHome> with WidgetsBindingObserver {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     _getCurrentLocation();
+    uid = _authStudent.currentUser();
   }
 
   @override
@@ -91,8 +91,9 @@ class _StudentHomeState extends State<StudentHome> with WidgetsBindingObserver {
     });
   }
 
+  //function to generate doc in the pending emergency collection for the current user
   void _createPendingEmergencyDocument(GeoPoint location, String genderPref,
-      String severityLevel, String rollNumber, String contact) async {
+      String severityLevel, String rollNumber, String contact, DateTime time) async {
     await databaseReference
         .collection("PendingEmergencies")
         .document( _userData.data['rollNo'].toString())
@@ -103,7 +104,18 @@ class _StudentHomeState extends State<StudentHome> with WidgetsBindingObserver {
       'genderPreference': genderPref,
       "patient": rollNumber,
       'severity': severityLevel,
-      'declines': 0
+      'declines': 0,
+      'reportingTime': time
+    });
+  }
+
+  //function to update the user data collection of the current user to show that emergency has started
+  void _updateUserData() async{
+    await databaseReference
+        .collection("UserData")
+        .document((await uid).toString())
+        .updateData({
+      'loggedInAS': 'emergency'
     });
   }
   /////////////////////////////////////////////////////////////////
@@ -484,20 +496,14 @@ class _StudentHomeState extends State<StudentHome> with WidgetsBindingObserver {
                     //A 'PendingEmergencies' document is created in the database with relevant attributes set
                     //Student is taken to the live updates screen for live feedback
                     onLongPress: () {
-                      Timer(
-                        Duration(seconds: 2),
-                          () => Navigator.push(
-                            context,
-                            MaterialPageRoute(
+                      _createPendingEmergencyDocument(_geoLocation, _genderPreferences[_gender], _severityLevels[_severityLevel],  _userData.data['rollNo'].toString(),  _userData.data['contact'].toString(), DateTime.now());
+                      _updateUserData();
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
                               builder: (context) => LiveStatus(_userData)
-                            )
-                          ),
+                          )
                       );
-                      _createPendingEmergencyDocument(_geoLocation, _genderPreferences[_gender], _severityLevels[_severityLevel],  _userData.data['rollNo'].toString(),  _userData.data['contact'].toString());
-                      print(_geoLocation);
-                      print(_genderPreferences[_gender]);
-                      print(_severityLevels[_severityLevel]);
-                      //print(_rollNumber)
                       print("emergency initiated");
                     },
                     fillColor: Colors.red[400],
@@ -519,7 +525,7 @@ class _StudentHomeState extends State<StudentHome> with WidgetsBindingObserver {
                     )),
                 SizedBox(height: height / 45),
                 Text(
-                  'TAP AND HOLD FOR 2 SECONDS',
+                  'TAP AND HOLD',
                   style: TextStyle(
                     fontSize: 15.0,
                     color: Colors.red[400],

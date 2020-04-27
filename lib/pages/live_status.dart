@@ -31,8 +31,6 @@ class _LiveStatusState extends State<LiveStatus> {
     super.initState();
   }
 
-    //final databaseReference = Firestore.instance;
-
 
   Stream<QuerySnapshot> ongoingEmergencies = Firestore.instance.collection('OngoingEmergencies').snapshots();
 
