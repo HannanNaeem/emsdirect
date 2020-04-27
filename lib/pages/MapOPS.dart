@@ -22,7 +22,6 @@ class MapStateOPS extends State<MapOPS> {
   List<Marker> allMarkers = [];
   LatLng _lastMapPosition = _loc;
   MapType _currentMapType = MapType.normal;
-
   static final CameraPosition _position1 = CameraPosition(
     bearing: 192.833,
     target: LatLng(45.531563, -122.677433),
