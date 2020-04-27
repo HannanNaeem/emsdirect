@@ -65,17 +65,18 @@ class MapStateOPS extends State<OpsMap> {
   }
   @override
   Widget build(BuildContext context) {
+    var _availableMfrsList = Provider.of<List<AvailableMfrs>>(context);
+    var _pendingEmergenciesList = Provider.of<List<PendingEmergencyModel>>(context);
+    var _onGoingEmergenciesList = Provider.of<List<OngoingEmergencyModel>>(context);
+
     var screenSize = MediaQuery.of(context).size;
     var width = screenSize.width;
     var height = screenSize.height;
     // ----------------------------- snapshot lists ---------------------------------//
-//    var _availableMfrsList = Provider.of<List<AvailableMfrs>>(context);
-//    var _pendingEmergenciesList = Provider.of<List<PendingEmergencyModel>>(context);
-//    var _onGoingEmergenciesList = Provider.of<List<OngoingEmergencyModel>>(context);
-//
-//    _addAvailableMfrsMarker(_availableMfrsList);
-//    _addPendingEmergenciesMarker(_pendingEmergenciesList);
-//    _addOnGoingEmergenciesMarker(_onGoingEmergenciesList);
+    //
+    _addAvailableMfrsMarker(_availableMfrsList);
+    _addPendingEmergenciesMarker(_pendingEmergenciesList);
+    _addOnGoingEmergenciesMarker(_onGoingEmergenciesList);
     return MaterialApp(
       home: Scaffold(
         body: Stack(
@@ -135,67 +136,88 @@ class MapStateOPS extends State<OpsMap> {
 
 
   _addOnGoingEmergenciesMarker(_onGoingEmergenciesList){
-    for(var x = 0; x < _onGoingEmergenciesList.length; x++) {
-      GeoPoint location = _onGoingEmergenciesList[x].location;
-      String rollNumber = _onGoingEmergenciesList[x].patientRollNo;
-      String assignedMFR = _onGoingEmergenciesList[x].mfr;
-      String severity = _onGoingEmergenciesList[x].severity;
+    if (_onGoingEmergenciesList != null) {
+      for (var x = 0; x < _onGoingEmergenciesList.length; x++) {
+        GeoPoint location = _onGoingEmergenciesList[x].location;
+        String rollNumber = _onGoingEmergenciesList[x].patientRollNo;
+        String assignedMFR = _onGoingEmergenciesList[x].mfr;
+        String severity = _onGoingEmergenciesList[x].severity;
 
-      allMarkers.add(
-          Marker(
-            markerId: MarkerId(location.toString()),
-            position: LatLng(location.latitude, location.longitude),
-            onTap: () {
-              print('Roll Number: ');
-              print(rollNumber);
-              print('\nSeverity: ');
-              print(severity);
-              print('\nAssigned MFR: ');
-              print(assignedMFR);
-            },
-            icon: BitmapDescriptor.fromAsset("images/cross.png"),
-          )
-      );
+        allMarkers.add(
+            Marker(
+              markerId: MarkerId(location.toString()),
+              position: LatLng(location.latitude, location.longitude),
+              onTap: () {
+                print('Roll Number: ');
+                print(rollNumber);
+                print('\nSeverity: ');
+                print(severity);
+                print('\nAssigned MFR: ');
+                print(assignedMFR);
+              },
+              icon: BitmapDescriptor.fromAsset("images/cross.png"),
+            )
+        );
+      }
     }
   }
 
 
   _addPendingEmergenciesMarker(_pendingEmergenciesList){
-    for(var x = 0; x < _pendingEmergenciesList.length; x++) {
-      GeoPoint location = _pendingEmergenciesList[x].location;
-      String rollNumber = _pendingEmergenciesList[x].patientRollNo;
-      String severity = _pendingEmergenciesList.severity;
+    if (_pendingEmergenciesList != null) {
+      for (var x = 0; x < _pendingEmergenciesList.length; x++) {
+        GeoPoint location = _pendingEmergenciesList[x].location;
+        String rollNumber = _pendingEmergenciesList[x].patientRollNo;
+        String severity = _pendingEmergenciesList[x].severity;
 
-      allMarkers.add(
-          Marker(
-            markerId: MarkerId(location.toString()),
-            position: LatLng(location.latitude, location.longitude),
-            onTap: () {
-              print('Roll Number: ');
-              print(rollNumber);
-              print('\nSeverity: ');
-              print(severity);
-              print('PLEASE ASSIGN AN MFR.');
-              // todo: assign MFR option
-            },
-            icon: BitmapDescriptor.fromAsset("images/cross.png"),
-          )
-      );
+        allMarkers.add(
+            Marker(
+              markerId: MarkerId(location.toString()),
+              position: LatLng(location.latitude, location.longitude),
+              onTap: () {
+                print('Roll Number: ');
+                print(rollNumber);
+                print('\nSeverity: ');
+                print(severity);
+                print('PLEASE ASSIGN AN MFR.');
+                // todo: assign MFR option
+              },
+              icon: BitmapDescriptor.fromAsset("images/cross.png"),
+            )
+        );
+      }
     }
   }
 
 
   _addAvailableMfrsMarker(_availableMfrsList) {
-    for (var x = 0; x < _availableMfrsList.length; x++) {
-      GeoPoint location = _availableMfrsList[x].location;
-      String name = _availableMfrsList[x].name;
-      String gender = _availableMfrsList[x].gender;
+    if(_availableMfrsList != null) {
+      for (var x = 0; x < _availableMfrsList.length; x++) {
+        GeoPoint location = _availableMfrsList[x].location;
+        String name = _availableMfrsList[x].name;
+        String gender = _availableMfrsList[x].gender;
 
-      bool busy = _availableMfrsList.isOccupied;
+        bool busy = _availableMfrsList.isOccupied;
 
-      if (busy == 1) {
-        allMarkers.add(
-            Marker(
+        if (busy == 1) {
+          allMarkers.add(
+              Marker(
+                  markerId: MarkerId(location.toString()),
+                  position: LatLng(location.latitude, location.longitude),
+                  onTap: () {
+                    print('Name: ');
+                    print(name);
+                    print('\nGender: ');
+                    print(gender);
+                  },
+                  icon: BitmapDescriptor.defaultMarkerWithHue(
+                      BitmapDescriptor.hueBlue)
+              )
+          );
+        }
+        else {
+          allMarkers.add(
+              Marker(
                 markerId: MarkerId(location.toString()),
                 position: LatLng(location.latitude, location.longitude),
                 onTap: () {
@@ -204,23 +226,9 @@ class MapStateOPS extends State<OpsMap> {
                   print('\nGender: ');
                   print(gender);
                 },
-                icon:  BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueBlue)
-            )
-        );
-      }
-      else {
-        allMarkers.add(
-            Marker(
-              markerId: MarkerId(location.toString()),
-              position: LatLng(location.latitude, location.longitude),
-              onTap: () {
-                print('Name: ');
-                print(name);
-                print('\nGender: ');
-                print(gender);
-              },
-            )
-        );
+              )
+          );
+        }
       }
     }
   }
