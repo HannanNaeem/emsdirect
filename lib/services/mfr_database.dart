@@ -32,8 +32,9 @@ class MfrDatabaseService {
         genderPreference: doc.data['genderPreference'],
         location: doc.data['location'],
         mfr: doc.data['mfr'],
-        reportingTime: doc.data['reportingTime'],
+        reportingTime: doc.data['reportingTime'].toString(),
         severity: doc.data['severity'],
+        patientContactNo: doc.data['pateintContactNo'],
       );
     }).toList();
   }
@@ -49,7 +50,6 @@ class MfrDatabaseService {
   //get ongoing emergencies
   Stream<List<OngoingEmergencyModel>> get ongoingStream {
     return onGoingEmergencies
-        .where('severity', whereIn: ['low', 'medium'])
         .snapshots()
         .map(_ongoingEmergencyListFromSnapshot);
   }

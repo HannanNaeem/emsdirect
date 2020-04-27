@@ -24,7 +24,7 @@ class MyApp extends StatelessWidget {
         '/emergencyNumbers': (context) => EmergencyNumbers(),
         '/select_login': (context) => SelectLogin(),
         '/availableMFRs': (context) => AvailableMfrs(),
-        '/dummy': (context) => DummyPage(),
+        //'/dummy': (context) => DummyPage(),
       },
     );
   }

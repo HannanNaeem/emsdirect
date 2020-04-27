@@ -12,16 +12,6 @@ import 'package:ems_direct/models/emergency_models.dart';
 //This is responsible for alerting MFRs of any pending emergencies with a severity level of low/medium
 class AlertFunctionMfr extends StatefulWidget {
   var _userData;
-//  var availability;
-//  var occupied;
-//  var gender;
-
-//  AlertFunctionMfr(var available, var occupied, var userData, var gender) {
-//    _userData = userData;
-//    availability = available;
-//    occupied = occupied;
-//    gender = gender;
-//  }
 
   AlertFunctionMfr(var userData) {
     _userData = userData;
@@ -81,7 +71,7 @@ class _AlertFunctionMfrState extends State<AlertFunctionMfr> {
   }
 
   //updates occupied status of MFR
-  Future updateOccupiedStatus(bool newVal, var docID) async {
+  Future updateOccupiedStatus(bool newVal) async {
     DocumentReference docRef = databaseReference
         .collection('Mfr')
         .document(widget._userData['rollNo']);
@@ -134,28 +124,14 @@ class _AlertFunctionMfrState extends State<AlertFunctionMfr> {
       'location': location,
       'genderPreference': genderPreference,
       'patientRollNo': patientRollNo,
-      'reportingTime': FieldValue.serverTimestamp(),
+      'reportingTime': FieldValue.serverTimestamp().toString(),
       'severity': severityLevel,
       'patientContactNo': patientContactNo,
     });
   }
 
   //main function to show alert
-  Future showAlert(int num, var doc, var width, var height) async {
-    //------------TESTING---------------------
-    //num = 1; //FOR TESTING ALERTS BASED ON SITUATIONS WITH A NULL STREAM
-//    _isOccupied = false;
-//    _isAvailable = true;
-//    var doc = {
-//      'declines': 0,
-//      'severity': 'low',
-//      'genderPreference': 'F',
-//      'patientRollNo': '21100118',
-//      'declinedBY': [''],
-//      'location': null
-//    };
-    //-----------------------------------------
-
+  Future showPendingAlert(int num, var doc, var width, var height) async {
     //only shows alerts if there is a pending emergency document AND if MFR is available+not occupied
     if (_isAvailable && (num > 0) && !_isOccupied) {
       //-------------- TESTING ------------------------------------
@@ -203,8 +179,6 @@ class _AlertFunctionMfrState extends State<AlertFunctionMfr> {
                 ),
                 onPressed: () async {
                   print('yes');
-                  //mfrGlobalKey.currentState.locationOfEmergency = doc.location;
-                  //mfrGlobalKey.currentState.patientContactNo = doc.patientContactNo;
                   _isOccupied = true;
                   await createOngoingEmergencyDocument(
                       doc.location,
@@ -214,7 +188,7 @@ class _AlertFunctionMfrState extends State<AlertFunctionMfr> {
                       doc.patientContactNo);
                   await deleteRecord(doc.patientRollNo);
                   Navigator.of(context).pop();
-                  return await updateOccupiedStatus(true, doc.patientRollNo);
+                  return await updateOccupiedStatus(true);
                 },
               ),
             ),
@@ -245,6 +219,94 @@ class _AlertFunctionMfrState extends State<AlertFunctionMfr> {
     }
   }
 
+  Future showOngoingAlert(int num, var doc, var width, var height) async {
+    //only shows alerts if there is a pending emergency document AND if MFR is available+not occupied
+    if (_isAvailable && (num > 0) && !_isOccupied) {
+      //-------------- TESTING ------------------------------------
+      // print(widget.occupied);
+      //print(doc.data);
+      //print('ID: ${doc.documentID}');
+      //-----------------------------------------------------------
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          title: Text(
+            "You have been assigned an emergency!",
+            style: TextStyle(
+              fontFamily: 'HelveticaNeueLight',
+              letterSpacing: 2.0,
+              fontSize: 24,
+            ),
+          ),
+          content: Stack(
+            children: <Widget>[
+              Text(
+                "Severity level:${doc.severity}\nPatient: ${doc.patientRollNo}\nContact: ${doc.patientContactNo}",
+                style: TextStyle(
+                  fontFamily: 'HelveticaNeueLight',
+                  letterSpacing: 2.0,
+                  fontSize: 18,
+                ),
+              ),
+            ],
+          ),
+          actions: <Widget>[
+            Center(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(10, 0, 10, 10),
+                child: FlatButton(
+                  child: Text(
+                    'Acknowledge',
+                    style: TextStyle(
+                      fontFamily: 'HelveticaNeueLight',
+                      letterSpacing: 2,
+                      fontSize: 20,
+                      color: const Color(0xff1a832a),
+                    ),
+                  ),
+                  onPressed: () async {
+                    print('acknowledge');
+                    _isOccupied = true;
+                    Navigator.of(context).pop();
+                    return await updateDecline(doc.patientRollNo);
+                  },
+                ),
+              ),
+            ),
+            Divider(),
+            SizedBox(width: 10),
+            Center(
+              child: Padding(
+                padding: EdgeInsets.fromLTRB(10, 0, 10, 10),
+                child: FlatButton(
+                  child: Text(
+                    'Go to map',
+                    style: TextStyle(
+                      fontFamily: 'HelveticaNeueLight',
+                      letterSpacing: 2.0,
+                      fontSize: 20,
+                      color: const Color(0xff1a832a),
+                    ),
+                  ),
+                  onPressed: () async {
+                    print('acknowledge');
+                    _isOccupied = true;
+                    //delete the below navigator when merging with the map file
+                    Navigator.of(context).pop();
+                    //Navigator.push<dynamic>(context, MaterialPageRoute(builder: (context) => MapMFR(locationOfEmergency, patientContactNo)));
+                    return await updateOccupiedStatus(true);
+                  },
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+  }
+
   //------------TESTING---------------------
   void printData(var docs) {
     docs.forEach((emergency) {
@@ -258,9 +320,6 @@ class _AlertFunctionMfrState extends State<AlertFunctionMfr> {
   @override
   void initState() {
     super.initState();
-//    _isAvailable = widget.availability;
-//    _isOccupied = widget.occupied;
-//    _gender = widget.gender;
     //getting MFRs data on initialization
     WidgetsBinding.instance.addPostFrameCallback(
         (_) => getInitialData(widget._userData['rollNo']));
@@ -272,8 +331,6 @@ class _AlertFunctionMfrState extends State<AlertFunctionMfr> {
     var screenSize = MediaQuery.of(context).size;
     var _width = screenSize.width;
     var _height = screenSize.height;
-//    print(_height);
-//    print(_width);
     var _pendingEmergencyList =
         Provider.of<List<PendingEmergencyModel>>(context);
     var _ongoingEmergencyList =
@@ -288,72 +345,41 @@ class _AlertFunctionMfrState extends State<AlertFunctionMfr> {
 
     //handling cases for null values (this can happen in the case of null data being received from the stream)
     if (_pendingEmergencyList != null && _gender != null) {
+      //filtering the pending emergency to make sure MFR does not get alerts for the emergencies he/she rejected
       _pendingEmergencyList.removeWhere(
           (item) => item.declinedBy.contains(widget._userData['rollNo']));
+      //putting another filter of gender
       if (_pendingEmergencyList != null)
         _pendingEmergencyList
             .retainWhere((item) => item.genderPreference.contains(_gender));
       numPending = _pendingEmergencyList.length;
-      WidgetsBinding.instance
-          .addPostFrameCallback((_) => printData(_pendingEmergencyList));
+      //WidgetsBinding.instance.addPostFrameCallback((_) => printData(_pendingEmergencyList));
     }
 
+    //handling cases for null values (this can happen in the case of null data being received from the stream)
     if (_ongoingEmergencyList != null) {
-      printData((_ongoingEmergencyList));
+      //filtering for any emergency that is in my name
       _ongoingEmergencyList
           .retainWhere((item) => item.mfr.contains(widget._userData['rollNo']));
       numOngoing = _ongoingEmergencyList.length;
-      print('huh $numOngoing');
-      WidgetsBinding.instance
-          .addPostFrameCallback((_) => printData(_ongoingEmergencyList));
+      //WidgetsBinding.instance.addPostFrameCallback((_) => printData(_ongoingEmergencyList));
     }
 
+    //this is where the two alert functions are called depending on whether there is data AND conditions are met
     if (_isAvailable != null && _isOccupied != null) {
-      print('wut');
       if (!_isOccupied && _isAvailable) {
-        print('hmm');
+        //conditions
         if (_ongoingEmergencyList != null && numOngoing > 0) {
-          print('uhh wut');
           WidgetsBinding.instance.addPostFrameCallback((_) async =>
-              await showAlert(
+              await showOngoingAlert(
                   numOngoing, _ongoingEmergencyList[0], _width, _height));
         } else if (_pendingEmergencyList != null && numPending > 0) {
           WidgetsBinding.instance.addPostFrameCallback((_) async =>
-              await showAlert(
+              await showPendingAlert(
                   numPending, _pendingEmergencyList[0], _width, _height));
         }
       }
     }
-
-//    //handling cases for null values (this can happen in the case of null data being received from the stream)
-//    if (_docs != null && _isAvailable != null && _isOccupied != null) {
-//      //getting the document list from the snapshot for the purpose of further filtering
-//      List<DocumentSnapshot> _docList = _docs.documents;
-//      //making sure the alerts received are those which are not already declined by the MFR
-//      //if (_docs.documents[0].data != null) {
-//      //handling the null value error
-//      _docList.removeWhere((item) =>
-//          item.data['declinedBy'].contains(widget._userData['rollNo']));
-//      _docList.retainWhere(
-//          (item) => item.data['genderPreference'].contains(_gender));
-//      num = _docList.length;
-//      print(num);
-//      //}
-//      //only call the show alert function if the MFR is available, not occupied and actually has emergencies to tend to
-//      if ((_isAvailable) && (_docs != null) && (num > 0) && (!_isOccupied)) {
-//        WidgetsBinding.instance
-//            .addPostFrameCallback((_) => printData(_docList));
-//        WidgetsBinding.instance.addPostFrameCallback((_) async =>
-//            await showAlert(
-//                _docs.documents.length, _docList[0], _width, _height));
-//      }
-//
-////      if (_isAvailable != null && _isOccupied != null) {
-////        if ((_isAvailable) && (_docs != null) && (num > 0) && (!_isOccupied)) {
-////          WidgetsBinding.instance.addPostFrameCallback((_) => printData(_docList));
-////          WidgetsBinding.instance.addPostFrameCallback((_) async => await showAlert(_docs.documents.length, _docList[0], _width, _height));
-////        }
-//    }
 
     return Container();
   }

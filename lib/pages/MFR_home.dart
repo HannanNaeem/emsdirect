@@ -1,3 +1,4 @@
+import 'package:ems_direct/dummy.dart';
 import 'package:ems_direct/services/auth.dart';
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -80,10 +81,11 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
   //////////////////////////////// FUNCTIONS /////////////////////////////////////
   Future getEmergencyData(var docId) async {
     try {
-      return await databaseReference
+      var querySnap = await databaseReference
           .collection('OngoingEmergencies')
           .where('mfr', isEqualTo: docId)
           .getDocuments();
+      return querySnap.documents;
     } catch (e) {
       print(e);
     }
@@ -412,7 +414,8 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
         child: Column(
           //everything is placed in the column
           children: <Widget>[
-            //if (isAvailable != null && isOccupied != null) AlertFunctionMfr(_userData),
+            if (isAvailable != null && isOccupied != null)
+              AlertFunctionMfr(_userData),
             //showAlert(isAvailable, length), //AlertFunction(),
             Flexible(
               flex: 3,
@@ -447,8 +450,6 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
                                   value: isAvailable, //isAvailable,
                                   onChanged: (bool newVal) {
                                     setState(() {
-                                      //print('newbal: $newVal');
-                                      //print('Current availability val: $isAvailable');
                                       isAvailable = newVal;
                                       upDateAvailability(
                                           isAvailable, _userData['rollNo']);
@@ -480,7 +481,7 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
                       builder: (BuildContext context, AsyncSnapshot snapshot) {
                         if (snapshot.connectionState == ConnectionState.done) {
                           if (snapshot.hasData) {
-                            print(snapshot.data);
+                            print(snapshot.data[0].data['patientRollNo']);
                             return SizedBox(
                               height: height / 4,
                               width: width / 1.5,
@@ -497,18 +498,20 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
                                     IconButton(
                                         icon: Icon(
                                           Icons.location_on,
-                                          color: Colors.red[400],
+                                          color: isOccupied
+                                              ? Colors.red[800]
+                                              : Colors.grey[400],
                                           size: height / 9,
                                         ),
                                         onPressed: () {
                                           print('Clicked');
                                           locationOfEmergency =
-                                              snapshot.data['location'];
-                                          patientContactNo =
-                                              snapshot.data['patientContactNo'];
+                                              snapshot.data[0].data['location'];
+                                          patientContactNo = snapshot
+                                              .data[0].data['patientContactNo'];
                                           print(locationOfEmergency);
                                           print(patientContactNo);
-                                          //Navigator.of(context).pushNamed('/dummy');
+                                          //Navigator.push<dynamic>(context, MaterialPageRoute(builder: (context) => MapMFR(locationOfEmergency, patientContactNo)));
                                         }),
                                     Center(
                                       child: Text(
@@ -548,13 +551,10 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
                                   IconButton(
                                     icon: Icon(
                                       Icons.location_on,
-                                      color: Colors.red[400],
+                                      color: Colors.grey[800],
                                       size: height / 9,
                                     ),
-                                    onPressed: () {
-                                      print('Clicked');
-                                      Navigator.of(context).pushNamed('/dummy');
-                                    },
+                                    onPressed: () {},
                                   ),
                                   Center(
                                     child: Text(
@@ -585,10 +585,13 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: <Widget>[
-                            Icon(
-                              Icons.location_on,
-                              color: Colors.red[400],
-                              size: height / 9,
+                            IconButton(
+                              icon: Icon(
+                                Icons.location_on,
+                                color: Colors.grey[800],
+                                size: height / 9,
+                              ),
+                              onPressed: () {},
                             ),
                             Center(
                               child: Text(

@@ -18,7 +18,6 @@ class MfrWrapper extends StatelessWidget {
   Widget build(BuildContext context) {
     return Stack(
       children: <Widget>[
-        //AlertFunctionMfr(_userData),
         MFRHome(_keepSignedIn, _userData),
       ],
     );
