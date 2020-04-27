@@ -115,7 +115,7 @@ class _StudentHomeState extends State<StudentHome> with WidgetsBindingObserver {
         .collection("UserData")
         .document((await uid).toString())
         .updateData({
-      'loggedInAS': 'emergency'
+      'loggedInAs': 'emergency'
     });
   }
   /////////////////////////////////////////////////////////////////
