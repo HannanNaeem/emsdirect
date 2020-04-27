@@ -33,6 +33,7 @@ dependencies:
   provider: ^4.0.5
   flutter_spinkit: ^4.1.2+1
   get: ^1.17.3
+  intl: ^0.16.1
 
 
 dev_dependencies:

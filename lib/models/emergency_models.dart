@@ -48,7 +48,7 @@ class OngoingEmergencyModel {
   final String genderPreference;
   final GeoPoint location;
   final String mfr;
-  final Timestamp reportingTime;
+  final DateTime reportingTime;
   final String severity;
   final String patientContactNo;
 

@@ -8,7 +8,7 @@ class OpsDatabaseService {
 
   // collection references ops will be listening to
 
-  final CollectionReference onGoingEmergencies = Firestore.instance.collection('OnGoingEmergencies');
+  final CollectionReference onGoingEmergencies = Firestore.instance.collection('OngoingEmergencies');
   final CollectionReference pendingEmergencies = Firestore.instance.collection('PendingEmergencies');
   final CollectionReference availableMfrs = Firestore.instance.collection('Mfrs');
 
@@ -69,7 +69,7 @@ class OpsDatabaseService {
         severity : doc.data['severity'],
         patientContactNo: doc.data['patientContactNo'] ?? '',
         mfr : doc.data['mfr'],
-        reportingTime : doc.data['reportingTime'],
+        reportingTime : doc.data['reportingTime'].toDate() ?? null,
 
       );
     }).toList();
