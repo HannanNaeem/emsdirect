@@ -130,7 +130,7 @@ class _LoginEmsState extends State<LoginEms> {
 
   Widget _buildForm(final height) {
     return Container(
-      height: 350,
+      height: height/2,
       child: Form(
         key: _formKey,
         child: Column(
@@ -301,8 +301,9 @@ class _LoginEmsState extends State<LoginEms> {
                         children: <Widget>[
                           Image.asset(
                               'assets/ems_logo.png',
-                              scale: (height/100)/2.5,
+                              scale: (height/100)/2,
                             ),
+                          SizedBox(height: height/40),
                           Padding(
                               padding:
                                   EdgeInsets.fromLTRB(0, height / 30, 0, 0),
@@ -316,15 +317,21 @@ class _LoginEmsState extends State<LoginEms> {
                                 ),
                               ),
                             ),
-                          _buildForm(height),
+                          SizedBox(height: height/40),
+                          Container(
+                            height: height/ 2.7,
+                            child: SingleChildScrollView(
+                              child: _buildForm(height)
+                            ),
+                          ),
                           SizedBox(
-                            height: height / 30,
+                            height: height / 50,
                           ),
                           // Expanded(child: Container(),),
                           Align(
                             alignment: Alignment.bottomCenter,
                             child: Padding(
-                              padding: EdgeInsets.fromLTRB(0, 0, 0, 25),
+                              padding: EdgeInsets.fromLTRB(0, 20, 0, height/30),
                               child: Text(
                                 'EMS DIRECT',
                                 style: TextStyle(

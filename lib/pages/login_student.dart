@@ -218,7 +218,7 @@ class _LoginStudentState extends State<LoginStudent>
     final height = screenSize.height;
     if (index == 0) {
       return Container(
-        height: 350,
+        height: height/2,
         child: Form(
           key: _loginformKey,
           child: Column(
@@ -454,7 +454,7 @@ class _LoginStudentState extends State<LoginStudent>
                 ),
               ),
             ),
-            SizedBox(height: height/100),
+            SizedBox(height: height/20),
           ],
         ),
       );
@@ -492,7 +492,7 @@ class _LoginStudentState extends State<LoginStudent>
                         children: <Widget>[
                           Image.asset(
                             'assets/ems_logo.png',
-                            scale: (height/100)/2.5,
+                            scale: (height/100)/2,
                           ),
                           SizedBox(height: 40),
                           TabBar(
@@ -519,12 +519,14 @@ class _LoginStudentState extends State<LoginStudent>
                           ),
                           SizedBox(height: 10),
                           Container(
-                            height: height / 2,
+                            height: height / 3,
                             width: screenSize.width,
                             child: TabBarView(
                               controller: _controller,
                               children: <Widget>[
-                                _buildForm(0),
+                                SingleChildScrollView(
+                                  child: _buildForm(0)
+                                ),
                                 SingleChildScrollView(
                                   child: _buildForm(1),
                                 ),
@@ -533,11 +535,11 @@ class _LoginStudentState extends State<LoginStudent>
                           ),
 
                           //_buildForm(),
-                          SizedBox(height: 10,),
+                          SizedBox(height: 20,),
                           Align(
                             alignment: Alignment.bottomCenter,
                               child: Padding(
-                              padding: EdgeInsets.fromLTRB(0, 0, 0, 25),
+                              padding: EdgeInsets.fromLTRB(0, 20, 0, height/30),
                               child: Text(
                                 'EMS DIRECT',
                                 style: TextStyle(
