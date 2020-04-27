@@ -1,53 +1,67 @@
 import 'package:ems_direct/services/auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:geolocator/geolocator.dart';
+import 'dart:async';
+import 'package:ems_direct/pages/live_status.dart';
 
 class StudentHome extends StatefulWidget {
+
   bool _keepSignedIn = false;
   var _userData;
-  StudentHome(bool keepSignedIn, var userData) {
+  StudentHome(bool keepSignedIn, var userData){
     _keepSignedIn = keepSignedIn;
     _userData = userData;
   }
 
   @override
-  _StudentHomeState createState() =>
-      _StudentHomeState(_keepSignedIn, _userData);
+  _StudentHomeState createState() => _StudentHomeState(_keepSignedIn,_userData);
 }
 
+
 class _StudentHomeState extends State<StudentHome> with WidgetsBindingObserver {
+
   //keepMeSignedIn vairable passed from login screen if successful
   bool _keepSignedIn = false;
   //document for userData
   var _userData;
 
   // constructor to set keepSignedIn
-  _StudentHomeState(bool keepSignedIn, var userData) {
+  _StudentHomeState(bool keepSignedIn, var userData){
     _keepSignedIn = keepSignedIn;
     _userData = userData;
 
     print("-----------------------got ${_userData.data}");
   }
-
-  List<bool> _selections = List.generate(4, (_) => false);
-  List<bool> _selections2 = List.generate(3, (_) => false);
+  var uid;
+  List<bool> _selections =[true, false, false,false];
+  List<bool> _selections2 = [true,false,false];
   List<String> _genderPreferences = ['NA', 'M', 'F'];
   List<String> _severityLevels = ['low', 'medium', 'high', 'critical'];
   int _gender = 0;
   int _severityLevel = 0;
   bool _emergency = false;
-  GeoPoint dummyLocation = GeoPoint(4, 12);
+  Position _currentLocation; //location from geolocator
+  GeoPoint _geoLocation; //converted location into a geopoint
   /////////////////////////////////////////////////////////////////
 
-  //instance of auth service
-  final AuthService _auth = AuthService();
-  final AuthService _authStudent = AuthService();
+  //function to get current location of the student to update to the database
+  _getCurrentLocation() async{
+    _currentLocation = await Geolocator().getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+    _geoLocation = GeoPoint(_currentLocation.latitude,_currentLocation.longitude);
+  }
 
+
+  //instance of auth service
+  final AuthService _authStudent = AuthService();
+  
   //State management for keepsignedin ----------------------------------
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
+    _getCurrentLocation();
+    uid = _authStudent.currentUser();
   }
 
   @override
@@ -58,7 +72,7 @@ class _StudentHomeState extends State<StudentHome> with WidgetsBindingObserver {
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (_keepSignedIn == false && state == AppLifecycleState.inactive) {
+    if(_keepSignedIn == false && state == AppLifecycleState.inactive){
       _authStudent.logOut();
     }
   }
@@ -77,17 +91,31 @@ class _StudentHomeState extends State<StudentHome> with WidgetsBindingObserver {
     });
   }
 
+  //function to generate doc in the pending emergency collection for the current user
   void _createPendingEmergencyDocument(GeoPoint location, String genderPref,
-      String severityLevel, String rollNumber) async {
+      String severityLevel, String rollNumber, String contact, DateTime time) async {
     await databaseReference
         .collection("PendingEmergencies")
-        .document()
+        .document( _userData.data['rollNo'].toString())
         .setData({
+      'patientContactNo' : contact,
+      'declinedBy' : [],
       'location': location,
       'genderPreference': genderPref,
-      "patientRollNo": rollNumber,
+      "patient": rollNumber,
       'severity': severityLevel,
-      'declines': 0
+      'declines': 0,
+      'reportingTime': time
+    });
+  }
+
+  //function to update the user data collection of the current user to show that emergency has started
+  void _updateUserData() async{
+    await databaseReference
+        .collection("UserData")
+        .document((await uid).toString())
+        .updateData({
+      'loggedInAs': 'emergency'
     });
   }
   /////////////////////////////////////////////////////////////////
@@ -262,7 +290,7 @@ class _StudentHomeState extends State<StudentHome> with WidgetsBindingObserver {
                                           ),
                                           onPressed: () async {
                                             //navigation to login screen
-                                            //! signout here
+                                            //! signout here                                        
                                             await _authStudent.logOut();
                                             Navigator.of(context).pop();
                                             Navigator.pushReplacementNamed(
@@ -468,12 +496,14 @@ class _StudentHomeState extends State<StudentHome> with WidgetsBindingObserver {
                     //A 'PendingEmergencies' document is created in the database with relevant attributes set
                     //Student is taken to the live updates screen for live feedback
                     onLongPress: () {
-                      //_createPendingEmergencyDocument(dummyLocation, _genderPreferences[_gender], _severityLevels[_severityLevel], _rollNumber);
-                      print(dummyLocation);
-                      print(_genderPreferences[_gender]);
-                      print(_severityLevels[_severityLevel]);
-                      //print(_rollNumber);
-                      Navigator.of(context).pushNamed('/live_status');
+                      _createPendingEmergencyDocument(_geoLocation, _genderPreferences[_gender], _severityLevels[_severityLevel],  _userData.data['rollNo'].toString(),  _userData.data['contact'].toString(), DateTime.now());
+                      _updateUserData();
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => LiveStatus(_userData)
+                          )
+                      );
                       print("emergency initiated");
                     },
                     fillColor: Colors.red[400],
@@ -495,7 +525,7 @@ class _StudentHomeState extends State<StudentHome> with WidgetsBindingObserver {
                     )),
                 SizedBox(height: height / 45),
                 Text(
-                  'TAP AND HOLD FOR 2 SECONDS',
+                  'TAP AND HOLD',
                   style: TextStyle(
                     fontSize: 15.0,
                     color: Colors.red[400],
