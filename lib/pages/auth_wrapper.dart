@@ -1,8 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:ems_direct/models/emergency_models.dart';
+import 'package:ems_direct/models/emergency_models.dart';
 import 'package:ems_direct/models/user.dart';
 import 'package:ems_direct/ops.dart';
 import 'package:ems_direct/pages/MFR_home.dart';
 import 'package:ems_direct/services/auth.dart';
+import 'package:ems_direct/services/ops_database.dart';
+import 'package:ems_direct/services/ops_notification_wrapper.dart';
+import 'package:ems_direct/services/mfr_database.dart';
 import 'package:ems_direct/services/user_database.dart';
 import 'package:ems_direct/shared/loading.dart';
 import 'package:flutter/material.dart';
@@ -10,6 +15,7 @@ import 'package:ems_direct/pages/student_home.dart';
 import 'package:ems_direct/pages/SelectLogin.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:ems_direct/mfr_home_wrapper.dart';
 
 // This a wrapping widget that sits just after the splash screen within the application
 // widget tree. Its sole purpose is to check if the user stored in disk/locally is currently
@@ -20,55 +26,62 @@ import 'package:firebase_auth/firebase_auth.dart';
 // on each other. This function will merge them into a singe future. We will only get the Document future
 // if the user is logged in. Otherwise the function returns null
 Future getUserDoc() async {
-
-  try{
+  try {
     FirebaseUser user = await FirebaseAuth.instance.currentUser();
     String uid = user.uid;
-    return await UserDatabaseService(uid:uid).getData();
-  }
-  catch(e)
-  {
+    return await UserDatabaseService(uid: uid).getData();
+  } catch (e) {
     return null;
   }
-
 }
-
 
 class Wrapper extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-        return FutureBuilder(
-            future: getUserDoc(),
-            builder: (BuildContext context, AsyncSnapshot snapshot){
+    return FutureBuilder(
+        future: getUserDoc(),
+        builder: (BuildContext context, AsyncSnapshot snapshot) {
+          if (snapshot.connectionState == ConnectionState.done) {
+            // if processing is done and there is data = user currently logged in
+            if (snapshot.hasData) {
+              print(snapshot.data);
+              if (snapshot.data['loggedInAs'] == 'ops') {
+                // user is logged in as ops
 
-                       if (snapshot.connectionState == ConnectionState.done){
+                return StreamProvider<List<OngoingEmergencyModel>>.value(
+                  value: OpsDatabaseService().onGoingStream,
+                  child: StreamProvider<List<AvailableMfrs>>.value(
+                    value: OpsDatabaseService().availableMfrStream,
+                    child: StreamProvider<List<SevereEmergencyModel>>.value(
+                      value: OpsDatabaseService().severeStream,
+                      child: StreamProvider<List<DeclinedEmergencyModel>>.value(
+                          value: OpsDatabaseService().declinedStream,
+                          child: OpsWrapper(true, snapshot.data)),
+                    ),
+                  ),
+                );
+              } else if (snapshot.data['loggedInAs'] == 'mfr') {
+                //user is logged in as mfr
+                return StreamProvider<List<PendingEmergencyModel>>.value(
+                  value: MfrDatabaseService().pendingStream,
+                  child: StreamProvider<List<OngoingEmergencyModel>>.value(
+                      value: MfrDatabaseService().ongoingStream,
+                      child: MFRHome(true, snapshot.data)),
+                );
+              } else {
+                // user is logged in as student
+                return StudentHome(true, snapshot.data);
+              }
+            }
 
-                        // if processing is done and there is data = user currently logged in   
-                        if(snapshot.hasData){
-
-                            if(snapshot.data['loggedInAs'] == 'ops'){ // user is logged in as ops
-                              return OpsHome(true,snapshot.data);
-                            }
-                            else if(snapshot.data['loggedInAs'] == 'mfr'){ //user is logged in as mfr
-                              return MFRHome(true,snapshot.data);
-                            }
-                            else{ // user is logged in as student
-                              return StudentHome(true,snapshot.data);
-                            }
-
-                          }                         
-                        
-                        //if there is no data user needs to authenticate
-                        else{
-                          return SelectLogin();
-                        }
-                      }
-                      
-                      else //display loading as we are waiting for future
-                      {
-                        return Loading();
-                      }
-             }
-          );
+            //if there is no data user needs to authenticate
+            else {
+              return SelectLogin();
+            }
+          } else //display loading as we are waiting for future
+          {
+            return Loading();
+          }
+        });
   }
 }

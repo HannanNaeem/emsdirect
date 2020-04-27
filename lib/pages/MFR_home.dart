@@ -1,3 +1,4 @@
+import 'package:ems_direct/dummy.dart';
 import 'package:ems_direct/services/auth.dart';
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -6,18 +7,13 @@ import 'package:flutter/material.dart';
 import 'package:ems_direct/services/pending_emergency_alert_MFR.dart';
 import 'package:ems_direct/pages/emergency_numbers.dart';
 import 'package:ems_direct/pages/available_MFRs.dart';
-import 'package:ems_direct/services/auth.dart';
-
-class PendingEmergency {
-  GeoPoint location;
-  String genderPreference;
-  String severityLevel;
-  int rollNumber;
-}
+import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:provider/provider.dart';
+import 'package:ems_direct/shared/loading.dart';
+import 'package:ems_direct/pages/MapMFR.dart';
 
 //This is the main homepage for any MFR login
 class MFRHome extends StatefulWidget {
-
   //used to transfer data to the first created state
   bool _keepSignedIn = false;
   var _userData;
@@ -28,11 +24,10 @@ class MFRHome extends StatefulWidget {
   }
 
   @override
-  _MFRHomeState createState() => _MFRHomeState(_keepSignedIn,_userData);
+  _MFRHomeState createState() => _MFRHomeState(_keepSignedIn, _userData);
 }
 
 class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
-  
   //keepMeSignedIn variable passed from login screen if successful
   bool _keepSignedIn = false;
 
@@ -48,21 +43,18 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
   }
 
   //Tells whether toggle switch is to be on or off
-  bool isAvailable = false;
-  final databaseReference = Firestore.instance;
+  static final databaseReference = Firestore.instance;
   Stream<QuerySnapshot> _documentStream;
-  DocumentSnapshot qs = null;
-  bool shouldRender = false;
-  var length = 0;
-
+  var isAvailable;
+  var isOccupied = false;
+  var gender;
+  var locationOfEmergency;
+  var patientContactNo;
 
   //instance of auth service
-
   final AuthService _authMfr = AuthService();
 
-
   //State management for keepsignedin ----------------------------------
-
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
@@ -75,34 +67,119 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
       _authMfr.logOut();
     }
   }
-
-  // ---------------------------------------------------------------------------------
-  // Hannan says get rid of this now ----------------------------------------------- !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  //Not required but keeping it for testing purposes ----------------------------------
-  void _getData() {
-    databaseReference
-        .collection('UserData')
-        .getDocuments()
-        .then((QuerySnapshot snapshot) {
-      snapshot.documents.forEach(((f) => print('${f.data}')));
-    });
-  }
-  // ---------------------------------------------------------------------------------
+  //--------------------------------------------------------------------
 
   @override
   void initState() {
     super.initState();
-
     //State management for keepsignedin
     WidgetsBinding.instance.addObserver(this);
     //initializing stream to null as MFR will always be unavailable unless made available by himself
     _documentStream = null;
-    //_documentStream = databaseReference.collection('PendingEmergencies').where('severity', isEqualTo: 'low').snapshots();
+    getInitialData(_userData['rollNo']);
   }
+
+  //////////////////////////////// FUNCTIONS /////////////////////////////////////
+  Future getEmergencyData(var docId) async {
+    try {
+      var querySnap = await databaseReference
+          .collection('OngoingEmergencies')
+          .where('mfr', isEqualTo: docId)
+          .getDocuments();
+      return querySnap.documents;
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  void updateDeclineCount(docId) async {
+    DocumentReference docRef =
+        databaseReference.collection("PendingEmergencies").document(docId);
+    await databaseReference.runTransaction((Transaction tx) async {
+      DocumentSnapshot docSnapshot = await tx.get(docRef);
+      if (docSnapshot.exists) {
+        await tx.update(docRef,
+            <String, dynamic>{'declines': docSnapshot.data['declines'] + 1});
+      }
+    }).then((_) {
+      print("Decline count incremented");
+    }).catchError((onError) {
+      print(onError.message);
+    });
+  }
+
+  void upDateAvailability(bool val, var docId) async {
+    DocumentReference docRef =
+        databaseReference.collection("Mfr").document(docId);
+    await databaseReference.runTransaction((Transaction tx) async {
+      DocumentSnapshot docSnapshot = await tx.get(docRef);
+      if (docSnapshot.exists) {
+        await tx.update(docRef, <String, bool>{'isActive': val});
+      }
+    }).then((_) {
+      print("isActive status updated");
+    }).catchError((onError) {
+      print(onError.message);
+    });
+  }
+
+  void getInitialData(var docId) {
+    try {
+      databaseReference.collection("Mfr").document(docId).get().then((onVal) {
+        setState(() {
+          isOccupied = onVal.data['isOccupied'];
+          isAvailable = onVal.data['isActive'];
+          gender = onVal.data['gender'];
+          print('done!');
+        });
+      }).catchError((onError) {
+        print(onError.message);
+      });
+    } catch (e) {
+      print(e);
+      return null;
+    }
+  }
+
+  Future getInitialData2(var docId) async {
+    try {
+      //print(docId);
+      return await databaseReference.collection("Mfr").document(docId).get();
+//          .then((onVal) {
+//        setState(() {
+//          isAvailable = onVal.data['isActive'];
+//        });
+//      }).catchError((onError) {
+//        print(onError.message);
+//      });
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  Stream<QuerySnapshot> setStreamValue(bool available, bool occupied) {
+    //print('getting value');
+    //available = false;
+    if (available == null || occupied == null) {
+      return null;
+    }
+    if (available && !occupied) {
+      return databaseReference
+          .collection('PendingEmergencies')
+          .where('severity', whereIn: ['low', 'medium']).snapshots();
+    } else {
+      return null;
+    }
+  }
+
+  ////////////////////////////////////////////////////////////////////////////////
 
   @override
   Widget build(BuildContext context) {
+    //------- TESTING PURPOSES ------------------
     print('Context rebuit');
+    print(isAvailable);
+    print(isOccupied);
 
     //Getting screen dimensions to adjust widgets accordingly
     var screenSize = MediaQuery.of(context).size;
@@ -335,165 +412,197 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
       ),
       //This is where the toggle option and the two cards (Map and Report Emergency) reside
       body: Center(
-          child: StreamBuilder<QuerySnapshot>(
-              //REPLACE _documentStream WITH NULL FOR SIMPLY CHECKING ALERTS
-              stream: _documentStream,
-              builder: (context, snapshot) {
-                if (snapshot.data != null) {
-                  length = snapshot.data.documents.length;
-                  if (qs == null) {
-                    shouldRender = true;
-                    qs = snapshot.data.documents[0];
-                  } else if (qs == snapshot.data.documents[0]) {
-                    shouldRender = false;
-                  } else {
-                    shouldRender = true;
-                  }
-//                  for (int i = 0; i < length; i++) {
-//                    print(snapshot.data.documents[i].data);
-//                  }
-                }
-                return Column(
-                  //everything is placed in the column
-                  children: <Widget>[
-                    AlertFunction(
-                        availability: isAvailable,
-                        length: length,
-                        render: shouldRender),
-                    //showAlert(isAvailable, length), //AlertFunction(),
-                    Flexible(
-                      flex: 3,
-                      child: Container(
-                        height: height / 5,
-                        width: width / 1.5,
-                        child: Row(children: <Widget>[
-                          Expanded(
-                            flex: 2,
-                            child: Text(
-                              'Available',
-                              style: TextStyle(
-                                  fontFamily: 'HelveticaNeueLight',
-                                  letterSpacing: 2.0,
-                                  fontSize: 24,
-                                  color: Colors.white //const Color(0xff142850),
-                                  ),
-                            ),
+        child: Column(
+          //everything is placed in the column
+          children: <Widget>[
+            if (isAvailable != null && isOccupied != null)
+              AlertFunctionMfr(_userData),
+            Flexible(
+              flex: 3,
+              child: Container(
+                height: height / 5,
+                width: width / 1.5,
+                child: Row(children: <Widget>[
+                  Expanded(
+                    flex: 2,
+                    child: Text(
+                      'Available',
+                      style: TextStyle(
+                          fontFamily: 'HelveticaNeueLight',
+                          letterSpacing: 2.0,
+                          fontSize: 24,
+                          color: Colors.white //const Color(0xff142850),
                           ),
-                          Transform.scale(
-                            scale: 2.5,
-                            child: Switch(
-                              value: isAvailable,
-                              onChanged: (bool newVal) {
-                                setState(() {
-                                  isAvailable = newVal;
-                                  if (isAvailable == true) {
-                                    _documentStream = databaseReference
-                                        .collection('PendingEmergencies')
-                                        .where('severity', isEqualTo: 'low')
-                                        .snapshots();
-                                    shouldRender = true;
-                                  } else {
-                                    _documentStream = null;
-                                    shouldRender = false;
-                                  }
-                                });
-                              },
-                              activeTrackColor: Colors.green,
-                              activeColor: Colors.green[50],
-                              inactiveThumbColor: Colors.white,
-                              inactiveTrackColor: Colors.red[200],
-                            ),
-                          ),
-                        ]),
-                      ),
                     ),
-                    Flexible(
-                      flex: 4,
-                      child: SizedBox(
-                        height: height / 4,
-                        width: width / 1.5,
-                        child: Card(
-                          elevation: 7,
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(15)),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.stretch,
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            children: <Widget>[
-                              IconButton(
-                                icon: Icon(
-                                  Icons.location_on,
-                                  color: Colors.red[400],
-                                  size: height / 9,
-                                ),
-                                onPressed: () {
-                                  print('Clicked');
-                                },
-                              ),
-                              Center(
-                                child: Text(
-                                  'Map',
-                                  style: TextStyle(
-                                      fontSize: 22,
-                                      fontFamily: 'HelveticaNeueLight',
-                                      letterSpacing: 2.0,
-                                      color: const Color(
-                                          0xff142850) //Colors.cyan[800],
-                                      ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                    SizedBox(
-                      height: height / 16,
-                    ),
-                    Flexible(
-                      flex: 4,
-                      child: SizedBox(
-                        height: height / 4,
-                        width: width / 1.5,
-                        child: Card(
-                          elevation: 7,
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(15)),
-                          child: Column(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: <Widget>[
-                                IconButton(
-                                  icon: Image(
-                                    image: AssetImage('assets/report.png'),
-                                    fit: BoxFit.fill,
-                                  ),
-                                  iconSize: height / 9,
-                                  onPressed: () {
-                                    print('Clicked');
+                  ),
+                  FutureBuilder(
+                      future: getInitialData2(_userData.data['rollNo']),
+                      builder: (BuildContext context, AsyncSnapshot snapshot) {
+                        if (snapshot.connectionState == ConnectionState.done) {
+                          if (snapshot.hasError) {
+                            return Text('----- ERROR -> ${snapshot.error}');
+                          } else {
+                            //print(snapshot.data['isActive']);
+                            //isAvailable = snapshot.data['isActive'];
+                            return Transform.scale(
+                                scale: 2.5,
+                                child: Switch(
+                                  value: isAvailable, //isAvailable,
+                                  onChanged: (bool newVal) {
+                                    setState(() {
+                                      isAvailable = newVal;
+                                      if (!isAvailable) {
+                                        isOccupied = false;
+                                      }
+                                      upDateAvailability(
+                                          isAvailable, _userData['rollNo']);
+                                    });
                                   },
-                                ),
-                                Center(
-                                  child: Padding(
-                                    padding: EdgeInsets.fromLTRB(
-                                        0, 0, 0, height / 80),
-                                    child: Text(
-                                      'Report Emergency',
-                                      style: TextStyle(
-                                        fontSize: 22,
-                                        fontFamily: 'HelveticaNeueLight',
-                                        letterSpacing: 2.0,
-                                        color: const Color(0xff142850),
-                                      ),
+                                  activeTrackColor: Colors.green,
+                                  activeColor: Colors.green[50],
+                                  inactiveThumbColor: Colors.white,
+                                  inactiveTrackColor: Colors.red[200],
+                                ));
+                          }
+                        } else {
+                          return Container(
+                            child: SpinKitThreeBounce(
+                              color: Colors.white,
+                              size: 20,
+                            ),
+                          );
+                        }
+                      }),
+                ]),
+              ),
+            ),
+            Flexible(
+              flex: 4,
+              child: SizedBox(
+                height: height / 4,
+                width: width / 1.5,
+                child: Card(
+                  elevation: 7,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15)),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: <Widget>[
+                      //if the isOccupied field is set to true, then enable map otherwise don't
+                      isOccupied == null || !isOccupied
+                          ? IconButton(
+                              icon: Icon(
+                                Icons.location_on,
+                                color: Colors.grey[800],
+                                size: height / 9,
+                              ),
+                              onPressed: () {},
+                            )
+                          : FutureBuilder(
+                              future: getEmergencyData(_userData['rollNo']),
+                              builder: (BuildContext context,
+                                  AsyncSnapshot snapshot) {
+                                if (snapshot.connectionState ==
+                                    ConnectionState.done) {
+                                  if (snapshot.hasData) {
+                                    print(
+                                        snapshot.data[0].data['patientRollNo']);
+                                    return IconButton(
+                                        icon: Icon(
+                                          Icons.location_on,
+                                          color: Colors.red[800],
+                                          size: height / 9,
+                                        ),
+                                        onPressed: () {
+                                          print('Clicked');
+                                          locationOfEmergency =
+                                              snapshot.data[0].data['location'];
+                                          patientContactNo = snapshot
+                                              .data[0].data['patientContactNo'];
+                                          print(locationOfEmergency);
+                                          print(patientContactNo);
+                                          //Navigator.push<dynamic>(context, MaterialPageRoute(builder: (context) => MapMFR(locationOfEmergency, patientContactNo)));
+                                        });
+                                  } else if (snapshot.hasError) {
+                                    print(snapshot.error);
+                                    return Container();
+                                  } else {
+                                    return Container();
+                                  }
+                                } else {
+                                  return IconButton(
+                                    icon: Icon(
+                                      Icons.location_on,
+                                      color: Colors.grey[800],
+                                      size: height / 9,
                                     ),
-                                  ),
-                                ),
-                              ]),
+                                    onPressed: () {},
+                                  );
+                                }
+                              }),
+                      Center(
+                        child: Text(
+                          'Map',
+                          style: TextStyle(
+                              fontSize: 22,
+                              fontFamily: 'HelveticaNeueLight',
+                              letterSpacing: 2.0,
+                              color: const Color(0xff142850) //Colors.cyan[800],
+                              ),
                         ),
                       ),
-                    )
-                  ],
-                );
-              })),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            SizedBox(
+              height: height / 16,
+            ),
+            Flexible(
+              flex: 4,
+              child: SizedBox(
+                height: height / 4,
+                width: width / 1.5,
+                child: Card(
+                  elevation: 7,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15)),
+                  child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: <Widget>[
+                        IconButton(
+                          icon: Image(
+                            image: AssetImage('assets/report.png'),
+                            fit: BoxFit.fill,
+                          ),
+                          iconSize: height / 9,
+                          onPressed: () {
+                            print('Clicked');
+                          },
+                        ),
+                        Center(
+                          child: Padding(
+                            padding: EdgeInsets.fromLTRB(0, 0, 0, height / 80),
+                            child: Text(
+                              'Report Emergency',
+                              style: TextStyle(
+                                fontSize: 22,
+                                fontFamily: 'HelveticaNeueLight',
+                                letterSpacing: 2.0,
+                                color: const Color(0xff142850),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ]),
+                ),
+              ),
+            )
+          ],
+        ),
+      ),
     );
   }
 }
