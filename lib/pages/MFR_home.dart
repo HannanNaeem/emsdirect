@@ -415,8 +415,8 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
         child: Column(
           //everything is placed in the column
           children: <Widget>[
-            //if (isAvailable != null && isOccupied != null)AlertFunctionMfr(_userData),
-            //showAlert(isAvailable, length), //AlertFunction(),
+            if (isAvailable != null && isOccupied != null)
+              AlertFunctionMfr(_userData),
             Flexible(
               flex: 3,
               child: Container(
@@ -465,14 +465,12 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
                                 ));
                           }
                         } else {
-                          return Stack(children: <Widget>[
-                            Container(
-                              child: SpinKitThreeBounce(
-                                color: Colors.white,
-                                size: 20,
-                              ),
+                          return Container(
+                            child: SpinKitThreeBounce(
+                              color: Colors.white,
+                              size: 20,
                             ),
-                          ]);
+                          );
                         }
                       }),
                 ]),
