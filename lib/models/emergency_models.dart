@@ -48,10 +48,24 @@ class OngoingEmergencyModel {
   final String genderPreference;
   final GeoPoint location;
   final String mfr;
-  final DateTime reportingTime;
+  final Timestamp reportingTime;
   final String severity;
   final String patientContactNo;
 
   OngoingEmergencyModel({this.patientContactNo,this.patientRollNo, this.genderPreference, this.location, this.mfr, this.reportingTime, this.severity});
+}
+
+class AvailableMfrs {
+
+  final String contact;
+  final String gender;
+  final bool isActive;
+  final bool isHostelite;
+  final bool isOccupied;
+  final bool isSenior;
+  final GeoPoint location;
+  final String name;
+
+  AvailableMfrs({this.contact, this.gender, this.isActive, this.isHostelite, this.isOccupied, this.isSenior,this.location, this.name});
 }
 
