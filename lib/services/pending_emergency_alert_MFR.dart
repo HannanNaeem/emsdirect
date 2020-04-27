@@ -12,9 +12,17 @@ import 'package:ems_direct/models/emergency_models.dart';
 //This is responsible for alerting MFRs of any pending emergencies with a severity level of low/medium
 class AlertFunctionMfr extends StatefulWidget {
   var _userData;
+//  var availability;
+//  var occupied;
+//  var gender;
 
-  //the alert is received on the MFRs screens depending on the three variables below
-  //decision: only show alert if the MFR is available, there is a pending emergency document and that document is to be rendered
+//  AlertFunctionMfr(var available, var occupied, var userData, var gender) {
+//    _userData = userData;
+//    availability = available;
+//    occupied = occupied;
+//    gender = gender;
+//  }
+
   AlertFunctionMfr(var userData) {
     _userData = userData;
   }
@@ -56,9 +64,9 @@ class _AlertFunctionMfrState extends State<AlertFunctionMfr> {
   }
 
   //deletes the given docID document
-  void deleteRecord(var docID) async {
+  Future deleteRecord(var docID) async {
     try {
-      await Firestore.instance
+      return await Firestore.instance
           .collection('PendingEmergencies')
           .document(docID)
           .delete()
@@ -73,11 +81,11 @@ class _AlertFunctionMfrState extends State<AlertFunctionMfr> {
   }
 
   //updates occupied status of MFR
-  void updateOccupiedStatus(bool newVal, var docID) async {
+  Future updateOccupiedStatus(bool newVal, var docID) async {
     DocumentReference docRef = databaseReference
         .collection('Mfr')
         .document(widget._userData['rollNo']);
-    await databaseReference.runTransaction((Transaction tx) async {
+    return await databaseReference.runTransaction((Transaction tx) async {
       DocumentSnapshot docSnapshot = await tx.get(docRef);
       if (docSnapshot.exists) {
         await tx.update(docRef, <String, dynamic>{'isOccupied': newVal});
@@ -112,12 +120,13 @@ class _AlertFunctionMfrState extends State<AlertFunctionMfr> {
   }
 
   //creates a document in OngoingEmergencies after accpetance of a pending emergency
-  void createOngoingEmergencyDocument(
+  Future createOngoingEmergencyDocument(
       GeoPoint location,
       String genderPreference,
       String patientRollNo,
-      String severityLevel) async {
-    await databaseReference
+      String severityLevel,
+      String patientContactNo) async {
+    return await databaseReference
         .collection('OngoingEmergencies')
         .document(patientRollNo)
         .setData({
@@ -127,11 +136,12 @@ class _AlertFunctionMfrState extends State<AlertFunctionMfr> {
       'patientRollNo': patientRollNo,
       'reportingTime': FieldValue.serverTimestamp(),
       'severity': severityLevel,
+      'patientContactNo': patientContactNo,
     });
   }
 
   //main function to show alert
-  Future showAlert(var num, var doc, var width, var height) async {
+  Future showAlert(int num, var doc, var width, var height) async {
     //------------TESTING---------------------
     //num = 1; //FOR TESTING ALERTS BASED ON SITUATIONS WITH A NULL STREAM
 //    _isOccupied = false;
@@ -155,91 +165,81 @@ class _AlertFunctionMfrState extends State<AlertFunctionMfr> {
       //-----------------------------------------------------------
       showDialog(
         context: context,
-        builder: (context) => Container(
-//          height: height / 14,
-//          width: width / 2.7,
-          child: AspectRatio(
-            aspectRatio: 2 / 3,
-            child: AlertDialog(
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20)),
-              title: Text(
-                "New Emergency!!",
+        builder: (context) => AlertDialog(
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          title: Text(
+            "New Emergency!!",
+            style: TextStyle(
+              fontFamily: 'HelveticaNeueLight',
+              letterSpacing: 2.0,
+              fontSize: 24,
+            ),
+          ),
+          content: Stack(
+            children: <Widget>[
+              Text(
+                "Severity level:${doc.severity}\n Patient: ${doc.patientRollNo}\n Contact: ${doc.patientContactNo}",
                 style: TextStyle(
                   fontFamily: 'HelveticaNeueLight',
                   letterSpacing: 2.0,
-                  fontSize: 20,
+                  fontSize: 18,
                 ),
               ),
-              content: Stack(
-                children: <Widget>[
-                  Text(
-                    "Severity level:${doc.severity}",
-                    style: TextStyle(
-                      fontFamily: 'HelveticaNeueLight',
-                      letterSpacing: 2.0,
-                      fontSize: 18,
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.fromLTRB(0, 30, 0, 0),
-                    child: Text(
-                      "Patient: ${doc.patientRollNo}",
-                      style: TextStyle(
-                        fontFamily: 'HelveticaNeueLight',
-                        letterSpacing: 2.0,
-                        fontSize: 18,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              actions: <Widget>[
-                FlatButton(
-                  child: Text(
-                    'ACCEPT',
-                    style: TextStyle(
-                      fontFamily: 'HelveticaNeueLight',
-                      letterSpacing: 2.0,
-                      fontSize: 20,
-                      color: const Color(0xff1a832a),
-                    ),
-                  ),
-                  onPressed: () {
-                    print('yes');
-                    createOngoingEmergencyDocument(
-                        doc.data['location'],
-                        doc.data['genderPreference'],
-                        doc.data['patientRollNo'],
-                        doc.data['severity']);
-                    deleteRecord(doc.patientRollNo);
-                    updateOccupiedStatus(true, doc.patientRollNo);
-                    Navigator.of(context).pop();
-                  },
-                ),
-                SizedBox(width: 10),
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(0, 0, 10, 0),
-                  child: FlatButton(
-                    child: Text(
-                      'REJECT',
-                      style: TextStyle(
-                        fontFamily: 'HelveticaNeueLight',
-                        letterSpacing: 2,
-                        fontSize: 20,
-                        color: const Color(0xffee0000),
-                      ),
-                    ),
-                    onPressed: () async {
-                      print('no');
-                      Navigator.of(context).pop();
-                      await updateDecline(doc.patientRollNo);
-                    },
-                  ),
-                ),
-              ],
-            ),
+            ],
           ),
+          actions: <Widget>[
+            Padding(
+              padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+              child: FlatButton(
+                child: Text(
+                  'ACCEPT',
+                  style: TextStyle(
+                    fontFamily: 'HelveticaNeueLight',
+                    letterSpacing: 2.0,
+                    fontSize: 20,
+                    color: const Color(0xff1a832a),
+                  ),
+                ),
+                onPressed: () async {
+                  print('yes');
+                  //mfrGlobalKey.currentState.locationOfEmergency = doc.location;
+                  //mfrGlobalKey.currentState.patientContactNo = doc.patientContactNo;
+                  _isOccupied = true;
+                  await createOngoingEmergencyDocument(
+                      doc.location,
+                      doc.genderPreference,
+                      doc.patientRollNo,
+                      doc.severity,
+                      doc.patientContactNo);
+                  await deleteRecord(doc.patientRollNo);
+                  Navigator.of(context).pop();
+                  return await updateOccupiedStatus(true, doc.patientRollNo);
+                },
+              ),
+            ),
+            SizedBox(width: 10),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(0, 0, 10, 0),
+              child: FlatButton(
+                child: Text(
+                  'REJECT',
+                  style: TextStyle(
+                    fontFamily: 'HelveticaNeueLight',
+                    letterSpacing: 2,
+                    fontSize: 20,
+                    color: const Color(0xffee0000),
+                  ),
+                ),
+                onPressed: () async {
+                  print('no');
+                  _isOccupied = false;
+                  Navigator.of(context).pop();
+                  return await updateDecline(doc.patientRollNo);
+                },
+              ),
+            ),
+          ],
         ),
       );
     }
@@ -258,6 +258,9 @@ class _AlertFunctionMfrState extends State<AlertFunctionMfr> {
   @override
   void initState() {
     super.initState();
+//    _isAvailable = widget.availability;
+//    _isOccupied = widget.occupied;
+//    _gender = widget.gender;
     //getting MFRs data on initialization
     WidgetsBinding.instance.addPostFrameCallback(
         (_) => getInitialData(widget._userData['rollNo']));
@@ -275,10 +278,13 @@ class _AlertFunctionMfrState extends State<AlertFunctionMfr> {
         Provider.of<List<PendingEmergencyModel>>(context);
     var _ongoingEmergencyList =
         Provider.of<List<OngoingEmergencyModel>>(context);
-    var numPending = 0;
-    var numOngoing = 0;
+    int numPending = 0;
+    int numOngoing = 0;
     print('IN THIS FUNCTION');
+    print(_ongoingEmergencyList);
     print(_gender);
+    print(_isOccupied);
+    print(_isAvailable);
 
     //handling cases for null values (this can happen in the case of null data being received from the stream)
     if (_pendingEmergencyList != null && _gender != null) {
@@ -292,23 +298,30 @@ class _AlertFunctionMfrState extends State<AlertFunctionMfr> {
           .addPostFrameCallback((_) => printData(_pendingEmergencyList));
     }
 
-//    if (_ongoingEmergencyList != null) {
-//      //printData((_ongoingEmergencyList));
-//      //_ongoingEmergencyList.retainWhere((item) => item.mfr.contains(widget._userData['rollNo']));
-//      numOngoing = _ongoingEmergencyList.length;
-//      print('huh $numOngoing');
-//      WidgetsBinding.instance
-//          .addPostFrameCallback((_) => printData(_ongoingEmergencyList));
-//    }
+    if (_ongoingEmergencyList != null) {
+      printData((_ongoingEmergencyList));
+      _ongoingEmergencyList
+          .retainWhere((item) => item.mfr.contains(widget._userData['rollNo']));
+      numOngoing = _ongoingEmergencyList.length;
+      print('huh $numOngoing');
+      WidgetsBinding.instance
+          .addPostFrameCallback((_) => printData(_ongoingEmergencyList));
+    }
 
-    if (!_isOccupied && _isAvailable) {
-//      if (_ongoingEmergencyList != null && numOngoing > 0) {
-//        WidgetsBinding.instance.addPostFrameCallback((_) async =>
-//        await showAlert(num, _ongoingEmergencyList[0], _width, _height));
-//      }
-      if (_pendingEmergencyList != null && numPending > 0) {
-        WidgetsBinding.instance.addPostFrameCallback((_) async =>
-            await showAlert(num, _pendingEmergencyList[0], _width, _height));
+    if (_isAvailable != null && _isOccupied != null) {
+      print('wut');
+      if (!_isOccupied && _isAvailable) {
+        print('hmm');
+        if (_ongoingEmergencyList != null && numOngoing > 0) {
+          print('uhh wut');
+          WidgetsBinding.instance.addPostFrameCallback((_) async =>
+              await showAlert(
+                  numOngoing, _ongoingEmergencyList[0], _width, _height));
+        } else if (_pendingEmergencyList != null && numPending > 0) {
+          WidgetsBinding.instance.addPostFrameCallback((_) async =>
+              await showAlert(
+                  numPending, _pendingEmergencyList[0], _width, _height));
+        }
       }
     }
 

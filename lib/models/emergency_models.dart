@@ -7,6 +7,7 @@ class PendingEmergencyModel {
   final int declines;
   final List declinedBy;
   final String severity;
+  final String patientContactNo;
 
   PendingEmergencyModel(
       {this.patientRollNo,
@@ -14,7 +15,8 @@ class PendingEmergencyModel {
       this.location,
       this.declines,
       this.declinedBy,
-      this.severity});
+      this.severity,
+      this.patientContactNo});
 }
 
 class OngoingEmergencyModel {
@@ -22,8 +24,9 @@ class OngoingEmergencyModel {
   final String genderPreference;
   final GeoPoint location;
   final String mfr;
-  final DateTime reportingTime;
+  final Timestamp reportingTime;
   final String severity;
+  final String patientContactNo;
 
   OngoingEmergencyModel(
       {this.patientRollNo,
@@ -31,5 +34,6 @@ class OngoingEmergencyModel {
       this.location,
       this.mfr,
       this.reportingTime,
-      this.severity});
+      this.severity,
+      this.patientContactNo});
 }

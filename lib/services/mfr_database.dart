@@ -4,7 +4,7 @@ import 'package:ems_direct/models/emergency_models.dart';
 class MfrDatabaseService {
   // collection references mfr will be listening to
   final CollectionReference onGoingEmergencies =
-      Firestore.instance.collection('OnGoingEmergencies');
+      Firestore.instance.collection('OngoingEmergencies');
   final CollectionReference pendingEmergencies =
       Firestore.instance.collection('PendingEmergencies');
 
@@ -41,6 +41,7 @@ class MfrDatabaseService {
   //get pending emergencies
   Stream<List<PendingEmergencyModel>> get pendingStream {
     return pendingEmergencies
+        .where('severity', whereIn: ['low', 'medium'])
         .snapshots()
         .map(_pendingEmergencyListFromSnapshot);
   }
@@ -48,6 +49,7 @@ class MfrDatabaseService {
   //get ongoing emergencies
   Stream<List<OngoingEmergencyModel>> get ongoingStream {
     return onGoingEmergencies
+        .where('severity', whereIn: ['low', 'medium'])
         .snapshots()
         .map(_ongoingEmergencyListFromSnapshot);
   }

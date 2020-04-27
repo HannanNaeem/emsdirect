@@ -45,6 +45,9 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
   Stream<QuerySnapshot> _documentStream;
   var isAvailable;
   var isOccupied;
+  var gender;
+  var locationOfEmergency;
+  var patientContactNo;
 
   //instance of auth service
   final AuthService _authMfr = AuthService();
@@ -75,6 +78,17 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
   }
 
   //////////////////////////////// FUNCTIONS /////////////////////////////////////
+  Future getEmergencyData(var docId) async {
+    try {
+      return await databaseReference
+          .collection('OngoingEmergencies')
+          .where('mfr', isEqualTo: docId)
+          .getDocuments();
+    } catch (e) {
+      print(e);
+    }
+  }
+
   void updateDeclineCount(docId) async {
     DocumentReference docRef =
         databaseReference.collection("PendingEmergencies").document(docId);
@@ -112,6 +126,7 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
         setState(() {
           isOccupied = onVal.data['isOccupied'];
           isAvailable = onVal.data['isActive'];
+          gender = onVal.data['gender'];
           print('done!');
         });
       }).catchError((onError) {
@@ -125,7 +140,7 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
 
   Future getInitialData2(var docId) async {
     try {
-      print(docId);
+      //print(docId);
       return await databaseReference.collection("Mfr").document(docId).get();
 //          .then((onVal) {
 //        setState(() {
@@ -397,11 +412,7 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
         child: Column(
           //everything is placed in the column
           children: <Widget>[
-            AlertFunctionMfr(_userData),
-//              AlertFunctionMfr(
-//                  availability: isAvailable,
-//                  occupied: isOccupied,
-//                  mfrRollNo: _userData['rollNo']),
+            //if (isAvailable != null && isOccupied != null) AlertFunctionMfr(_userData),
             //showAlert(isAvailable, length), //AlertFunction(),
             Flexible(
               flex: 3,
@@ -463,43 +474,138 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
             ),
             Flexible(
               flex: 4,
-              child: SizedBox(
-                height: height / 4,
-                width: width / 1.5,
-                child: Card(
-                  elevation: 7,
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(15)),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: <Widget>[
-                      IconButton(
-                        icon: Icon(
-                          Icons.location_on,
-                          color: Colors.red[400],
-                          size: height / 9,
-                        ),
-                        onPressed: () {
-                          print('Clicked');
-                          Navigator.of(context).pushNamed('/dummy');
-                        },
-                      ),
-                      Center(
-                        child: Text(
-                          'Map',
-                          style: TextStyle(
-                              fontSize: 22,
-                              fontFamily: 'HelveticaNeueLight',
-                              letterSpacing: 2.0,
-                              color: const Color(0xff142850) //Colors.cyan[800],
+              child: isOccupied == true
+                  ? FutureBuilder(
+                      future: getEmergencyData(_userData['rollNo']),
+                      builder: (BuildContext context, AsyncSnapshot snapshot) {
+                        if (snapshot.connectionState == ConnectionState.done) {
+                          if (snapshot.hasData) {
+                            print(snapshot.data);
+                            return SizedBox(
+                              height: height / 4,
+                              width: width / 1.5,
+                              child: Card(
+                                elevation: 7,
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(15)),
+                                child: Column(
+                                  crossAxisAlignment:
+                                      CrossAxisAlignment.stretch,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceAround,
+                                  children: <Widget>[
+                                    IconButton(
+                                        icon: Icon(
+                                          Icons.location_on,
+                                          color: Colors.red[400],
+                                          size: height / 9,
+                                        ),
+                                        onPressed: () {
+                                          print('Clicked');
+                                          locationOfEmergency =
+                                              snapshot.data['location'];
+                                          patientContactNo =
+                                              snapshot.data['patientContactNo'];
+                                          print(locationOfEmergency);
+                                          print(patientContactNo);
+                                          //Navigator.of(context).pushNamed('/dummy');
+                                        }),
+                                    Center(
+                                      child: Text(
+                                        'Map',
+                                        style: TextStyle(
+                                            fontSize: 22,
+                                            fontFamily: 'HelveticaNeueLight',
+                                            letterSpacing: 2.0,
+                                            color: const Color(
+                                                0xff142850) //Colors.cyan[800],
+                                            ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
+                            );
+                          } else if (snapshot.hasError) {
+                            print(snapshot.error);
+                            return Container();
+                          } else {
+                            return Container();
+                          }
+                        } else {
+                          return SizedBox(
+                            height: height / 4,
+                            width: width / 1.5,
+                            child: Card(
+                              elevation: 7,
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(15)),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.stretch,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceAround,
+                                children: <Widget>[
+                                  IconButton(
+                                    icon: Icon(
+                                      Icons.location_on,
+                                      color: Colors.red[400],
+                                      size: height / 9,
+                                    ),
+                                    onPressed: () {
+                                      print('Clicked');
+                                      Navigator.of(context).pushNamed('/dummy');
+                                    },
+                                  ),
+                                  Center(
+                                    child: Text(
+                                      'Map',
+                                      style: TextStyle(
+                                          fontSize: 22,
+                                          fontFamily: 'HelveticaNeueLight',
+                                          letterSpacing: 2.0,
+                                          color: const Color(
+                                              0xff142850) //Colors.cyan[800],
+                                          ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        }
+                      })
+                  : SizedBox(
+                      height: height / 4,
+                      width: width / 1.5,
+                      child: Card(
+                        elevation: 7,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(15)),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: <Widget>[
+                            Icon(
+                              Icons.location_on,
+                              color: Colors.red[400],
+                              size: height / 9,
+                            ),
+                            Center(
+                              child: Text(
+                                'Map',
+                                style: TextStyle(
+                                    fontSize: 22,
+                                    fontFamily: 'HelveticaNeueLight',
+                                    letterSpacing: 2.0,
+                                    color: const Color(
+                                        0xff142850) //Colors.cyan[800],
+                                    ),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                    ],
-                  ),
-                ),
-              ),
+                    ),
             ),
             SizedBox(
               height: height / 16,
