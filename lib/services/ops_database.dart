@@ -40,6 +40,7 @@ class OpsDatabaseService {
         declinedBy : doc.data['declinedBy'],
         severity : doc.data['severity'],
         patientContactNo: doc.data['patientContactNo'] ?? '',
+        reportingTime : doc.data['reportingTime'].toDate() ?? null,
       );
     }).toList();
   }
@@ -70,7 +71,6 @@ class OpsDatabaseService {
         patientContactNo: doc.data['patientContactNo'] ?? '',
         mfr : doc.data['mfr'],
         reportingTime : doc.data['reportingTime'].toDate() ?? null,
-
       );
     }).toList();
   }
@@ -93,12 +93,12 @@ class OpsDatabaseService {
 
   //get pending emergencies
   Stream<List<DeclinedEmergencyModel>> get declinedStream {
-    return pendingEmergencies.where('declines', isGreaterThanOrEqualTo: 4).snapshots().map(_declinedEmergencyListFromSnapshot);
+    return pendingEmergencies.where('declines', isGreaterThanOrEqualTo: 4).orderBy('reportingTime').snapshots().map(_declinedEmergencyListFromSnapshot);
   }
 
   //get severe emergencies
   Stream<List<SevereEmergencyModel>> get severeStream {
-    return pendingEmergencies.where('severity', whereIn: ['high','critical']).snapshots().map(_severeEmergencyListFromSnapshot);
+    return pendingEmergencies.where('severity', whereIn: ['high','critical']).orderBy('reportingTime').snapshots().map(_severeEmergencyListFromSnapshot);
   }
 
   //get pending emergencies
@@ -108,7 +108,7 @@ class OpsDatabaseService {
 
   //get onGoing emergencies
   Stream<List<OngoingEmergencyModel>> get onGoingStream {
-     return onGoingEmergencies.snapshots().map(_onGoingEmergencyListFromSnapshot);  
+     return onGoingEmergencies.orderBy('reportingTime').snapshots().map(_onGoingEmergencyListFromSnapshot);  
   }
 
   //get available mfrs
