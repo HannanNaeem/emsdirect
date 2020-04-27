@@ -115,16 +115,21 @@ class _AlertFunctionMfrState extends State<AlertFunctionMfr> {
       String genderPreference,
       String patientRollNo,
       String severityLevel,
-      String patientContactNo) async {
+      String patientContactNo,
+      Timestamp time) async {
     return await databaseReference
         .collection('OngoingEmergencies')
         .document(patientRollNo)
         .setData({
       'mfr': widget._userData['rollNo'],
+      'mfrDetails': {
+        'name': widget._userData['name'],
+        'contact': widget._userData['contact'],
+      },
       'location': location,
       'genderPreference': genderPreference,
       'patientRollNo': patientRollNo,
-      'reportingTime': DateTime.now(),
+      'reportingTime': time.toDate(),
       'severity': severityLevel,
       'patientContactNo': patientContactNo,
     });
@@ -206,7 +211,8 @@ class _AlertFunctionMfrState extends State<AlertFunctionMfr> {
                         doc[0].genderPreference,
                         doc[0].patientRollNo,
                         doc[0].severity,
-                        doc[0].patientContactNo);
+                        doc[0].patientContactNo,
+                        doc[0].reportingTime);
                     //await deleteRecord(doc[0].patientRollNo);
                     return await updateOccupiedStatus(true);
                   },
@@ -365,9 +371,9 @@ class _AlertFunctionMfrState extends State<AlertFunctionMfr> {
     int numOngoing = 0;
     print('IN THIS FUNCTION');
     print(_ongoingEmergencyList);
-    print(_gender);
-    print(_isOccupied);
-    print(_isAvailable);
+//    print(_gender);
+//    print(_isOccupied);
+//    print(_isAvailable);
 
     //handling cases for null values (this can happen in the case of null data being received from the stream)
     if (_pendingEmergencyList != null && _gender != null) {
@@ -385,6 +391,7 @@ class _AlertFunctionMfrState extends State<AlertFunctionMfr> {
     //handling cases for null values (this can happen in the case of null data being received from the stream)
     if (_ongoingEmergencyList != null) {
       //filtering for any emergency that is in my name
+      print(_ongoingEmergencyList[0].mfr);
       _ongoingEmergencyList
           .retainWhere((item) => item.mfr.contains(widget._userData['rollNo']));
       numOngoing = _ongoingEmergencyList.length;
@@ -394,8 +401,6 @@ class _AlertFunctionMfrState extends State<AlertFunctionMfr> {
     //this is where the two alert functions are called depending on whether there is data AND conditions are met
     if (_isAvailable != null && _isOccupied != null) {
       if (!_isOccupied && _isAvailable) {
-        //conditions
-        _ongoingEmergencyList = null;
 //        if (_ongoingEmergencyList != null && numOngoing > 0) {
 //          WidgetsBinding.instance.addPostFrameCallback((_) async =>
 //              await showOngoingAlert(
@@ -405,7 +410,6 @@ class _AlertFunctionMfrState extends State<AlertFunctionMfr> {
 //              await showPendingAlert(
 //                  numPending, _pendingEmergencyList[0], _width, _height));
 
-        _ongoingEmergencyList = null;
         if (_ongoingEmergencyList != null && numOngoing > 0) {
           WidgetsBinding.instance.addPostFrameCallback((_) async =>
               await showOngoingAlert(
