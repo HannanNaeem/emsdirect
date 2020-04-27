@@ -214,14 +214,20 @@ class _LoginEmsState extends State<LoginEms> {
                           context,
                           MaterialPageRoute(
                             builder: (context) =>
-                                StreamProvider<List<SevereEmergencyModel>>.value(
-                                value: OpsDatabaseService().severeStream,
-                                child: StreamProvider<List<DeclinedEmergencyModel>>.value(
-                                  value: OpsDatabaseService().declinedStream,
-                                  child:OpsWrapper(_keepSignedIn, result),
+                                StreamProvider<List<OngoingEmergencyModel>>.value(
+                                value: OpsDatabaseService().onGoingStream,
+                                child: StreamProvider<List<AvailableMfrs>>.value(
+                                  value: OpsDatabaseService().availableMfrStream,
+                                  child: StreamProvider<List<SevereEmergencyModel>>.value(
+                                    value: OpsDatabaseService().severeStream,
+                                    child: StreamProvider<List<DeclinedEmergencyModel>>.value(
+                                      value: OpsDatabaseService().declinedStream,
+                                      child:OpsWrapper(_keepSignedIn, result),
                                   )
                                 )
+                            )
                           )
+                        )
                       );
                     } else if (_emsType == 'mfr') {
                       Navigator.pushReplacement(
