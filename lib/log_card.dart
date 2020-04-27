@@ -78,7 +78,7 @@ class _LogCardState extends State<LogCard> {
                       ),
                     ),
                     Text(
-                      'Gender: ' + widget.gender,
+                      'Gender Preference: ' + widget.gender,
                       style: TextStyle(
                         color: const Color(0xff142850),
                         fontSize: 14,
