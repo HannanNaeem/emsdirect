@@ -5,6 +5,8 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:location/location.dart';
 import 'package:flutter/services.dart';
+import 'dart:developer';
+import 'dart:ui' as ui;
 
 class OpsMap extends StatefulWidget {
   OpsMap() : super();
@@ -19,7 +21,8 @@ class MapStateOPS extends State<OpsMap> {
   LatLng currLoc = _loc;
   static Location _locationTracker = Location();
   static var Zoom = 11.0;
-  List<Marker> allMarkers = [];
+//  List<Marker> allMarkers = [];
+  Map<MarkerId, Marker> allMarkers = <MarkerId, Marker>{};
   LatLng _lastMapPosition = _loc;
   MapType _currentMapType = MapType.normal;
 
@@ -55,6 +58,7 @@ class MapStateOPS extends State<OpsMap> {
               )
           )
       );
+
     }
     on PlatformException catch(e){
       if(e.code == 'PERMISSION_DENIED'){
@@ -78,9 +82,8 @@ class MapStateOPS extends State<OpsMap> {
     var height = screenSize.height;
     // ----------------------------- snapshot lists ---------------------------------//
     //
-    _addAvailableMfrsMarker(_availableMfrsList);
-    _addPendingEmergenciesMarker(_pendingEmergenciesList);
-    _addOnGoingEmergenciesMarker(_onGoingEmergenciesList);
+
+
 
     return MaterialApp(
       home: Scaffold(
@@ -93,7 +96,7 @@ class MapStateOPS extends State<OpsMap> {
                 zoom: 11.0,
               ),
               mapType: _currentMapType,
-              markers:  Set.from(allMarkers),
+              markers:  Set<Marker>.of(allMarkers.values),
               onCameraMove: _onCameraMove,
             ),
             (_mapLoading)
@@ -139,7 +142,14 @@ class MapStateOPS extends State<OpsMap> {
               FloatingActionButton(
                 child: Icon(Icons.location_searching),
                 onPressed: (){
-                  getCurrentLocaion();
+                  debugPrint('sigh');
+//                  _addAvailableMfrsMarker(_availableMfrsList);
+//                  _addPendingEmergenciesMarker(_pendingEmergenciesList);
+                  _addOnGoingEmergenciesMarker(_onGoingEmergenciesList);
+//                  getCurrentLocaion();
+
+//                  UpdateMarker(_availableMfrsList);
+
                 },
                 backgroundColor: const Color(0xff47719e),
               ),
@@ -150,46 +160,56 @@ class MapStateOPS extends State<OpsMap> {
   }
 
 
-  _addOnGoingEmergenciesMarker(_onGoingEmergenciesList){
+  void _addOnGoingEmergenciesMarker(_onGoingEmergenciesList) async {
     if (_onGoingEmergenciesList != null && _onGoingEmergenciesList.length != 0) {
-      for (var x = 0; x < _onGoingEmergenciesList.length; x++) {
-        GeoPoint location = _onGoingEmergenciesList[x].location;
-        String rollNumber = _onGoingEmergenciesList[x].patientRollNo;
-        String assignedMFR = _onGoingEmergenciesList[x].mfr;
-        String severity = _onGoingEmergenciesList[x].severity;
-
-        allMarkers.add(
+      _onGoingEmergenciesList.forEach((EM){
+        debugPrint('hello');
+        GeoPoint location = EM.location;
+        String rollNumber = EM.patientRollNo;
+//        String assignedMFR = MFR.mfr;
+        String severity = EM.severity;
+        var markerIdVal = allMarkers.length + 1;
+        String mar = markerIdVal.toString();
+        final MarkerId markerId = MarkerId(mar);
+        final Marker marker =
             Marker(
-              markerId: MarkerId(location.toString()),
+              markerId: markerId,
               position: LatLng(location.latitude, location.longitude),
               onTap: () {
                 print('Roll Number: ');
                 print(rollNumber);
                 print('\nSeverity: ');
                 print(severity);
-                print('\nAssigned MFR: ');
-                print(assignedMFR);
+//                print('\nAssigned MFR: ');
+//                print(assignedMFR);
               },
-              icon: BitmapDescriptor.fromAsset("images/cross.png"),
-            )
-        );
+            );
+        setState(() {
+          allMarkers[markerId] = marker;
+        });
       }
+      );
     }
   }
 
 
-  _addPendingEmergenciesMarker(_pendingEmergenciesList){
-    if (_pendingEmergenciesList != null && _pendingEmergenciesList.length != 0) {
-      for (var x = 0; x < _pendingEmergenciesList.length; x++) {
-        GeoPoint location = _pendingEmergenciesList[x].location;
-        String rollNumber = _pendingEmergenciesList[x].patientRollNo;
-        String severity = _pendingEmergenciesList[x].severity;
+  void _addPendingEmergenciesMarker(_pendingEmergenciesList){
 
-        allMarkers.add(
-            Marker(
-              markerId: MarkerId(location.toString()),
-              position: LatLng(location.latitude, location.longitude),
-              onTap: () {
+    if (_pendingEmergenciesList != null && _pendingEmergenciesList.length != 0) {
+      _pendingEmergenciesList.forEach((EM){
+
+
+        GeoPoint location = EM.location;
+        String rollNumber = EM.patientRollNo;
+        String severity = EM.severity;
+        var markerIdVal = allMarkers.length + 1;
+        String mar = markerIdVal.toString();
+        final MarkerId markerId = MarkerId(mar);
+        final Marker marker =
+        Marker(
+            markerId: markerId,
+            position: LatLng(location.latitude, location.longitude),
+            onTap: () {
                 print('Roll Number: ');
                 print(rollNumber);
                 print('\nSeverity: ');
@@ -197,60 +217,63 @@ class MapStateOPS extends State<OpsMap> {
                 print('PLEASE ASSIGN AN MFR.');
                 // todo: assign MFR option
               },
-              icon: BitmapDescriptor.fromAsset("images/cross.png"),
-            )
-        );
-      }
+            );
+            setState(() {
+                allMarkers[markerId] = marker;
+            });
+        }
+      );
     }
   }
 
 
-  _addAvailableMfrsMarker(_availableMfrsList) {
-    if(_availableMfrsList != null && _availableMfrsList.length != 0) {
-      for (var x = 0; x < _availableMfrsList.length; x++) {
-        GeoPoint location = _availableMfrsList[x].location;
-        String name = _availableMfrsList[x].name;
-        String gender = _availableMfrsList[x].gender;
+  void _addAvailableMfrsMarker(_availableMfrsList) {
+    if (_availableMfrsList != null && _availableMfrsList.length != 0) {
+      _availableMfrsList.forEach((MFR) {
+        GeoPoint location = MFR.location;
+        String name = MFR.name;
+        String gender = MFR.gender;
 
         bool busy = _availableMfrsList.isOccupied;
+        var markerIdVal = allMarkers.length + 1;
+        String mar = markerIdVal.toString();
+        final MarkerId markerId = MarkerId(mar);
 
-        if (busy == 1) {
-          allMarkers.add(
-              Marker(
-                  markerId: MarkerId(location.toString()),
-                  position: LatLng(location.latitude, location.longitude),
-                  onTap: () {
-                    print('Name: ');
-                    print(name);
-                    print('\nGender: ');
-                    print(gender);
-                  },
-                  icon: BitmapDescriptor.defaultMarkerWithHue(
-                      BitmapDescriptor.hueBlue)
-              )
+        if (busy == true) {
+          final Marker marker =
+          Marker(
+              markerId: markerId,
+              position: LatLng(location.latitude, location.longitude),
+              onTap: () {
+                print('Name: ');
+                print(name);
+                print('\nGender: ');
+                print(gender);
+              },
+              icon: BitmapDescriptor.defaultMarkerWithHue(
+                  BitmapDescriptor.hueBlue)
           );
         }
         else {
-          allMarkers.add(
-              Marker(
-                markerId: MarkerId(location.toString()),
-                position: LatLng(location.latitude, location.longitude),
-                onTap: () {
-                  print('Name: ');
-                  print(name);
-                  print('\nGender: ');
-                  print(gender);
-                },
-              )
+          final Marker marker =
+          Marker(
+            markerId: markerId,
+            position: LatLng(location.latitude, location.longitude),
+            onTap: () {
+              print('Name: ');
+              print(name);
+              print('\nGender: ');
+              print(gender);
+            },
           );
         }
-      }
+      });
     }
   }
 
   _onMapCreated(GoogleMapController controller){
     _controller=controller;
-   setState(() => _mapLoading = false);
+    this.setState(() => _mapLoading = false);
   }
 
   _onCameraMove(CameraPosition position){
@@ -285,7 +308,6 @@ class MapStateOPS extends State<OpsMap> {
 //        )
 //    );
 //  }
-
 
 
 
