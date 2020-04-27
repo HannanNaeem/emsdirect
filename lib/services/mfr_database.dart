@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ems_direct/models/emergency_models.dart';
+import 'package:built_value/iso_8601_date_time_serializer.dart';
 
 class MfrDatabaseService {
   // collection references mfr will be listening to
@@ -32,9 +33,9 @@ class MfrDatabaseService {
         genderPreference: doc.data['genderPreference'],
         location: doc.data['location'],
         mfr: doc.data['mfr'],
-        reportingTime: doc.data['reportingTime'].toString(),
+        reportingTime: doc.data['reportingTime'].toDate(),
         severity: doc.data['severity'],
-        patientContactNo: doc.data['pateintContactNo'],
+        patientContactNo: doc.data['patientContactNo'],
       );
     }).toList();
   }

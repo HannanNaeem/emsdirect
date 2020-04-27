@@ -44,6 +44,7 @@ class Wrapper extends StatelessWidget {
           if (snapshot.connectionState == ConnectionState.done) {
             // if processing is done and there is data = user currently logged in
             if (snapshot.hasData) {
+              print(snapshot.data);
               if (snapshot.data['loggedInAs'] == 'ops') {
                 // user is logged in as ops
 
