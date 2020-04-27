@@ -47,24 +47,25 @@ class _SplashScreenState extends State<SplashScreen> {
                   
                   ),
           ),
+          child: new SingleChildScrollView(
           child: Center(
           child: Column(
             children: <Widget>[
 
               Padding(
-                padding: EdgeInsets.fromLTRB(width*0.35, height*0.25,width*0.35, height*0.1),
+                padding: EdgeInsets.fromLTRB(width*0.23, height*0.20,width*0.23, height*0.05),
                 child: Image.asset(
                   'assets/ems_logo.png',
-                  scale: 0.0009*(height+width)
+                  scale: 0.0010*(height+width)
                 ),
               ),
               Padding(
-                padding: EdgeInsets.fromLTRB(width*0.20, 0.4, width*0.16, 10.0),
+                padding: EdgeInsets.fromLTRB(width*0.16, height*0.06, width*0.16, 10.0),
                   child: Text(
                     'EMS DIRECT',
                     style: TextStyle(
                       color:Colors.white,
-                      fontSize: (width)*0.05,
+                      fontSize: (width+height)*0.02,
                       letterSpacing: 8.0,
                       fontFamily: 'HelveticaNeueLight',
                     ),
@@ -74,6 +75,7 @@ class _SplashScreenState extends State<SplashScreen> {
           ),
         )
     )
+        )
     );
   }
 }
