@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ems_direct/models/emergency_models.dart';
-import 'package:flutter/material.dart';
-import 'dart:async';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:location/location.dart';
@@ -25,9 +23,11 @@ class MapStateOPS extends State<OpsMap> {
   LatLng _lastMapPosition = _loc;
   MapType _currentMapType = MapType.normal;
 
+  bool _mapLoading = true;
+
   static final CameraPosition _position1 = CameraPosition(
     bearing: 192.833,
-    target: LatLng(45.531563, -122.677433),
+    target: LatLng(31.4700, 74.4111),
     tilt: 59.440,
     zoom: 11.0,
   );
@@ -64,6 +64,10 @@ class MapStateOPS extends State<OpsMap> {
 
   }
   @override
+  void dispose(){
+    super.dispose();
+  }
+  @override
   Widget build(BuildContext context) {
     var _availableMfrsList = Provider.of<List<AvailableMfrs>>(context);
     var _pendingEmergenciesList = Provider.of<List<PendingEmergencyModel>>(context);
@@ -77,6 +81,7 @@ class MapStateOPS extends State<OpsMap> {
     _addAvailableMfrsMarker(_availableMfrsList);
     _addPendingEmergenciesMarker(_pendingEmergenciesList);
     _addOnGoingEmergenciesMarker(_onGoingEmergenciesList);
+
     return MaterialApp(
       home: Scaffold(
         body: Stack(
@@ -91,6 +96,16 @@ class MapStateOPS extends State<OpsMap> {
               markers:  Set.from(allMarkers),
               onCameraMove: _onCameraMove,
             ),
+            (_mapLoading)
+                ? Container(
+              height: height,
+              width: width,
+              color: Colors.grey[100],
+              child: Center(
+                child: CircularProgressIndicator(),
+              ),
+            )
+                : Container(),
           ],
         ),
         floatingActionButton: Column(
@@ -103,24 +118,24 @@ class MapStateOPS extends State<OpsMap> {
                 },
                   backgroundColor: const Color(0xff47719e)
               ),
-              SizedBox(height: height/2.8),
-              FloatingActionButton(
-                child: Icon(Icons.add),
-                onPressed: (){
-                  zoomIn();
-                },
-                  backgroundColor: const Color(0xff47719e)
-              ),
-              SizedBox(height: 10),
-              FloatingActionButton(
-                child: Icon(Icons.remove),
-                onPressed: (){
-                  zoomOut();
-                },
-                backgroundColor: const Color(0xff47719e),
-              ),
+              SizedBox(height: height/1.75),
+//              FloatingActionButton(
+//                child: Icon(Icons.add),
+//                onPressed: (){
+//                  zoomIn();
+//                },
+//                  backgroundColor: const Color(0xff47719e)
+//              ),
+//              SizedBox(height: 10),
+//              FloatingActionButton(
+//                child: Icon(Icons.remove),
+//                onPressed: (){
+//                  zoomOut();
+//                },
+//                backgroundColor: const Color(0xff47719e),
+//              ),
 
-              SizedBox(height: 10),
+//              SizedBox(height: 10),
               FloatingActionButton(
                 child: Icon(Icons.location_searching),
                 onPressed: (){
@@ -136,7 +151,7 @@ class MapStateOPS extends State<OpsMap> {
 
 
   _addOnGoingEmergenciesMarker(_onGoingEmergenciesList){
-    if (_onGoingEmergenciesList != null) {
+    if (_onGoingEmergenciesList != null && _onGoingEmergenciesList.length != 0) {
       for (var x = 0; x < _onGoingEmergenciesList.length; x++) {
         GeoPoint location = _onGoingEmergenciesList[x].location;
         String rollNumber = _onGoingEmergenciesList[x].patientRollNo;
@@ -164,7 +179,7 @@ class MapStateOPS extends State<OpsMap> {
 
 
   _addPendingEmergenciesMarker(_pendingEmergenciesList){
-    if (_pendingEmergenciesList != null) {
+    if (_pendingEmergenciesList != null && _pendingEmergenciesList.length != 0) {
       for (var x = 0; x < _pendingEmergenciesList.length; x++) {
         GeoPoint location = _pendingEmergenciesList[x].location;
         String rollNumber = _pendingEmergenciesList[x].patientRollNo;
@@ -191,7 +206,7 @@ class MapStateOPS extends State<OpsMap> {
 
 
   _addAvailableMfrsMarker(_availableMfrsList) {
-    if(_availableMfrsList != null) {
+    if(_availableMfrsList != null && _availableMfrsList.length != 0) {
       for (var x = 0; x < _availableMfrsList.length; x++) {
         GeoPoint location = _availableMfrsList[x].location;
         String name = _availableMfrsList[x].name;
@@ -235,40 +250,41 @@ class MapStateOPS extends State<OpsMap> {
 
   _onMapCreated(GoogleMapController controller){
     _controller=controller;
+   setState(() => _mapLoading = false);
   }
 
   _onCameraMove(CameraPosition position){
     _lastMapPosition = position.target;
   }
 
+//
+//  void zoomIn() async {
+//    Zoom = Zoom*1.25;
+//    _controller.animateCamera(
+//        CameraUpdate.newCameraPosition(
+//            new CameraPosition(
+//                bearing: 192,
+//                target: LatLng(currLoc.latitude, currLoc.longitude),
+//                tilt: 0,
+//                zoom: Zoom
+//            )
+//        )
+//    );
+//  }
 
-  void zoomIn() async {
-    Zoom = Zoom*1.25;
-    _controller.animateCamera(
-        CameraUpdate.newCameraPosition(
-            new CameraPosition(
-                bearing: 192,
-                target: LatLng(currLoc.latitude, currLoc.longitude),
-                tilt: 0,
-                zoom: Zoom
-            )
-        )
-    );
-  }
-
-  void zoomOut() async {
-    Zoom = Zoom*0.75;
-    _controller.animateCamera(
-        CameraUpdate.newCameraPosition(
-            new CameraPosition(
-                bearing: 192,
-                target: LatLng(currLoc.latitude, currLoc.longitude),
-                tilt: 0,
-                zoom: Zoom
-            )
-        )
-    );
-  }
+//  void zoomOut() async {
+//    Zoom = Zoom*0.75;
+//    _controller.animateCamera(
+//        CameraUpdate.newCameraPosition(
+//            new CameraPosition(
+//                bearing: 192,
+//                target: LatLng(currLoc.latitude, currLoc.longitude),
+//                tilt: 0,
+//                zoom: Zoom
+//            )
+//        )
+//    );
+//  }
 
 
 
