@@ -45,6 +45,7 @@ class PendingEmergencyModel {
   final int declines;
   final List declinedBy;
   final String severity;
+  final DateTime reportingTime;
   final String patientContactNo;
 
   PendingEmergencyModel(
@@ -54,7 +55,9 @@ class PendingEmergencyModel {
       this.declines,
       this.declinedBy,
       this.severity,
-      this.patientContactNo});
+      this.patientContactNo,
+      this.reportingTime}
+      );
 }
 
 class AvailableMfrs {
