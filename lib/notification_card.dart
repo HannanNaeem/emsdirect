@@ -40,7 +40,7 @@ class _NotificationCardState extends State<NotificationCard> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Padding(
-                  padding: EdgeInsets.fromLTRB(10, 29, 0, 20),
+                  padding: EdgeInsets.fromLTRB(6, 24, 0, 20),
                   child: Icon(
                     Icons.fiber_manual_record,
                     color: color,
@@ -48,13 +48,13 @@ class _NotificationCardState extends State<NotificationCard> {
                 ),
                 Expanded(
                   child: Padding(
-                    padding: EdgeInsets.fromLTRB(10, 30, 0, 20),
+                    padding: EdgeInsets.fromLTRB(10, 25, 0, 20),
                     child: Container(
                       child: Text(
                         widget.text,
                         style: TextStyle(
                           color: const Color(0xff142850),
-                          fontSize: 17,
+                          fontSize: 14,
                           fontFamily: 'HelveticaNeueLight',
                         ),
                       ),
@@ -66,24 +66,31 @@ class _NotificationCardState extends State<NotificationCard> {
           ),
           Flexible(
             flex: 1,
-            child: IconButton(
-              color: Colors.grey[700],
-              icon: Icon(Icons.cancel),
-              onPressed: () {
-                print('Delete notification');
-//                setState(() {
-//                  data.removeAt(index);
-//                });
-              },
+            child: Align(
+              alignment: Alignment.bottomCenter,
+              child: Text(
+                widget.time,
+                style: TextStyle(
+                  color: const Color(0xff142850),
+                  fontSize: 12,
+                  fontFamily: 'HelveticaNeueLight',
+                ),
+              ),
             ),
           ),
-          Flexible(
-            flex: 1,
-            child: Align(
-              alignment: Alignment.bottomRight,
-              child: Text(widget.time),
-            ),
-          )
+//           Flexible(
+//             flex: 1,
+//             child: IconButton(
+//               color: Colors.grey[700],
+//               icon: Icon(Icons.cancel),
+//               onPressed: () {
+//                 print('Delete notification');
+// //                setState(() {
+// //                  data.removeAt(index);
+// //                });
+//               },
+//             ),
+//           ),
         ],
       ),
     );

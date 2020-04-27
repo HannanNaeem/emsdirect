@@ -9,7 +9,7 @@ class Notifications extends StatefulWidget {
 }
 
 class _NotificationsState extends State<Notifications> {
-  var notificationData = NotificationData.Data;
+  var notificationData = NotificationData.data;
   var hello = NotificationData.hello;
   var timeList = NotificationData.timeList;
 
@@ -25,20 +25,6 @@ class _NotificationsState extends State<Notifications> {
 
     return Scaffold(
       backgroundColor: const Color(0xff27496d),
-      //!APPBAR HAS TO BE DELETED - ONLY FOR TESTING
-      appBar: AppBar(
-        title: Text('Hello'),
-        leading: IconButton(
-          icon: Icon(Icons.menu),
-          onPressed: () {
-            setState(() {
-              var item = {'text': 'New card', 'category': 'testing'};
-              notificationData.insert(0, item);
-              timeList.insert(0, res);
-            });
-          },
-        ),
-      ),
       body: Container(
         child: Column(
           mainAxisSize: MainAxisSize.max,
