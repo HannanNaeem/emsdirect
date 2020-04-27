@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:ems_direct/models/emergency_models.dart';
 import 'package:ems_direct/ops.dart';
 import 'package:ems_direct/pages/MFR_home.dart';
 import 'package:ems_direct/services/auth.dart';
@@ -217,10 +218,15 @@ class _LoginEmsState extends State<LoginEms> {
                       Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
-                              builder: (context) =>
-                                  StreamProvider<QuerySnapshot>.value(
+                              builder: (context) => StreamProvider<
+                                      List<PendingEmergencyModel>>.value(
                                     value: MfrDatabaseService().pendingStream,
-                                    child: MfrWrapper(_keepSignedIn, result),
+                                    child: StreamProvider<
+                                            List<OngoingEmergencyModel>>.value(
+                                        value:
+                                            MfrDatabaseService().ongoingStream,
+                                        child:
+                                            MfrWrapper(_keepSignedIn, result)),
                                   )));
                     }
                   }

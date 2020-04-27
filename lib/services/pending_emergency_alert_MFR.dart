@@ -7,6 +7,7 @@ import 'package:material_dialog/material_dialog.dart';
 import 'package:ems_direct/pages/MFR_home.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:ems_direct/models/emergency_models.dart';
 
 //This is responsible for alerting MFRs of any pending emergencies with a severity level of low/medium
 class AlertFunctionMfr extends StatefulWidget {
@@ -89,7 +90,7 @@ class _AlertFunctionMfrState extends State<AlertFunctionMfr> {
   }
 
   //updates field values after rejection
-  Future updateDeclineBy(var docID) async {
+  Future updateDecline(var docID) async {
     DocumentReference docRef =
         databaseReference.collection("PendingEmergencies").document(docID);
     return await databaseReference.runTransaction((Transaction tx) async {
@@ -130,7 +131,7 @@ class _AlertFunctionMfrState extends State<AlertFunctionMfr> {
   }
 
   //main function to show alert
-  Future showAlert(var num, DocumentSnapshot doc, var width, var height) async {
+  Future showAlert(var num, var doc, var width, var height) async {
     //------------TESTING---------------------
     //num = 1; //FOR TESTING ALERTS BASED ON SITUATIONS WITH A NULL STREAM
 //    _isOccupied = false;
@@ -146,7 +147,7 @@ class _AlertFunctionMfrState extends State<AlertFunctionMfr> {
     //-----------------------------------------
 
     //only shows alerts if there is a pending emergency document AND if MFR is available+not occupied
-    if (_isAvailable && num > 0 && !_isOccupied) {
+    if (_isAvailable && (num > 0) && !_isOccupied) {
       //-------------- TESTING ------------------------------------
       // print(widget.occupied);
       //print(doc.data);
@@ -173,7 +174,7 @@ class _AlertFunctionMfrState extends State<AlertFunctionMfr> {
               content: Stack(
                 children: <Widget>[
                   Text(
-                    "Severity level:${doc.data['severity']}",
+                    "Severity level:${doc.severity}",
                     style: TextStyle(
                       fontFamily: 'HelveticaNeueLight',
                       letterSpacing: 2.0,
@@ -183,7 +184,7 @@ class _AlertFunctionMfrState extends State<AlertFunctionMfr> {
                   Padding(
                     padding: EdgeInsets.fromLTRB(0, 30, 0, 0),
                     child: Text(
-                      "Patient: ${doc.data['patientRollNo']}",
+                      "Patient: ${doc.patientRollNo}",
                       style: TextStyle(
                         fontFamily: 'HelveticaNeueLight',
                         letterSpacing: 2.0,
@@ -211,8 +212,8 @@ class _AlertFunctionMfrState extends State<AlertFunctionMfr> {
                         doc.data['genderPreference'],
                         doc.data['patientRollNo'],
                         doc.data['severity']);
-                    deleteRecord(doc.documentID);
-                    updateOccupiedStatus(true, doc.documentID);
+                    deleteRecord(doc.patientRollNo);
+                    updateOccupiedStatus(true, doc.patientRollNo);
                     Navigator.of(context).pop();
                   },
                 ),
@@ -232,7 +233,7 @@ class _AlertFunctionMfrState extends State<AlertFunctionMfr> {
                     onPressed: () async {
                       print('no');
                       Navigator.of(context).pop();
-                      await updateDeclineBy(doc.documentID);
+                      await updateDecline(doc.patientRollNo);
                     },
                   ),
                 ),
@@ -246,10 +247,10 @@ class _AlertFunctionMfrState extends State<AlertFunctionMfr> {
 
   //------------TESTING---------------------
   void printData(var docs) {
-    if (docs != null)
-      for (int i = 0; i < docs.length; i++) {
-        print(docs[i].data);
-      }
+    docs.forEach((emergency) {
+      print(emergency.patientRollNo);
+      print(emergency.genderPreference);
+    });
   }
 
   //----------------------------------------
@@ -268,41 +269,78 @@ class _AlertFunctionMfrState extends State<AlertFunctionMfr> {
     var screenSize = MediaQuery.of(context).size;
     var _width = screenSize.width;
     var _height = screenSize.height;
-    print(_height);
-    print(_width);
-    var _docs = Provider.of<QuerySnapshot>(context);
-    var num = 0;
+//    print(_height);
+//    print(_width);
+    var _pendingEmergencyList =
+        Provider.of<List<PendingEmergencyModel>>(context);
+    var _ongoingEmergencyList =
+        Provider.of<List<OngoingEmergencyModel>>(context);
+    var numPending = 0;
+    var numOngoing = 0;
     print('IN THIS FUNCTION');
+    print(_gender);
 
     //handling cases for null values (this can happen in the case of null data being received from the stream)
-    if (_docs != null && _isAvailable != null && _isOccupied != null) {
-      //getting the document list from the snapshot for the purpose of further filtering
-      List<DocumentSnapshot> _docList = _docs.documents;
-      //making sure the alerts received are those which are not already declined by the MFR
-      //if (_docs.documents[0].data != null) {
-      //handling the null value error
-      _docList.removeWhere((item) =>
-          item.data['declinedBy'].contains(widget._userData['rollNo']));
-      _docList.retainWhere(
-          (item) => item.data['genderPreference'].contains(_gender));
-      num = _docList.length;
-      print(num);
-      //}
-      //only call the show alert function if the MFR is available, not occupied and actually has emergencies to tend to
-      if ((_isAvailable) && (_docs != null) && (num > 0) && (!_isOccupied)) {
-        WidgetsBinding.instance
-            .addPostFrameCallback((_) => printData(_docList));
-        WidgetsBinding.instance.addPostFrameCallback((_) async =>
-            await showAlert(
-                _docs.documents.length, _docList[0], _width, _height));
-      }
-
-//      if (_isAvailable != null && _isOccupied != null) {
-//        if ((_isAvailable) && (_docs != null) && (num > 0) && (!_isOccupied)) {
-//          WidgetsBinding.instance.addPostFrameCallback((_) => printData(_docList));
-//          WidgetsBinding.instance.addPostFrameCallback((_) async => await showAlert(_docs.documents.length, _docList[0], _width, _height));
-//        }
+    if (_pendingEmergencyList != null && _gender != null) {
+      _pendingEmergencyList.removeWhere(
+          (item) => item.declinedBy.contains(widget._userData['rollNo']));
+      if (_pendingEmergencyList != null)
+        _pendingEmergencyList
+            .retainWhere((item) => item.genderPreference.contains(_gender));
+      numPending = _pendingEmergencyList.length;
+      WidgetsBinding.instance
+          .addPostFrameCallback((_) => printData(_pendingEmergencyList));
     }
+
+//    if (_ongoingEmergencyList != null) {
+//      //printData((_ongoingEmergencyList));
+//      //_ongoingEmergencyList.retainWhere((item) => item.mfr.contains(widget._userData['rollNo']));
+//      numOngoing = _ongoingEmergencyList.length;
+//      print('huh $numOngoing');
+//      WidgetsBinding.instance
+//          .addPostFrameCallback((_) => printData(_ongoingEmergencyList));
+//    }
+
+    if (!_isOccupied && _isAvailable) {
+//      if (_ongoingEmergencyList != null && numOngoing > 0) {
+//        WidgetsBinding.instance.addPostFrameCallback((_) async =>
+//        await showAlert(num, _ongoingEmergencyList[0], _width, _height));
+//      }
+      if (_pendingEmergencyList != null && numPending > 0) {
+        WidgetsBinding.instance.addPostFrameCallback((_) async =>
+            await showAlert(num, _pendingEmergencyList[0], _width, _height));
+      }
+    }
+
+//    //handling cases for null values (this can happen in the case of null data being received from the stream)
+//    if (_docs != null && _isAvailable != null && _isOccupied != null) {
+//      //getting the document list from the snapshot for the purpose of further filtering
+//      List<DocumentSnapshot> _docList = _docs.documents;
+//      //making sure the alerts received are those which are not already declined by the MFR
+//      //if (_docs.documents[0].data != null) {
+//      //handling the null value error
+//      _docList.removeWhere((item) =>
+//          item.data['declinedBy'].contains(widget._userData['rollNo']));
+//      _docList.retainWhere(
+//          (item) => item.data['genderPreference'].contains(_gender));
+//      num = _docList.length;
+//      print(num);
+//      //}
+//      //only call the show alert function if the MFR is available, not occupied and actually has emergencies to tend to
+//      if ((_isAvailable) && (_docs != null) && (num > 0) && (!_isOccupied)) {
+//        WidgetsBinding.instance
+//            .addPostFrameCallback((_) => printData(_docList));
+//        WidgetsBinding.instance.addPostFrameCallback((_) async =>
+//            await showAlert(
+//                _docs.documents.length, _docList[0], _width, _height));
+//      }
+//
+////      if (_isAvailable != null && _isOccupied != null) {
+////        if ((_isAvailable) && (_docs != null) && (num > 0) && (!_isOccupied)) {
+////          WidgetsBinding.instance.addPostFrameCallback((_) => printData(_docList));
+////          WidgetsBinding.instance.addPostFrameCallback((_) async => await showAlert(_docs.documents.length, _docList[0], _width, _height));
+////        }
+//    }
 
     return Container();
   }

@@ -397,6 +397,7 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
         child: Column(
           //everything is placed in the column
           children: <Widget>[
+            AlertFunctionMfr(_userData),
 //              AlertFunctionMfr(
 //                  availability: isAvailable,
 //                  occupied: isOccupied,

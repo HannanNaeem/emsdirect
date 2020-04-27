@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:ems_direct/models/emergency_models.dart';
 import 'package:ems_direct/models/user.dart';
 import 'package:ems_direct/ops.dart';
 import 'package:ems_direct/pages/MFR_home.dart';
@@ -45,9 +46,11 @@ class Wrapper extends StatelessWidget {
                 return OpsHome(true, snapshot.data);
               } else if (snapshot.data['loggedInAs'] == 'mfr') {
                 //user is logged in as mfr
-                return StreamProvider<QuerySnapshot>.value(
+                return StreamProvider<List<PendingEmergencyModel>>.value(
                   value: MfrDatabaseService().pendingStream,
-                  child: MfrWrapper(true, snapshot.data),
+                  child: StreamProvider<List<OngoingEmergencyModel>>.value(
+                      value: MfrDatabaseService().ongoingStream,
+                      child: MfrWrapper(true, snapshot.data)),
                 );
               } else {
                 // user is logged in as student
