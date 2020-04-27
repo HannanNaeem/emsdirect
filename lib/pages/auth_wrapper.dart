@@ -50,12 +50,18 @@ class Wrapper extends StatelessWidget {
 
                             if(snapshot.data['loggedInAs'] == 'ops'){ // user is logged in as ops
                               
-                              return StreamProvider<List<SevereEmergencyModel>>.value(
-                                value: OpsDatabaseService().severeStream,
-                                child: StreamProvider<List<DeclinedEmergencyModel>>.value(
-                                  value: OpsDatabaseService().declinedStream,
-                                  child:OpsWrapper(true,snapshot.data)
-                                    ),
+                              return StreamProvider<List<OngoingEmergencyModel>>.value(
+                                value: OpsDatabaseService().onGoingStream,
+                                child: StreamProvider<List<AvailableMfrs>>.value(
+                                  value: OpsDatabaseService().availableMfrStream,
+                                  child: StreamProvider<List<SevereEmergencyModel>>.value(
+                                    value: OpsDatabaseService().severeStream,
+                                    child: StreamProvider<List<DeclinedEmergencyModel>>.value(
+                                      value: OpsDatabaseService().declinedStream,
+                                      child:OpsWrapper(true,snapshot.data)
+                                        ),
+                                  ),
+                                ),
                               );
                             
                             }

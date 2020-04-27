@@ -1,6 +1,8 @@
+import 'package:ems_direct/models/emergency_models.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:provider/provider.dart';
 
 
 class MapMFR extends StatefulWidget {
@@ -26,6 +28,11 @@ class MapState extends State<MapMFR> {
     tilt: 59.440,
     zoom: 11.0,
   );
+
+ 
+
+
+
   @override
   void initState(){
     super.initState();
@@ -85,8 +92,15 @@ class MapState extends State<MapMFR> {
   }
 
   @override
-
   Widget build(BuildContext context) {
+    
+    // ----------------------------- snapshot lists ---------------------------------//
+    var _availableMfrsList = Provider.of<List<AvailableMfrs>>(context);
+    var _pendingEmergenciesList = Provider.of<List<PendingEmergencyModel>>(context);
+    var _onGoingEmergenciesList = Provider.of<List<OngoingEmergencyModel>>(context);
+
+
+
     return MaterialApp(
       home: Scaffold(
           appBar: AppBar(
