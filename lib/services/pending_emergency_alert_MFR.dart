@@ -115,16 +115,21 @@ class _AlertFunctionMfrState extends State<AlertFunctionMfr> {
       String genderPreference,
       String patientRollNo,
       String severityLevel,
-      String patientContactNo) async {
+      String patientContactNo,
+      Timestamp time) async {
     return await databaseReference
         .collection('OngoingEmergencies')
         .document(patientRollNo)
         .setData({
-      'mfr': widget._userData['rollNo'],
+      'mfr': {
+        'name': widget._userData['name'],
+        'contact': widget._userData['contact'],
+        'rollNo': widget._userData['rollNo']
+      },
       'location': location,
       'genderPreference': genderPreference,
       'patientRollNo': patientRollNo,
-      'reportingTime': DateTime.now(),
+      'reportingTime': time.toDate(),
       'severity': severityLevel,
       'patientContactNo': patientContactNo,
     });
@@ -206,7 +211,8 @@ class _AlertFunctionMfrState extends State<AlertFunctionMfr> {
                         doc[0].genderPreference,
                         doc[0].patientRollNo,
                         doc[0].severity,
-                        doc[0].patientContactNo);
+                        doc[0].patientContactNo,
+                        doc[0].reportingTime);
                     //await deleteRecord(doc[0].patientRollNo);
                     return await updateOccupiedStatus(true);
                   },
