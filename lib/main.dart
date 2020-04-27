@@ -16,7 +16,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: MapMFR(),
+      home: SplashScreen(),
       routes: {
         '/login_student': (context) => LoginStudent(),
         '/login_ems_mfr': (context) => LoginEms('mfr'),

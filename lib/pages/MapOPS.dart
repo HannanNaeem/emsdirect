@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -6,11 +5,9 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class MapMFR extends StatefulWidget {
   MapMFR() : super();
-
   final String title = "Map";
 
   @override
-
   MapState createState() => new MapState();
 
 }
@@ -18,7 +15,8 @@ class MapMFR extends StatefulWidget {
 class MapState extends State<MapMFR> {
   Completer<GoogleMapController> _controller = Completer();
   static const LatLng _center = const LatLng(45.521563, -122.677433);
-  final Set<Marker> _markers = {};
+//  final Set<Marker> _markers = {};
+  List<Marker> allMarkers = [];
   LatLng _lastMapPosition = _center;
   MapType _currentMapType = MapType.normal;
 
@@ -28,7 +26,20 @@ class MapState extends State<MapMFR> {
     tilt: 59.440,
     zoom: 11.0,
   );
-
+  @override
+  void initState(){
+    super.initState();
+    allMarkers.add(
+      Marker(
+        markerId: MarkerId('marker'),
+        draggable: false,
+        onTap: () {
+          print('information');
+        },
+        position: LatLng(latitude, longitude)
+      )
+    );
+  }
   _onMapCreated(GoogleMapController controller){
     _controller.complete(controller);
   }
@@ -45,20 +56,20 @@ class MapState extends State<MapMFR> {
     });
   }
 
-  _onAddMarkerButtonPressed(){
-    setState(() {
-      _markers.add(
-          Marker(
-            markerId: MarkerId(_lastMapPosition.toString()),
-            position: _lastMapPosition,
-            infoWindow: InfoWindow(
-              title: 'Information comes here',
-            ),
-            icon: BitmapDescriptor.defaultMarker,
-          )
-      );
-    });
-  }
+//  _onAddMarkerButtonPressed(){
+//    setState(() {
+//      _markers.add(
+//          Marker(
+//            markerId: MarkerId(_lastMapPosition.toString()),
+//            position: _lastMapPosition,
+//            infoWindow: InfoWindow(
+//              title: 'Information comes here',
+//            ),
+//            icon: BitmapDescriptor.defaultMarker,
+//          )
+//      );
+//    });
+//  }
 
 
   Widget button(Function function, IconData icon){
@@ -106,23 +117,23 @@ class MapState extends State<MapMFR> {
                   zoom: 11.0,
                 ),
                 mapType: _currentMapType,
-                markers: _markers,
+                markers:  Set.from(allMarkers),
                 onCameraMove: _onCameraMove,
               ),
-              Padding(
-                  padding: EdgeInsets.all(16.0),
-                  child: Align(
-                      alignment: Alignment.topRight,
-                      child: Column(
-                        children: <Widget>[
-                          button(
-                              _onAddMarkerButtonPressed,
-                              Icons.add_location
-                          ),
-                        ],
-                      )
-                  )
-              )
+//              Padding(
+//                  padding: EdgeInsets.all(16.0),
+//                  child: Align(
+//                      alignment: Alignment.topRight,
+//                      child: Column(
+//                        children: <Widget>[
+//                          button(
+//                              _onAddMarkerButtonPressed,
+//                              Icons.add_location
+//                          ),
+//                        ],
+//                      )
+//                  )
+//              )
             ],
           )
       ),
