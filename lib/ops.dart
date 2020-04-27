@@ -9,16 +9,22 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ems_direct/services/ops_database.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
+ 
+// ---------------------- GLOBAL KEY TO SET OPS HOMEPAGE --------------//
+GlobalKey<_OpsHomeState> opsGlobalKey = GlobalKey();
+
 
 class OpsHome extends StatefulWidget {
 
   //used to transfer data to the first created state
   bool _keepSignedIn = false;
   var _userData;
+  Key key;
 
-  OpsHome(bool keepSignedIn, var userData) {
+  OpsHome(bool keepSignedIn, var userData, Key passedKey) {
     _keepSignedIn = keepSignedIn;
     _userData = userData;
+    key = passedKey;
   }
 
   @override
@@ -41,7 +47,6 @@ class _OpsHomeState extends State<OpsHome> with WidgetsBindingObserver {
     _keepSignedIn = keepSignedIn;
     _userData = userData;
 
-    print("--------------got ${_userData.data}");
   }
 
 
@@ -69,6 +74,12 @@ class _OpsHomeState extends State<OpsHome> with WidgetsBindingObserver {
 
   int _selectedPage = 2;
 
+  void setPage(int moveTo){
+    setState(() {
+      _selectedPage = moveTo;
+    });
+  }
+
 
   final _pageOptions = [
     EmergencyLog(),
@@ -83,11 +94,7 @@ class _OpsHomeState extends State<OpsHome> with WidgetsBindingObserver {
     'Records'
   ];
 
-  void setSelectPage(int moveTo){
-    setState(() {
-      _selectedPage = moveTo;
-    });
-  }
+
 
   // ------------------------------------------------------------
 

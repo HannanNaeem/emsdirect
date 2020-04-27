@@ -1,3 +1,4 @@
+import 'package:ems_direct/ops.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:ems_direct/models/emergency_models.dart';
@@ -7,13 +8,14 @@ import 'package:ems_direct/models/emergency_models.dart';
 List<String> _alertedBuffer =  [];
 
 class AlertOps extends StatefulWidget {
+
   @override
   _AlertOpsState createState() => _AlertOpsState();
 }
 
 class _AlertOpsState extends State<AlertOps> {
   
-  
+
   @override
   Widget build(BuildContext context) {
 
@@ -26,7 +28,7 @@ class _AlertOpsState extends State<AlertOps> {
     //! -------------------------------------- Alert for severe emergencies --------------------------------//
 
 
-    void _showAlertSevere(String severity, String patientRollNo, String genderPreference){
+    void _showAlertSevere(String severity, String patientRollNo, String genderPreference, String patientContactNo){
      
      showDialog(
         context: context,
@@ -43,7 +45,7 @@ class _AlertOpsState extends State<AlertOps> {
             ),
           ),
           content: Text(
-            "Please manually assign a MFR\n Details:\n Patient: ${patientRollNo}\n Severity: ${severity}\n Gender Preferred: $genderPreference",
+            "Please manually assign a MFR\n\n Patient: ${patientRollNo}\n Contact: ${patientContactNo}\n Severity: ${severity}\n Gender Preferred: $genderPreference",
             style: TextStyle(
               fontFamily: 'HelveticaNeueLight',
               letterSpacing: 2.0,
@@ -52,45 +54,51 @@ class _AlertOpsState extends State<AlertOps> {
             ),
           ),
           actions: <Widget>[
-            Padding(
-              //alignment: Alignment.bottomLeft,
-              padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
-              child: FlatButton(
-                child: Text(
-                  'Go to Map',
-                  style: TextStyle(
-                    fontFamily: 'HelveticaNeueLight',
-                    //fontWeight: FontWeight.bold,
-                    letterSpacing: 2.0,
-                    fontSize: 20,
-                    color: const Color(0xff1a832a),
+            Center(
+              child: Padding(
+                //alignment: Alignment.bottomLeft,
+                padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                child: FlatButton(
+                  child: Text(
+                    'Go to Map',
+                    style: TextStyle(
+                      fontFamily: 'HelveticaNeueLight',
+                      //fontWeight: FontWeight.bold,
+                      letterSpacing: 2.0,
+                      fontSize: 20,
+                      color: const Color(0xff1a832a),
+                    ),
                   ),
+                  onPressed: () {
+                    print('go to map');
+                    opsGlobalKey.currentState.setPage(2);                  
+                    Navigator.of(context).pop();
+                    
+                  },
                 ),
-                onPressed: () {
-                  print('go to map');
-
-                  Navigator.of(context).pop();
-                },
               ),
             ),
+            Divider(),
             SizedBox(width: 10),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(0, 0, 10, 0),
-              child: FlatButton(
-                child: Text(
-                  'Go to Notifications',
-                  style: TextStyle(
-                    fontFamily: 'HelveticaNeueLight',
-                    letterSpacing: 2,
-                    fontSize: 20,
-                    color: const Color(0xffee0000),
+            Center(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
+                child: FlatButton(
+                  child: Text(
+                    'Go to Notifications',
+                    style: TextStyle(
+                      fontFamily: 'HelveticaNeueLight',
+                      letterSpacing: 2,
+                      fontSize: 20,
+                      color: const Color(0xffee0000),
+                    ),
                   ),
+                  onPressed: () {
+                    print('go to notifications');
+                    opsGlobalKey.currentState.setPage(1);
+                    Navigator.of(context).pop();
+                  },
                 ),
-                onPressed: () {
-                  print('go to notifications');
-
-                  Navigator.of(context).pop();
-                },
               ),
             ),
           ],
@@ -112,7 +120,8 @@ class _AlertOpsState extends State<AlertOps> {
             style: TextStyle(
               fontFamily: 'HelveticaNeueLight',
               letterSpacing: 2.0,
-              fontSize: 20,
+              fontSize: 24,
+              color: const Color(0xffee0000),
             ),
           ),
           content: Text(
@@ -125,45 +134,50 @@ class _AlertOpsState extends State<AlertOps> {
             ),
           ),
           actions: <Widget>[
-            Padding(
-              //alignment: Alignment.bottomLeft,
-              padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
-              child: FlatButton(
-                child: Text(
-                  'Go to Map',
-                  style: TextStyle(
-                    fontFamily: 'HelveticaNeueLight',
-                    //fontWeight: FontWeight.bold,
-                    letterSpacing: 2.0,
-                    fontSize: 20,
-                    color: const Color(0xff1a832a),
+            Center(
+              child: Padding(
+                //alignment: Alignment.bottomLeft,
+                padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                child: FlatButton(
+                  child: Text(
+                    'Go to Map',
+                    style: TextStyle(
+                      fontFamily: 'HelveticaNeueLight',
+                      //fontWeight: FontWeight.bold,
+                      letterSpacing: 2.0,
+                      fontSize: 20,
+                      color: const Color(0xff1a832a),
+                    ),
                   ),
+                  onPressed: () {
+                    print('go to map');
+                    opsGlobalKey.currentState.setPage(2);  
+                    Navigator.of(context).pop();
+                  },
                 ),
-                onPressed: () {
-                  print('go to map');
-
-                  Navigator.of(context).pop();
-                },
               ),
             ),
+            Divider(),
             SizedBox(width: 10),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(0, 0, 10, 0),
-              child: FlatButton(
-                child: Text(
-                  'Go to Notifications',
-                  style: TextStyle(
-                    fontFamily: 'HelveticaNeueLight',
-                    letterSpacing: 2,
-                    fontSize: 20,
-                    color: const Color(0xffee0000),
+            Center(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
+                child: FlatButton(
+                  child: Text(
+                    'Go to Notifications',
+                    style: TextStyle(
+                      fontFamily: 'HelveticaNeueLight',
+                      letterSpacing: 2,
+                      fontSize: 20,
+                      color: const Color(0xffee0000),
+                    ),
                   ),
+                  onPressed: () {
+                    print('go to notifications');
+                    opsGlobalKey.currentState.setPage(1);  
+                    Navigator.of(context).pop();
+                  },
                 ),
-                onPressed: () {
-                  print('go to notifications');
-
-                  Navigator.of(context).pop();
-                },
               ),
             ),
           ],
@@ -189,7 +203,7 @@ class _AlertOpsState extends State<AlertOps> {
         if(!_alertedBuffer.contains(emergency.patientRollNo)){
               
               WidgetsBinding.instance.addPostFrameCallback((_) =>
-                _showAlertSevere(emergency.severity,emergency.patientRollNo,emergency.genderPreference));
+                _showAlertSevere(emergency.severity,emergency.patientRollNo,emergency.genderPreference,emergency.patientContactNo));
               print("------before-------$_alertedBuffer");
               _iterationBuffer.add(emergency.patientRollNo);
 

@@ -15,10 +15,11 @@ class OpsWrapper extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    
     return Stack(
       children: <Widget>[
         AlertOps(),
-        OpsHome(_keepSignedIn, _userData)
+        OpsHome(_keepSignedIn, _userData, opsGlobalKey)
       ],
       
     );

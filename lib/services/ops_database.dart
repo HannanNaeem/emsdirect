@@ -23,6 +23,7 @@ class OpsDatabaseService {
         declines : doc.data['declines'],
         declinedBy : doc.data['declinedBy'],
         severity : doc.data['severity'],
+        patientContactNo: doc.data['patientContacNo'] ?? '',
       );
     }).toList();
   }
@@ -37,6 +38,7 @@ class OpsDatabaseService {
         declines : doc.data['declines'],
         declinedBy : doc.data['declinedBy'],
         severity : doc.data['severity'],
+        patientContactNo: doc.data['patientContacNo'] ?? '',
       );
     }).toList();
   }
