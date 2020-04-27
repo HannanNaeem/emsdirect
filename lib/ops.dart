@@ -1,4 +1,5 @@
 import 'package:ems_direct/services/emergency_alert_ops.dart';
+import 'package:ems_direct/services/ops_map_wrapper.dart';
 import 'package:flutter/material.dart';
 import 'package:ems_direct/records.dart';
 import 'package:ems_direct/map.dart';
@@ -84,7 +85,7 @@ class _OpsHomeState extends State<OpsHome> with WidgetsBindingObserver {
   final _pageOptions = [
     EmergencyLog(),
     Notifications(),
-    OpsMap(),
+    OpsMapWrapper(),
     Records(),
   ];
   List<String> _headerNames = [

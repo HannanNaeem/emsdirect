@@ -36,7 +36,7 @@ class MapState extends State<MapMFR> {
         onTap: () {
           print('information');
         },
-        position: LatLng(latitude, longitude)
+        //position: LatLng(latitude, longitude)
       )
     );
   }
