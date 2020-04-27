@@ -16,7 +16,7 @@ class MapState extends State<MapMFR> {
   GoogleMapController _controller;
   static var Zoom = 11.0;
 //  final Set<Marker> _markers = {};
-  static const LatLng _loc = const LatLng(31.4700, 74.4111);
+  static const LatLng _loc = const LatLng(45.531563, -122.677433);
   LatLng currLoc = _loc;
   LatLng _lastMapPosition = _loc;
   MapType _currentMapType = MapType.normal;
@@ -44,7 +44,7 @@ class MapState extends State<MapMFR> {
 
 
   static final CameraPosition initialisation = CameraPosition(
-    target: LatLng(31.4700, -74.4111),
+    target: LatLng(45.531563, -122.677433),
     zoom: Zoom,
   );
 
@@ -148,6 +148,7 @@ class MapState extends State<MapMFR> {
     var width = screenSize.width;
     var height = screenSize.height;
     return MaterialApp(
+
       home: Scaffold(
           appBar: AppBar(
             backgroundColor: const Color(0xff142850),
