@@ -1,9 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ems_direct/models/emergency_models.dart';
+import 'package:ems_direct/models/emergency_models.dart';
 import 'package:ems_direct/models/user.dart';
 import 'package:ems_direct/ops.dart';
 import 'package:ems_direct/pages/MFR_home.dart';
 import 'package:ems_direct/services/auth.dart';
+import 'package:ems_direct/services/ops_database.dart';
+import 'package:ems_direct/services/ops_notification_wrapper.dart';
 import 'package:ems_direct/services/mfr_database.dart';
 import 'package:ems_direct/services/user_database.dart';
 import 'package:ems_direct/shared/loading.dart';
@@ -43,7 +46,19 @@ class Wrapper extends StatelessWidget {
             if (snapshot.hasData) {
               if (snapshot.data['loggedInAs'] == 'ops') {
                 // user is logged in as ops
-                return OpsHome(true, snapshot.data);
+
+                return StreamProvider<List<OngoingEmergencyModel>>.value(
+                  value: OpsDatabaseService().onGoingStream,
+                  child: StreamProvider<List<AvailableMfrs>>.value(
+                    value: OpsDatabaseService().availableMfrStream,
+                    child: StreamProvider<List<SevereEmergencyModel>>.value(
+                      value: OpsDatabaseService().severeStream,
+                      child: StreamProvider<List<DeclinedEmergencyModel>>.value(
+                          value: OpsDatabaseService().declinedStream,
+                          child: OpsWrapper(true, snapshot.data)),
+                    ),
+                  ),
+                );
               } else if (snapshot.data['loggedInAs'] == 'mfr') {
                 //user is logged in as mfr
                 return StreamProvider<List<PendingEmergencyModel>>.value(

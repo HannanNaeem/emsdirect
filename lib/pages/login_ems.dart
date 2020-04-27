@@ -4,6 +4,8 @@ import 'package:ems_direct/ops.dart';
 import 'package:ems_direct/pages/MFR_home.dart';
 import 'package:ems_direct/services/auth.dart';
 import 'package:ems_direct/services/mfr_database.dart';
+import 'package:ems_direct/services/ops_database.dart';
+import 'package:ems_direct/services/ops_notification_wrapper.dart';
 import 'package:ems_direct/shared/loading.dart';
 import 'package:flutter/material.dart';
 import 'package:ems_direct/mfr_home_wrapper.dart';
@@ -37,15 +39,16 @@ class _LoginEmsState extends State<LoginEms> {
   final AuthService _authEms = AuthService();
 
   Widget _buildEmail() {
+    var screenSize = MediaQuery.of(context).size;
+    final height = screenSize.height;
     return Padding(
-      padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+      padding: EdgeInsets.fromLTRB(height / 75, 0, height / 75, 0),
       child: TextFormField(
           decoration: InputDecoration(
             hintText: 'Email Address',
             hintStyle: TextStyle(
               color: Colors.grey[700],
-              fontFamily: 'HelveticaNeue',
-              fontWeight: FontWeight.bold,
+              fontFamily: 'HelveticaNeueLight',
               letterSpacing: 2.0,
             ),
             errorStyle: TextStyle(
@@ -72,8 +75,10 @@ class _LoginEmsState extends State<LoginEms> {
   }
 
   Widget _buildPassword() {
+    var screenSize = MediaQuery.of(context).size;
+    final height = screenSize.height;
     return Padding(
-      padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+      padding: EdgeInsets.fromLTRB(height / 75, 0, height / 75, 0),
       child: TextFormField(
           keyboardType: TextInputType.visiblePassword,
           obscureText: true,
@@ -81,8 +86,7 @@ class _LoginEmsState extends State<LoginEms> {
             hintText: 'Password',
             hintStyle: TextStyle(
               color: Colors.grey[700],
-              fontFamily: 'HelveticaNeue',
-              fontWeight: FontWeight.bold,
+              fontFamily: 'HelveticaNeueLight',
               letterSpacing: 2.0,
             ),
             errorStyle: TextStyle(
@@ -124,9 +128,9 @@ class _LoginEmsState extends State<LoginEms> {
     ]);
   }
 
-  Widget _buildForm() {
+  Widget _buildForm(final height) {
     return Container(
-      height: 367,
+      height: height / 2,
       child: Form(
         key: _formKey,
         child: Column(
@@ -134,16 +138,16 @@ class _LoginEmsState extends State<LoginEms> {
           mainAxisAlignment: MainAxisAlignment.center,
 
           children: <Widget>[
-            SizedBox(height: 40),
+            SizedBox(height: height / 40),
             _buildEmail(),
-            SizedBox(height: 30),
+            SizedBox(height: height / 30),
             _buildPassword(),
-            SizedBox(height: 10),
+            SizedBox(height: height / 100),
             _buildKeepSignedIn(),
-            SizedBox(height: 30),
+            SizedBox(height: height / 20),
             ButtonTheme(
-              height: 55.0,
-              minWidth: 120.0,
+              height: height / 14,
+              minWidth: height / 5,
               child: RaisedButton(
                 onPressed: () async {
                   if (!_formKey.currentState.validate()) {
@@ -190,7 +194,7 @@ class _LoginEmsState extends State<LoginEms> {
                                   style: TextStyle(
                                     fontFamily: 'HelveticaNeueLight',
                                     letterSpacing: 2.5,
-                                    fontSize: 20,
+                                    fontSize: 16,
                                     color: const Color(0xffee0000),
                                   ),
                                 ),
@@ -211,9 +215,25 @@ class _LoginEmsState extends State<LoginEms> {
                       Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
-                            builder: (context) =>
-                                OpsHome(_keepSignedIn, result),
-                          ));
+                              builder: (context) => StreamProvider<
+                                      List<OngoingEmergencyModel>>.value(
+                                  value: OpsDatabaseService().onGoingStream,
+                                  child: StreamProvider<
+                                          List<AvailableMfrs>>.value(
+                                      value: OpsDatabaseService()
+                                          .availableMfrStream,
+                                      child: StreamProvider<
+                                              List<SevereEmergencyModel>>.value(
+                                          value:
+                                              OpsDatabaseService().severeStream,
+                                          child: StreamProvider<
+                                              List<
+                                                  DeclinedEmergencyModel>>.value(
+                                            value: OpsDatabaseService()
+                                                .declinedStream,
+                                            child: OpsWrapper(
+                                                _keepSignedIn, result),
+                                          ))))));
                     } else if (_emsType == 'mfr') {
                       Navigator.pushReplacement(
                           context,
@@ -225,7 +245,7 @@ class _LoginEmsState extends State<LoginEms> {
                                             List<OngoingEmergencyModel>>.value(
                                         value:
                                             MfrDatabaseService().ongoingStream,
-                                        child: MFRHome(_keepSignedIn, result)),
+                                        child: MFRHome(true, result)),
                                   )));
                     }
                   }
@@ -233,6 +253,7 @@ class _LoginEmsState extends State<LoginEms> {
                 child: Text('LOGIN',
                     style: TextStyle(
                       color: Colors.white,
+                      fontSize: 16,
                       fontFamily: 'HelveticaNeueBold',
                       letterSpacing: 3.0,
                     )),
@@ -250,6 +271,9 @@ class _LoginEmsState extends State<LoginEms> {
 
   @override
   Widget build(BuildContext context) {
+    var screenSize = MediaQuery.of(context).size;
+    final height = screenSize.height;
+
     return _loading
         ? Loading()
         : Scaffold(
@@ -270,39 +294,55 @@ class _LoginEmsState extends State<LoginEms> {
               child: SafeArea(
                 child: SingleChildScrollView(
                   child: Padding(
-                    padding: EdgeInsets.fromLTRB(30, 0, 30, 0),
+                    padding:
+                        EdgeInsets.fromLTRB(height / 30, 0, height / 30, 0),
                     child: Center(
-                      child: Column(
+                      child: Stack(
                         children: <Widget>[
-                          Image.asset(
-                            'assets/ems_logo.png',
-                            scale: 3.2,
+                          Container(
+                            alignment: Alignment.center,
+                            child: Image.asset(
+                              'assets/ems_logo.png',
+                              scale: (height) / 200,
+                            ),
                           ),
-                          Padding(
-                            padding: const EdgeInsets.fromLTRB(0, 50, 0, 0),
-                            child: Text(
-                              'EMS LOGIN',
-                              style: TextStyle(
-                                color: Colors.white,
-                                letterSpacing: 8.0,
-                                fontFamily: 'HelveticaNeueLight',
-                                fontSize: 24,
+                          Container(
+                            alignment: Alignment.center,
+                            margin: EdgeInsets.only(top: height / 3.5),
+                            child: Padding(
+                              padding:
+                                  EdgeInsets.fromLTRB(0, height / 30, 0, 0),
+                              child: Text(
+                                'EMS LOGIN',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  letterSpacing: 6.0,
+                                  fontFamily: 'HelveticaNeueLight',
+                                  fontSize: 24,
+                                ),
                               ),
                             ),
                           ),
-                          _buildForm(),
+                          Container(
+                              alignment: Alignment.center,
+                              margin: EdgeInsets.only(top: height / 3),
+                              child: _buildForm(height)),
                           SizedBox(
-                            height: 40,
+                            height: height / 30,
                           ),
-                          Padding(
-                            padding: const EdgeInsets.fromLTRB(0, 0, 0, 30),
-                            child: Text(
-                              'EMS DIRECT',
-                              style: TextStyle(
-                                color: Colors.white,
-                                letterSpacing: 5.0,
-                                fontSize: 15,
-                                fontFamily: 'HelveticaNeueLight',
+                          Container(
+                            alignment: Alignment.center,
+                            margin: EdgeInsets.only(top: height / 1.2),
+                            child: Padding(
+                              padding: EdgeInsets.fromLTRB(0, 0, 0, 25),
+                              child: Text(
+                                'EMS DIRECT',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  letterSpacing: 5.0,
+                                  fontSize: 14,
+                                  fontFamily: 'HelveticaNeueLight',
+                                ),
                               ),
                             ),
                           ),

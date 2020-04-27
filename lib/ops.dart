@@ -1,19 +1,31 @@
+import 'package:ems_direct/services/emergency_alert_ops.dart';
+import 'package:ems_direct/services/ops_map_wrapper.dart';
 import 'package:flutter/material.dart';
 import 'package:ems_direct/records.dart';
 import 'package:ems_direct/map.dart';
 import 'package:ems_direct/notifications.dart';
+import 'package:ems_direct/emergency_log.dart';
 import 'package:ems_direct/services/auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:ems_direct/services/ops_database.dart';
+import 'package:get/get.dart';
+import 'package:provider/provider.dart';
+ 
+// ---------------------- GLOBAL KEY TO SET OPS HOMEPAGE --------------//
+GlobalKey<_OpsHomeState> opsGlobalKey = GlobalKey();
+
 
 class OpsHome extends StatefulWidget {
 
   //used to transfer data to the first created state
   bool _keepSignedIn = false;
   var _userData;
+  Key key;
 
-  OpsHome(bool keepSignedIn, var userData) {
+  OpsHome(bool keepSignedIn, var userData, Key passedKey) {
     _keepSignedIn = keepSignedIn;
     _userData = userData;
+    key = passedKey;
   }
 
   @override
@@ -36,7 +48,6 @@ class _OpsHomeState extends State<OpsHome> with WidgetsBindingObserver {
     _keepSignedIn = keepSignedIn;
     _userData = userData;
 
-    print("--------------got ${_userData.data}");
   }
 
 
@@ -64,11 +75,17 @@ class _OpsHomeState extends State<OpsHome> with WidgetsBindingObserver {
 
   int _selectedPage = 2;
 
+  void setPage(int moveTo){
+    setState(() {
+      _selectedPage = moveTo;
+    });
+  }
+
 
   final _pageOptions = [
-    Center(child: Text('Log')),
+    EmergencyLog(),
     Notifications(),
-    OpsMap(),
+    OpsMapWrapper(),
     Records(),
   ];
   List<String> _headerNames = [
@@ -78,15 +95,23 @@ class _OpsHomeState extends State<OpsHome> with WidgetsBindingObserver {
     'Records'
   ];
 
-  //instance of auth service
-  final AuthService _auth = AuthService();
-  final AuthService _authStudent = AuthService();
 
+
+  // ------------------------------------------------------------
+
+  // ------------- Notification handler ------------------------//
+  
+ 
   @override
   Widget build(BuildContext context) {
+
     var screenSize = MediaQuery.of(context).size;
     var width = screenSize.width;
     var height = screenSize.height;
+
+    //final ignoredEmergencies = Provider.of<QuerySnapshot>(context);
+
+    
 
     return Scaffold(
       appBar: AppBar(
@@ -94,9 +119,8 @@ class _OpsHomeState extends State<OpsHome> with WidgetsBindingObserver {
         title: Text(
           _headerNames[_selectedPage],
           style: TextStyle(
-            fontSize: 20,
-            fontFamily: 'HelveticaNeue',
-            fontWeight: FontWeight.bold,
+            fontSize: 24,
+            fontFamily: 'HelveticaNeueLight',
             color: Colors.white,
             letterSpacing: 2,
           ),
@@ -305,7 +329,15 @@ class _OpsHomeState extends State<OpsHome> with WidgetsBindingObserver {
           ],
         ),
       ),
-      body: _pageOptions[_selectedPage],
+
+
+      body: Stack(
+        children: <Widget>[
+          _pageOptions[_selectedPage],
+        ],
+      ),
+
+      
       bottomNavigationBar: BottomNavigationBar(
         elevation: 0.0,
         currentIndex: _selectedPage,
@@ -317,26 +349,48 @@ class _OpsHomeState extends State<OpsHome> with WidgetsBindingObserver {
         showUnselectedLabels: true,
         type: BottomNavigationBarType.fixed,
         backgroundColor: const Color(0xff142850),
-        selectedItemColor: Colors.cyan[200],//const Color(0xff73cde8),
-        selectedFontSize: 15,
-        unselectedItemColor: Colors.grey[500],
+        selectedItemColor: Colors.white,
+        selectedFontSize: 14,
+        unselectedFontSize: 12,
+        unselectedItemColor: const Color(0xff47719e),
+
         iconSize: 30,
         items: [
           BottomNavigationBarItem(
             icon: Icon(Icons.insert_drive_file),
-            title: Text('Log'),
+            title: Text(
+              'Log',
+              style: TextStyle(
+                fontFamily: 'HelveticaNeueLight',
+              )
+            ),
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.notifications),
-            title: Text('Notifications'),
+            title: Text(
+              'Notifications',
+              style: TextStyle(
+                fontFamily: 'HelveticaNeueLight',
+              )
+            ),
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.place),
-            title: Text('Map'),
+            title: Text(
+              'Map',
+              style: TextStyle(
+                fontFamily: 'HelveticaNeueLight',
+              )
+            ),
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.description),
-            title: Text('Records'),
+            title: Text(
+              'Records',
+              style: TextStyle(
+                fontFamily: 'HelveticaNeueLight',
+              )
+            ),
           ),
         ],
       ),

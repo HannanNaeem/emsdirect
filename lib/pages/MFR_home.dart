@@ -414,8 +414,7 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
         child: Column(
           //everything is placed in the column
           children: <Widget>[
-            if (isAvailable != null && isOccupied != null)
-              AlertFunctionMfr(_userData),
+            //if (isAvailable != null && isOccupied != null)AlertFunctionMfr(_userData),
             //showAlert(isAvailable, length), //AlertFunction(),
             Flexible(
               flex: 3,
@@ -475,7 +474,7 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
             ),
             Flexible(
               flex: 4,
-              child: isOccupied == true
+              child: isOccupied
                   ? FutureBuilder(
                       future: getEmergencyData(_userData['rollNo']),
                       builder: (BuildContext context, AsyncSnapshot snapshot) {

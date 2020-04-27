@@ -3,10 +3,10 @@ import 'package:ems_direct/pages/SelectLogin.dart';
 import 'package:flutter/material.dart';
 import 'package:ems_direct/pages/live_status.dart';
 import 'package:ems_direct/pages/emergency_numbers.dart';
-import 'package:ems_direct/ops.dart';
 import 'package:ems_direct/pages/login_student.dart';
 import 'package:ems_direct/pages/login_ems.dart';
 import 'package:ems_direct/pages/SplashScreen.dart';
+import 'package:ems_direct/pages/MapMFR.dart';
 import 'package:ems_direct/pages/available_MFRs.dart';
 
 void main() => runApp(MyApp());
