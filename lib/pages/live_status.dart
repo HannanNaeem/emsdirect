@@ -1,24 +1,53 @@
+import 'package:ems_direct/models/user.dart';
 import 'package:flutter/material.dart';
 import 'package:ems_direct/pages/live_status_data.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:provider/provider.dart';
+import 'package:ems_direct/pages/status_list.dart';
+import 'package:ems_direct/services/user_database.dart';
 
 class LiveStatus extends StatefulWidget {
+  //final UserDatabaseService _userData;
+  var _userData;
+  LiveStatus(var userData){
+    _userData = userData;
+  }
   @override
-  _LiveStatusState createState() => _LiveStatusState();
+  _LiveStatusState createState() => _LiveStatusState(_userData);
 }
 
 class _LiveStatusState extends State<LiveStatus> {
   var _status = StatusData.Data;
+
+  var _userData;
+  _LiveStatusState(var userData){
+    _userData = userData;
+  }
+  Stream<DocumentSnapshot> pendingEmergencies;
+
+  @override
+  void initState() {
+    pendingEmergencies = Firestore.instance.collection('PendingEmergencies').document(_userData.data['rollNo']).snapshots();
+    super.initState();
+  }
+
+
+  Stream<QuerySnapshot> ongoingEmergencies = Firestore.instance.collection('OngoingEmergencies').snapshots();
+
   @override
   Widget build(BuildContext context) {
     var screenSize = MediaQuery.of(context).size;
     var width = screenSize.width;
     var height = screenSize.height;
-    String _rollnumber = '21100118';
-    String _contact = '03362356254';
-    String _email = '21100118@lums.edu.pk';
-    return Scaffold(
-      drawer: Container(
-        child: Drawer(
+
+
+    return MultiProvider(
+      providers: [
+        StreamProvider<DocumentSnapshot>.value(value: pendingEmergencies),
+        StreamProvider<QuerySnapshot>.value(value: ongoingEmergencies),
+      ],
+      child: Scaffold(
+        drawer: Container(
           child: Drawer(
             child: Column(
               //this column contains the drawer header, the option to view profile/emergency numbers/available MFRs list
@@ -33,9 +62,10 @@ class _LiveStatusState extends State<LiveStatus> {
                 ExpansionTile(
                   leading: Icon(
                     Icons.account_circle,
+                    color: const Color(0xff142850),
                   ),
                   title: Text(
-                    'Harum Naseem',
+                    _userData.data['name'].toString(),
                     style: TextStyle(
                       fontSize: 15,
                       fontFamily: 'HelveticaNeue',
@@ -59,7 +89,7 @@ class _LiveStatusState extends State<LiveStatus> {
                           ),
                           SizedBox(width: 2.0),
                           Text(
-                            '$_rollnumber',
+                            _userData.data['rollNo'].toString(),
                             style: TextStyle(
                               fontSize: 15,
                               fontFamily: 'HelveticaNeue',
@@ -86,7 +116,7 @@ class _LiveStatusState extends State<LiveStatus> {
                           ),
                           SizedBox(width: 2.0),
                           Text(
-                            _email,
+                            _userData.data['email'].toString(),
                             style: TextStyle(
                               fontSize: 15,
                               fontFamily: 'HelveticaNeue',
@@ -113,7 +143,7 @@ class _LiveStatusState extends State<LiveStatus> {
                           ),
                           SizedBox(width: 1.0),
                           Text(
-                            '$_contact',
+                            _userData.data['contact'].toString(),
                             style: TextStyle(
                               fontSize: 15,
                               fontFamily: 'HelveticaNeue',
@@ -144,85 +174,33 @@ class _LiveStatusState extends State<LiveStatus> {
                 ),
               ],
             ),
-          ),
-        )
-      ),
-      appBar: AppBar(
-        backgroundColor: const Color(0xff142850),
-        title: Text(
-          'Live Status',
-          style: TextStyle(
-            fontSize: 26,
-            fontFamily: 'HelveticaNeue',
-            fontWeight: FontWeight.bold,
-            color: Colors.white,
-            letterSpacing: 2,
-          ),
+          )
         ),
-        centerTitle: true,
-      ),
-      body: Container(
-        color: const Color(0xff27496d),
-        child: Column(
-          mainAxisSize: MainAxisSize.max,
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: <Widget>[
-            Expanded(
-              child: ListView.builder(
-                itemCount: _status.length,
-                itemBuilder: (context, index) {
-                  return Padding(
-                    padding: EdgeInsets.fromLTRB(20, 10, 20, 0),
-                    child: ConstrainedBox(
-                      constraints: BoxConstraints(
-                        minHeight: 100,
-                      ),
-                      child: Card(
-                        elevation: 6,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Flexible(
-                              flex: 6,
-                              child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: <Widget>[
-                                  Padding(
-                                    padding:
-                                    EdgeInsets.fromLTRB(10, 29, 0, 20),
-                                    child: Icon(Icons.fiber_manual_record),
-                                  ),
-                                  Expanded(
-                                    child: Padding(
-                                      padding:
-                                      EdgeInsets.fromLTRB(10, 30, 0, 20),
-                                      child: Container(
-                                        child: Text(
-                                          _status[index]['text'],
-                                          style: TextStyle(
-                                            //color: const Color(0xff3596b5),
-                                            fontSize: 17,
-                                            fontFamily: 'HelveticaNeue',
-                                            //fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  );
-                },
-                //child: Card(elevation: 10, child: Text('Hello World')),
-              ),
+        appBar: AppBar(
+          backgroundColor: const Color(0xff142850),
+          title: Text(
+            'Live Status',
+            style: TextStyle(
+              fontSize: 26,
+              fontFamily: 'HelveticaNeue',
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+              letterSpacing: 2,
             ),
-          ],
+          ),
+          centerTitle: true,
+        ),
+        body: Container(
+          color: const Color(0xff27496d),
+          child: Column(
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: <Widget>[
+              Expanded(
+                child: DisplayList(_userData.data['rollNo'].toString()),
+              ),
+            ],
+          ),
         ),
       ),
     );

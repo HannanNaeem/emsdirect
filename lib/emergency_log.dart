@@ -13,17 +13,15 @@ class EmergencyLog extends StatefulWidget {
 class _LogState extends State<EmergencyLog> {
   var logData = LogData.data;
 
-  
-
   @override
   Widget build(BuildContext context) {
     var screenSize = MediaQuery.of(context).size;
     var width = screenSize.width;
     var height = screenSize.height;
 
+    var _onGoingEmergencyList =
+        Provider.of<List<OngoingEmergencyModel>>(context);
 
-    var _onGoingEmergencyList = Provider.of<List<OngoingEmergencyModel>>(context);
-  
     return Scaffold(
       backgroundColor: const Color(0xff27496d),
       body: Container(
@@ -33,7 +31,9 @@ class _LogState extends State<EmergencyLog> {
           children: <Widget>[
             Expanded(
               child: ListView.builder(
-                itemCount: _onGoingEmergencyList == null ? 0 : _onGoingEmergencyList.length,
+                itemCount: _onGoingEmergencyList == null
+                    ? 0
+                    : _onGoingEmergencyList.length,
                 itemBuilder: (context, index) {
                   return Padding(
                     padding: EdgeInsets.fromLTRB(20, 10, 20, 0),
@@ -46,7 +46,8 @@ class _LogState extends State<EmergencyLog> {
                           _onGoingEmergencyList[index].patientContactNo,
                           _onGoingEmergencyList[index].genderPreference,
                           _onGoingEmergencyList[index].severity,
-                          DateFormat.jm().format(_onGoingEmergencyList[index].reportingTime)),
+                          DateFormat.jm().format(
+                              _onGoingEmergencyList[index].reportingTime)),
                     ),
                   );
                 },

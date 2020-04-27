@@ -115,20 +115,41 @@ class _AlertFunctionMfrState extends State<AlertFunctionMfr> {
       String genderPreference,
       String patientRollNo,
       String severityLevel,
-      String patientContactNo) async {
+      String patientContactNo,
+      Timestamp time) async {
     return await databaseReference
         .collection('OngoingEmergencies')
         .document(patientRollNo)
         .setData({
       'mfr': widget._userData['rollNo'],
+      'mfrDetails': {
+        'name': widget._userData['name'],
+        'contact': widget._userData['contact'],
+      },
       'location': location,
       'genderPreference': genderPreference,
       'patientRollNo': patientRollNo,
-      'reportingTime': FieldValue.serverTimestamp().toString(),
+      'reportingTime': time.toDate(),
       'severity': severityLevel,
       'patientContactNo': patientContactNo,
     });
   }
+
+//  Future updateOnAccept(var doc) async {
+//    List<Future> futureList = List<Future>();
+//    futureList.add(await createOngoingEmergencyDocument(
+//        doc[0].location,
+//        doc[0].genderPreference,
+//        doc[0].patientRollNo,
+//        doc[0].severity,
+//        doc[0].patientContactNo));
+//    futureList.add(deleteRecord(doc[0].patientRollNo));
+//    futureList.add(updateOccupiedStatus(true));
+//    for (int i = 1; i < doc.length; i++) {
+//      futureList.add(updateDecline(doc[i].patientRollNo));
+//    }
+//    return Future.wait(futureList);
+//  }
 
   //main function to show alert
   Future showPendingAlert(int num, var doc, var width, var height) async {
@@ -137,84 +158,90 @@ class _AlertFunctionMfrState extends State<AlertFunctionMfr> {
       //-------------- TESTING ------------------------------------
       // print(widget.occupied);
       //print(doc.data);
-      //print('ID: ${doc.documentID}');
+      print('ID: ${doc[0].patientRollNo}');
       //-----------------------------------------------------------
       showDialog(
         context: context,
-        builder: (context) => AlertDialog(
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-          title: Text(
-            "New Emergency!!",
-            style: TextStyle(
-              fontFamily: 'HelveticaNeueLight',
-              letterSpacing: 2.0,
-              fontSize: 24,
-            ),
-          ),
-          content: Stack(
-            children: <Widget>[
-              Text(
-                "Severity level:${doc.severity}\n Patient: ${doc.patientRollNo}\n Contact: ${doc.patientContactNo}",
-                style: TextStyle(
-                  fontFamily: 'HelveticaNeueLight',
-                  letterSpacing: 2.0,
-                  fontSize: 18,
-                ),
+        builder: (context) {
+          Future.delayed(Duration(seconds: 30), () {
+            Navigator.of(context).pop(true);
+          });
+          return AlertDialog(
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+            title: Text(
+              "New Emergency!!",
+              style: TextStyle(
+                fontFamily: 'HelveticaNeueLight',
+                letterSpacing: 2.0,
+                fontSize: 24,
               ),
-            ],
-          ),
-          actions: <Widget>[
-            Padding(
-              padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
-              child: FlatButton(
-                child: Text(
-                  'ACCEPT',
+            ),
+            content: Stack(
+              children: <Widget>[
+                Text(
+                  "Severity level:${doc[0].severity}\nPatient: ${doc[0].patientRollNo}\nContact: ${doc[0].patientContactNo}",
                   style: TextStyle(
                     fontFamily: 'HelveticaNeueLight',
                     letterSpacing: 2.0,
-                    fontSize: 20,
-                    color: const Color(0xff1a832a),
+                    fontSize: 18,
                   ),
                 ),
-                onPressed: () async {
-                  print('yes');
-                  _isOccupied = true;
-                  await createOngoingEmergencyDocument(
-                      doc.location,
-                      doc.genderPreference,
-                      doc.patientRollNo,
-                      doc.severity,
-                      doc.patientContactNo);
-                  await deleteRecord(doc.patientRollNo);
-                  Navigator.of(context).pop();
-                  return await updateOccupiedStatus(true);
-                },
-              ),
+              ],
             ),
-            SizedBox(width: 10),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(0, 0, 10, 0),
-              child: FlatButton(
-                child: Text(
-                  'REJECT',
-                  style: TextStyle(
-                    fontFamily: 'HelveticaNeueLight',
-                    letterSpacing: 2,
-                    fontSize: 20,
-                    color: const Color(0xffee0000),
+            actions: <Widget>[
+              Padding(
+                padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                child: FlatButton(
+                  child: Text(
+                    'ACCEPT',
+                    style: TextStyle(
+                      fontFamily: 'HelveticaNeueLight',
+                      letterSpacing: 2.0,
+                      fontSize: 20,
+                      color: const Color(0xff1a832a),
+                    ),
                   ),
+                  onPressed: () async {
+                    print('yes');
+                    _isOccupied = true;
+                    Navigator.of(context).pop();
+                    await createOngoingEmergencyDocument(
+                        doc[0].location,
+                        doc[0].genderPreference,
+                        doc[0].patientRollNo,
+                        doc[0].severity,
+                        doc[0].patientContactNo,
+                        doc[0].reportingTime);
+                    //await deleteRecord(doc[0].patientRollNo);
+                    return await updateOccupiedStatus(true);
+                  },
                 ),
-                onPressed: () async {
-                  print('no');
-                  _isOccupied = false;
-                  Navigator.of(context).pop();
-                  return await updateDecline(doc.patientRollNo);
-                },
               ),
-            ),
-          ],
-        ),
+              SizedBox(width: 10),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(0, 0, 10, 0),
+                child: FlatButton(
+                  child: Text(
+                    'REJECT',
+                    style: TextStyle(
+                      fontFamily: 'HelveticaNeueLight',
+                      letterSpacing: 2,
+                      fontSize: 20,
+                      color: const Color(0xffee0000),
+                    ),
+                  ),
+                  onPressed: () async {
+                    print('no');
+                    _isOccupied = false;
+                    Navigator.of(context).pop();
+                    return await updateDecline(doc[0].patientRollNo);
+                  },
+                ),
+              ),
+            ],
+          );
+        },
       );
     }
   }
@@ -229,80 +256,85 @@ class _AlertFunctionMfrState extends State<AlertFunctionMfr> {
       //-----------------------------------------------------------
       showDialog(
         context: context,
-        builder: (context) => AlertDialog(
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-          title: Text(
-            "You have been assigned an emergency!",
-            style: TextStyle(
-              fontFamily: 'HelveticaNeueLight',
-              letterSpacing: 2.0,
-              fontSize: 24,
+        builder: (context) {
+          Future.delayed(Duration(seconds: 30), () {
+            Navigator.of(context).pop(true);
+          });
+          return AlertDialog(
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+            title: Text(
+              "You have been assigned an emergency!",
+              style: TextStyle(
+                fontFamily: 'HelveticaNeueLight',
+                letterSpacing: 2.0,
+                fontSize: 24,
+              ),
             ),
-          ),
-          content: Stack(
-            children: <Widget>[
-              Text(
-                "Severity level:${doc.severity}\nPatient: ${doc.patientRollNo}\nContact: ${doc.patientContactNo}",
-                style: TextStyle(
-                  fontFamily: 'HelveticaNeueLight',
-                  letterSpacing: 2.0,
-                  fontSize: 18,
+            content: Stack(
+              children: <Widget>[
+                Text(
+                  "Severity level:${doc[0].severity}\nPatient: ${doc[0].patientRollNo}\nContact: ${doc[0].patientContactNo}",
+                  style: TextStyle(
+                    fontFamily: 'HelveticaNeueLight',
+                    letterSpacing: 2.0,
+                    fontSize: 18,
+                  ),
+                ),
+              ],
+            ),
+            actions: <Widget>[
+              Center(
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(10, 0, 10, 10),
+                  child: FlatButton(
+                    child: Text(
+                      'Acknowledge',
+                      style: TextStyle(
+                        fontFamily: 'HelveticaNeueLight',
+                        letterSpacing: 2,
+                        fontSize: 20,
+                        color: const Color(0xff1a832a),
+                      ),
+                    ),
+                    onPressed: () async {
+                      print('acknowledge');
+                      _isOccupied = true;
+                      Navigator.of(context).pop();
+                      return await updateDecline(doc[0].patientRollNo);
+                    },
+                  ),
+                ),
+              ),
+              Divider(),
+              SizedBox(width: 10),
+              Center(
+                child: Padding(
+                  padding: EdgeInsets.fromLTRB(10, 0, 10, 10),
+                  child: FlatButton(
+                    child: Text(
+                      'Go to map',
+                      style: TextStyle(
+                        fontFamily: 'HelveticaNeueLight',
+                        letterSpacing: 2.0,
+                        fontSize: 20,
+                        color: const Color(0xff1a832a),
+                      ),
+                    ),
+                    onPressed: () async {
+                      print('acknowledge');
+                      _isOccupied = true;
+                      //delete the below navigator when merging with the map file
+                      Navigator.of(context).pop();
+                      //Navigator.push<dynamic>(context, MaterialPageRoute(builder: (context) => MapMFR(locationOfEmergency, patientContactNo)));
+                      return await updateOccupiedStatus(true);
+                    },
+                  ),
                 ),
               ),
             ],
-          ),
-          actions: <Widget>[
-            Center(
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(10, 0, 10, 10),
-                child: FlatButton(
-                  child: Text(
-                    'Acknowledge',
-                    style: TextStyle(
-                      fontFamily: 'HelveticaNeueLight',
-                      letterSpacing: 2,
-                      fontSize: 20,
-                      color: const Color(0xff1a832a),
-                    ),
-                  ),
-                  onPressed: () async {
-                    print('acknowledge');
-                    _isOccupied = true;
-                    Navigator.of(context).pop();
-                    return await updateDecline(doc.patientRollNo);
-                  },
-                ),
-              ),
-            ),
-            Divider(),
-            SizedBox(width: 10),
-            Center(
-              child: Padding(
-                padding: EdgeInsets.fromLTRB(10, 0, 10, 10),
-                child: FlatButton(
-                  child: Text(
-                    'Go to map',
-                    style: TextStyle(
-                      fontFamily: 'HelveticaNeueLight',
-                      letterSpacing: 2.0,
-                      fontSize: 20,
-                      color: const Color(0xff1a832a),
-                    ),
-                  ),
-                  onPressed: () async {
-                    print('acknowledge');
-                    _isOccupied = true;
-                    //delete the below navigator when merging with the map file
-                    Navigator.of(context).pop();
-                    //Navigator.push<dynamic>(context, MaterialPageRoute(builder: (context) => MapMFR(locationOfEmergency, patientContactNo)));
-                    return await updateOccupiedStatus(true);
-                  },
-                ),
-              ),
-            ),
-          ],
-        ),
+          );
+        },
       );
     }
   }
@@ -339,9 +371,9 @@ class _AlertFunctionMfrState extends State<AlertFunctionMfr> {
     int numOngoing = 0;
     print('IN THIS FUNCTION');
     print(_ongoingEmergencyList);
-    print(_gender);
-    print(_isOccupied);
-    print(_isAvailable);
+//    print(_gender);
+//    print(_isOccupied);
+//    print(_isAvailable);
 
     //handling cases for null values (this can happen in the case of null data being received from the stream)
     if (_pendingEmergencyList != null && _gender != null) {
@@ -359,6 +391,7 @@ class _AlertFunctionMfrState extends State<AlertFunctionMfr> {
     //handling cases for null values (this can happen in the case of null data being received from the stream)
     if (_ongoingEmergencyList != null) {
       //filtering for any emergency that is in my name
+      print(_ongoingEmergencyList[0].mfr);
       _ongoingEmergencyList
           .retainWhere((item) => item.mfr.contains(widget._userData['rollNo']));
       numOngoing = _ongoingEmergencyList.length;
@@ -368,15 +401,23 @@ class _AlertFunctionMfrState extends State<AlertFunctionMfr> {
     //this is where the two alert functions are called depending on whether there is data AND conditions are met
     if (_isAvailable != null && _isOccupied != null) {
       if (!_isOccupied && _isAvailable) {
-        //conditions
+//        if (_ongoingEmergencyList != null && numOngoing > 0) {
+//          WidgetsBinding.instance.addPostFrameCallback((_) async =>
+//              await showOngoingAlert(
+//                  numOngoing, _ongoingEmergencyList[0], _width, _height));
+//        } else if (_pendingEmergencyList != null && numPending > 0) {
+//          WidgetsBinding.instance.addPostFrameCallback((_) async =>
+//              await showPendingAlert(
+//                  numPending, _pendingEmergencyList[0], _width, _height));
+
         if (_ongoingEmergencyList != null && numOngoing > 0) {
           WidgetsBinding.instance.addPostFrameCallback((_) async =>
               await showOngoingAlert(
-                  numOngoing, _ongoingEmergencyList[0], _width, _height));
+                  numOngoing, _ongoingEmergencyList, _width, _height));
         } else if (_pendingEmergencyList != null && numPending > 0) {
           WidgetsBinding.instance.addPostFrameCallback((_) async =>
               await showPendingAlert(
-                  numPending, _pendingEmergencyList[0], _width, _height));
+                  numPending, _pendingEmergencyList, _width, _height));
         }
       }
     }
