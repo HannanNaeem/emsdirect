@@ -177,9 +177,9 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
   @override
   Widget build(BuildContext context) {
     //------- TESTING PURPOSES ------------------
-    //print('Context rebuit');
-    //print(isAvailable);
-    //print(isOccupied);
+    print('Context rebuit');
+    print(isAvailable);
+    print(isOccupied);
 
     //Getting screen dimensions to adjust widgets accordingly
     var screenSize = MediaQuery.of(context).size;
@@ -506,8 +506,8 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
                                 if (snapshot.connectionState ==
                                     ConnectionState.done) {
                                   if (snapshot.hasData) {
-                                    print('wut');
-                                    print(snapshot.data);
+                                    print(
+                                        snapshot.data[0].data['patientRollNo']);
                                     return IconButton(
                                         icon: Icon(
                                           Icons.location_on,

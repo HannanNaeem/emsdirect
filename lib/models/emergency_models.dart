@@ -56,7 +56,8 @@ class PendingEmergencyModel {
       this.declinedBy,
       this.severity,
       this.patientContactNo,
-      this.reportingTime});
+      this.reportingTime}
+      );
 }
 
 class AvailableMfrs {
@@ -85,7 +86,6 @@ class OngoingEmergencyModel {
   final String genderPreference;
   final GeoPoint location;
   final String mfr;
-  final Map mfrDetails;
   final DateTime reportingTime;
   final String severity;
   final String patientContactNo;
@@ -95,7 +95,6 @@ class OngoingEmergencyModel {
       this.genderPreference,
       this.location,
       this.mfr,
-      this.mfrDetails,
       this.reportingTime,
       this.severity,
       this.patientContactNo});
