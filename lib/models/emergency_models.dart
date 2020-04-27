@@ -84,7 +84,8 @@ class OngoingEmergencyModel {
   final String patientRollNo;
   final String genderPreference;
   final GeoPoint location;
-  final Map mfr;
+  final String mfr;
+  final Map mfrDetails;
   final DateTime reportingTime;
   final String severity;
   final String patientContactNo;
@@ -94,6 +95,7 @@ class OngoingEmergencyModel {
       this.genderPreference,
       this.location,
       this.mfr,
+      this.mfrDetails,
       this.reportingTime,
       this.severity,
       this.patientContactNo});
