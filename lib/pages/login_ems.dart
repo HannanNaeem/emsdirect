@@ -1,14 +1,16 @@
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ems_direct/models/emergency_models.dart';
 import 'package:ems_direct/ops.dart';
 import 'package:ems_direct/pages/MFR_home.dart';
 import 'package:ems_direct/services/auth.dart';
+import 'package:ems_direct/services/mfr_database.dart';
 import 'package:ems_direct/services/ops_database.dart';
 import 'package:ems_direct/services/ops_notification_wrapper.dart';
 import 'package:ems_direct/shared/loading.dart';
 import 'package:flutter/material.dart';
+import 'package:ems_direct/mfr_home_wrapper.dart';
 import 'package:provider/provider.dart';
+import 'package:ems_direct/services/mfr_database.dart';
 
 class LoginEms extends StatefulWidget {
   String _emsType = '';
@@ -213,29 +215,38 @@ class _LoginEmsState extends State<LoginEms> {
                       Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
-                            builder: (context) =>
-                                StreamProvider<List<OngoingEmergencyModel>>.value(
-                                value: OpsDatabaseService().onGoingStream,
-                                child: StreamProvider<List<AvailableMfrs>>.value(
-                                  value: OpsDatabaseService().availableMfrStream,
-                                  child: StreamProvider<List<SevereEmergencyModel>>.value(
-                                    value: OpsDatabaseService().severeStream,
-                                    child: StreamProvider<List<DeclinedEmergencyModel>>.value(
-                                      value: OpsDatabaseService().declinedStream,
-                                      child:OpsWrapper(_keepSignedIn, result),
-                                  )
-                                )
-                            )
-                          )
-                        )
-                      );
+                              builder: (context) => StreamProvider<
+                                      List<OngoingEmergencyModel>>.value(
+                                  value: OpsDatabaseService().onGoingStream,
+                                  child: StreamProvider<
+                                          List<AvailableMfrs>>.value(
+                                      value: OpsDatabaseService()
+                                          .availableMfrStream,
+                                      child: StreamProvider<
+                                              List<SevereEmergencyModel>>.value(
+                                          value:
+                                              OpsDatabaseService().severeStream,
+                                          child: StreamProvider<
+                                              List<
+                                                  DeclinedEmergencyModel>>.value(
+                                            value: OpsDatabaseService()
+                                                .declinedStream,
+                                            child: OpsWrapper(
+                                                _keepSignedIn, result),
+                                          ))))));
                     } else if (_emsType == 'mfr') {
                       Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
-                            builder: (context) =>
-                                MFRHome(_keepSignedIn, result),
-                          ));
+                              builder: (context) => StreamProvider<
+                                      List<PendingEmergencyModel>>.value(
+                                    value: MfrDatabaseService().pendingStream,
+                                    child: StreamProvider<
+                                            List<OngoingEmergencyModel>>.value(
+                                        value:
+                                            MfrDatabaseService().ongoingStream,
+                                        child: MFRHome(true, result)),
+                                  )));
                     }
                   }
                 },
@@ -297,7 +308,7 @@ class _LoginEmsState extends State<LoginEms> {
                           ),
                           Container(
                             alignment: Alignment.center,
-                            margin: EdgeInsets.only(top: height/3.5),
+                            margin: EdgeInsets.only(top: height / 3.5),
                             child: Padding(
                               padding:
                                   EdgeInsets.fromLTRB(0, height / 30, 0, 0),
@@ -313,15 +324,15 @@ class _LoginEmsState extends State<LoginEms> {
                             ),
                           ),
                           Container(
-                            alignment: Alignment.center,
-                            margin: EdgeInsets.only(top: height/3),
-                            child: _buildForm(height)),
+                              alignment: Alignment.center,
+                              margin: EdgeInsets.only(top: height / 3),
+                              child: _buildForm(height)),
                           SizedBox(
                             height: height / 30,
                           ),
                           Container(
                             alignment: Alignment.center,
-                            margin: EdgeInsets.only(top: height/1.2),
+                            margin: EdgeInsets.only(top: height / 1.2),
                             child: Padding(
                               padding: EdgeInsets.fromLTRB(0, 0, 0, 25),
                               child: Text(

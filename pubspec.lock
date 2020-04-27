@@ -345,6 +345,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.1.4"
+  intl:
+    dependency: "direct main"
+    description:
+      name: intl
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.16.1"
   io:
     dependency: transitive
     description:
@@ -408,6 +415,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "4.0.5145"
+  material_dialog:
+    dependency: "direct main"
+    description:
+      name: material_dialog
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.0.9"
   meta:
     dependency: transitive
     description:

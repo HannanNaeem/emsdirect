@@ -3,28 +3,26 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class StudentHome extends StatefulWidget {
-
   bool _keepSignedIn = false;
   var _userData;
-  StudentHome(bool keepSignedIn, var userData){
+  StudentHome(bool keepSignedIn, var userData) {
     _keepSignedIn = keepSignedIn;
     _userData = userData;
   }
 
   @override
-  _StudentHomeState createState() => _StudentHomeState(_keepSignedIn,_userData);
+  _StudentHomeState createState() =>
+      _StudentHomeState(_keepSignedIn, _userData);
 }
 
-
 class _StudentHomeState extends State<StudentHome> with WidgetsBindingObserver {
-
   //keepMeSignedIn vairable passed from login screen if successful
   bool _keepSignedIn = false;
   //document for userData
   var _userData;
 
   // constructor to set keepSignedIn
-  _StudentHomeState(bool keepSignedIn, var userData){
+  _StudentHomeState(bool keepSignedIn, var userData) {
     _keepSignedIn = keepSignedIn;
     _userData = userData;
 
@@ -41,12 +39,10 @@ class _StudentHomeState extends State<StudentHome> with WidgetsBindingObserver {
   GeoPoint dummyLocation = GeoPoint(4, 12);
   /////////////////////////////////////////////////////////////////
 
-
-
   //instance of auth service
   final AuthService _auth = AuthService();
   final AuthService _authStudent = AuthService();
-  
+
   //State management for keepsignedin ----------------------------------
   @override
   void initState() {
@@ -62,7 +58,7 @@ class _StudentHomeState extends State<StudentHome> with WidgetsBindingObserver {
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    if(_keepSignedIn == false && state == AppLifecycleState.inactive){
+    if (_keepSignedIn == false && state == AppLifecycleState.inactive) {
       _authStudent.logOut();
     }
   }
@@ -87,11 +83,11 @@ class _StudentHomeState extends State<StudentHome> with WidgetsBindingObserver {
         .collection("PendingEmergencies")
         .document()
         .setData({
-      'Location': location,
-      'Gender Preference': genderPref,
-      "Patient roll_no": rollNumber,
-      'Severity': severityLevel,
-      'Declines': 0
+      'location': location,
+      'genderPreference': genderPref,
+      "patientRollNo": rollNumber,
+      'severity': severityLevel,
+      'declines': 0
     });
   }
   /////////////////////////////////////////////////////////////////
@@ -266,7 +262,7 @@ class _StudentHomeState extends State<StudentHome> with WidgetsBindingObserver {
                                           ),
                                           onPressed: () async {
                                             //navigation to login screen
-                                            //! signout here                                        
+                                            //! signout here
                                             await _authStudent.logOut();
                                             Navigator.of(context).pop();
                                             Navigator.pushReplacementNamed(
