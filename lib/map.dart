@@ -22,7 +22,9 @@ class MapStateOPS extends State<OpsMap> {
   Map<MarkerId, Marker> allMarkers = <MarkerId, Marker>{};
   LatLng _lastMapPosition = _loc;
   MapType _currentMapType = MapType.normal;
-
+  var _availableMfrsList;
+  var _pendingEmergenciesList;
+  var _onGoingEmergenciesList;
   bool _mapLoading = true;
 
 
@@ -72,21 +74,15 @@ class MapStateOPS extends State<OpsMap> {
   }
   @override
   Widget build(BuildContext context) {
-    var _availableMfrsList = Provider.of<List<AvailableMfrs>>(context);
-    var _pendingEmergenciesList = Provider.of<List<PendingEmergencyModel>>(context);
-    var _onGoingEmergenciesList = Provider.of<List<OngoingEmergencyModel>>(context);
+    // ----------------------------- snapshot lists ---------------------------------//
+
+    _availableMfrsList = Provider.of<List<AvailableMfrs>>(context);
+    _pendingEmergenciesList = Provider.of<List<PendingEmergencyModel>>(context);
+    _onGoingEmergenciesList = Provider.of<List<OngoingEmergencyModel>>(context);
 
     var screenSize = MediaQuery.of(context).size;
     var width = screenSize.width;
     var height = screenSize.height;
-    // ----------------------------- snapshot lists ---------------------------------//
-    //
-
-    void initState() {
-      _addAvailableMfrsMarker(_availableMfrsList);
-      _addPendingEmergenciesMarker(_pendingEmergenciesList);
-      _addOnGoingEmergenciesMarker(_onGoingEmergenciesList);
-    }
 
 
     return MaterialApp(
@@ -125,36 +121,22 @@ class MapStateOPS extends State<OpsMap> {
                 },
                   backgroundColor: const Color(0xff47719e)
               ),
-              SizedBox(height: height/1.75),
-//              FloatingActionButton(
-//                child: Icon(Icons.add),
-//                onPressed: (){
-//                  zoomIn();
-//                },
-//                  backgroundColor: const Color(0xff47719e)
-//              ),
-//              SizedBox(height: 10),
-//              FloatingActionButton(
-//                child: Icon(Icons.remove),
-//                onPressed: (){
-//                  zoomOut();
-//                },
-//                backgroundColor: const Color(0xff47719e),
-//              ),
-
-//              SizedBox(height: 10),
-//              FloatingActionButton(
-//                child: Icon(Icons.location_searching),
-//                onPressed: (){
-//                  debugPrint('sigh');
-//
-////                  getCurrentLocaion();
-//
-////                  UpdateMarker(_availableMfrsList);
-//
-//                },
-//                backgroundColor: const Color(0xff47719e),
-//              ),
+              SizedBox(height: height/2.3),
+              FloatingActionButton(
+                child: Icon(Icons.add),
+                onPressed: (){
+                  zoomIn();
+                },
+                  backgroundColor: const Color(0xff47719e)
+              ),
+              SizedBox(height: 10),
+              FloatingActionButton(
+                child: Icon(Icons.remove),
+                onPressed: (){
+                  zoomOut();
+                },
+                backgroundColor: const Color(0xff47719e),
+              ),
             ]
         ),
       ),
@@ -164,11 +146,11 @@ class MapStateOPS extends State<OpsMap> {
 
   void _addOnGoingEmergenciesMarker(_onGoingEmergenciesList) async {
     if (_onGoingEmergenciesList != null && _onGoingEmergenciesList.length != 0) {
+      print('here lol');
       _onGoingEmergenciesList.forEach((EM){
         debugPrint('hello');
         GeoPoint location = EM.location;
         String rollNumber = EM.patientRollNo;
-//        String assignedMFR = MFR.mfr;
         String severity = EM.severity;
         var markerIdVal = allMarkers.length + 1;
         String mar = markerIdVal.toString();
@@ -191,6 +173,7 @@ class MapStateOPS extends State<OpsMap> {
   void _addPendingEmergenciesMarker(_pendingEmergenciesList){
 
     if (_pendingEmergenciesList != null && _pendingEmergenciesList.length != 0) {
+      print('here lol2');
       _pendingEmergenciesList.forEach((EM){
         GeoPoint location = EM.location;
         String rollNumber = EM.patientRollNo;
@@ -222,6 +205,7 @@ class MapStateOPS extends State<OpsMap> {
 
   void _addAvailableMfrsMarker(_availableMfrsList) {
     if (_availableMfrsList != null && _availableMfrsList.length != 0) {
+      print('here lol444');
       _availableMfrsList.forEach((MFR) {
         GeoPoint location = MFR.location;
         String name = MFR.name;
@@ -270,6 +254,10 @@ class MapStateOPS extends State<OpsMap> {
   _onMapCreated(GoogleMapController controller){
     _controller=controller;
     this.setState(() => _mapLoading = false);
+    print('helloooooo');
+    _addAvailableMfrsMarker(_availableMfrsList);
+    _addPendingEmergenciesMarker(_pendingEmergenciesList);
+    _addOnGoingEmergenciesMarker(_onGoingEmergenciesList);
   }
 
   _onCameraMove(CameraPosition position){
@@ -277,33 +265,17 @@ class MapStateOPS extends State<OpsMap> {
   }
 
 //
-//  void zoomIn() async {
-//    Zoom = Zoom*1.25;
-//    _controller.animateCamera(
-//        CameraUpdate.newCameraPosition(
-//            new CameraPosition(
-//                bearing: 192,
-//                target: LatLng(currLoc.latitude, currLoc.longitude),
-//                tilt: 0,
-//                zoom: Zoom
-//            )
-//        )
-//    );
-//  }
+  void zoomIn() async {
+    _controller.animateCamera(
+      CameraUpdate.zoomIn(),
+    );
+  }
 
-//  void zoomOut() async {
-//    Zoom = Zoom*0.75;
-//    _controller.animateCamera(
-//        CameraUpdate.newCameraPosition(
-//            new CameraPosition(
-//                bearing: 192,
-//                target: LatLng(currLoc.latitude, currLoc.longitude),
-//                tilt: 0,
-//                zoom: Zoom
-//            )
-//        )
-//    );
-//  }
+  void zoomOut() async {
+    _controller.animateCamera(
+      CameraUpdate.zoomOut(),
+    );
+  }
 
 
 

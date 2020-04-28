@@ -45,7 +45,6 @@ class MapState extends State<MapMFR> {
 
   GoogleMapController _controller;
   static var Zoom = 11.0;
-//  final Set<Marker> _markers = {};
   static const LatLng _loc = const LatLng(45.531563, -122.677433);
   LatLng currLoc = _loc;
   LatLng _lastMapPosition = _loc;
@@ -94,21 +93,15 @@ class MapState extends State<MapMFR> {
   }
 
   void zoomIn() async {
-    Zoom = Zoom * 1.25;
-    _controller.animateCamera(CameraUpdate.newCameraPosition(new CameraPosition(
-        bearing: 192,
-        target: LatLng(currLoc.latitude, currLoc.longitude),
-        tilt: 0,
-        zoom: Zoom)));
+    _controller.animateCamera(
+      CameraUpdate.zoomIn(),
+    );
   }
 
   void zoomOut() async {
-    Zoom = Zoom * 0.75;
-    _controller.animateCamera(CameraUpdate.newCameraPosition(new CameraPosition(
-        bearing: 192,
-        target: LatLng(currLoc.latitude, currLoc.longitude),
-        tilt: 0,
-        zoom: Zoom)));
+    _controller.animateCamera(
+      CameraUpdate.zoomOut(),
+    );
   }
 
   void getCurrentLocaion() async {
