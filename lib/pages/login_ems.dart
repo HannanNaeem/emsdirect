@@ -318,12 +318,7 @@ class _LoginEmsState extends State<LoginEms> {
                               ),
                             ),
                           SizedBox(height: height/40),
-                          Container(
-                            height: height/ 2.7,
-                            child: SingleChildScrollView(
-                              child: _buildForm(height)
-                            ),
-                          ),
+                          _buildForm(height),
                           SizedBox(
                             height: height / 50,
                           ),
