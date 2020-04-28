@@ -8,6 +8,7 @@ class SevereEmergencyModel {
   final List declinedBy;
   final String severity;
   final String patientContactNo;
+  final DateTime reportingTime;
 
   SevereEmergencyModel(
       {this.patientRollNo,
@@ -16,7 +17,8 @@ class SevereEmergencyModel {
       this.declines,
       this.declinedBy,
       this.severity,
-      this.patientContactNo});
+      this.patientContactNo,
+      this.reportingTime});
 }
 
 class DeclinedEmergencyModel {
@@ -27,6 +29,7 @@ class DeclinedEmergencyModel {
   final List declinedBy;
   final String severity;
   final String patientContactNo;
+  final DateTime reportingTime;
 
   DeclinedEmergencyModel(
       {this.patientContactNo,
@@ -35,7 +38,8 @@ class DeclinedEmergencyModel {
       this.location,
       this.declines,
       this.declinedBy,
-      this.severity});
+      this.severity,
+      this.reportingTime});
 }
 
 class PendingEmergencyModel {
