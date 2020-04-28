@@ -5,6 +5,14 @@ import 'package:ems_direct/models/emergency_models.dart';
 import 'package:provider/provider.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
+class NotificationItem {
+  String category;
+  dynamic item;
+
+  NotificationItem({this.category, this.item});
+}
+
+
 class Notifications extends StatefulWidget {
   @override
   _NotificationsState createState() => _NotificationsState();
@@ -14,6 +22,13 @@ class _NotificationsState extends State<Notifications> {
   var notificationData = NotificationData.data;
   var hello = NotificationData.hello;
   var timeList = NotificationData.timeList;
+
+
+  NotificationItem _listToNotificationData(dynamic item, String category){
+      return NotificationItem(category: category, item : item);
+ 
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +41,8 @@ class _NotificationsState extends State<Notifications> {
     var _severeEmergenciesList = Provider.of<List<SevereEmergencyModel>>(context);
 
     // to add later equipment
-  
+    // List<NotificationItem> _notificationsList.from(_declinedEmergenciesList.map((item) =>_listToNotificationData(item,'declined')).toList());
+    // print(_notificationsList);
 
     TimeOfDay timeOfDay = TimeOfDay.fromDateTime(DateTime.now());
     String res = timeOfDay.format(context);
