@@ -1,19 +1,25 @@
 import 'package:flutter/material.dart';
 
 class LogCard extends StatefulWidget {
-  String name;
-  String number;
-  String gender;
+  String mfrName;
+  String mfrRollNo;
+  String mfrContact;
+  String genderPreference;
   String severity;
   String reportingTime;
+  String patientRollNo;
+  String patientContactNo;
 
-  LogCard(String name, String number, String gender, String severity,
-      String reportingTime) {
-    this.name = name;
-    this.number = number;
-    this.gender = gender;
+  LogCard(String mfrName, String mfrRollNo ,String mfrContact, String genderPreference, String severity,
+      String reportingTime, String patientRollNo, String patientContactNo) {
+    this.mfrName = mfrName;
+    this.mfrRollNo = mfrRollNo;
+    this.mfrContact = mfrContact;
+    this.genderPreference = genderPreference;
     this.severity = severity;
     this.reportingTime = reportingTime;
+    this.patientRollNo = patientRollNo;
+    this.patientContactNo = patientContactNo;
   }
 
   @override
@@ -60,7 +66,7 @@ class _LogCardState extends State<LogCard> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Text(
-                      'MFR: ' + widget.name,
+                      'MFR: ' + widget.mfrName + ' ' + widget.mfrRollNo,
                       style: TextStyle(
                         color: const Color(0xff142850),
                         fontSize: 14,
@@ -69,7 +75,17 @@ class _LogCardState extends State<LogCard> {
                       ),
                     ),
                     Text(
-                      'Contact: ' + widget.number,
+                      'Contact: ' + widget.mfrContact,
+                      style: TextStyle(
+                        color: const Color(0xff142850),
+                        fontSize: 14,
+                        fontFamily: 'HelveticaNeueLight',
+                        letterSpacing: 1,
+                      ),
+                    ),
+                    Divider(),
+                    Text(
+                      'Patient: ' + widget.patientRollNo,
                       style: TextStyle(
                         color: const Color(0xff142850),
                         fontSize: 14,
@@ -78,7 +94,16 @@ class _LogCardState extends State<LogCard> {
                       ),
                     ),
                     Text(
-                      'Gender Preference: ' + widget.gender,
+                      'Patient Contact: ' + widget.patientContactNo,
+                      style: TextStyle(
+                        color: const Color(0xff142850),
+                        fontSize: 14,
+                        fontFamily: 'HelveticaNeueLight',
+                        letterSpacing: 1,
+                      ),
+                    ),
+                    Text(
+                      'Gender Preference: ' + widget.genderPreference,
                       style: TextStyle(
                         color: const Color(0xff142850),
                         fontSize: 14,
