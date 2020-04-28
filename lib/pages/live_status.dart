@@ -4,7 +4,8 @@ import 'package:ems_direct/pages/live_status_data.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:provider/provider.dart';
 import 'package:ems_direct/pages/status_list.dart';
-import 'package:ems_direct/services/user_database.dart';
+import 'package:ems_direct/models/emergency_models.dart';
+import 'package:ems_direct/services/ops_database.dart';
 
 class LiveStatus extends StatefulWidget {
   //final UserDatabaseService _userData;
@@ -17,22 +18,20 @@ class LiveStatus extends StatefulWidget {
 }
 
 class _LiveStatusState extends State<LiveStatus> {
-  var _status = StatusData.Data;
 
   var _userData;
   _LiveStatusState(var userData){
     _userData = userData;
   }
-  Stream<DocumentSnapshot> pendingEmergencies;
+  //Stream<DocumentSnapshot> pendingEmergencies;
 
   @override
   void initState() {
-    pendingEmergencies = Firestore.instance.collection('PendingEmergencies').document(_userData.data['rollNo']).snapshots();
+   // pendingEmergencies = Firestore.instance.collection('PendingEmergencies').document(_userData.data['rollNo']).snapshots();
     super.initState();
   }
 
-
-  Stream<QuerySnapshot> ongoingEmergencies = Firestore.instance.collection('OngoingEmergencies').snapshots();
+ // Stream<QuerySnapshot> ongoingEmergencies = Firestore.instance.collection('OngoingEmergencies').snapshots();
 
   @override
   Widget build(BuildContext context) {
@@ -43,8 +42,10 @@ class _LiveStatusState extends State<LiveStatus> {
 
     return MultiProvider(
       providers: [
-        StreamProvider<DocumentSnapshot>.value(value: pendingEmergencies),
-        StreamProvider<QuerySnapshot>.value(value: ongoingEmergencies),
+        StreamProvider<List<PendingEmergencyModel>>.value(value: OpsDatabaseService().studentPendingStream(_userData.data['rollNo'].toString())),
+        StreamProvider<List<OngoingEmergencyModel>>.value(value: OpsDatabaseService().studentOnGoingStream(_userData.data['rollNo'].toString())),
+        //StreamProvider<DocumentSnapshot>.value(value: pendingEmergencies),
+        //StreamProvider<QuerySnapshot>.value(value: ongoingEmergencies),
       ],
       child: Scaffold(
         drawer: Container(

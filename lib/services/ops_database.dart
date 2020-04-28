@@ -124,4 +124,15 @@ class OpsDatabaseService {
         .snapshots()
         .map(_availableMfrsListFromSnapshot);
   }
+
+
+  // streams needed for student
+  Stream<List<PendingEmergencyModel>> studentPendingStream(String rollNo){
+    return pendingEmergencies.where('patientRollNo', isEqualTo: rollNo).snapshots().map(_pendingEmergencyListFromSnapshot);
+  }
+
+  Stream<List<OngoingEmergencyModel>> studentOnGoingStream(String rollNo){
+    return onGoingEmergencies.where('patientRollNo', isEqualTo: rollNo).snapshots().map(_onGoingEmergencyListFromSnapshot);
+  }
+
 }
