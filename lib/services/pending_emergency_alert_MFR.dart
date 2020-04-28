@@ -12,9 +12,11 @@ import 'package:ems_direct/models/emergency_models.dart';
 //This is responsible for alerting MFRs of any pending emergencies with a severity level of low/medium
 class AlertFunctionMfr extends StatefulWidget {
   var _userData;
+  //Key key;
 
   AlertFunctionMfr(var userData) {
     _userData = userData;
+    //key = passedkey;
   }
 
   @override
@@ -207,18 +209,22 @@ class _AlertFunctionMfrState extends State<AlertFunctionMfr> {
                     ),
                   ),
                   onPressed: () async {
-                    print('yes');
-                    _isOccupied = true;
-                    Navigator.of(context).pop();
-                    await createOngoingEmergencyDocument(
-                        doc[0].location,
-                        doc[0].genderPreference,
-                        doc[0].patientRollNo,
-                        doc[0].severity,
-                        doc[0].patientContactNo,
-                        doc[0].reportingTime);
-                    await deleteRecord(doc[0].patientRollNo);
-                    return await updateOccupiedStatus(true);
+                    setState(() async {
+                      _isOccupied = true;
+                      mfrHomeGlobalKey.currentState.updateOccupied(true);
+                      ;
+                      print('yes');
+                      Navigator.of(context).pop();
+                      await createOngoingEmergencyDocument(
+                          doc[0].location,
+                          doc[0].genderPreference,
+                          doc[0].patientRollNo,
+                          doc[0].severity,
+                          doc[0].patientContactNo,
+                          doc[0].reportingTime);
+                      await deleteRecord(doc[0].patientRollNo);
+                      return await updateOccupiedStatus(true);
+                    });
                   },
                 ),
               ),
@@ -238,6 +244,7 @@ class _AlertFunctionMfrState extends State<AlertFunctionMfr> {
                   onPressed: () async {
                     print('no');
                     _isOccupied = false;
+                    mfrHomeGlobalKey.currentState.updateOccupied(false);
                     Navigator.of(context).pop();
                     return await updateDecline(doc[0].patientRollNo);
                   },
@@ -304,6 +311,7 @@ class _AlertFunctionMfrState extends State<AlertFunctionMfr> {
                     onPressed: () async {
                       print('acknowledge');
                       _isOccupied = true;
+                      mfrHomeGlobalKey.currentState.updateOccupied(true);
                       Navigator.of(context).pop();
                       return await updateOccupiedStatus(true);
                     },
@@ -328,6 +336,7 @@ class _AlertFunctionMfrState extends State<AlertFunctionMfr> {
                     onPressed: () async {
                       print('acknowledge');
                       _isOccupied = true;
+                      mfrHomeGlobalKey.currentState.updateOccupied(true);
                       //delete the below navigator when merging with the map file
                       Navigator.of(context).pop();
                       //Navigator.push<dynamic>(context, MaterialPageRoute(builder: (context) => MapMFR(locationOfEmergency, patientContactNo)));
@@ -373,12 +382,13 @@ class _AlertFunctionMfrState extends State<AlertFunctionMfr> {
         Provider.of<List<OngoingEmergencyModel>>(context);
     int numPending = 0;
     int numOngoing = 0;
+    _isAvailable = mfrHomeGlobalKey.currentState.isAvailable;
     print('IN THIS FUNCTION');
-    // print(_ongoingEmergencyList);
-    // print(_pendingEmergencyList);
-//    print(_gender);
-//    print(_isOccupied);
-//    print(_isAvailable);
+    print(_ongoingEmergencyList);
+    print(_pendingEmergencyList);
+    print(_gender);
+    print(_isOccupied);
+    print(_isAvailable);
 
     //handling cases for null values (this can happen in the case of null data being received from the stream)
     if (_pendingEmergencyList != null && _gender != null) {
@@ -415,11 +425,12 @@ class _AlertFunctionMfrState extends State<AlertFunctionMfr> {
 //              await showPendingAlert(
 //                  numPending, _pendingEmergencyList[0], _width, _height));
         if (_ongoingEmergencyList != null && numOngoing > 0) {
+          print('hello');
           WidgetsBinding.instance.addPostFrameCallback((_) async =>
               await showOngoingAlert(
                   numOngoing, _ongoingEmergencyList, _width, _height));
         } else if (_pendingEmergencyList != null && numPending > 0) {
-            print(_pendingEmergencyList);
+          print(_pendingEmergencyList);
           WidgetsBinding.instance.addPostFrameCallback((_) async =>
               await showPendingAlert(
                   numPending, _pendingEmergencyList, _width, _height));

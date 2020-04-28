@@ -12,15 +12,19 @@ import 'package:provider/provider.dart';
 import 'package:ems_direct/shared/loading.dart';
 import 'package:ems_direct/pages/MapMFR.dart';
 
+GlobalKey<_MFRHomeState> mfrHomeGlobalKey = GlobalKey();
+
 //This is the main homepage for any MFR login
 class MFRHome extends StatefulWidget {
   //used to transfer data to the first created state
   bool _keepSignedIn = false;
   var _userData;
+  Key key;
 
-  MFRHome(bool keepSignedIn, var userData) {
+  MFRHome(bool keepSignedIn, var userData, Key passedkey) {
     _keepSignedIn = keepSignedIn;
     _userData = userData;
+    key = passedkey;
   }
 
   @override
@@ -171,6 +175,12 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
     } else {
       return null;
     }
+  }
+
+  void updateOccupied(bool val) {
+    setState(() {
+      isOccupied = val;
+    });
   }
 
   ////////////////////////////////////////////////////////////////////////////////
@@ -500,52 +510,20 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
                               ),
                               onPressed: () {},
                             )
-                          : FutureBuilder(
-                              future: getEmergencyData(_userData['rollNo']),
-                              builder: (BuildContext context,
-                                  AsyncSnapshot snapshot) {
-                                if (snapshot.connectionState ==
-                                    ConnectionState.done) {
-                                  if (snapshot.hasData) {
-                                    print('wut');
-                                    print(snapshot.data);
-                                    return IconButton(
-                                        icon: Icon(
-                                          Icons.location_on,
-                                          color: Colors.red[800],
-                                          size: height / 9,
-                                        ),
-                                        onPressed: () {
-                                          print('Clicked');
-                                          locationOfEmergency =
-                                              snapshot.data[0].data['location'];
-                                          patientContactNo = snapshot
-                                              .data[0].data['patientContactNo'];
-                                          print(locationOfEmergency);
-                                          print(patientContactNo);
-                                          Navigator.push<dynamic>(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder: (context) => MapMFR(
-                                                      locationOfEmergency,
-                                                      patientContactNo)));
-                                        });
-                                  } else if (snapshot.hasError) {
-                                    print(snapshot.error);
-                                    return Container();
-                                  } else {
-                                    return Container();
-                                  }
-                                } else {
-                                  return IconButton(
-                                    icon: Icon(
-                                      Icons.location_on,
-                                      color: Colors.grey[800],
-                                      size: height / 9,
-                                    ),
-                                    onPressed: () {},
-                                  );
-                                }
+                          : IconButton(
+                              icon: Icon(
+                                Icons.location_on,
+                                color: Colors.red[800],
+                                size: height / 9,
+                              ),
+                              onPressed: () {
+                                print('Clicked');
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => MapMFR(
+                                            locationOfEmergency,
+                                            patientContactNo)));
                               }),
                       Center(
                         child: Text(

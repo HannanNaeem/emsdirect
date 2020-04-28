@@ -130,7 +130,7 @@ class _LoginEmsState extends State<LoginEms> {
 
   Widget _buildForm(final height) {
     return Container(
-      height: height/2,
+      height: height / 2,
       child: Form(
         key: _formKey,
         child: Column(
@@ -245,7 +245,8 @@ class _LoginEmsState extends State<LoginEms> {
                                             List<OngoingEmergencyModel>>.value(
                                         value:
                                             MfrDatabaseService().ongoingStream,
-                                        child: MFRHome(_keepSignedIn, result)),
+                                        child: MFRHome(_keepSignedIn, result,
+                                            mfrHomeGlobalKey)),
                                   )));
                     }
                   }
@@ -300,24 +301,23 @@ class _LoginEmsState extends State<LoginEms> {
                       child: Column(
                         children: <Widget>[
                           Image.asset(
-                              'assets/ems_logo.png',
-                              scale: (height/100)/2,
-                            ),
-                          SizedBox(height: height/40),
+                            'assets/ems_logo.png',
+                            scale: (height / 100) / 2,
+                          ),
+                          SizedBox(height: height / 40),
                           Padding(
-                              padding:
-                                  EdgeInsets.fromLTRB(0, height / 30, 0, 0),
-                              child: Text(
-                                'EMS LOGIN',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  letterSpacing: 6.0,
-                                  fontFamily: 'HelveticaNeueLight',
-                                  fontSize: 24,
-                                ),
+                            padding: EdgeInsets.fromLTRB(0, height / 30, 0, 0),
+                            child: Text(
+                              'EMS LOGIN',
+                              style: TextStyle(
+                                color: Colors.white,
+                                letterSpacing: 6.0,
+                                fontFamily: 'HelveticaNeueLight',
+                                fontSize: 24,
                               ),
                             ),
-                          SizedBox(height: height/40),
+                          ),
+                          SizedBox(height: height / 40),
                           _buildForm(height),
                           SizedBox(
                             height: height / 50,
@@ -326,7 +326,8 @@ class _LoginEmsState extends State<LoginEms> {
                           Align(
                             alignment: Alignment.bottomCenter,
                             child: Padding(
-                              padding: EdgeInsets.fromLTRB(0, 20, 0, height/30),
+                              padding:
+                                  EdgeInsets.fromLTRB(0, 20, 0, height / 30),
                               child: Text(
                                 'EMS DIRECT',
                                 style: TextStyle(
