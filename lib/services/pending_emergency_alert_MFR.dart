@@ -409,7 +409,7 @@ class _AlertFunctionMfrState extends State<AlertFunctionMfr> {
 //          WidgetsBinding.instance.addPostFrameCallback((_) async =>
 //              await showPendingAlert(
 //                  numPending, _pendingEmergencyList[0], _width, _height));
-
+        _ongoingEmergencyList = null;
         if (_ongoingEmergencyList != null && numOngoing > 0) {
           WidgetsBinding.instance.addPostFrameCallback((_) async =>
               await showOngoingAlert(
