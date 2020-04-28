@@ -10,28 +10,29 @@ import 'package:ems_direct/services/ops_database.dart';
 class LiveStatus extends StatefulWidget {
   //final UserDatabaseService _userData;
   var _userData;
-  LiveStatus(var userData){
+  var _uid;
+  LiveStatus(var userData, var uid){
     _userData = userData;
+    _uid = uid;
   }
   @override
-  _LiveStatusState createState() => _LiveStatusState(_userData);
+  _LiveStatusState createState() => _LiveStatusState(_userData, _uid);
 }
 
 class _LiveStatusState extends State<LiveStatus> {
 
   var _userData;
-  _LiveStatusState(var userData){
+  var _uid;
+  _LiveStatusState(var userData, var uid){
     _userData = userData;
+    _uid = uid;
   }
-  //Stream<DocumentSnapshot> pendingEmergencies;
 
   @override
   void initState() {
-   // pendingEmergencies = Firestore.instance.collection('PendingEmergencies').document(_userData.data['rollNo']).snapshots();
     super.initState();
   }
 
- // Stream<QuerySnapshot> ongoingEmergencies = Firestore.instance.collection('OngoingEmergencies').snapshots();
 
   @override
   Widget build(BuildContext context) {
@@ -44,8 +45,6 @@ class _LiveStatusState extends State<LiveStatus> {
       providers: [
         StreamProvider<List<PendingEmergencyModel>>.value(value: OpsDatabaseService().studentPendingStream(_userData.data['rollNo'].toString())),
         StreamProvider<List<OngoingEmergencyModel>>.value(value: OpsDatabaseService().studentOnGoingStream(_userData.data['rollNo'].toString())),
-        //StreamProvider<DocumentSnapshot>.value(value: pendingEmergencies),
-        //StreamProvider<QuerySnapshot>.value(value: ongoingEmergencies),
       ],
       child: Scaffold(
         drawer: Container(

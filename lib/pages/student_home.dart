@@ -290,7 +290,7 @@ class _StudentHomeState extends State<StudentHome> with WidgetsBindingObserver {
                                           ),
                                           onPressed: () async {
                                             //navigation to login screen
-                                            //! signout here                                        
+                                            //! signout here
                                             await _authStudent.logOut();
                                             Navigator.of(context).pop();
                                             Navigator.pushReplacementNamed(
@@ -498,10 +498,10 @@ class _StudentHomeState extends State<StudentHome> with WidgetsBindingObserver {
                     onLongPress: () {
                       _createPendingEmergencyDocument(_geoLocation, _genderPreferences[_gender], _severityLevels[_severityLevel],  _userData.data['rollNo'].toString(),  _userData.data['contact'].toString(), DateTime.now());
                       _updateUserData();
-                      Navigator.push(
+                      Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => LiveStatus(_userData)
+                              builder: (context) => LiveStatus(_userData, uid)
                           )
                       );
                       print("emergency initiated");
