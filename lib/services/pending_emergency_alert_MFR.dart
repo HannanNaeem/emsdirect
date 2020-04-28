@@ -167,9 +167,9 @@ class _AlertFunctionMfrState extends State<AlertFunctionMfr> {
       showDialog(
         context: context,
         builder: (context) {
-          Future.delayed(Duration(seconds: 30), () {
-            Navigator.of(context).pop(true);
-          });
+          // Future.delayed(Duration(seconds: 30), () {
+          //   Navigator.of(context).pop(true);
+          // });
           return AlertDialog(
             shape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
@@ -261,9 +261,9 @@ class _AlertFunctionMfrState extends State<AlertFunctionMfr> {
       showDialog(
         context: context,
         builder: (context) {
-          Future.delayed(Duration(seconds: 30), () {
-            Navigator.of(context).pop(true);
-          });
+          // Future.delayed(Duration(seconds: 30), () {
+          //   Navigator.of(context).pop(true);
+          // });
           return AlertDialog(
             shape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
@@ -305,7 +305,7 @@ class _AlertFunctionMfrState extends State<AlertFunctionMfr> {
                       print('acknowledge');
                       _isOccupied = true;
                       Navigator.of(context).pop();
-                      return await updateDecline(doc[0].patientRollNo);
+                      return await updateOccupiedStatus(true);
                     },
                   ),
                 ),
@@ -374,8 +374,8 @@ class _AlertFunctionMfrState extends State<AlertFunctionMfr> {
     int numPending = 0;
     int numOngoing = 0;
     print('IN THIS FUNCTION');
-    print(_ongoingEmergencyList);
-    print(_pendingEmergencyList);
+    // print(_ongoingEmergencyList);
+    // print(_pendingEmergencyList);
 //    print(_gender);
 //    print(_isOccupied);
 //    print(_isAvailable);
@@ -419,6 +419,7 @@ class _AlertFunctionMfrState extends State<AlertFunctionMfr> {
               await showOngoingAlert(
                   numOngoing, _ongoingEmergencyList, _width, _height));
         } else if (_pendingEmergencyList != null && numPending > 0) {
+            print(_pendingEmergencyList);
           WidgetsBinding.instance.addPostFrameCallback((_) async =>
               await showPendingAlert(
                   numPending, _pendingEmergencyList, _width, _height));
