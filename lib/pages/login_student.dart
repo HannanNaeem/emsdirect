@@ -377,7 +377,7 @@ class _LoginStudentState extends State<LoginStudent>
                         builder: (BuildContext context) {
                           return AlertDialog(
                             title: Text(
-                              "Signup failed! User already exists",
+                              "Signup failed!",
                               style: TextStyle(
                                 fontFamily: 'HelveticaNeueLight',
                                 letterSpacing: 2.0,
