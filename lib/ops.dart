@@ -287,6 +287,7 @@ class _OpsHomeState extends State<OpsHome> with WidgetsBindingObserver {
                                       onPressed: () async {
 
                                         //signout here
+                                        setPage(3);
                                         await _authOps.logOut();
                                         Navigator.of(context).pop();
                                         Navigator.pushReplacementNamed(
