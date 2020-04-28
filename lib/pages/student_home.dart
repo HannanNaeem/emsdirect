@@ -102,7 +102,7 @@ class _StudentHomeState extends State<StudentHome> with WidgetsBindingObserver {
       'declinedBy' : [],
       'location': location,
       'genderPreference': genderPref,
-      "patient": rollNumber,
+      "patientRollNo": rollNumber,
       'severity': severityLevel,
       'declines': 0,
       'reportingTime': time
