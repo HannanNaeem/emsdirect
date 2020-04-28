@@ -89,6 +89,7 @@ class OpsDatabaseService {
         isSenior: doc.data['isSenior'],
         location: doc.data['location'],
         name: doc.data['name'],
+        rollNo: doc.documentID,
       );
     }).toList();
   }

@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'dart:async';
@@ -5,18 +6,46 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 
 class MapMFR extends StatefulWidget {
-  MapMFR() : super();
+  String _StudentContact = '';
+  GeoPoint _locationOfEmergency;
+  MapMFR(GeoPoint locationOfEmergency, String patientContactNo): super(){
+    _StudentContact = patientContactNo;
+    _locationOfEmergency = locationOfEmergency;
+  }
 
-  final String title = "Map";
   @override
-  MapState createState() => new MapState();
+  MapState createState() => new MapState(_locationOfEmergency, _StudentContact);
 }
 
 class MapState extends State<MapMFR> {
+  GeoPoint _locationOfEmergency;
+  String contactNumber = '';
+  Map<MarkerId, Marker> emergencyMarker = <MarkerId, Marker>{};
+
+  MapState(GeoPoint location, String number){
+    _locationOfEmergency = location;
+    contactNumber = number;
+    var markerIdVal = emergencyMarker.length + 1;
+    String mar = markerIdVal.toString();
+    final MarkerId markerId = MarkerId(mar);
+    final Marker marker =
+    Marker(
+        markerId: markerId,
+        position: LatLng(location.latitude, location.longitude),
+        infoWindow: InfoWindow( title: contactNumber)
+    );
+    setState(() {
+      emergencyMarker[markerId] = marker;
+    });
+
+
+
+
+  }
+
   GoogleMapController _controller;
   static var Zoom = 11.0;
-//  final Set<Marker> _markers = {};
-  static const LatLng _loc = const LatLng(31.4700, 74.4111);
+  static const LatLng _loc = const LatLng(45.531563, -122.677433);
   LatLng currLoc = _loc;
   LatLng _lastMapPosition = _loc;
   MapType _currentMapType = MapType.normal;
@@ -41,7 +70,7 @@ class MapState extends State<MapMFR> {
   }
 
   static final CameraPosition initialisation = CameraPosition(
-    target: LatLng(31.4700, -74.4111),
+    target: LatLng(45.531563, -122.677433),
     zoom: Zoom,
   );
 
@@ -64,21 +93,15 @@ class MapState extends State<MapMFR> {
   }
 
   void zoomIn() async {
-    Zoom = Zoom * 1.25;
-    _controller.animateCamera(CameraUpdate.newCameraPosition(new CameraPosition(
-        bearing: 192,
-        target: LatLng(currLoc.latitude, currLoc.longitude),
-        tilt: 0,
-        zoom: Zoom)));
+    _controller.animateCamera(
+      CameraUpdate.zoomIn(),
+    );
   }
 
   void zoomOut() async {
-    Zoom = Zoom * 0.75;
-    _controller.animateCamera(CameraUpdate.newCameraPosition(new CameraPosition(
-        bearing: 192,
-        target: LatLng(currLoc.latitude, currLoc.longitude),
-        tilt: 0,
-        zoom: Zoom)));
+    _controller.animateCamera(
+      CameraUpdate.zoomOut(),
+    );
   }
 
   void getCurrentLocaion() async {
@@ -128,6 +151,7 @@ class MapState extends State<MapMFR> {
     var width = screenSize.width;
     var height = screenSize.height;
     return MaterialApp(
+
       home: Scaffold(
         appBar: AppBar(
           backgroundColor: const Color(0xff142850),
@@ -154,7 +178,7 @@ class MapState extends State<MapMFR> {
               onMapCreated: _onMapCreated,
               initialCameraPosition: initialisation,
               mapType: _currentMapType,
-              markers: Set.of((marker != null) ? [marker] : []),
+              markers:  Set<Marker>.of(emergencyMarker.values),
               onCameraMove: _onCameraMove,
             ),
 //              Padding(
@@ -201,7 +225,11 @@ class MapState extends State<MapMFR> {
                                         ),
                                       ),
                                       onPressed: () async {
-                                        // todo: add mfr home here
+
+                                        Navigator.pushReplacementNamed(
+                                            context, '/MFR_home');
+                                        Navigator.of(context).pop();
+//                                        todo: occupied status change
                                       },
                                     ),
                                     FlatButton(

@@ -12,6 +12,7 @@ class MfrDatabaseService {
   List<PendingEmergencyModel> _pendingEmergencyListFromSnapshot(
       QuerySnapshot snapshot) {
     return snapshot.documents.map((doc) {
+      //print(doc.data);
       return PendingEmergencyModel(
         patientRollNo: doc.data['patientRollNo'],
         genderPreference: doc.data['genderPreference'],
@@ -19,6 +20,8 @@ class MfrDatabaseService {
         declines: doc.data['declines'],
         declinedBy: doc.data['declinedBy'],
         severity: doc.data['severity'],
+        patientContactNo: doc.data['patientContactNo'],
+        reportingTime: (doc.data['reportingTime']).toDate(),
       );
     }).toList();
   }
@@ -27,7 +30,7 @@ class MfrDatabaseService {
   List<OngoingEmergencyModel> _ongoingEmergencyListFromSnapshot(
       QuerySnapshot snapshot) {
     return snapshot.documents.map((doc) {
-      print(doc.data);
+      //print(doc.data);
       return OngoingEmergencyModel(
         patientRollNo: doc.data['patientRollNo'],
         genderPreference: doc.data['genderPreference'],

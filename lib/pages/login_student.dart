@@ -38,10 +38,8 @@ class _LoginStudentState extends State<LoginStudent>
   }
 
   Widget _buildEmail() {
-    var screenSize = MediaQuery.of(context).size;
-    final height = screenSize.height;
     return Padding(
-      padding: EdgeInsets.fromLTRB(height / 75, 0, height / 75, 0),
+      padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
       child: TextFormField(
           decoration: InputDecoration(
             hintText: 'Email Address',
@@ -74,10 +72,8 @@ class _LoginStudentState extends State<LoginStudent>
   }
 
   Widget _buildPassword() {
-    var screenSize = MediaQuery.of(context).size;
-    final height = screenSize.height;
     return Padding(
-      padding: EdgeInsets.fromLTRB(height/75, 0, height/75, 0),
+      padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
       child: TextFormField(
           keyboardType: TextInputType.visiblePassword,
           obscureText: true,
@@ -128,10 +124,8 @@ class _LoginStudentState extends State<LoginStudent>
   }
 
   Widget _buildName() {
-    var screenSize = MediaQuery.of(context).size;
-    final height = screenSize.height;
     return Padding(
-      padding: EdgeInsets.fromLTRB(height/75, 0, height/75, 0),
+      padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
       child: TextFormField(
           decoration: InputDecoration(
             hintText: 'Full Name',
@@ -158,10 +152,8 @@ class _LoginStudentState extends State<LoginStudent>
   }
 
   Widget _buildRollno() {
-    var screenSize = MediaQuery.of(context).size;
-    final height = screenSize.height;
     return Padding(
-      padding: EdgeInsets.fromLTRB(height/75, 0, height/75, 0),
+      padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
       child: TextFormField(
           decoration: InputDecoration(
             hintText: 'Roll No.',
@@ -191,10 +183,8 @@ class _LoginStudentState extends State<LoginStudent>
   }
 
   Widget _buildContact() {
-    var screenSize = MediaQuery.of(context).size;
-    final height = screenSize.height;
     return Padding(
-      padding: EdgeInsets.fromLTRB(height/75, 0, height/75, 0),
+      padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
       child: TextFormField(
           decoration: InputDecoration(
             hintText: 'Contact Number',
@@ -236,16 +226,16 @@ class _LoginStudentState extends State<LoginStudent>
             mainAxisAlignment: MainAxisAlignment.center,
 
             children: <Widget>[
-              SizedBox(height: height/40),
+              SizedBox(height: 20),
               _buildEmail(),
-              SizedBox(height: height/30),
+              SizedBox(height: 30),
               _buildPassword(),
-              SizedBox(height: height/100),
+              SizedBox(height: 10),
               _buildKeepSignedIn(),
-              SizedBox(height: height/20),
+              SizedBox(height: 20),
               ButtonTheme(
-                height: height/14,
-                minWidth: height/5,
+                height: height / 14,
+                minWidth: height / 5,
                 child: RaisedButton(
                   onPressed: () async {
                     if (!_loginformKey.currentState.validate()) {
@@ -340,17 +330,17 @@ class _LoginStudentState extends State<LoginStudent>
           mainAxisAlignment: MainAxisAlignment.center,
 
           children: <Widget>[
-            SizedBox(height: height/20),
+            SizedBox(height: 20),
             _buildName(),
-            SizedBox(height: height/30),
+            SizedBox(height: 20),
             _buildRollno(),
-            SizedBox(height: height/30),
+            SizedBox(height: 20),
             _buildContact(),
-            SizedBox(height: height/30),
+            SizedBox(height: 20),
             _buildEmail(),
-            SizedBox(height: height/30),
+            SizedBox(height: 20),
             _buildPassword(),
-            SizedBox(height: height/20),
+            SizedBox(height: 30),
             ButtonTheme(
               height: height/14,
               minWidth: height/5,
@@ -387,7 +377,7 @@ class _LoginStudentState extends State<LoginStudent>
                         builder: (BuildContext context) {
                           return AlertDialog(
                             title: Text(
-                              "Signup failed! User already exists",
+                              "Signup failed!",
                               style: TextStyle(
                                 fontFamily: 'HelveticaNeueLight',
                                 letterSpacing: 2.0,
@@ -464,7 +454,7 @@ class _LoginStudentState extends State<LoginStudent>
                 ),
               ),
             ),
-            SizedBox(height: height/100),
+            SizedBox(height: height/20),
           ],
         ),
       );
@@ -498,54 +488,45 @@ class _LoginStudentState extends State<LoginStudent>
                   child: Center(
                     child: Padding(
                       padding: EdgeInsets.fromLTRB(height/ 30, 0, height/30, 0),
-                      child: Stack(
+                      child: Column(
                         children: <Widget>[
-                          Container(
-                            alignment: Alignment.center,
-                            child: Image.asset(
-                              'assets/ems_logo.png',
-                              scale: height / 200,
-                            ),
+                          Image.asset(
+                            'assets/ems_logo.png',
+                            scale: (height/100)/2,
                           ),
-
                           SizedBox(height: 40),
-
-                          Container(
-                            alignment: Alignment.center,
-                            margin: EdgeInsets.only(top: height/3.5),
-                            child: TabBar(
-                              controller: _controller,
-                              indicatorColor: Colors.white,
-                              tabs: <Widget>[
-                                Tab(
-                                    child: Text('LOGIN',
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontFamily: 'HelveticaNeueLight',
-                                          fontSize: 18.0,
-                                          letterSpacing: 4.0,
-                                        ))),
-                                Tab(
-                                    child: Text('SIGNUP',
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontFamily: 'HelveticaNeueLight',
-                                          fontSize: 18.0,
-                                          letterSpacing: 4.0,
-                                        ))),
-                              ],
-                            ),
+                          TabBar(
+                            controller: _controller,
+                            indicatorColor: Colors.white,
+                            tabs: <Widget>[
+                              Tab(
+                                  child: Text('LOGIN',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontFamily: 'HelveticaNeueLight',
+                                        fontSize: 18.0,
+                                        letterSpacing: 4.0,
+                                      ))),
+                              Tab(
+                                  child: Text('SIGNUP',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontFamily: 'HelveticaNeueLight',
+                                        fontSize: 18.0,
+                                        letterSpacing: 4.0,
+                                      ))),
+                            ],
                           ),
-                          SizedBox(height: height / 150),
+                          SizedBox(height: 10),
                           Container(
-                            height: height / 2,
+                            height: 355,
                             width: screenSize.width,
-                            alignment: Alignment.center,
-                            margin: EdgeInsets.only(top: height/3),
                             child: TabBarView(
                               controller: _controller,
                               children: <Widget>[
-                                _buildForm(0),
+                                SingleChildScrollView(
+                                  child: _buildForm(0)
+                                ),
                                 SingleChildScrollView(
                                   child: _buildForm(1),
                                 ),
@@ -554,16 +535,11 @@ class _LoginStudentState extends State<LoginStudent>
                           ),
 
                           //_buildForm(),
-
-                          SizedBox(
-                            height: height / 30,
-                          ),
-
-                          Container(
-                            alignment: Alignment.center,
-                            margin: EdgeInsets.only(top: height/1.2),
-                            child: Padding(
-                              padding: EdgeInsets.fromLTRB(0, height/100, 0, 25),
+                          SizedBox(height: 20,),
+                          Align(
+                            alignment: Alignment.bottomCenter,
+                              child: Padding(
+                              padding: EdgeInsets.fromLTRB(0, 20, 0, height/30),
                               child: Text(
                                 'EMS DIRECT',
                                 style: TextStyle(
@@ -581,6 +557,7 @@ class _LoginStudentState extends State<LoginStudent>
                   ),
                 ),
               ),
-            ));
+            )
+          );
   }
 }

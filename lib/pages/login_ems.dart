@@ -42,7 +42,7 @@ class _LoginEmsState extends State<LoginEms> {
     var screenSize = MediaQuery.of(context).size;
     final height = screenSize.height;
     return Padding(
-      padding: EdgeInsets.fromLTRB(height / 75, 0, height / 75, 0),
+      padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
       child: TextFormField(
           decoration: InputDecoration(
             hintText: 'Email Address',
@@ -78,7 +78,7 @@ class _LoginEmsState extends State<LoginEms> {
     var screenSize = MediaQuery.of(context).size;
     final height = screenSize.height;
     return Padding(
-      padding: EdgeInsets.fromLTRB(height / 75, 0, height / 75, 0),
+      padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
       child: TextFormField(
           keyboardType: TextInputType.visiblePassword,
           obscureText: true,
@@ -138,13 +138,13 @@ class _LoginEmsState extends State<LoginEms> {
           mainAxisAlignment: MainAxisAlignment.center,
 
           children: <Widget>[
-            SizedBox(height: height / 40),
+            SizedBox(height: 40),
             _buildEmail(),
-            SizedBox(height: height / 30),
+            SizedBox(height: 30),
             _buildPassword(),
-            SizedBox(height: height / 100),
+            SizedBox(height: 10),
             _buildKeepSignedIn(),
-            SizedBox(height: height / 20),
+            SizedBox(height: 30),
             ButtonTheme(
               height: height / 14,
               minWidth: height / 5,
@@ -245,7 +245,8 @@ class _LoginEmsState extends State<LoginEms> {
                                             List<OngoingEmergencyModel>>.value(
                                         value:
                                             MfrDatabaseService().ongoingStream,
-                                        child: MFRHome(_keepSignedIn, result)),
+                                        child: MFRHome(_keepSignedIn, result,
+                                            mfrHomeGlobalKey)),
                                   )));
                     }
                   }
@@ -297,44 +298,36 @@ class _LoginEmsState extends State<LoginEms> {
                     padding:
                         EdgeInsets.fromLTRB(height / 30, 0, height / 30, 0),
                     child: Center(
-                      child: Stack(
+                      child: Column(
                         children: <Widget>[
-                          Container(
-                            alignment: Alignment.center,
-                            child: Image.asset(
-                              'assets/ems_logo.png',
-                              scale: (height) / 200,
-                            ),
+                          Image.asset(
+                            'assets/ems_logo.png',
+                            scale: (height / 100) / 2,
                           ),
-                          Container(
-                            alignment: Alignment.center,
-                            margin: EdgeInsets.only(top: height / 3.5),
-                            child: Padding(
-                              padding:
-                                  EdgeInsets.fromLTRB(0, height / 30, 0, 0),
-                              child: Text(
-                                'EMS LOGIN',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  letterSpacing: 6.0,
-                                  fontFamily: 'HelveticaNeueLight',
-                                  fontSize: 24,
-                                ),
+                          SizedBox(height: height / 40),
+                          Padding(
+                            padding: EdgeInsets.fromLTRB(0, height / 30, 0, 0),
+                            child: Text(
+                              'EMS LOGIN',
+                              style: TextStyle(
+                                color: Colors.white,
+                                letterSpacing: 6.0,
+                                fontFamily: 'HelveticaNeueLight',
+                                fontSize: 24,
                               ),
                             ),
                           ),
-                          Container(
-                              alignment: Alignment.center,
-                              margin: EdgeInsets.only(top: height / 3),
-                              child: _buildForm(height)),
+                          SizedBox(height: height / 40),
+                          _buildForm(height),
                           SizedBox(
-                            height: height / 30,
+                            height: height / 50,
                           ),
-                          Container(
-                            alignment: Alignment.center,
-                            margin: EdgeInsets.only(top: height / 1.2),
+                          // Expanded(child: Container(),),
+                          Align(
+                            alignment: Alignment.bottomCenter,
                             child: Padding(
-                              padding: EdgeInsets.fromLTRB(0, 0, 0, 25),
+                              padding:
+                                  EdgeInsets.fromLTRB(0, 20, 0, height / 30),
                               child: Text(
                                 'EMS DIRECT',
                                 style: TextStyle(
