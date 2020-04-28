@@ -39,6 +39,7 @@ class OpsDatabaseService {
         declinedBy: doc.data['declinedBy'],
         severity: doc.data['severity'],
         patientContactNo: doc.data['patientContactNo'] ?? '',
+        reportingTime : doc.data['reportingTime'].toDate() ?? null,
       );
     }).toList();
   }
@@ -70,10 +71,7 @@ class OpsDatabaseService {
         severity: doc.data['severity'],
         patientContactNo: doc.data['patientContactNo'] ?? '',
         mfr: doc.data['mfr'],
-        mfrDetails: {
-          'contact': doc.data['mfrDetails']['contact'],
-          'name': doc.data['mfrDetails']['name'],
-        },
+        mfrDetails: doc.data['mfrDetails'],
         reportingTime: doc.data['reportingTime'].toDate() ?? null,
       );
     }).toList();
@@ -91,24 +89,19 @@ class OpsDatabaseService {
         isSenior: doc.data['isSenior'],
         location: doc.data['location'],
         name: doc.data['name'],
+        rollNo: doc.documentID,
       );
     }).toList();
   }
 
   //get pending emergencies
   Stream<List<DeclinedEmergencyModel>> get declinedStream {
-    return pendingEmergencies
-        .where('declines', isGreaterThanOrEqualTo: 4)
-        .snapshots()
-        .map(_declinedEmergencyListFromSnapshot);
+    return pendingEmergencies.where('declines', isGreaterThanOrEqualTo: 4).snapshots().map(_declinedEmergencyListFromSnapshot);
   }
 
   //get severe emergencies
   Stream<List<SevereEmergencyModel>> get severeStream {
-    return pendingEmergencies
-        .where('severity', whereIn: ['high', 'critical'])
-        .snapshots()
-        .map(_severeEmergencyListFromSnapshot);
+    return pendingEmergencies.where('severity', whereIn: ['high','critical']).snapshots().map(_severeEmergencyListFromSnapshot);
   }
 
   //get pending emergencies
@@ -120,9 +113,7 @@ class OpsDatabaseService {
 
   //get onGoing emergencies
   Stream<List<OngoingEmergencyModel>> get onGoingStream {
-    return onGoingEmergencies
-        .snapshots()
-        .map(_onGoingEmergencyListFromSnapshot);
+     return onGoingEmergencies.orderBy('reportingTime').snapshots().map(_onGoingEmergencyListFromSnapshot);  
   }
 
   //get available mfrs

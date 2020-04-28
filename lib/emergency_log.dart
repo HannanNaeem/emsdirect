@@ -19,8 +19,7 @@ class _LogState extends State<EmergencyLog> {
     var width = screenSize.width;
     var height = screenSize.height;
 
-    var _onGoingEmergencyList =
-        Provider.of<List<OngoingEmergencyModel>>(context);
+    var _onGoingEmergencyList = Provider.of<List<OngoingEmergencyModel>>(context);
 
     return Scaffold(
       backgroundColor: const Color(0xff27496d),
@@ -42,12 +41,16 @@ class _LogState extends State<EmergencyLog> {
                         minHeight: 100,
                       ),
                       child: LogCard(
+                          _onGoingEmergencyList[index].mfrDetails['name'],
                           _onGoingEmergencyList[index].mfr,
-                          _onGoingEmergencyList[index].patientContactNo,
+                          _onGoingEmergencyList[index].mfrDetails['contact'],
                           _onGoingEmergencyList[index].genderPreference,
                           _onGoingEmergencyList[index].severity,
-                          DateFormat.jm().format(
-                              _onGoingEmergencyList[index].reportingTime)),
+                          DateFormat.jm().format(_onGoingEmergencyList[index].reportingTime),
+                          _onGoingEmergencyList[index].patientRollNo,
+                          _onGoingEmergencyList[index].patientContactNo,
+
+                          ),
                     ),
                   );
                 },

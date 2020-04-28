@@ -522,7 +522,7 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
                                               .data[0].data['patientContactNo'];
                                           print(locationOfEmergency);
                                           print(patientContactNo);
-                                          //Navigator.push<dynamic>(context, MaterialPageRoute(builder: (context) => MapMFR(locationOfEmergency, patientContactNo)));
+                                          Navigator.push<dynamic>(context, MaterialPageRoute(builder: (context) => MapMFR(locationOfEmergency, patientContactNo)));
                                         });
                                   } else if (snapshot.hasError) {
                                     print(snapshot.error);
