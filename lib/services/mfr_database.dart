@@ -21,6 +21,7 @@ class MfrDatabaseService {
         declinedBy: doc.data['declinedBy'],
         severity: doc.data['severity'],
         patientContactNo: doc.data['patientContactNo'],
+        reportingTime: (doc.data['reportingTime']).toDate(),
       );
     }).toList();
   }

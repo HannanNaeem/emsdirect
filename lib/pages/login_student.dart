@@ -519,7 +519,7 @@ class _LoginStudentState extends State<LoginStudent>
                           ),
                           SizedBox(height: 10),
                           Container(
-                            height: height / 3,
+                            height: 355,
                             width: screenSize.width,
                             child: TabBarView(
                               controller: _controller,
