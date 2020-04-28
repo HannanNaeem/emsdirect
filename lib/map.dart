@@ -25,6 +25,8 @@ class MapStateOPS extends State<OpsMap> {
 
   bool _mapLoading = true;
 
+
+
   static final CameraPosition _position1 = CameraPosition(
     bearing: 192.833,
     target: LatLng(31.4700, 74.4111),
@@ -80,6 +82,11 @@ class MapStateOPS extends State<OpsMap> {
     // ----------------------------- snapshot lists ---------------------------------//
     //
 
+    void initState() {
+      _addAvailableMfrsMarker(_availableMfrsList);
+      _addPendingEmergenciesMarker(_pendingEmergenciesList);
+      _addOnGoingEmergenciesMarker(_onGoingEmergenciesList);
+    }
 
 
     return MaterialApp(
@@ -136,20 +143,18 @@ class MapStateOPS extends State<OpsMap> {
 //              ),
 
 //              SizedBox(height: 10),
-              FloatingActionButton(
-                child: Icon(Icons.location_searching),
-                onPressed: (){
-                  debugPrint('sigh');
-                  _addAvailableMfrsMarker(_availableMfrsList);
-                  _addPendingEmergenciesMarker(_pendingEmergenciesList);
-                  _addOnGoingEmergenciesMarker(_onGoingEmergenciesList);
-//                  getCurrentLocaion();
-
-//                  UpdateMarker(_availableMfrsList);
-
-                },
-                backgroundColor: const Color(0xff47719e),
-              ),
+//              FloatingActionButton(
+//                child: Icon(Icons.location_searching),
+//                onPressed: (){
+//                  debugPrint('sigh');
+//
+////                  getCurrentLocaion();
+//
+////                  UpdateMarker(_availableMfrsList);
+//
+//                },
+//                backgroundColor: const Color(0xff47719e),
+//              ),
             ]
         ),
       ),
