@@ -120,7 +120,7 @@ class _AlertFunctionMfrState extends State<AlertFunctionMfr> {
       String patientRollNo,
       String severityLevel,
       String patientContactNo,
-      Timestamp time) async {
+      DateTime time) async {
     return await databaseReference
         .collection('OngoingEmergencies')
         .document(patientRollNo)
@@ -133,7 +133,7 @@ class _AlertFunctionMfrState extends State<AlertFunctionMfr> {
       'location': location,
       'genderPreference': genderPreference,
       'patientRollNo': patientRollNo,
-      'reportingTime': time.toDate(),
+      'reportingTime': time,
       'severity': severityLevel,
       'patientContactNo': patientContactNo,
     });
@@ -375,6 +375,7 @@ class _AlertFunctionMfrState extends State<AlertFunctionMfr> {
     int numOngoing = 0;
     print('IN THIS FUNCTION');
     print(_ongoingEmergencyList);
+    print(_pendingEmergencyList);
 //    print(_gender);
 //    print(_isOccupied);
 //    print(_isAvailable);
