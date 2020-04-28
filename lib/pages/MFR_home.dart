@@ -177,9 +177,9 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
   @override
   Widget build(BuildContext context) {
     //------- TESTING PURPOSES ------------------
-    print('Context rebuit');
-    print(isAvailable);
-    print(isOccupied);
+    //print('Context rebuit');
+    //print(isAvailable);
+    //print(isOccupied);
 
     //Getting screen dimensions to adjust widgets accordingly
     var screenSize = MediaQuery.of(context).size;
@@ -506,8 +506,8 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
                                 if (snapshot.connectionState ==
                                     ConnectionState.done) {
                                   if (snapshot.hasData) {
-                                    print(
-                                        snapshot.data[0].data['patientRollNo']);
+                                    print('wut');
+                                    print(snapshot.data);
                                     return IconButton(
                                         icon: Icon(
                                           Icons.location_on,
@@ -522,7 +522,7 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
                                               .data[0].data['patientContactNo'];
                                           print(locationOfEmergency);
                                           print(patientContactNo);
-                                          //Navigator.push<dynamic>(context, MaterialPageRoute(builder: (context) => MapMFR(locationOfEmergency, patientContactNo)));
+                                          Navigator.push<dynamic>(context, MaterialPageRoute(builder: (context) => MapMFR(locationOfEmergency, patientContactNo)));
                                         });
                                   } else if (snapshot.hasError) {
                                     print(snapshot.error);

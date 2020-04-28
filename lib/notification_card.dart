@@ -47,20 +47,35 @@ class _NotificationCardState extends State<NotificationCard> {
                   ),
                 ),
                 Expanded(
+                  flex: 1,
                   child: Padding(
                     padding: EdgeInsets.fromLTRB(10, 25, 0, 20),
-                    child: Container(
-                      child: Text(
-                        widget.text,
-                        style: TextStyle(
-                          color: const Color(0xff142850),
-                          fontSize: 14,
-                          fontFamily: 'HelveticaNeueLight',
-                        ),
+                    child: Container(                     
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Text(                        
+                            "Ignored Emergency!",
+                            style: TextStyle(
+                              color: const Color(0xffee0000),
+                              fontSize: 20,
+                              fontFamily: 'HelveticaNeueLight',
+                            ),
+                          ),
+                          Text(
+                            widget.text,
+                            style: TextStyle(
+                              color: const Color(0xff142850),
+                              fontSize: 14,
+                              fontFamily: 'HelveticaNeueLight',
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ),
                 ),
+                
               ],
             ),
           ),
