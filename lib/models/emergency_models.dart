@@ -68,6 +68,7 @@ class AvailableMfrs {
   final bool isSenior;
   final GeoPoint location;
   final String name;
+  final String rollNo;
 
   AvailableMfrs(
       {this.contact,
@@ -77,7 +78,8 @@ class AvailableMfrs {
       this.isOccupied,
       this.isSenior,
       this.location,
-      this.name});
+      this.name,
+      this.rollNo});
 }
 
 class OngoingEmergencyModel {
