@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'dart:async';
@@ -5,14 +6,43 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 
 class MapMFR extends StatefulWidget {
-  MapMFR() : super();
+  String _StudentContact = '';
+  GeoPoint _locationOfEmergency;
+  MapMFR(GeoPoint locationOfEmergency, String patientContactNo): super(){
+    _StudentContact = patientContactNo;
+    _locationOfEmergency = locationOfEmergency;
+  }
 
-  final String title = "Map";
   @override
-  MapState createState() => new MapState();
+  MapState createState() => new MapState(_locationOfEmergency, _StudentContact);
 }
 
 class MapState extends State<MapMFR> {
+  GeoPoint _locationOfEmergency;
+  String contactNumber = '';
+  Map<MarkerId, Marker> emergencyMarker = <MarkerId, Marker>{};
+
+  MapState(GeoPoint location, String number){
+    _locationOfEmergency = location;
+    contactNumber = number;
+    var markerIdVal = emergencyMarker.length + 1;
+    String mar = markerIdVal.toString();
+    final MarkerId markerId = MarkerId(mar);
+    final Marker marker =
+    Marker(
+        markerId: markerId,
+        position: LatLng(location.latitude, location.longitude),
+        infoWindow: InfoWindow( title: contactNumber)
+    );
+    setState(() {
+      emergencyMarker[markerId] = marker;
+    });
+
+
+
+
+  }
+
   GoogleMapController _controller;
   static var Zoom = 11.0;
 //  final Set<Marker> _markers = {};
@@ -155,7 +185,7 @@ class MapState extends State<MapMFR> {
               onMapCreated: _onMapCreated,
               initialCameraPosition: initialisation,
               mapType: _currentMapType,
-              markers: Set.of((marker != null) ? [marker] : []),
+              markers:  Set<Marker>.of(emergencyMarker.values),
               onCameraMove: _onCameraMove,
             ),
 //              Padding(
@@ -202,7 +232,11 @@ class MapState extends State<MapMFR> {
                                         ),
                                       ),
                                       onPressed: () async {
-                                        // todo: add mfr home here
+
+                                        Navigator.pushReplacementNamed(
+                                            context, '/MFR_home');
+                                        Navigator.of(context).pop();
+//                                        todo: occupied status change
                                       },
                                     ),
                                     FlatButton(

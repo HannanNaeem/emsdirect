@@ -5,8 +5,6 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:location/location.dart';
 import 'package:flutter/services.dart';
-import 'dart:developer';
-import 'dart:ui' as ui;
 
 class OpsMap extends StatefulWidget {
   OpsMap() : super();
@@ -21,7 +19,6 @@ class MapStateOPS extends State<OpsMap> {
   LatLng currLoc = _loc;
   static Location _locationTracker = Location();
   static var Zoom = 11.0;
-//  List<Marker> allMarkers = [];
   Map<MarkerId, Marker> allMarkers = <MarkerId, Marker>{};
   LatLng _lastMapPosition = _loc;
   MapType _currentMapType = MapType.normal;
@@ -143,8 +140,8 @@ class MapStateOPS extends State<OpsMap> {
                 child: Icon(Icons.location_searching),
                 onPressed: (){
                   debugPrint('sigh');
-//                  _addAvailableMfrsMarker(_availableMfrsList);
-//                  _addPendingEmergenciesMarker(_pendingEmergenciesList);
+                  _addAvailableMfrsMarker(_availableMfrsList);
+                  _addPendingEmergenciesMarker(_pendingEmergenciesList);
                   _addOnGoingEmergenciesMarker(_onGoingEmergenciesList);
 //                  getCurrentLocaion();
 
@@ -175,14 +172,7 @@ class MapStateOPS extends State<OpsMap> {
             Marker(
               markerId: markerId,
               position: LatLng(location.latitude, location.longitude),
-              onTap: () {
-                print('Roll Number: ');
-                print(rollNumber);
-                print('\nSeverity: ');
-                print(severity);
-//                print('\nAssigned MFR: ');
-//                print(assignedMFR);
-              },
+
             );
         setState(() {
           allMarkers[markerId] = marker;
@@ -197,8 +187,6 @@ class MapStateOPS extends State<OpsMap> {
 
     if (_pendingEmergenciesList != null && _pendingEmergenciesList.length != 0) {
       _pendingEmergenciesList.forEach((EM){
-
-
         GeoPoint location = EM.location;
         String rollNumber = EM.patientRollNo;
         String severity = EM.severity;
@@ -232,40 +220,43 @@ class MapStateOPS extends State<OpsMap> {
       _availableMfrsList.forEach((MFR) {
         GeoPoint location = MFR.location;
         String name = MFR.name;
-        String gender = MFR.gender;
-
+        String contact = MFR.contact;
+//        String rollNumber = MFR.roll;
         bool busy = _availableMfrsList.isOccupied;
         var markerIdVal = allMarkers.length + 1;
         String mar = markerIdVal.toString();
         final MarkerId markerId = MarkerId(mar);
-
+        print('BUSY: ');
+        print(busy);
         if (busy == true) {
+          print('hmmmmmmsigh');
           final Marker marker =
           Marker(
               markerId: markerId,
               position: LatLng(location.latitude, location.longitude),
-              onTap: () {
-                print('Name: ');
-                print(name);
-                print('\nGender: ');
-                print(gender);
-              },
-              icon: BitmapDescriptor.defaultMarkerWithHue(
-                  BitmapDescriptor.hueBlue)
+
+//              infoWindow: InfoWindow( title: name, snippet: rollNumber)
+
+
           );
+          setState(() {
+            allMarkers[markerId] = marker;
+          });
         }
-        else {
+        else if(busy == false) {
+          print('lol');
           final Marker marker =
           Marker(
             markerId: markerId,
             position: LatLng(location.latitude, location.longitude),
-            onTap: () {
-              print('Name: ');
-              print(name);
-              print('\nGender: ');
-              print(gender);
+            onTap: (){
+              print('hmmm');
             },
+              icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueBlue,),
           );
+          setState(() {
+            allMarkers[markerId] = marker;
+          });
         }
       });
     }
