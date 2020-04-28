@@ -73,7 +73,7 @@ class _OpsHomeState extends State<OpsHome> with WidgetsBindingObserver {
   // ---------------------------------------------------------------------------------
 
 
-  int _selectedPage = 2;
+  int _selectedPage = 1;
 
   void setPage(int moveTo){
     setState(() {
