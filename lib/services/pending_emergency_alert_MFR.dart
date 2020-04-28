@@ -73,18 +73,22 @@ class _AlertFunctionMfrState extends State<AlertFunctionMfr> {
   //updates occupied status of MFR
   Future updateOccupiedStatus(bool newVal) async {
     DocumentReference docRef = databaseReference
-        .collection('Mfr')
+        .collection("Mfr")
         .document(widget._userData['rollNo']);
-    return await databaseReference.runTransaction((Transaction tx) async {
-      DocumentSnapshot docSnapshot = await tx.get(docRef);
-      if (docSnapshot.exists) {
-        await tx.update(docRef, <String, dynamic>{'isOccupied': newVal});
-      }
-    }).then((_) {
-      print("Occupied status updated");
-    }).catchError((onError) {
-      print(onError.message);
-    });
+    await docRef.updateData({'isOccupied': newVal});
+//    DocumentReference docRef = databaseReference
+//        .collection('Mfr')
+//        .document(widget._userData['rollNo']);
+//    return await databaseReference.runTransaction((Transaction tx) async {
+//      DocumentSnapshot docSnapshot = await tx.get(docRef);
+//      if (docSnapshot.exists) {
+//        await tx.update(docRef, <String, dynamic>{'isOccupied': newVal});
+//      }
+//    }).then((_) {
+//      print("Occupied status updated");
+//    }).catchError((onError) {
+//      print(onError.message);
+//    });
   }
 
   //updates field values after rejection
@@ -213,7 +217,7 @@ class _AlertFunctionMfrState extends State<AlertFunctionMfr> {
                         doc[0].severity,
                         doc[0].patientContactNo,
                         doc[0].reportingTime);
-                    //await deleteRecord(doc[0].patientRollNo);
+                    await deleteRecord(doc[0].patientRollNo);
                     return await updateOccupiedStatus(true);
                   },
                 ),
@@ -389,9 +393,9 @@ class _AlertFunctionMfrState extends State<AlertFunctionMfr> {
     }
 
     //handling cases for null values (this can happen in the case of null data being received from the stream)
-    if (_ongoingEmergencyList != null) {
+    if (_ongoingEmergencyList != null && _ongoingEmergencyList.length > 0) {
       //filtering for any emergency that is in my name
-      print(_ongoingEmergencyList[0].mfr);
+      //print(_ongoingEmergencyList[0].mfr);
       _ongoingEmergencyList
           .retainWhere((item) => item.mfr.contains(widget._userData['rollNo']));
       numOngoing = _ongoingEmergencyList.length;
@@ -409,7 +413,6 @@ class _AlertFunctionMfrState extends State<AlertFunctionMfr> {
 //          WidgetsBinding.instance.addPostFrameCallback((_) async =>
 //              await showPendingAlert(
 //                  numPending, _pendingEmergencyList[0], _width, _height));
-        _ongoingEmergencyList = null;
         if (_ongoingEmergencyList != null && numOngoing > 0) {
           WidgetsBinding.instance.addPostFrameCallback((_) async =>
               await showOngoingAlert(

@@ -108,19 +108,20 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
     });
   }
 
-  void upDateAvailability(bool val, var docId) async {
+  Future upDateAvailability(bool val, var docId) async {
     DocumentReference docRef =
         databaseReference.collection("Mfr").document(docId);
-    await databaseReference.runTransaction((Transaction tx) async {
-      DocumentSnapshot docSnapshot = await tx.get(docRef);
-      if (docSnapshot.exists) {
-        await tx.update(docRef, <String, bool>{'isActive': val});
-      }
-    }).then((_) {
-      print("isActive status updated");
-    }).catchError((onError) {
-      print(onError.message);
-    });
+    await docRef.updateData({'isActive': val});
+//    await databaseReference.runTransaction((Transaction tx) async {
+//      DocumentSnapshot docSnapshot = await tx.get(docRef);
+//      if (docSnapshot.exists) {
+//        await tx.update(docRef, <String, bool>{'isActive': val});
+//      }
+//    }).then((_) {
+//      print("isActive status updated");
+//    }).catchError((onError) {
+//      print(onError.message);
+//    });
   }
 
   void getInitialData(var docId) {
@@ -522,7 +523,12 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
                                               .data[0].data['patientContactNo'];
                                           print(locationOfEmergency);
                                           print(patientContactNo);
-                                          Navigator.push<dynamic>(context, MaterialPageRoute(builder: (context) => MapMFR(locationOfEmergency, patientContactNo)));
+                                          Navigator.push<dynamic>(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) => MapMFR(
+                                                      locationOfEmergency,
+                                                      patientContactNo)));
                                         });
                                   } else if (snapshot.hasError) {
                                     print(snapshot.error);
