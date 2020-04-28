@@ -10,6 +10,7 @@ import 'package:ems_direct/pages/available_MFRs.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:provider/provider.dart';
 import 'package:ems_direct/shared/loading.dart';
+import 'package:ems_direct/pages/MapMFR.dart';
 
 //This is the main homepage for any MFR login
 class MFRHome extends StatefulWidget {
@@ -45,7 +46,7 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
   static final databaseReference = Firestore.instance;
   Stream<QuerySnapshot> _documentStream;
   var isAvailable;
-  var isOccupied;
+  var isOccupied = false;
   var gender;
   var locationOfEmergency;
   var patientContactNo;
@@ -176,9 +177,9 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
   @override
   Widget build(BuildContext context) {
     //------- TESTING PURPOSES ------------------
-    print('Context rebuit');
-    print(isAvailable);
-    print(isOccupied);
+    //print('Context rebuit');
+    //print(isAvailable);
+    //print(isOccupied);
 
     //Getting screen dimensions to adjust widgets accordingly
     var screenSize = MediaQuery.of(context).size;
@@ -414,8 +415,8 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
         child: Column(
           //everything is placed in the column
           children: <Widget>[
-            //if (isAvailable != null && isOccupied != null)AlertFunctionMfr(_userData),
-            //showAlert(isAvailable, length), //AlertFunction(),
+            if (isAvailable != null && isOccupied != null)
+              AlertFunctionMfr(_userData),
             Flexible(
               flex: 3,
               child: Container(
@@ -450,6 +451,9 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
                                   onChanged: (bool newVal) {
                                     setState(() {
                                       isAvailable = newVal;
+                                      if (!isAvailable) {
+                                        isOccupied = false;
+                                      }
                                       upDateAvailability(
                                           isAvailable, _userData['rollNo']);
                                     });
@@ -462,9 +466,9 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
                           }
                         } else {
                           return Container(
-                            child: SpinKitPulse(
+                            child: SpinKitThreeBounce(
                               color: Colors.white,
-                              size: 50,
+                              size: 20,
                             ),
                           );
                         }
@@ -474,32 +478,40 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
             ),
             Flexible(
               flex: 4,
-              child: isOccupied
-                  ? FutureBuilder(
-                      future: getEmergencyData(_userData['rollNo']),
-                      builder: (BuildContext context, AsyncSnapshot snapshot) {
-                        if (snapshot.connectionState == ConnectionState.done) {
-                          if (snapshot.hasData) {
-                            print(snapshot.data[0].data['patientRollNo']);
-                            return SizedBox(
-                              height: height / 4,
-                              width: width / 1.5,
-                              child: Card(
-                                elevation: 7,
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(15)),
-                                child: Column(
-                                  crossAxisAlignment:
-                                      CrossAxisAlignment.stretch,
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceAround,
-                                  children: <Widget>[
-                                    IconButton(
+              child: SizedBox(
+                height: height / 4,
+                width: width / 1.5,
+                child: Card(
+                  elevation: 7,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15)),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: <Widget>[
+                      //if the isOccupied field is set to true, then enable map otherwise don't
+                      isOccupied == null || !isOccupied
+                          ? IconButton(
+                              icon: Icon(
+                                Icons.location_on,
+                                color: Colors.grey[800],
+                                size: height / 9,
+                              ),
+                              onPressed: () {},
+                            )
+                          : FutureBuilder(
+                              future: getEmergencyData(_userData['rollNo']),
+                              builder: (BuildContext context,
+                                  AsyncSnapshot snapshot) {
+                                if (snapshot.connectionState ==
+                                    ConnectionState.done) {
+                                  if (snapshot.hasData) {
+                                    print('wut');
+                                    print(snapshot.data);
+                                    return IconButton(
                                         icon: Icon(
                                           Icons.location_on,
-                                          color: isOccupied
-                                              ? Colors.red[800]
-                                              : Colors.grey[400],
+                                          color: Colors.red[800],
                                           size: height / 9,
                                         ),
                                         onPressed: () {
@@ -511,103 +523,39 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
                                           print(locationOfEmergency);
                                           print(patientContactNo);
                                           //Navigator.push<dynamic>(context, MaterialPageRoute(builder: (context) => MapMFR(locationOfEmergency, patientContactNo)));
-                                        }),
-                                    Center(
-                                      child: Text(
-                                        'Map',
-                                        style: TextStyle(
-                                            fontSize: 22,
-                                            fontFamily: 'HelveticaNeueLight',
-                                            letterSpacing: 2.0,
-                                            color: const Color(
-                                                0xff142850) //Colors.cyan[800],
-                                            ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            );
-                          } else if (snapshot.hasError) {
-                            print(snapshot.error);
-                            return Container();
-                          } else {
-                            return Container();
-                          }
-                        } else {
-                          return SizedBox(
-                            height: height / 4,
-                            width: width / 1.5,
-                            child: Card(
-                              elevation: 7,
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(15)),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.stretch,
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceAround,
-                                children: <Widget>[
-                                  IconButton(
+                                        });
+                                  } else if (snapshot.hasError) {
+                                    print(snapshot.error);
+                                    return Container();
+                                  } else {
+                                    return Container();
+                                  }
+                                } else {
+                                  return IconButton(
                                     icon: Icon(
                                       Icons.location_on,
                                       color: Colors.grey[800],
                                       size: height / 9,
                                     ),
                                     onPressed: () {},
-                                  ),
-                                  Center(
-                                    child: Text(
-                                      'Map',
-                                      style: TextStyle(
-                                          fontSize: 22,
-                                          fontFamily: 'HelveticaNeueLight',
-                                          letterSpacing: 2.0,
-                                          color: const Color(
-                                              0xff142850) //Colors.cyan[800],
-                                          ),
-                                    ),
-                                  ),
-                                ],
+                                  );
+                                }
+                              }),
+                      Center(
+                        child: Text(
+                          'Map',
+                          style: TextStyle(
+                              fontSize: 22,
+                              fontFamily: 'HelveticaNeueLight',
+                              letterSpacing: 2.0,
+                              color: const Color(0xff142850) //Colors.cyan[800],
                               ),
-                            ),
-                          );
-                        }
-                      })
-                  : SizedBox(
-                      height: height / 4,
-                      width: width / 1.5,
-                      child: Card(
-                        elevation: 7,
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(15)),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          children: <Widget>[
-                            IconButton(
-                              icon: Icon(
-                                Icons.location_on,
-                                color: Colors.grey[800],
-                                size: height / 9,
-                              ),
-                              onPressed: () {},
-                            ),
-                            Center(
-                              child: Text(
-                                'Map',
-                                style: TextStyle(
-                                    fontSize: 22,
-                                    fontFamily: 'HelveticaNeueLight',
-                                    letterSpacing: 2.0,
-                                    color: const Color(
-                                        0xff142850) //Colors.cyan[800],
-                                    ),
-                              ),
-                            ),
-                          ],
                         ),
                       ),
-                    ),
+                    ],
+                  ),
+                ),
+              ),
             ),
             SizedBox(
               height: height / 16,

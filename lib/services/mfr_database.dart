@@ -27,14 +27,19 @@ class MfrDatabaseService {
   List<OngoingEmergencyModel> _ongoingEmergencyListFromSnapshot(
       QuerySnapshot snapshot) {
     return snapshot.documents.map((doc) {
+      print(doc.data);
       return OngoingEmergencyModel(
         patientRollNo: doc.data['patientRollNo'],
         genderPreference: doc.data['genderPreference'],
         location: doc.data['location'],
         mfr: doc.data['mfr'],
-        reportingTime : doc.data['reportingTime'].toDate() ?? null,
+        mfrDetails: {
+          'contact': doc.data['mfrDetails']['contact'],
+          'name': doc.data['mfrDetails']['name'],
+        },
+        reportingTime: doc.data['reportingTime'].toDate() ?? null,
         severity: doc.data['severity'],
-        patientContactNo: doc.data['pateintContactNo'],
+        patientContactNo: doc.data['patientContactNo'],
       );
     }).toList();
   }
