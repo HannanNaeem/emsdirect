@@ -118,6 +118,16 @@ class _StudentHomeState extends State<StudentHome> with WidgetsBindingObserver {
       'loggedInAs': 'emergency'
     });
   }
+
+  //function to set user collection to not emergency
+  void _setNotEmergency() async{
+    await databaseReference
+        .collection("UserData")
+        .document((await uid).toString())
+        .updateData({
+      'loggedInAs': ''
+    });
+  }
   /////////////////////////////////////////////////////////////////
 
   @override
@@ -125,6 +135,8 @@ class _StudentHomeState extends State<StudentHome> with WidgetsBindingObserver {
     var screenSize = MediaQuery.of(context).size;
     var width = screenSize.width;
     var height = screenSize.height;
+
+    _setNotEmergency();
 
     return Scaffold(
         backgroundColor: const Color(0xff27496d),
