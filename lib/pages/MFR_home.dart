@@ -545,6 +545,15 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
                               ),
                               onPressed: () {
                                 print('Clicked');
+                                if (isOccupied) {
+                                  setState(() {
+                                    locationOfEmergency =
+                                        mfrAlertFunctionGlobalKey
+                                            .currentState.locationOfEmergency;
+                                    patientContactNo = mfrAlertFunctionGlobalKey
+                                        .currentState.studentContactNo;
+                                  });
+                                }
                                 if (locationOfEmergency != null &&
                                     patientContactNo != null) {
                                   print('location: $locationOfEmergency');

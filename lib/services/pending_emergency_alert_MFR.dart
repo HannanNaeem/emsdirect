@@ -310,8 +310,7 @@ class _AlertFunctionMfrState extends State<AlertFunctionMfr> {
                     setState(() {
                       _isOccupied = true;
                       mfrHomeGlobalKey.currentState.updateOccupied(true);
-                      mfrHomeGlobalKey.currentState.updateEmergencyData(
-                          doc[0].location, doc[0].patientContactNo);
+                      //mfrHomeGlobalKey.currentState.updateEmergencyData(doc[0].location, doc[0].patientContactNo);
                     });
                     print('acknowledge');
                     Navigator.of(context).pop();
@@ -446,6 +445,8 @@ class _AlertFunctionMfrState extends State<AlertFunctionMfr> {
       _ongoingEmergencyList
           .retainWhere((item) => item.mfr.contains(widget._userData['rollNo']));
       numOngoing = _ongoingEmergencyList.length;
+      locationOfEmergency = _ongoingEmergencyList[0].location;
+      studentContactNo = _ongoingEmergencyList[0].patientContactNo;
       //WidgetsBinding.instance.addPostFrameCallback((_) => printData(_ongoingEmergencyList));
     }
 
