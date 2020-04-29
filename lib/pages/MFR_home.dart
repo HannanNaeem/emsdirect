@@ -46,7 +46,6 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
     print("--------------got ${_userData.data}");
   }
 
-  //Tells whether toggle switch is to be on or off
   static final databaseReference = Firestore.instance;
   Stream<QuerySnapshot> _documentStream;
   var isAvailable;
@@ -97,40 +96,37 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
   }
 
   void updateDeclineCount(docId) async {
-    DocumentReference docRef =
-        databaseReference.collection("PendingEmergencies").document(docId);
-    await databaseReference.runTransaction((Transaction tx) async {
-      DocumentSnapshot docSnapshot = await tx.get(docRef);
-      if (docSnapshot.exists) {
-        await tx.update(docRef,
-            <String, dynamic>{'declines': docSnapshot.data['declines'] + 1});
-      }
-    }).then((_) {
-      print("Decline count incremented");
-    }).catchError((onError) {
-      print(onError.message);
-    });
+    try {
+      DocumentReference docRef = await databaseReference
+          .collection("PendingEmergencies")
+          .document(docId);
+      DocumentSnapshot doc = await docRef.get();
+      var num = await doc.data['declines'];
+      await docRef.updateData({'declines': num + 1});
+    } catch (e) {
+      print(e);
+    }
   }
 
   Future upDateAvailability(bool val, var docId) async {
-    DocumentReference docRef =
-        databaseReference.collection("Mfr").document(docId);
-    await docRef.updateData({'isActive': val});
-//    await databaseReference.runTransaction((Transaction tx) async {
-//      DocumentSnapshot docSnapshot = await tx.get(docRef);
-//      if (docSnapshot.exists) {
-//        await tx.update(docRef, <String, bool>{'isActive': val});
-//      }
-//    }).then((_) {
-//      print("isActive status updated");
-//    }).catchError((onError) {
-//      print(onError.message);
-//    });
+    try {
+      DocumentReference docRef =
+          databaseReference.collection("Mfr").document(docId);
+      await docRef.updateData({'isActive': val}).then((_) {
+        print('Availability status updated');
+      });
+    } catch (e) {
+      print(e);
+    }
   }
 
-  void getInitialData(var docId) {
+  void getInitialData(var docId) async {
     try {
-      databaseReference.collection("Mfr").document(docId).get().then((onVal) {
+      await databaseReference
+          .collection("Mfr")
+          .document(docId)
+          .get()
+          .then((onVal) {
         setState(() {
           isOccupied = onVal.data['isOccupied'];
           isAvailable = onVal.data['isActive'];
@@ -148,15 +144,7 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
 
   Future getInitialData2(var docId) async {
     try {
-      //print(docId);
       return await databaseReference.collection("Mfr").document(docId).get();
-//          .then((onVal) {
-//        setState(() {
-//          isAvailable = onVal.data['isActive'];
-//        });
-//      }).catchError((onError) {
-//        print(onError.message);
-//      });
     } catch (e) {
       print(e);
     }
@@ -183,14 +171,33 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
     });
   }
 
+  void updateEmergencyData(var location, var contact) {
+    setState(() {
+      locationOfEmergency = location;
+      patientContactNo = contact;
+    });
+  }
+
+  Future updateOccupiedStatus(bool newVal) async {
+    try {
+      DocumentReference docRef =
+          databaseReference.collection("Mfr").document(_userData['rollNo']);
+      await docRef.updateData({'isOccupied': newVal}).then((_) {
+        print('Updated occupied status');
+      });
+    } catch (e) {
+      print(e);
+    }
+  }
+
   ////////////////////////////////////////////////////////////////////////////////
 
   @override
   Widget build(BuildContext context) {
     //------- TESTING PURPOSES ------------------
-    //print('Context rebuit');
-    //print(isAvailable);
-    //print(isOccupied);
+    print('Context rebuit');
+    print(isAvailable);
+    print(isOccupied);
 
     //Getting screen dimensions to adjust widgets accordingly
     var screenSize = MediaQuery.of(context).size;
@@ -426,8 +433,25 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
         child: Column(
           //everything is placed in the column
           children: <Widget>[
-            if (isAvailable != null && isOccupied != null)
-              AlertFunctionMfr(_userData),
+            IconButton(
+              icon: Icon(Icons.cancel),
+              onPressed: () {
+                bool val;
+                if (isOccupied)
+                  val = false;
+                else
+                  val = true;
+                setState(() {
+                  isOccupied = val;
+                  mfrAlertFunctionGlobalKey.currentState
+                      .updateOccupiedStatus(val);
+                  mfrAlertFunctionGlobalKey.currentState
+                      .updateStatus(isAvailable, isOccupied);
+                });
+                //updateOccupiedStatus(val);
+              },
+            ),
+            //if (isAvailable != null && isOccupied != null) AlertFunctionMfr(_userData),
             Flexible(
               flex: 3,
               child: Container(
@@ -467,6 +491,9 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
                                       }
                                       upDateAvailability(
                                           isAvailable, _userData['rollNo']);
+                                      mfrAlertFunctionGlobalKey.currentState
+                                          .updateStatus(
+                                              isAvailable, isOccupied);
                                     });
                                   },
                                   activeTrackColor: Colors.green,
@@ -518,12 +545,18 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
                               ),
                               onPressed: () {
                                 print('Clicked');
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => MapMFR(
-                                            locationOfEmergency,
-                                            patientContactNo)));
+                                if (locationOfEmergency != null &&
+                                    patientContactNo != null) {
+                                  print('location: $locationOfEmergency');
+                                  print('paient contact $patientContactNo');
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => MapMFR(
+                                              locationOfEmergency,
+                                              patientContactNo)));
+                                }
+                                //
                               }),
                       Center(
                         child: Text(

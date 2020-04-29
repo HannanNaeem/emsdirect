@@ -66,7 +66,7 @@ class Wrapper extends StatelessWidget {
                   value: MfrDatabaseService().pendingStream,
                   child: StreamProvider<List<OngoingEmergencyModel>>.value(
                       value: MfrDatabaseService().ongoingStream,
-                      child: MFRHome(true, snapshot.data, mfrHomeGlobalKey)),
+                      child: MfrWrapper(true, snapshot.data)),
                 );
               } else {
                 // user is logged in as student

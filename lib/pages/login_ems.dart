@@ -245,8 +245,8 @@ class _LoginEmsState extends State<LoginEms> {
                                             List<OngoingEmergencyModel>>.value(
                                         value:
                                             MfrDatabaseService().ongoingStream,
-                                        child: MFRHome(_keepSignedIn, result,
-                                            mfrHomeGlobalKey)),
+                                        child:
+                                            MfrWrapper(_keepSignedIn, result)),
                                   )));
                     }
                   }
