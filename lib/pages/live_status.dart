@@ -8,19 +8,24 @@ import 'package:ems_direct/models/emergency_models.dart';
 import 'package:ems_direct/services/ops_database.dart';
 
 class LiveStatus extends StatefulWidget {
-  //final UserDatabaseService _userData;
+
+  bool _keepSignedIn;
   var _userData;
-  LiveStatus(var userData){
+  LiveStatus(bool keepSignedIn, var userData){
+    _keepSignedIn = keepSignedIn;
     _userData = userData;
   }
+
   @override
-  _LiveStatusState createState() => _LiveStatusState(_userData);
+  _LiveStatusState createState() => _LiveStatusState(_keepSignedIn, _userData);
 }
 
 class _LiveStatusState extends State<LiveStatus> {
 
+  bool _keepSignedIn;
   var _userData;
-  _LiveStatusState(var userData){
+  _LiveStatusState(keepSignedIn, var userData){
+    _keepSignedIn = keepSignedIn;
     _userData = userData;
   }
 
@@ -193,7 +198,7 @@ class _LiveStatusState extends State<LiveStatus> {
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
               Expanded(
-                child: DisplayList(_userData.data['rollNo'].toString()),
+                child: DisplayList(_keepSignedIn,_userData),
               ),
             ],
           ),

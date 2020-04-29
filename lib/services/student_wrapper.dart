@@ -15,7 +15,7 @@ class StudentWrapper extends StatelessWidget {
   Widget build(BuildContext context) {
     if (_userData != null) {
       if (_userData.data['loggedInAs'] == 'emergency') {
-        return LiveStatus(_userData);
+        return LiveStatus(_keepSignedIn,_userData);
       }
       else {
         return StudentHome(_keepSignedIn, _userData);

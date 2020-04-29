@@ -1,30 +1,37 @@
+import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:provider/provider.dart';
 import 'package:ems_direct/models/emergency_models.dart';
+import 'package:ems_direct/pages/student_home.dart';
+
 
 class DisplayList extends StatefulWidget {
-  var _rollNum;
-  DisplayList(var rollNum){
-    _rollNum = rollNum;
+
+  bool _keepSignedIn;
+  var _userData;
+  DisplayList(bool keepSignedIn,var userData){
+    _keepSignedIn = keepSignedIn;
+    _userData = userData;
   }
 
   @override
-  _DisplayListState createState() => _DisplayListState(_rollNum);
+  _DisplayListState createState() => _DisplayListState(_keepSignedIn, _userData);
 }
 
 class _DisplayListState extends State<DisplayList> {
 
-  var _rollNum;
-  _DisplayListState(var rollNum){
-    _rollNum = rollNum;
+  var _keepSignedIn;
+  var _userData;
+  _DisplayListState(bool keepSignedIn, var userData){
+    _keepSignedIn = keepSignedIn;
+    _userData = userData;
   }
 
   @override
     Widget build(BuildContext context) {
-      TimeOfDay timeOfDay = TimeOfDay.fromDateTime(DateTime.now());
-      String currentTime = timeOfDay.format(context);
+
       String _status = 'Loading';
 
       var pendingEmergency = Provider.of<List<PendingEmergencyModel>>(context);
@@ -38,6 +45,18 @@ class _DisplayListState extends State<DisplayList> {
         }
         else{
           _status = "ended";
+          print('status has endeddd');
+          Timer(
+            Duration(seconds: 2),
+              () => Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(
+                      builder : (BuildContext context) {
+
+                        return StudentHome(_keepSignedIn, _userData);
+                      }
+                  )
+              )
+          );
         }
       }catch(e){
         print(e);
@@ -68,7 +87,7 @@ class _DisplayListState extends State<DisplayList> {
 Widget getWidget(String status){
   if(status == 'onGoing'){
     return Text(
-      'MFR has been assigned to you emergency',
+      'MFR has been assigned to your emergency',
       style: TextStyle(
         fontSize: 20.0,
         fontFamily: 'HelveticaNeueLight',
@@ -79,7 +98,7 @@ Widget getWidget(String status){
   }
   else if(status == 'pending'){
     return Text(
-      'Emergency Request is Pending',
+      'Emergency Request is \n        Pending',
       style: TextStyle(
         fontSize: 20.0,
         fontFamily: 'HelveticaNeueLight',
