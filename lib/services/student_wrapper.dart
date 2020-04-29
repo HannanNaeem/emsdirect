@@ -6,14 +6,20 @@ class StudentWrapper extends StatelessWidget {
   bool _keepSignedIn = false;
   var _userData;
 
-  StudentWrapper(bool keepSignedIn, var userData){
+  StudentWrapper(bool keepSignedIn, var userData) {
     _keepSignedIn = keepSignedIn;
     _userData = userData;
   }
 
   @override
   Widget build(BuildContext context) {
-
-    return _userData['loggesIsAs'] == 'emergency' ? LiveStatus(_userData) : StudentHome(_keepSignedIn,_userData);
+    if (_userData != null) {
+      if (_userData.data['loggedInAs'] == 'emergency') {
+        return LiveStatus(_userData);
+      }
+      else {
+        return StudentHome(_keepSignedIn, _userData);
+      }
+    }
   }
 }
