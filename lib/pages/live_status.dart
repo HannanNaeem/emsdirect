@@ -10,22 +10,18 @@ import 'package:ems_direct/services/ops_database.dart';
 class LiveStatus extends StatefulWidget {
   //final UserDatabaseService _userData;
   var _userData;
-  var _uid;
-  LiveStatus(var userData, var uid){
+  LiveStatus(var userData){
     _userData = userData;
-    _uid = uid;
   }
   @override
-  _LiveStatusState createState() => _LiveStatusState(_userData, _uid);
+  _LiveStatusState createState() => _LiveStatusState(_userData);
 }
 
 class _LiveStatusState extends State<LiveStatus> {
 
   var _userData;
-  var _uid;
-  _LiveStatusState(var userData, var uid){
+  _LiveStatusState(var userData){
     _userData = userData;
-    _uid = uid;
   }
 
   @override

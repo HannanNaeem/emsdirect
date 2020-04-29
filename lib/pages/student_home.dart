@@ -501,7 +501,7 @@ class _StudentHomeState extends State<StudentHome> with WidgetsBindingObserver {
                       Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => LiveStatus(_userData, uid)
+                              builder: (context) => LiveStatus(_userData)
                           )
                       );
                       print("emergency initiated");
