@@ -7,13 +7,13 @@ import 'package:ems_direct/pages/live_status.dart';
 
 class StudentHome extends StatefulWidget {
 
-  bool _keepSignedIn = false;
   var _userData;
   StudentHome(bool keepSignedIn, var userData){
     _keepSignedIn = keepSignedIn;
     _userData = userData;
   }
 
+  bool _keepSignedIn = false;
   @override
   _StudentHomeState createState() => _StudentHomeState(_keepSignedIn,_userData);
 }
