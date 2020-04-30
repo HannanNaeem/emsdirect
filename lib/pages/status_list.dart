@@ -35,6 +35,9 @@ class _DisplayListState extends State<DisplayList> {
 
   @override
     Widget build(BuildContext context) {
+    var screenSize = MediaQuery.of(context).size;
+    var width = screenSize.width;
+    var height = screenSize.height;
 
       String _status = 'Loading';
       String mfrName = '';
@@ -72,21 +75,20 @@ class _DisplayListState extends State<DisplayList> {
       }
 
       return Container(
-        color: Colors.red[400],
-        child: Stack(
-          children: <Widget>[
-            Align(
-              alignment: Alignment(-1,-1),
-              child: SpinKitRipple(
+        color:const Color(0xff840123),
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              SpinKitRipple(
                 color: Colors.red[200],
-                size: 80.0,
+                size: 120.0,
               ),
-            ),
-            Align(
-              alignment: Alignment(0,0.1),
-              child:getWidget(_status, mfrName, mfrContact),
-            )
-          ],
+              SizedBox(height: height*0.03),
+              getWidget(_status, mfrName, mfrContact),
+            ],
+          ),
         )
       );
   }
@@ -94,49 +96,27 @@ class _DisplayListState extends State<DisplayList> {
 
 
 Widget getWidget(String status, String mfrName, String mfrContact){
+  String answer;
   if(status == 'onGoing'){
-    String answer = 'MFR has been assigned to your emergency \n Name: ' + mfrName + '\n Contact: ' + mfrContact;
-    return Text(
-      answer,
-      style: TextStyle(
-        fontSize: 20.0,
-        fontFamily: 'HelveticaNeueLight',
-        color: Colors.black,
-        letterSpacing: 2.0,
-      ),
-    );
+    answer = 'MFR has been assigned to your emergency \n Name: ' + mfrName + '\n Contact: ' + mfrContact;
   }
   else if(status == 'pending'){
-    return Text(
-      'Emergency Request is Pending',
-      style: TextStyle(
-        fontSize: 20.0,
-        fontFamily: 'HelveticaNeueLight',
-        color: Colors.black,
-        letterSpacing: 2.0,
-      ),
-    );
+    answer = 'Your Emergency request is pending';
   }
   else if(status == 'loading'){
-    return Text(
-      'loading',
-      style: TextStyle(
-        fontSize: 20.0,
-        fontFamily: 'HelveticaNeueLight',
-        color: Colors.black,
-        letterSpacing: 2.0,
-      ),
-    );
+    answer = 'Loading...';
   }
   else{
-    return Text(
-      'Your emergency ended',
-      style: TextStyle(
-        fontSize: 20.0,
-        fontFamily: 'HelveticaNeueLight',
-        color: Colors.black,
-        letterSpacing: 2.0,
-      ),
-    );
+    answer = 'Your Emergency has ended';
   }
+  return Text(
+    answer,
+    textAlign: TextAlign.center,
+    style: TextStyle(
+      fontSize: 20.0,
+      fontFamily: 'HelveticaNeueLight',
+      color: Colors.white,
+      letterSpacing: 2.0,
+    ),
+  );
 }
