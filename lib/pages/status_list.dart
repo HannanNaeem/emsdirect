@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:provider/provider.dart';
@@ -29,6 +30,9 @@ class _DisplayListState extends State<DisplayList> {
     _userData = userData;
   }
 
+  final databaseReference = Firestore.instance;
+  String stringMfrDetails;
+
   @override
     Widget build(BuildContext context) {
 
@@ -45,7 +49,8 @@ class _DisplayListState extends State<DisplayList> {
         }
         else{
           _status = "ended";
-          print('status has endeddd');
+
+          //at the end of emergency, go back to home screen
           Timer(
             Duration(seconds: 2),
               () => Navigator.of(context).pushReplacement(
@@ -83,11 +88,59 @@ class _DisplayListState extends State<DisplayList> {
   }
 }
 
+//class getDetails(var userData){
+//    databaseReference
+//        .collection('OngoingEmergencies')
+//        .where('patientRollNo', isEqualTo: userData.data['rollNo'])
+//        .getDocuments().then((QuerySnapshot snapshot){
+//    if(snapshot.documents.isNotEmpty){
+//    mfrDetails = (snapshot.documents[0].data['mfrDetails']);
+//    print(snapshot.documents[0].data['mfrDetails']);
+//    }
+//    });
+//}
+
+//class MfrDetails{
+//  details(String rollNo){
+//    return Firestore.instance
+//        .collection('OngoingEmergencies')
+//        .where('patientRollNo', isEqualTo: rollNo)
+//        .getDocuments();
+//  }
+//}
+
+String getDetails(var userData){
+  String mfr = 'None';
+  Firestore.instance.collection('OngoingEmergencies')
+  .where('patientRollNo', isEqualTo: userData.data['rollNo'])
+  .getDocuments().then((QuerySnapshot snapshot){
+    if(snapshot.documents.isNotEmpty){
+      mfr = snapshot.documents[0].data['mfrDetails'];
+    }
+  });
+  return mfr;
+}
+
+String getText(String status, var userData){
+  if(status == 'onGoing'){
+    getDetails(userData);
+    return 'wut';
+  }
+  else if(status == 'pending'){
+    return ('Your Emergency request is pedning');
+  }
+  else if(status == 'loading'){
+    return ('Loading...');
+  }
+  else{
+    return ('Your Emergency Ended');
+  }
+}
 
 Widget getWidget(String status){
   if(status == 'onGoing'){
     return Text(
-      'MFR has been assigned to your emergency',
+      'masley aa rhayy',
       style: TextStyle(
         fontSize: 20.0,
         fontFamily: 'HelveticaNeueLight',
@@ -98,7 +151,7 @@ Widget getWidget(String status){
   }
   else if(status == 'pending'){
     return Text(
-      'Emergency Request is \n        Pending',
+      'Emergency Request is Pending',
       style: TextStyle(
         fontSize: 20.0,
         fontFamily: 'HelveticaNeueLight',
@@ -130,4 +183,3 @@ Widget getWidget(String status){
     );
   }
 }
-
