@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -76,29 +77,112 @@ class _DisplayListState extends State<DisplayList> {
 
       return Container(
         color:const Color(0xff840123),
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[
-              SpinKitRipple(
-                color: Colors.red[200],
-                size: 120.0,
-              ),
-              SizedBox(height: height*0.03),
-              getWidget(_status, mfrName, mfrContact),
-            ],
-          ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+            SpinKitRipple(
+              color: Colors.red[200],
+              size: 120.0,
+            ),
+            SizedBox(height: height*0.03),
+            getWidget(_status, mfrName, mfrContact,height,width),
+          ],
         )
       );
   }
 }
 
 
-Widget getWidget(String status, String mfrName, String mfrContact){
+Widget getWidget(String status, String mfrName, String mfrContact, var height, var width){
   String answer;
   if(status == 'onGoing'){
-    answer = 'MFR has been assigned to your emergency \n Name: ' + mfrName + '\n Contact: ' + mfrContact;
+    answer = 'MFR has been assigned to your emergency';
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: <Widget>[
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Text(
+            answer,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 20.0,
+              fontFamily: 'HelveticaNeueLight',
+              color: Colors.white,
+              letterSpacing: 2.0,
+            ),
+          ),
+        ),
+        Container(
+          constraints: BoxConstraints(maxWidth: width*0.80, maxHeight: height*0.15),
+          child: Card(
+            elevation: 8,
+            child: Column(
+              children: <Widget>[
+                Row(
+                  children: <Widget>[
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(
+                        'Name:',
+                        textAlign: TextAlign.left,
+                        style: TextStyle(
+                          fontSize: 20.0,
+                          fontFamily: 'HelveticaNeue',
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
+                          letterSpacing: 2.0,
+                        ),
+                      ),
+                    ),
+                    Text(
+                      '$mfrName',
+                      textAlign: TextAlign.left,
+                      style: TextStyle(
+                        fontSize: 20.0,
+                        fontFamily: 'HelveticaNeueLight',
+                        color: Colors.black,
+                        letterSpacing: 2.0,
+                      ),
+                    ),
+                  ],
+                ),
+                Row(
+                  children: <Widget>[
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(
+                        'Contact:',
+                        textAlign: TextAlign.left,
+                        style: TextStyle(
+                          fontSize: 20.0,
+                          fontFamily: 'HelveticaNeue',
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
+                          letterSpacing: 2.0,
+                        ),
+                      ),
+                    ),
+                    Text(
+                      '$mfrContact',
+                      textAlign: TextAlign.left,
+                      style: TextStyle(
+                        fontSize: 20.0,
+                        fontFamily: 'HelveticaNeueLight',
+                        color: Colors.black,
+                        letterSpacing: 2.0,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        )
+      ],
+    );
   }
   else if(status == 'pending'){
     answer = 'Your Emergency request is pending';
