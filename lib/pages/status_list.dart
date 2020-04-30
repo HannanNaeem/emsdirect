@@ -31,18 +31,22 @@ class _DisplayListState extends State<DisplayList> {
   }
 
   final databaseReference = Firestore.instance;
-  String stringMfrDetails;
+
 
   @override
     Widget build(BuildContext context) {
 
       String _status = 'Loading';
+      String mfrName = '';
+      String mfrContact = '';
 
       var pendingEmergency = Provider.of<List<PendingEmergencyModel>>(context);
       var onGoingEmergency = Provider.of<List<OngoingEmergencyModel>>(context);
       try{
         if(onGoingEmergency.length == 1 && onGoingEmergency != null){
             _status = "onGoing";
+            mfrName = (onGoingEmergency[0].mfrDetails['name']).toString();
+            mfrContact = (onGoingEmergency[0].mfrDetails['contact']).toString();
           }
         else if(pendingEmergency.length == 1 && pendingEmergency != null){
           _status = "pending";
@@ -80,7 +84,7 @@ class _DisplayListState extends State<DisplayList> {
             ),
             Align(
               alignment: Alignment(0,0.1),
-              child:getWidget(_status),
+              child:getWidget(_status, mfrName, mfrContact),
             )
           ],
         )
@@ -88,59 +92,12 @@ class _DisplayListState extends State<DisplayList> {
   }
 }
 
-//class getDetails(var userData){
-//    databaseReference
-//        .collection('OngoingEmergencies')
-//        .where('patientRollNo', isEqualTo: userData.data['rollNo'])
-//        .getDocuments().then((QuerySnapshot snapshot){
-//    if(snapshot.documents.isNotEmpty){
-//    mfrDetails = (snapshot.documents[0].data['mfrDetails']);
-//    print(snapshot.documents[0].data['mfrDetails']);
-//    }
-//    });
-//}
 
-//class MfrDetails{
-//  details(String rollNo){
-//    return Firestore.instance
-//        .collection('OngoingEmergencies')
-//        .where('patientRollNo', isEqualTo: rollNo)
-//        .getDocuments();
-//  }
-//}
-
-String getDetails(var userData){
-  String mfr = 'None';
-  Firestore.instance.collection('OngoingEmergencies')
-  .where('patientRollNo', isEqualTo: userData.data['rollNo'])
-  .getDocuments().then((QuerySnapshot snapshot){
-    if(snapshot.documents.isNotEmpty){
-      mfr = snapshot.documents[0].data['mfrDetails'];
-    }
-  });
-  return mfr;
-}
-
-String getText(String status, var userData){
+Widget getWidget(String status, String mfrName, String mfrContact){
   if(status == 'onGoing'){
-    getDetails(userData);
-    return 'wut';
-  }
-  else if(status == 'pending'){
-    return ('Your Emergency request is pedning');
-  }
-  else if(status == 'loading'){
-    return ('Loading...');
-  }
-  else{
-    return ('Your Emergency Ended');
-  }
-}
-
-Widget getWidget(String status){
-  if(status == 'onGoing'){
+    String answer = 'MFR has been assigned to your emergency \n Name: ' + mfrName + '\n Contact: ' + mfrContact;
     return Text(
-      'masley aa rhayy',
+      answer,
       style: TextStyle(
         fontSize: 20.0,
         fontFamily: 'HelveticaNeueLight',
