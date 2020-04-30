@@ -83,9 +83,7 @@ class _NotificationsState extends State<Notifications> {
         return "A severe emergency has been initiated! Please manually assign a MFR via Map\n Severity: ${item.severity}\n\n Patient Details:\n  ${item.patientRollNo}\n  ${item.patientContactNo}";
     }
 
-
-    TimeOfDay timeOfDay = TimeOfDay.fromDateTime(DateTime.now());
-    String res = timeOfDay.format(context);
+  
 
     return Scaffold(
       backgroundColor: const Color(0xff27496d),
@@ -97,7 +95,7 @@ class _NotificationsState extends State<Notifications> {
             
             Expanded(
               child: ListView.builder(
-                itemCount: _notificationList.length,
+                itemCount: _notificationList == null ? 0 : _notificationList.length,
                 itemBuilder: (context, index) {
 
 
