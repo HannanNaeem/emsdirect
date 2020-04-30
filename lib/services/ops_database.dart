@@ -18,11 +18,12 @@ class OpsDatabaseService {
       return DeclinedEmergencyModel(
         patientRollNo: doc.data['patientRollNo'],
         genderPreference: doc.data['genderPreference'],
-        location: doc.data['location'],
+        location: doc.data['location'] ?? null,
         declines: doc.data['declines'],
         declinedBy: doc.data['declinedBy'],
         severity: doc.data['severity'],
         patientContactNo: doc.data['patientContactNo'] ?? '',
+        reportingTime : doc.data['reportingTime'].toDate() ?? null,
       );
     }).toList();
   }
@@ -34,7 +35,7 @@ class OpsDatabaseService {
       return PendingEmergencyModel(
         patientRollNo: doc.data['patientRollNo'],
         genderPreference: doc.data['genderPreference'],
-        location: doc.data['location'],
+        location: doc.data['location'] ?? null,
         declines: doc.data['declines'],
         declinedBy: doc.data['declinedBy'],
         severity: doc.data['severity'],
@@ -51,11 +52,12 @@ class OpsDatabaseService {
       return SevereEmergencyModel(
         patientRollNo: doc.data['patientRollNo'],
         genderPreference: doc.data['genderPreference'],
-        location: doc.data['location'],
+        location: doc.data['location'] ?? null ,
         declines: doc.data['declines'],
         declinedBy: doc.data['declinedBy'],
         severity: doc.data['severity'],
         patientContactNo: doc.data['patientContactNo'] ?? '',
+        reportingTime : doc.data['reportingTime'].toDate() ?? null,
       );
     }).toList();
   }

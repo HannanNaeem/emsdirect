@@ -17,7 +17,7 @@ class NotificationCard extends StatefulWidget {
 
 class _NotificationCardState extends State<NotificationCard> {
   Color GenerateColor(String category) {
-    if (category == 'testing') {
+    if (category == 'Equipment Restock' || category == 'Bag Restock') {
       return Colors.green;
     } else {
       return Colors.red;
@@ -35,7 +35,7 @@ class _NotificationCardState extends State<NotificationCard> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Flexible(
-            flex: 6,
+            flex: 5,
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
@@ -55,7 +55,7 @@ class _NotificationCardState extends State<NotificationCard> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
                           Text(                        
-                            "Ignored Emergency!",
+                            widget.category,
                             style: TextStyle(
                               color: const Color(0xffee0000),
                               fontSize: 20,
@@ -83,12 +83,15 @@ class _NotificationCardState extends State<NotificationCard> {
             flex: 1,
             child: Align(
               alignment: Alignment.bottomCenter,
-              child: Text(
-                widget.time,
-                style: TextStyle(
-                  color: const Color(0xff142850),
-                  fontSize: 12,
-                  fontFamily: 'HelveticaNeueLight',
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(0,3,3,0),
+                child: Text(
+                  widget.time,
+                  style: TextStyle(
+                    color: const Color(0xff142850),
+                    fontSize: 12,
+                    fontFamily: 'HelveticaNeueLight',
+                  ),
                 ),
               ),
             ),
