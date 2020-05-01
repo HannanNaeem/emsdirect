@@ -16,6 +16,7 @@ import 'package:ems_direct/pages/SelectLogin.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:ems_direct/mfr_home_wrapper.dart';
+import 'package:ems_direct/services/student_wrapper.dart';
 
 // This a wrapping widget that sits just after the splash screen within the application
 // widget tree. Its sole purpose is to check if the user stored in disk/locally is currently
@@ -66,11 +67,11 @@ class Wrapper extends StatelessWidget {
                   value: MfrDatabaseService().pendingStream,
                   child: StreamProvider<List<OngoingEmergencyModel>>.value(
                       value: MfrDatabaseService().ongoingStream,
-                      child: MFRHome(true, snapshot.data, mfrHomeGlobalKey)),
+                      child: MfrWrapper(true, snapshot.data)),
                 );
               } else {
                 // user is logged in as student
-                return StudentHome(true, snapshot.data);
+                return StudentWrapper(true,snapshot.data);//StudentHome(true, snapshot.data); // did this to include direct routing to live status
               }
             }
 

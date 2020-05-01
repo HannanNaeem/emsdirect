@@ -4,35 +4,36 @@ import 'package:ems_direct/pages/live_status_data.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:provider/provider.dart';
 import 'package:ems_direct/pages/status_list.dart';
-import 'package:ems_direct/services/user_database.dart';
+import 'package:ems_direct/models/emergency_models.dart';
+import 'package:ems_direct/services/ops_database.dart';
 
 class LiveStatus extends StatefulWidget {
-  //final UserDatabaseService _userData;
+
+  bool _keepSignedIn;
   var _userData;
-  LiveStatus(var userData){
+  LiveStatus(bool keepSignedIn, var userData){
+    _keepSignedIn = keepSignedIn;
     _userData = userData;
   }
+
   @override
-  _LiveStatusState createState() => _LiveStatusState(_userData);
+  _LiveStatusState createState() => _LiveStatusState(_keepSignedIn, _userData);
 }
 
 class _LiveStatusState extends State<LiveStatus> {
-  var _status = StatusData.Data;
 
+  bool _keepSignedIn;
   var _userData;
-  _LiveStatusState(var userData){
+  _LiveStatusState(keepSignedIn, var userData){
+    _keepSignedIn = keepSignedIn;
     _userData = userData;
   }
-  Stream<DocumentSnapshot> pendingEmergencies;
 
   @override
   void initState() {
-    pendingEmergencies = Firestore.instance.collection('PendingEmergencies').document(_userData.data['rollNo']).snapshots();
     super.initState();
   }
 
-
-  Stream<QuerySnapshot> ongoingEmergencies = Firestore.instance.collection('OngoingEmergencies').snapshots();
 
   @override
   Widget build(BuildContext context) {
@@ -43,8 +44,8 @@ class _LiveStatusState extends State<LiveStatus> {
 
     return MultiProvider(
       providers: [
-        StreamProvider<DocumentSnapshot>.value(value: pendingEmergencies),
-        StreamProvider<QuerySnapshot>.value(value: ongoingEmergencies),
+        StreamProvider<List<PendingEmergencyModel>>.value(value: OpsDatabaseService().studentPendingStream(_userData.data['rollNo'].toString())),
+        StreamProvider<List<OngoingEmergencyModel>>.value(value: OpsDatabaseService().studentOnGoingStream(_userData.data['rollNo'].toString())),
       ],
       child: Scaffold(
         drawer: Container(
@@ -197,7 +198,7 @@ class _LiveStatusState extends State<LiveStatus> {
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
               Expanded(
-                child: DisplayList(_userData.data['rollNo'].toString()),
+                child: DisplayList(_keepSignedIn,_userData),
               ),
             ],
           ),
