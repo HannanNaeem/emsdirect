@@ -52,12 +52,12 @@ class _NotificationsState extends State<Notifications> {
     List<NotificationItem> _notificationList = [];
     //Daisy chain to build notifications
     int divider1 = 0;
-    if(_declinedEmergenciesList != null)
+    if(_severeEmergenciesList != null)
     {
       _notificationList = _listToNotificationData(_severeEmergenciesList, "Severe Emergency!");
       divider1++;
     }
-    if(_severeEmergenciesList != null)
+    if(_declinedEmergenciesList!= null)
     {
        _notificationList.addAll(_listToNotificationData(_declinedEmergenciesList, "Ignored Emergency!"));
     }

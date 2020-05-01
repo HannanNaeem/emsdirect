@@ -6,6 +6,7 @@ import 'package:ems_direct/models/emergency_models.dart';
 
 
 List<String> _alertedBuffer =  [];
+List<String> _alertedBufferIgnored = [];
 
 class AlertOps extends StatefulWidget {
 
@@ -187,12 +188,49 @@ class _AlertOpsState extends State<AlertOps> {
     
     
 
-    //Calls the show alert function after build is complete to avoid repeated alerts
+    //Calls the show alert function and stores the notified rollno in a buffer to avoid repeated alerts
     if (_declinedEmergencyList != null && _declinedEmergencyList.length != 0)
     {
-      WidgetsBinding.instance.addPostFrameCallback((_) =>
+      List<String> _iterationBuffer = [];
+      _declinedEmergencyList.forEach((emergency){
+
+        if(!_alertedBufferIgnored.contains(emergency.patientRollNo)){
+
+          WidgetsBinding.instance.addPostFrameCallback((_) =>
           _showAlertIgnored());//_ignored.documents.length, _ignored.documents[0], _width, _height));
+
+          // add this roll no to a buffer - already informed - this is to avoid manipulation of list being iteratied
+          _iterationBuffer.add(emergency.patientRollNo);
+        }
+
+      });
+      // add enteries to the actual buffer
+      _alertedBufferIgnored.addAll(_iterationBuffer);
+
     }
+
+    //! Buffer clean up - 
+    // if an emergency exists in buffer that does not exist in _declined, 
+    // remove it so it can have an alert again
+    if(_declinedEmergencyList != null && _alertedBufferIgnored.length != 0){
+
+      List<String> _iterationBuffer = new List<String>.from(_alertedBufferIgnored);
+
+      _alertedBufferIgnored.forEach((oldEmergency){
+          if(!(_declinedEmergencyList.map((emergency) => emergency.patientRollNo)).contains(oldEmergency)) {
+
+            _iterationBuffer.remove(oldEmergency);
+
+          }
+      });
+
+      _alertedBufferIgnored = new List<String>.from(_iterationBuffer);
+
+    }
+
+
+
+
 
     // Alerting for
     if (_severeEmergencyList != null && _severeEmergencyList.length != 0)
@@ -204,7 +242,7 @@ class _AlertOpsState extends State<AlertOps> {
               
               WidgetsBinding.instance.addPostFrameCallback((_) =>
                 _showAlertSevere(emergency.severity,emergency.patientRollNo,emergency.genderPreference,emergency.patientContactNo));
-              print("------before-------$_alertedBuffer");
+             // print("------before-------$_alertedBuffer");
               _iterationBuffer.add(emergency.patientRollNo);
 
               
