@@ -8,7 +8,7 @@ import 'package:location/location.dart';
 class MapMFR extends StatefulWidget {
   String _StudentContact = '';
   GeoPoint _locationOfEmergency;
-  MapMFR(GeoPoint locationOfEmergency, String patientContactNo): super(){
+  MapMFR(GeoPoint locationOfEmergency, String patientContactNo) : super() {
     _StudentContact = patientContactNo;
     _locationOfEmergency = locationOfEmergency;
   }
@@ -22,7 +22,7 @@ class MapState extends State<MapMFR> {
   String contactNumber = '';
   Map<MarkerId, Marker> emergencyMarker = <MarkerId, Marker>{};
 
-  MapState(GeoPoint location, String number){
+  MapState(GeoPoint location, String number) {
     _locationOfEmergency = location;
     contactNumber = number;
   }
@@ -38,22 +38,19 @@ class MapState extends State<MapMFR> {
   Marker marker;
   StreamSubscription _locationSubscription;
 
-
   _onMapCreated(GoogleMapController controller) {
-
     _controller = controller;
     var markerIdVal = emergencyMarker.length + 1;
     String mar = markerIdVal.toString();
     final MarkerId markerId = MarkerId(mar);
-    EmergencyLocationIcon = BitmapDescriptor.fromAsset(
-        'assets/redcross.png');
-    final Marker marker =
-    Marker(
+    EmergencyLocationIcon = BitmapDescriptor.fromAsset('assets/redcross.png');
+    final Marker marker = Marker(
         markerId: markerId,
-        position: LatLng(_locationOfEmergency.latitude, _locationOfEmergency.longitude),
-        infoWindow: InfoWindow( title: 'Emergency Location', snippet: contactNumber),
-        icon: EmergencyLocationIcon
-    );
+        position: LatLng(
+            _locationOfEmergency.latitude, _locationOfEmergency.longitude),
+        infoWindow:
+            InfoWindow(title: 'Emergency Location', snippet: contactNumber),
+        icon: EmergencyLocationIcon);
     setState(() {
       emergencyMarker[markerId] = marker;
     });
@@ -82,23 +79,21 @@ class MapState extends State<MapMFR> {
     var markerIdVal = emergencyMarker.length + 1;
     String mar = markerIdVal.toString();
     final MarkerId markerId = MarkerId(mar);
-    final Marker marker =
-        Marker(
-        markerId: MarkerId("Your location"),
-        infoWindow: InfoWindow(
-          title: 'Your location',
-        ),
-        position: values,
-        rotation: newLocation.heading,
-        draggable: false,
-        zIndex: 2,
-        flat: false,
-        anchor: Offset(0, 0),
-      );
+    final Marker marker = Marker(
+      markerId: MarkerId("Your location"),
+      infoWindow: InfoWindow(
+        title: 'Your location',
+      ),
+      position: values,
+      rotation: newLocation.heading,
+      draggable: false,
+      zIndex: 2,
+      flat: false,
+      anchor: Offset(0, 0),
+    );
     setState(() {
       emergencyMarker[markerId] = marker;
     });
-
   }
 
   void zoomIn() async {
@@ -160,7 +155,6 @@ class MapState extends State<MapMFR> {
     var width = screenSize.width;
     var height = screenSize.height;
     return MaterialApp(
-
       home: Scaffold(
         appBar: AppBar(
           backgroundColor: const Color(0xff142850),
@@ -187,22 +181,21 @@ class MapState extends State<MapMFR> {
               onMapCreated: _onMapCreated,
               initialCameraPosition: initialisation,
               mapType: _currentMapType,
-              markers:  Set<Marker>.of(emergencyMarker.values),
+              markers: Set<Marker>.of(emergencyMarker.values),
               onCameraMove: _onCameraMove,
             ),
-              Padding(
-                  padding: EdgeInsets.fromLTRB(width*0.14, height*0.034, width*0.1, 10.0),
-                  child: Text(
-                    'Patient Number: ' + contactNumber,
-                    style: TextStyle(
-                      fontFamily: 'HelveticaNeueBold',
-                      letterSpacing: 2.0,
-                      fontSize: 0.012*(height+width),
-                      color: const Color(0xff142850),
-                    ),
-                  )
-              ),
-
+            Padding(
+                padding: EdgeInsets.fromLTRB(
+                    width * 0.14, height * 0.034, width * 0.1, 10.0),
+                child: Text(
+                  'Patient Number: ' + contactNumber,
+                  style: TextStyle(
+                    fontFamily: 'HelveticaNeueBold',
+                    letterSpacing: 2.0,
+                    fontSize: 0.012 * (height + width),
+                    color: const Color(0xff142850),
+                  ),
+                )),
             Padding(
                 padding: EdgeInsets.fromLTRB(
                     width * 0.23, height * 0.75, width * 0.16, 10.0),
@@ -236,7 +229,6 @@ class MapState extends State<MapMFR> {
                                         ),
                                       ),
                                       onPressed: () async {
-
                                         Navigator.pushReplacementNamed(
                                             context, '/MFR_home');
                                         Navigator.of(context).pop();
@@ -281,29 +273,25 @@ class MapState extends State<MapMFR> {
         floatingActionButton: Column(children: <Widget>[
           SizedBox(height: height * 0.16),
           FloatingActionButton(
-            child: Icon(Icons.map),
-            onPressed: () {
-              _onMapTypeButtonPressed();
-            },
-              backgroundColor: const Color(0xff47719e)
-          ),
+              child: Icon(Icons.map),
+              onPressed: () {
+                _onMapTypeButtonPressed();
+              },
+              backgroundColor: const Color(0xff47719e)),
           SizedBox(height: height / 2.2),
           FloatingActionButton(
-            child: Icon(Icons.add),
-            onPressed: () {
-              zoomIn();
-            },
-              backgroundColor: const Color(0xff47719e)
-          ),
+              child: Icon(Icons.add),
+              onPressed: () {
+                zoomIn();
+              },
+              backgroundColor: const Color(0xff47719e)),
           SizedBox(height: 10),
           FloatingActionButton(
-            child: Icon(Icons.remove),
-            onPressed: () {
-              zoomOut();
-            },
-              backgroundColor: const Color(0xff47719e)
-          ),
-
+              child: Icon(Icons.remove),
+              onPressed: () {
+                zoomOut();
+              },
+              backgroundColor: const Color(0xff47719e)),
         ]),
       ),
     );

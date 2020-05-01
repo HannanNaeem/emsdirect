@@ -447,6 +447,7 @@ class _AlertFunctionMfrState extends State<AlertFunctionMfr> {
       numOngoing = _ongoingEmergencyList.length;
       locationOfEmergency = _ongoingEmergencyList[0].location;
       studentContactNo = _ongoingEmergencyList[0].patientContactNo;
+      //mfrHomeGlobalKey.currentState.updateEmergencyData(locationOfEmergency, studentContactNo);
       //WidgetsBinding.instance.addPostFrameCallback((_) => printData(_ongoingEmergencyList));
     }
 
