@@ -1,0 +1,33 @@
+{
+  "indexes": [
+    {
+      "collectionGroup": "PendingEmergencies",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "declines",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "reportingTime",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "PendingEmergencies",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "severity",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "reportingTime",
+          "order": "ASCENDING"
+        }
+      ]
+    }
+  ],
+  "fieldOverrides": []
+}

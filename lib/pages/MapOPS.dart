@@ -43,10 +43,10 @@ class MapStateOPS extends State<MapOPS> {
     var width = screenSize.width;
     var height = screenSize.height;
     // ----------------------------- snapshot lists ---------------------------------//
-//    var _availableMfrsList = Provider.of<List<AvailableMfrs>>(context);
+   var _availableMfrsList = Provider.of<List<AvailableMfrs>>(context);
 //    var _pendingEmergenciesList = Provider.of<List<PendingEmergencyModel>>(context);
 //    var _onGoingEmergenciesList = Provider.of<List<OngoingEmergencyModel>>(context);
-//
+  if(_availableMfrsList != null) {_availableMfrsList.forEach((mfr){print("-------------------------${mfr.name}");});}
 //    _addAvailableMfrsMarker(_availableMfrsList);
 //    _addPendingEmergenciesMarker(_pendingEmergenciesList);
 //    _addOnGoingEmergenciesMarker(_onGoingEmergenciesList);
