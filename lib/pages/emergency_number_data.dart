@@ -3,19 +3,19 @@ class EmergencyNumbersData {
 
   static final data = [
     {
-      'name': 'EMS 1',
+      'name': 'EMS-1',
       'contact': '030000000',
     },
     {
-      'name': 'EMS 2',
+      'name': 'EMS-2',
       'contact': '030000000',
     },
     {
-      'name': 'EMS 3',
+      'name': 'EMS-3',
       'contact': '030000000',
     },
     {
-      'name': 'EMS 4',
+      'name': 'EMS-4',
       'contact': '030000000',
     },
     {

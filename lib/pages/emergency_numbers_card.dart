@@ -23,28 +23,30 @@ class _EmergencyNumberCardState extends State<EmergencyNumberCard> {
     return Card(
       elevation: 6,
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Flexible(
-            flex: 5,
+            flex: 1,
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Padding(
-                  padding: EdgeInsets.fromLTRB(6, 24, 0, 20),
+                  padding: EdgeInsets.fromLTRB(6, 28, 0, 20),
                   child: Icon(
                     Icons.fiber_manual_record,
                     color: color,
+                    size: 15,
                   ),
                 ),
                 Expanded(
                   flex: 1,
                   child: Padding(
-                    padding: EdgeInsets.fromLTRB(10, 25, 0, 20),
+                    padding: EdgeInsets.fromLTRB(10, 24, 0, 20),
                     child: Container(                     
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: <Widget>[
                           Text(                        
                             widget.name,
@@ -54,12 +56,15 @@ class _EmergencyNumberCardState extends State<EmergencyNumberCard> {
                               fontFamily: 'HelveticaNeueLight',
                             ),
                           ),
-                          Text(
-                            widget.contact,
-                            style: TextStyle(
-                              color: const Color(0xff142850),
-                              fontSize: 14,
-                              fontFamily: 'HelveticaNeueLight',
+                          Padding(
+                            padding: const EdgeInsets.only(right: 10),
+                            child: Text(
+                              widget.contact,
+                              style: TextStyle(
+                                color: const Color(0xff142850),
+                                fontSize: 18,
+                                fontFamily: 'HelveticaNeueLight',
+                              ),
                             ),
                           ),
                         ],
