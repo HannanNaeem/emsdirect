@@ -12,6 +12,7 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:ems_direct/models/emergency_models.dart';
 
 GlobalKey<_AlertFunctionMfrState> mfrAlertFunctionGlobalKey = GlobalKey();
+List<String> alertBuffer = [];
 
 //This is responsible for alerting MFRs of any pending emergencies with a severity level of low/medium
 class AlertFunctionMfr extends StatefulWidget {
@@ -44,6 +45,7 @@ class _AlertFunctionMfrState extends State<AlertFunctionMfr> {
   bool _ongoingAlertShowed = false;
   var locationOfEmergency;
   var studentContactNo;
+  bool decision;
 
   void getInitialData(var docId) async {
     try {
@@ -154,6 +156,24 @@ class _AlertFunctionMfrState extends State<AlertFunctionMfr> {
 //    }
 //    return Future.wait(futureList);
 //  }
+  Future<bool> checkExist(String docID) async {
+    bool exists = false;
+    try {
+      await Firestore.instance
+          .collection("PendingEmergencies")
+          .document(docID)
+          .get()
+          .then((doc) {
+        if (doc.exists)
+          exists = true;
+        else
+          exists = false;
+      });
+      return exists;
+    } catch (e) {
+      return false;
+    }
+  }
 
   Future updateDeclineOnRest(var docs) async {
     List<Future> futureList = List<Future>();
@@ -169,6 +189,8 @@ class _AlertFunctionMfrState extends State<AlertFunctionMfr> {
     //only shows alerts if there is a pending emergency document AND if MFR is available+not occupied
     //-------------- TESTING ------------------------------------
     print('ID: ${doc[0].patientRollNo}');
+    alertBuffer.add(doc[0].patientRollNo);
+    bool exist;
     //-----------------------------------------------------------
     showDialog(
       context: context,
@@ -210,23 +232,23 @@ class _AlertFunctionMfrState extends State<AlertFunctionMfr> {
                   ),
                 ),
                 onPressed: () async {
-//                  setState(() {
-//                    _isOccupied = true;
-//                  });
-                  _isOccupied = true;
-                  mfrHomeGlobalKey.currentState.updateOccupied(true);
-                  print('yes');
                   Navigator.of(context).pop();
-                  await createOngoingEmergencyDocument(
-                      doc[0].location,
-                      doc[0].genderPreference,
-                      doc[0].patientRollNo,
-                      doc[0].severity,
-                      doc[0].patientContactNo,
-                      doc[0].reportingTime);
-                  await deleteRecord(doc[0].patientRollNo);
-                  await updateOccupiedStatus(true);
-                  await updateDeclineOnRest(doc);
+                  exist = await checkExist(doc[0].patientRollNo);
+                  if (exist) {
+                    print('yes');
+                    await deleteRecord(doc[0].patientRollNo);
+                    await createOngoingEmergencyDocument(
+                        doc[0].location,
+                        doc[0].genderPreference,
+                        doc[0].patientRollNo,
+                        doc[0].severity,
+                        doc[0].patientContactNo,
+                        doc[0].reportingTime);
+                    _isOccupied = true;
+                    mfrHomeGlobalKey.currentState.updateOccupied(true);
+                    await updateOccupiedStatus(true);
+                    return await updateDeclineOnRest(doc);
+                  }
                 },
               ),
             ),
@@ -408,9 +430,6 @@ class _AlertFunctionMfrState extends State<AlertFunctionMfr> {
     int numPending = 0;
     int numOngoing = 0;
 
-//    _isAvailable = mfrHomeGlobalKey.currentState.isAvailable;
-//    _isOccupied = mfrHomeGlobalKey.currentState.isOccupied;
-
     print(_ongoingEmergencyList);
     print(_pendingEmergencyList);
     print(_gender);
@@ -436,6 +455,26 @@ class _AlertFunctionMfrState extends State<AlertFunctionMfr> {
       }
       numPending = _pendingEmergencyList.length;
       //WidgetsBinding.instance.addPostFrameCallback((_) => printData(_pendingEmergencyList));
+      //print(_pendingEmergencyList.map((emergency) => (emergency.patientRollNo)));
+    }
+
+    if (_pendingEmergencyList != null) {
+      //if there is some roll number that the alerted buffer contains but the pending does not
+      //remove that string from the alerted buffer
+      var toRemove = [];
+      print("alertbuffer: $alertBuffer");
+      if (_pendingEmergencyList.length > 0) {
+        alertBuffer.forEach((rollNumber) {
+          if (!(_pendingEmergencyList.map(
+              (emergency) => (emergency.patientRollNo))).contains(rollNumber)) {
+            toRemove.add(rollNumber);
+          }
+        });
+        alertBuffer.removeWhere((item) => toRemove.contains(item));
+      } else {
+        alertBuffer = [];
+      }
+      print("alertbuffer: $alertBuffer");
     }
 
     //handling cases for null values (this can happen in the case of null data being received from the stream)
@@ -445,8 +484,10 @@ class _AlertFunctionMfrState extends State<AlertFunctionMfr> {
       _ongoingEmergencyList
           .retainWhere((item) => item.mfr.contains(widget._userData['rollNo']));
       numOngoing = _ongoingEmergencyList.length;
-      locationOfEmergency = _ongoingEmergencyList[0].location;
-      studentContactNo = _ongoingEmergencyList[0].patientContactNo;
+      if (_ongoingEmergencyList.isNotEmpty) {
+        locationOfEmergency = _ongoingEmergencyList[0].location;
+        studentContactNo = _ongoingEmergencyList[0].patientContactNo;
+      }
       //WidgetsBinding.instance.addPostFrameCallback((_) => printData(_ongoingEmergencyList));
     }
 
@@ -454,55 +495,37 @@ class _AlertFunctionMfrState extends State<AlertFunctionMfr> {
     if (_isAvailable != null && _isOccupied != null) {
       if (_isAvailable && !_isOccupied) {
         //check if there is an ongoing emergency in the MFRs name, if so send an alert
-        //_ongoingEmergencyList = null;
         if (_ongoingEmergencyList != null && numOngoing > 0) {
           //call the send ongoingEmergency alert function
           if (!_ongoingAlertShowed) {
             _ongoingAlertShowed = true;
             WidgetsBinding.instance.addPostFrameCallback((_) async =>
                 await showOngoingAlert(_ongoingEmergencyList, _width, _height));
+          }
+          //add decline updates to the rest of the pending emergencies
+          if (numPending > 0) {
             for (int i = 0; i < numPending; i++) {
               updateDecline(_pendingEmergencyList[0].patientRollNo);
             }
           }
-//              await ongoingAlertProcesses(_pendingEmergencyList,
-//                  _ongoingEmergencyList, _width, _height));
-//          _ongoingEmergencyList.removeAt(0);
-
         }
         //otherwise check if there is a relevant pending emergency, if so send an alert
         else if (_pendingEmergencyList != null && numPending > 0) {
-          WidgetsBinding.instance.addPostFrameCallback((_) async =>
-              await showPendingAlert(_pendingEmergencyList, _width, _height));
           //call the send pendingEmergency alert function
+          if (!alertBuffer.contains(_pendingEmergencyList[0].patientRollNo)) {
+            WidgetsBinding.instance.addPostFrameCallback((_) async =>
+                await showPendingAlert(_pendingEmergencyList, _width, _height));
+//            if (decision != null) {
+//              if (decision) {
+//                print('True for ${_pendingEmergencyList[0].patientRollNo}');
+//              } else {
+//                print('False for ${_pendingEmergencyList[0].patientRollNo}');
+//              }
+//            }
+          }
         }
       }
     }
-
-    //this is where the two alert functions are called depending on whether there is data AND conditions are met
-//    if (_isAvailable != null && _isOccupied != null) {
-//      if (!_isOccupied && _isAvailable) {
-//        if (_ongoingEmergencyList != null && numOngoing > 0) {
-//          WidgetsBinding.instance.addPostFrameCallback((_) async =>
-//              await showOngoingAlert(
-//                  numOngoing, _ongoingEmergencyList[0], _width, _height));
-//        } else if (_pendingEmergencyList != null && numPending > 0) {
-//          WidgetsBinding.instance.addPostFrameCallback((_) async =>
-//              await showPendingAlert(
-//                  numPending, _pendingEmergencyList[0], _width, _height));
-//        if (_ongoingEmergencyList != null && numOngoing > 0) {
-//          print('hello');
-//          WidgetsBinding.instance.addPostFrameCallback((_) async =>
-//              await showOngoingAlert(
-//                  numOngoing, _ongoingEmergencyList, _width, _height));
-//        } else if (_pendingEmergencyList != null && numPending > 0) {
-//          print(_pendingEmergencyList);
-//          WidgetsBinding.instance.addPostFrameCallback((_) async =>
-//              await showPendingAlert(
-//                  numPending, _pendingEmergencyList, _width, _height));
-//        }
-//      }
-//    }
 
     return Container();
   }
