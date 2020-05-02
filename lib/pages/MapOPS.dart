@@ -1,14 +1,13 @@
+import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ems_direct/models/emergency_models.dart';
-import 'package:flutter/material.dart';
-import 'dart:async';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
+import 'package:location/location.dart';
+import 'package:flutter/services.dart';
 
 class MapOPS extends StatefulWidget {
   MapOPS() : super();
-  final String title = "Map";
-
   @override
   MapStateOPS createState() => new MapStateOPS();
 
@@ -18,13 +17,24 @@ class MapStateOPS extends State<MapOPS> {
   GoogleMapController _controller;
   static const LatLng _loc = const LatLng(31.4700, 74.4111);
   LatLng currLoc = _loc;
+  static Location _locationTracker = Location();
   static var Zoom = 11.0;
-  List<Marker> allMarkers = [];
+  Map<MarkerId, Marker> allMarkers = <MarkerId, Marker>{};
   LatLng _lastMapPosition = _loc;
   MapType _currentMapType = MapType.normal;
+  var _availableMfrsList;
+  var _pendingEmergenciesList;
+  var _onGoingEmergenciesList;
+  bool _mapLoading = true;
+  var EmergencyLocationIconRed = BitmapDescriptor.fromAsset(
+      'assets/redcross.png');
+  var EmergencyLocationIconBlue = BitmapDescriptor.fromAsset(
+      'assets/bluecross.png');
+  var RedMFR = BitmapDescriptor.fromAsset('assets/MFR_red.png');
+  var BlueMFR = BitmapDescriptor.fromAsset('assets/MFR_blue.png');
   static final CameraPosition _position1 = CameraPosition(
     bearing: 192.833,
-    target: LatLng(45.531563, -122.677433),
+    target: LatLng(31.4700, 74.4111),
     tilt: 59.440,
     zoom: 11.0,
   );
@@ -36,70 +46,91 @@ class MapStateOPS extends State<MapOPS> {
           : MapType.normal;
     });
   }
+  void getCurrentLocaion() async {
+    try {
+      var location = await _locationTracker.getLocation();
 
+      currLoc = LatLng(location.latitude, location.longitude);
+
+      _controller.animateCamera(
+          CameraUpdate.newCameraPosition(
+              new CameraPosition(
+                  bearing: 192,
+                  target: currLoc,
+                  tilt: 0,
+                  zoom: Zoom
+              )
+          )
+      );
+
+    }
+    on PlatformException catch(e){
+      if(e.code == 'PERMISSION_DENIED'){
+        debugPrint("Permission Denied");
+      }
+    }
+
+  }
+  @override
+  void dispose(){
+    super.dispose();
+  }
   @override
   Widget build(BuildContext context) {
+    // ----------------------------- snapshot lists ---------------------------------//
+
+    _availableMfrsList = Provider.of<List<AvailableMfrs>>(context);
+    _pendingEmergenciesList = Provider.of<List<PendingEmergencyModel>>(context);
+    _onGoingEmergenciesList = Provider.of<List<OngoingEmergencyModel>>(context);
+
     var screenSize = MediaQuery.of(context).size;
     var width = screenSize.width;
     var height = screenSize.height;
-    // ----------------------------- snapshot lists ---------------------------------//
-   var _availableMfrsList = Provider.of<List<AvailableMfrs>>(context);
-//    var _pendingEmergenciesList = Provider.of<List<PendingEmergencyModel>>(context);
-//    var _onGoingEmergenciesList = Provider.of<List<OngoingEmergencyModel>>(context);
-  if(_availableMfrsList != null) {_availableMfrsList.forEach((mfr){print("-------------------------${mfr.name}");});}
-//    _addAvailableMfrsMarker(_availableMfrsList);
-//    _addPendingEmergenciesMarker(_pendingEmergenciesList);
-//    _addOnGoingEmergenciesMarker(_onGoingEmergenciesList);
+
+
     return MaterialApp(
       home: Scaffold(
-          appBar: AppBar(
-            backgroundColor: const Color(0xff142850),
-            title: Text(
-              'Map',
-              style: TextStyle(
-                fontFamily: 'HelveticaNeueLight',
-                letterSpacing: 2.0,
-                fontSize: 24,
+        body: Stack(
+          children: <Widget>[
+            GoogleMap(
+              onMapCreated: _onMapCreated,
+              initialCameraPosition: CameraPosition(
+                target: _loc,
+                zoom: 11.0,
               ),
+              mapType: _currentMapType,
+              markers:  Set<Marker>.of(allMarkers.values),
+              onCameraMove: _onCameraMove,
             ),
-            centerTitle: true,
-            leading: new IconButton(
-              icon: new Icon(
-                Icons.arrow_back,
-                color: Colors.white,
+            (_mapLoading)
+                ? Container(
+              height: height,
+              width: width,
+              color: Colors.grey[100],
+              child: Center(
+                child: CircularProgressIndicator(),
               ),
-              onPressed: () => Navigator.of(context).pop(),
-            ),
-          ),
-          body: Stack(
-            children: <Widget>[
-              GoogleMap(
-                onMapCreated: _onMapCreated,
-                initialCameraPosition: CameraPosition(
-                  target: _loc,
-                  zoom: 11.0,
-                ),
-                mapType: _currentMapType,
-                markers:  Set.from(allMarkers),
-                onCameraMove: _onCameraMove,
-              ),
-            ],
-          ),
+            )
+                : Container(),
+          ],
+        ),
         floatingActionButton: Column(
             children: <Widget>[
-              SizedBox(height: height*0.16),
+              SizedBox(height: height*0.03),
               FloatingActionButton(
-                child: Icon(Icons.map),
-                onPressed: (){
-                  _onMapTypeButtonPressed();
-                },
+                  child: Icon(Icons.map),
+                  onPressed: (){
+                    _onMapTypeButtonPressed();
+                  },
+                  backgroundColor: const Color(0xff47719e)
               ),
-              SizedBox(height: height/1.8),
+              SizedBox(height: height/2.3),
               FloatingActionButton(
-                child: Icon(Icons.add),
-                onPressed: (){
-                  zoomIn();
-                },
+                  child: Icon(Icons.add),
+                  onPressed: (){
+                    zoomIn();
+                  },
+                  backgroundColor: const Color(0xff47719e)
               ),
               SizedBox(height: 10),
               FloatingActionButton(
@@ -107,9 +138,8 @@ class MapStateOPS extends State<MapOPS> {
                 onPressed: (){
                   zoomOut();
                 },
+                backgroundColor: const Color(0xff47719e),
               ),
-
-
             ]
         ),
       ),
@@ -117,134 +147,132 @@ class MapStateOPS extends State<MapOPS> {
   }
 
 
-  _addOnGoingEmergenciesMarker(_onGoingEmergenciesList){
-    for(var x = 0; x < _onGoingEmergenciesList.length; x++) {
-      GeoPoint location = _onGoingEmergenciesList[x].location;
-      String rollNumber = _onGoingEmergenciesList[x].patientRollNo;
-      String assignedMFR = _onGoingEmergenciesList[x].mfr;
-      String severity = _onGoingEmergenciesList[x].severity;
-
-      allMarkers.add(
-          Marker(
-            markerId: MarkerId(location.toString()),
-            position: LatLng(location.latitude, location.longitude),
-            onTap: () {
-              print('Roll Number: ');
-              print(rollNumber);
-              print('\nSeverity: ');
-              print(severity);
-              print('\nAssigned MFR: ');
-              print(assignedMFR);
-            },
-            icon: BitmapDescriptor.fromAsset("images/cross.png"),
-          )
+  void _addOnGoingEmergenciesMarker(_onGoingEmergenciesList) async {
+    if (_onGoingEmergenciesList != null && _onGoingEmergenciesList.length != 0) {
+      _onGoingEmergenciesList.forEach((EM){
+        GeoPoint location = EM.location;
+        String rollNumber = EM.patientRollNo;
+        String severity = EM.severity;
+        var markerIdVal = allMarkers.length + 1;
+        String mar = markerIdVal.toString();
+        final MarkerId markerId = MarkerId(mar);
+        final Marker marker =
+        Marker(
+          markerId: markerId,
+          position: LatLng(location.latitude, location.longitude),
+          icon: EmergencyLocationIconBlue,
+        );
+        setState(() {
+          allMarkers[markerId] = marker;
+        });
+      }
       );
     }
   }
 
 
-  _addPendingEmergenciesMarker(_pendingEmergenciesList){
-    for(var x = 0; x < _pendingEmergenciesList.length; x++) {
-      GeoPoint location = _pendingEmergenciesList[x].location;
-      String rollNumber = _pendingEmergenciesList[x].patientRollNo;
-      String severity = _pendingEmergenciesList.severity;
-
-      allMarkers.add(
-          Marker(
-            markerId: MarkerId(location.toString()),
-            position: LatLng(location.latitude, location.longitude),
-            onTap: () {
-              print('Roll Number: ');
-              print(rollNumber);
-              print('\nSeverity: ');
-              print(severity);
-              print('PLEASE ASSIGN AN MFR.');
-              // todo: assign MFR option
-            },
-            icon: BitmapDescriptor.fromAsset("images/cross.png"),
-          )
+  void _addPendingEmergenciesMarker(_pendingEmergenciesList){
+    if (_pendingEmergenciesList != null && _pendingEmergenciesList.length != 0) {
+      _pendingEmergenciesList.forEach((EM){
+        GeoPoint location = EM.location;
+        String rollNumber = EM.patientRollNo;
+        String severity = EM.severity;
+        var markerIdVal = allMarkers.length + 1;
+        String mar = markerIdVal.toString();
+        final MarkerId markerId = MarkerId(mar);
+        final Marker marker =
+        Marker(
+          markerId: markerId,
+          position: LatLng(location.latitude, location.longitude),
+          onTap: () {
+            print('Roll Number: ');
+            print(rollNumber);
+            print('\nSeverity: ');
+            print(severity);
+            print('PLEASE ASSIGN AN MFR.');
+            // todo: assign MFR option
+          },
+          icon: EmergencyLocationIconRed,
+        );
+        setState(() {
+          allMarkers[markerId] = marker;
+        });
+      }
       );
     }
   }
 
 
-  _addAvailableMfrsMarker(_availableMfrsList) {
-    for (var x = 0; x < _availableMfrsList.length; x++) {
-      GeoPoint location = _availableMfrsList[x].location;
-      String name = _availableMfrsList[x].name;
-      String gender = _availableMfrsList[x].gender;
+  void _addAvailableMfrsMarker(_availableMfrsList) {
+    print('hmmmm:(');
+    if (_availableMfrsList != null && _availableMfrsList.length != 0) {
+      print('here lol444');
+      _availableMfrsList.forEach((MFR) {
+        GeoPoint location = MFR.location;
+        String name = MFR.name;
+        String contact = MFR.contact;
+        bool busy = _availableMfrsList.isOccupied;
+        var markerIdVal = allMarkers.length + 1;
+        String mar = markerIdVal.toString();
+        final MarkerId markerId = MarkerId(mar);
+        print(busy);
+        if (busy) {
+          final Marker marker =
+          Marker(
+            markerId: markerId,
+            position: LatLng(location.latitude, location.longitude),
+            icon: RedMFR,
+//              infoWindow: InfoWindow( title: name, snippet: rollNumber)
 
-      bool busy = _availableMfrsList.isOccupied;
 
-      if (busy == 1) {
-        allMarkers.add(
-            Marker(
-              markerId: MarkerId(location.toString()),
-              position: LatLng(location.latitude, location.longitude),
-              onTap: () {
-                print('Name: ');
-                print(name);
-                print('\nGender: ');
-                print(gender);
-              },
-              icon:  BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueBlue)
-            )
-        );
-      }
-      else {
-        allMarkers.add(
-            Marker(
-              markerId: MarkerId(location.toString()),
-              position: LatLng(location.latitude, location.longitude),
-              onTap: () {
-                print('Name: ');
-                print(name);
-                print('\nGender: ');
-                print(gender);
-              },
-            )
-        );
-      }
+          );
+          setState(() {
+            allMarkers[markerId] = marker;
+          });
+        }
+        else if(!busy) {
+          print('lol');
+          final Marker marker =
+          Marker(
+            markerId: markerId,
+            position: LatLng(location.latitude, location.longitude),
+            onTap: (){
+              print('hmmm');
+            },
+            icon: BlueMFR,
+          );
+          setState(() {
+            allMarkers[markerId] = marker;
+          });
+        }
+      });
     }
   }
 
   _onMapCreated(GoogleMapController controller){
     _controller=controller;
+    this.setState(() => _mapLoading = false);
+    _addAvailableMfrsMarker(_availableMfrsList);
+    _addPendingEmergenciesMarker(_pendingEmergenciesList);
+    _addOnGoingEmergenciesMarker(_onGoingEmergenciesList);
   }
 
   _onCameraMove(CameraPosition position){
     _lastMapPosition = position.target;
   }
 
-
+//
   void zoomIn() async {
-    Zoom = Zoom*1.25;
     _controller.animateCamera(
-        CameraUpdate.newCameraPosition(
-            new CameraPosition(
-                bearing: 192,
-                target: LatLng(currLoc.latitude, currLoc.longitude),
-                tilt: 0,
-                zoom: Zoom
-            )
-        )
+      CameraUpdate.zoomIn(),
     );
   }
 
   void zoomOut() async {
-    Zoom = Zoom*0.75;
     _controller.animateCamera(
-        CameraUpdate.newCameraPosition(
-            new CameraPosition(
-                bearing: 192,
-                target: LatLng(currLoc.latitude, currLoc.longitude),
-                tilt: 0,
-                zoom: Zoom
-            )
-        )
+      CameraUpdate.zoomOut(),
     );
   }
-
 
 
 

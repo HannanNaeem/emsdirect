@@ -563,7 +563,6 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
                                               locationOfEmergency,
                                               patientContactNo)));
                                 }
-                                //
                               }),
                       Center(
                         child: Text(
