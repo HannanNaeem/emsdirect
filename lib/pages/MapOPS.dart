@@ -10,7 +10,6 @@ class MapOPS extends StatefulWidget {
   MapOPS() : super();
   @override
   MapStateOPS createState() => new MapStateOPS();
-
 }
 
 class MapStateOPS extends State<MapOPS> {
@@ -251,10 +250,10 @@ class MapStateOPS extends State<MapOPS> {
 
   _onMapCreated(GoogleMapController controller){
     _controller=controller;
-    this.setState(() => _mapLoading = false);
     _addAvailableMfrsMarker(_availableMfrsList);
     _addPendingEmergenciesMarker(_pendingEmergenciesList);
     _addOnGoingEmergenciesMarker(_onGoingEmergenciesList);
+    this.setState(() => _mapLoading = false);
   }
 
   _onCameraMove(CameraPosition position){
