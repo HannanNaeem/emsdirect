@@ -20,6 +20,7 @@ class MapMFR extends StatefulWidget {
 class MapState extends State<MapMFR> {
   GeoPoint _locationOfEmergency;
   String contactNumber = '';
+  bool _mapLoading = true;
   Map<MarkerId, Marker> emergencyMarker = <MarkerId, Marker>{};
 
   MapState(GeoPoint location, String number) {
@@ -55,6 +56,7 @@ class MapState extends State<MapMFR> {
       emergencyMarker[markerId] = marker;
     });
     getCurrentLocaion();
+    this.setState(() => _mapLoading = false);
   }
 
   _onCameraMove(CameraPosition position) {
@@ -184,6 +186,16 @@ class MapState extends State<MapMFR> {
               markers: Set<Marker>.of(emergencyMarker.values),
               onCameraMove: _onCameraMove,
             ),
+            (_mapLoading)
+                ? Container(
+              height: height,
+              width: width,
+              color: Colors.grey[100],
+              child: Center(
+                child: CircularProgressIndicator(),
+              ),
+            )
+                : Container(),
             Padding(
                 padding: EdgeInsets.fromLTRB(
                     width * 0.14, height * 0.034, width * 0.1, 10.0),
@@ -228,9 +240,8 @@ class MapState extends State<MapMFR> {
                                           color: const Color(0xff1a832a),
                                         ),
                                       ),
-                                      onPressed: () async {
-                                        Navigator.pushReplacementNamed(
-                                            context, '/MFR_home');
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
                                         Navigator.of(context).pop();
 //                                        todo: occupied status change
                                       },
@@ -273,6 +284,7 @@ class MapState extends State<MapMFR> {
         floatingActionButton: Column(children: <Widget>[
           SizedBox(height: height * 0.16),
           FloatingActionButton(
+              heroTag: "btn1",
               child: Icon(Icons.map),
               onPressed: () {
                 _onMapTypeButtonPressed();
@@ -280,6 +292,7 @@ class MapState extends State<MapMFR> {
               backgroundColor: const Color(0xff47719e)),
           SizedBox(height: height / 2.2),
           FloatingActionButton(
+              heroTag: "btn2",
               child: Icon(Icons.add),
               onPressed: () {
                 zoomIn();
@@ -287,6 +300,7 @@ class MapState extends State<MapMFR> {
               backgroundColor: const Color(0xff47719e)),
           SizedBox(height: 10),
           FloatingActionButton(
+              heroTag: "btn3",
               child: Icon(Icons.remove),
               onPressed: () {
                 zoomOut();

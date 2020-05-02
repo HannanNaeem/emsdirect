@@ -1,13 +1,17 @@
-import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ems_direct/models/emergency_models.dart';
+import 'package:flutter/material.dart';
+import 'dart:async';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
-import 'package:location/location.dart';
+import 'package:ems_direct/pages/ManualAssignment.dart';
 import 'package:flutter/services.dart';
+import 'package:location/location.dart';
 
 class MapOPS extends StatefulWidget {
   MapOPS() : super();
+  final String title = "Map";
+
   @override
   MapStateOPS createState() => new MapStateOPS();
 
@@ -19,22 +23,22 @@ class MapStateOPS extends State<MapOPS> {
   LatLng currLoc = _loc;
   static Location _locationTracker = Location();
   static var Zoom = 11.0;
-  Map<MarkerId, Marker> allMarkers = <MarkerId, Marker>{};
-  LatLng _lastMapPosition = _loc;
-  MapType _currentMapType = MapType.normal;
+  bool _mapLoading = true;
   var _availableMfrsList;
   var _pendingEmergenciesList;
   var _onGoingEmergenciesList;
-  bool _mapLoading = true;
+  Map<MarkerId, Marker> allMarkers = <MarkerId, Marker>{};
   var EmergencyLocationIconRed = BitmapDescriptor.fromAsset(
       'assets/redcross.png');
   var EmergencyLocationIconBlue = BitmapDescriptor.fromAsset(
       'assets/bluecross.png');
   var RedMFR = BitmapDescriptor.fromAsset('assets/MFR_red.png');
   var BlueMFR = BitmapDescriptor.fromAsset('assets/MFR_blue.png');
+  LatLng _lastMapPosition = _loc;
+  MapType _currentMapType = MapType.normal;
   static final CameraPosition _position1 = CameraPosition(
     bearing: 192.833,
-    target: LatLng(31.4700, 74.4111),
+    target: LatLng(45.531563, -122.677433),
     tilt: 59.440,
     zoom: 11.0,
   );
@@ -46,6 +50,9 @@ class MapStateOPS extends State<MapOPS> {
           : MapType.normal;
     });
   }
+
+
+
   void getCurrentLocaion() async {
     try {
       var location = await _locationTracker.getLocation();
@@ -86,8 +93,13 @@ class MapStateOPS extends State<MapOPS> {
     var screenSize = MediaQuery.of(context).size;
     var width = screenSize.width;
     var height = screenSize.height;
+  if(_availableMfrsList != null) {_availableMfrsList.forEach((mfr){print("-------------------------${mfr.name}");});}
 
-
+    Timer(Duration(seconds: 1), () {
+      _addPendingEmergenciesMarker(_pendingEmergenciesList);
+      _addAvailableMfrsMarker(_availableMfrsList);
+      _addOnGoingEmergenciesMarker(_onGoingEmergenciesList);
+    });
     return MaterialApp(
       home: Scaffold(
         body: Stack(
@@ -118,6 +130,7 @@ class MapStateOPS extends State<MapOPS> {
             children: <Widget>[
               SizedBox(height: height*0.03),
               FloatingActionButton(
+                  heroTag: "btn1",
                   child: Icon(Icons.map),
                   onPressed: (){
                     _onMapTypeButtonPressed();
@@ -126,6 +139,7 @@ class MapStateOPS extends State<MapOPS> {
               ),
               SizedBox(height: height/2.3),
               FloatingActionButton(
+                  heroTag: "btn2",
                   child: Icon(Icons.add),
                   onPressed: (){
                     zoomIn();
@@ -134,12 +148,15 @@ class MapStateOPS extends State<MapOPS> {
               ),
               SizedBox(height: 10),
               FloatingActionButton(
+                heroTag: "btn3",
                 child: Icon(Icons.remove),
                 onPressed: (){
                   zoomOut();
                 },
                 backgroundColor: const Color(0xff47719e),
               ),
+
+
             ]
         ),
       ),
@@ -147,12 +164,12 @@ class MapStateOPS extends State<MapOPS> {
   }
 
 
-  void _addOnGoingEmergenciesMarker(_onGoingEmergenciesList) async {
+  void _addOnGoingEmergenciesMarker(_onGoingEmergenciesList) {
     if (_onGoingEmergenciesList != null && _onGoingEmergenciesList.length != 0) {
       _onGoingEmergenciesList.forEach((EM){
         GeoPoint location = EM.location;
         String rollNumber = EM.patientRollNo;
-        String severity = EM.severity;
+        String mfrAssigned = EM.mfr;
         var markerIdVal = allMarkers.length + 1;
         String mar = markerIdVal.toString();
         final MarkerId markerId = MarkerId(mar);
@@ -161,6 +178,10 @@ class MapStateOPS extends State<MapOPS> {
           markerId: markerId,
           position: LatLng(location.latitude, location.longitude),
           icon: EmergencyLocationIconBlue,
+          infoWindow: InfoWindow(
+            title: rollNumber,
+            snippet: mfrAssigned
+          ),
         );
         setState(() {
           allMarkers[markerId] = marker;
@@ -172,11 +193,11 @@ class MapStateOPS extends State<MapOPS> {
 
 
   void _addPendingEmergenciesMarker(_pendingEmergenciesList){
+    debugPrint("PENDING EMERGENCIES");
     if (_pendingEmergenciesList != null && _pendingEmergenciesList.length != 0) {
       _pendingEmergenciesList.forEach((EM){
+        debugPrint("PENDING EMERGENCIES");
         GeoPoint location = EM.location;
-        String rollNumber = EM.patientRollNo;
-        String severity = EM.severity;
         var markerIdVal = allMarkers.length + 1;
         String mar = markerIdVal.toString();
         final MarkerId markerId = MarkerId(mar);
@@ -185,12 +206,14 @@ class MapStateOPS extends State<MapOPS> {
           markerId: markerId,
           position: LatLng(location.latitude, location.longitude),
           onTap: () {
-            print('Roll Number: ');
-            print(rollNumber);
-            print('\nSeverity: ');
-            print(severity);
-            print('PLEASE ASSIGN AN MFR.');
-            // todo: assign MFR option
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => ManualAssignment(
+                      EM
+                    )
+                )
+            );
           },
           icon: EmergencyLocationIconRed,
         );
@@ -251,10 +274,7 @@ class MapStateOPS extends State<MapOPS> {
 
   _onMapCreated(GoogleMapController controller){
     _controller=controller;
-    this.setState(() => _mapLoading = false);
-    _addAvailableMfrsMarker(_availableMfrsList);
-    _addPendingEmergenciesMarker(_pendingEmergenciesList);
-    _addOnGoingEmergenciesMarker(_onGoingEmergenciesList);
+    setState(() => _mapLoading = false);
   }
 
   _onCameraMove(CameraPosition position){
@@ -263,16 +283,19 @@ class MapStateOPS extends State<MapOPS> {
 
 //
   void zoomIn() async {
+    Zoom = Zoom*1.25;
     _controller.animateCamera(
       CameraUpdate.zoomIn(),
     );
   }
 
   void zoomOut() async {
+    Zoom = Zoom*0.75;
     _controller.animateCamera(
       CameraUpdate.zoomOut(),
     );
   }
+
 
 
 

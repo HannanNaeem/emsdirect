@@ -9,7 +9,7 @@ class OpsDatabaseService {
   final CollectionReference pendingEmergencies =
       Firestore.instance.collection('PendingEmergencies');
   final CollectionReference availableMfrs =
-      Firestore.instance.collection('Mfrs');
+      Firestore.instance.collection('Mfr');
 
   //Declined emergency list from snapshot
   List<DeclinedEmergencyModel> _declinedEmergencyListFromSnapshot(
