@@ -7,13 +7,13 @@ import 'package:ems_direct/pages/live_status.dart';
 
 class StudentHome extends StatefulWidget {
 
-  bool _keepSignedIn = false;
   var _userData;
   StudentHome(bool keepSignedIn, var userData){
     _keepSignedIn = keepSignedIn;
     _userData = userData;
   }
 
+  bool _keepSignedIn = false;
   @override
   _StudentHomeState createState() => _StudentHomeState(_keepSignedIn,_userData);
 }
@@ -118,6 +118,16 @@ class _StudentHomeState extends State<StudentHome> with WidgetsBindingObserver {
       'loggedInAs': 'emergency'
     });
   }
+
+  //function to set user collection to not emergency
+  void _setNotEmergency() async{
+    await databaseReference
+        .collection("UserData")
+        .document((await uid).toString())
+        .updateData({
+      'loggedInAs': ''
+    });
+  }
   /////////////////////////////////////////////////////////////////
 
   @override
@@ -125,6 +135,8 @@ class _StudentHomeState extends State<StudentHome> with WidgetsBindingObserver {
     var screenSize = MediaQuery.of(context).size;
     var width = screenSize.width;
     var height = screenSize.height;
+
+    _setNotEmergency();
 
     return Scaffold(
         backgroundColor: const Color(0xff27496d),
@@ -290,7 +302,7 @@ class _StudentHomeState extends State<StudentHome> with WidgetsBindingObserver {
                                           ),
                                           onPressed: () async {
                                             //navigation to login screen
-                                            //! signout here                                        
+                                            //! signout here
                                             await _authStudent.logOut();
                                             Navigator.of(context).pop();
                                             Navigator.pushReplacementNamed(
@@ -498,10 +510,10 @@ class _StudentHomeState extends State<StudentHome> with WidgetsBindingObserver {
                     onLongPress: () {
                       _createPendingEmergencyDocument(_geoLocation, _genderPreferences[_gender], _severityLevels[_severityLevel],  _userData.data['rollNo'].toString(),  _userData.data['contact'].toString(), DateTime.now());
                       _updateUserData();
-                      Navigator.push(
+                      Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => LiveStatus(_userData)
+                              builder: (context) => LiveStatus(_keepSignedIn,_userData)
                           )
                       );
                       print("emergency initiated");

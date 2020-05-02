@@ -52,12 +52,12 @@ class _NotificationsState extends State<Notifications> {
     List<NotificationItem> _notificationList = [];
     //Daisy chain to build notifications
     int divider1 = 0;
-    if(_declinedEmergenciesList != null)
+    if(_severeEmergenciesList != null)
     {
       _notificationList = _listToNotificationData(_severeEmergenciesList, "Severe Emergency!");
       divider1++;
     }
-    if(_severeEmergenciesList != null)
+    if(_declinedEmergenciesList!= null)
     {
        _notificationList.addAll(_listToNotificationData(_declinedEmergenciesList, "Ignored Emergency!"));
     }
@@ -83,9 +83,7 @@ class _NotificationsState extends State<Notifications> {
         return "A severe emergency has been initiated! Please manually assign a MFR via Map\n Severity: ${item.severity}\n\n Patient Details:\n  ${item.patientRollNo}\n  ${item.patientContactNo}";
     }
 
-
-    TimeOfDay timeOfDay = TimeOfDay.fromDateTime(DateTime.now());
-    String res = timeOfDay.format(context);
+  
 
     return Scaffold(
       backgroundColor: const Color(0xff27496d),
@@ -97,7 +95,7 @@ class _NotificationsState extends State<Notifications> {
             
             Expanded(
               child: ListView.builder(
-                itemCount: _notificationList.length,
+                itemCount: _notificationList == null ? 0 : _notificationList.length,
                 itemBuilder: (context, index) {
 
 

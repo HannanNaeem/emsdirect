@@ -9,7 +9,7 @@ class OpsDatabaseService {
   final CollectionReference pendingEmergencies =
       Firestore.instance.collection('PendingEmergencies');
   final CollectionReference availableMfrs =
-      Firestore.instance.collection('Mfrs');
+      Firestore.instance.collection('Mfr');
 
   //Declined emergency list from snapshot
   List<DeclinedEmergencyModel> _declinedEmergencyListFromSnapshot(
@@ -121,9 +121,20 @@ class OpsDatabaseService {
   //get available mfrs
   Stream<List<AvailableMfrs>> get availableMfrStream {
     return availableMfrs
-        .where('isActive', isEqualTo: true)
-        .where('isOccupied', isEqualTo: false)
+        .where('isActive', isEqualTo: 1)
+        .where('isOccupied', isEqualTo: 0)
         .snapshots()
         .map(_availableMfrsListFromSnapshot);
   }
+
+
+  // streams needed for student
+  Stream<List<PendingEmergencyModel>> studentPendingStream(String rollNo){
+    return pendingEmergencies.where('patientRollNo', isEqualTo: rollNo).snapshots().map(_pendingEmergencyListFromSnapshot);
+  }
+
+  Stream<List<OngoingEmergencyModel>> studentOnGoingStream(String rollNo){
+    return onGoingEmergencies.where('patientRollNo', isEqualTo: rollNo).snapshots().map(_onGoingEmergencyListFromSnapshot);
+  }
+
 }

@@ -1,42 +1,44 @@
-import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ems_direct/models/emergency_models.dart';
+import 'package:flutter/material.dart';
+import 'dart:async';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
-import 'package:location/location.dart';
-import 'package:flutter/services.dart';
 import 'package:ems_direct/pages/ManualAssignment.dart';
-import 'dart:async';
+import 'package:flutter/services.dart';
+import 'package:location/location.dart';
 
 class MapOPS extends StatefulWidget {
   MapOPS() : super();
+  final String title = "Map";
+
   @override
   MapStateOPS createState() => new MapStateOPS();
+
 }
 
 class MapStateOPS extends State<MapOPS> {
-
   GoogleMapController _controller;
   static const LatLng _loc = const LatLng(31.4700, 74.4111);
   LatLng currLoc = _loc;
   static Location _locationTracker = Location();
   static var Zoom = 11.0;
-  Map<MarkerId, Marker> allMarkers = <MarkerId, Marker>{};
-  LatLng _lastMapPosition = _loc;
-  MapType _currentMapType = MapType.normal;
+  bool _mapLoading = true;
   var _availableMfrsList;
   var _pendingEmergenciesList;
   var _onGoingEmergenciesList;
-  bool _mapLoading = true;
+  Map<MarkerId, Marker> allMarkers = <MarkerId, Marker>{};
   var EmergencyLocationIconRed = BitmapDescriptor.fromAsset(
       'assets/redcross.png');
   var EmergencyLocationIconBlue = BitmapDescriptor.fromAsset(
       'assets/bluecross.png');
   var RedMFR = BitmapDescriptor.fromAsset('assets/MFR_red.png');
   var BlueMFR = BitmapDescriptor.fromAsset('assets/MFR_blue.png');
+  LatLng _lastMapPosition = _loc;
+  MapType _currentMapType = MapType.normal;
   static final CameraPosition _position1 = CameraPosition(
     bearing: 192.833,
-    target: LatLng(31.4700, 74.4111),
+    target: LatLng(45.531563, -122.677433),
     tilt: 59.440,
     zoom: 11.0,
   );
@@ -91,6 +93,7 @@ class MapStateOPS extends State<MapOPS> {
     var screenSize = MediaQuery.of(context).size;
     var width = screenSize.width;
     var height = screenSize.height;
+  if(_availableMfrsList != null) {_availableMfrsList.forEach((mfr){print("-------------------------${mfr.name}");});}
 
     Timer(Duration(seconds: 1), () {
       _addPendingEmergenciesMarker(_pendingEmergenciesList);
@@ -152,6 +155,8 @@ class MapStateOPS extends State<MapOPS> {
                 },
                 backgroundColor: const Color(0xff47719e),
               ),
+
+
             ]
         ),
       ),
@@ -278,16 +283,19 @@ class MapStateOPS extends State<MapOPS> {
 
 //
   void zoomIn() async {
+    Zoom = Zoom*1.25;
     _controller.animateCamera(
       CameraUpdate.zoomIn(),
     );
   }
 
   void zoomOut() async {
+    Zoom = Zoom*0.75;
     _controller.animateCamera(
       CameraUpdate.zoomOut(),
     );
   }
+
 
 
 
