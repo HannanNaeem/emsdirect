@@ -327,6 +327,21 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
                   //print('Emergency numbers');
                 },
               ),
+              ListTile(
+                //the option to view emergency numbers - takes you to dummy page
+                title: Text(
+                  'Avaiable MFRs',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontFamily: 'HelveticaNeueLight',
+                    letterSpacing: 2.0,
+                  ),
+                ),
+                onTap: () {
+                  Navigator.of(context).pushNamed('/availableMfrs');
+                  //print('Emergency numbers');
+                },
+              ),
               Expanded(
                 //the option to logout (bottom center aligned)
                 child: Align(
