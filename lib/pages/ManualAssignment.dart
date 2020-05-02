@@ -2,6 +2,9 @@ import 'package:ems_direct/models/emergency_models.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'MfrInformation.dart';
+import 'dart:async';
+import 'package:flutter/services.dart';
+
 
 class ManualAssignment extends StatefulWidget {
   var _emergencyInformation;
@@ -19,12 +22,14 @@ class ManualAssignmentState extends State<ManualAssignment> {
   ManualAssignmentState(var EmergencyInformation) {
     _emergencyInformation = EmergencyInformation;
   }
-
+  @override
   Widget build(BuildContext context) {
+    var _availableMfrsList = Provider.of<List<AvailableMfrs>>(context);
+
     var screenSize = MediaQuery.of(context).size;
     var width = screenSize.width;
     var height = screenSize.height;
-    var _availableMfrsList = Provider.of<List<AvailableMfrs>>(context);
+
 
     return MaterialApp(
         home: Scaffold(
