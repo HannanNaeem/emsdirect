@@ -22,9 +22,7 @@ class CloudMessagingService {
       onResume: (Map<String,dynamic> message) async {
         print('onMessage: $message');
       },
-      onBackgroundMessage: (Map<String,dynamic> message) async {
-        print('onMessage: $message');
-      },
+
     );
   }
 
