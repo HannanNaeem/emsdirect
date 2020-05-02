@@ -18,65 +18,62 @@ class _EmergencyNumberCardState extends State<EmergencyNumberCard> {
 
   @override
   Widget build(BuildContext context) {
-    Color color = Colors.red;
-
     return Card(
       elevation: 6,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Flexible(
-            flex: 1,
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Padding(
-                  padding: EdgeInsets.fromLTRB(6, 28, 0, 20),
-                  child: Icon(
-                    Icons.fiber_manual_record,
-                    color: color,
-                    size: 15,
-                  ),
-                ),
-                Expanded(
-                  flex: 1,
-                  child: Padding(
-                    padding: EdgeInsets.fromLTRB(10, 24, 0, 20),
-                    child: Container(                     
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: <Widget>[
-                          Text(                        
-                            widget.name,
-                            style: TextStyle(
-                              color: const Color(0xffee0000),
-                              fontSize: 20,
-                              fontFamily: 'HelveticaNeueLight',
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(right: 10),
-                            child: Text(
-                              widget.contact,
-                              style: TextStyle(
-                                color: const Color(0xff142850),
-                                fontSize: 18,
-                                fontFamily: 'HelveticaNeueLight',
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
+      child: ListTile(
+        title: Text(
+          widget.name,
+          style: TextStyle(
+            letterSpacing: 2.0,
+            fontFamily: 'HelveticaNeueLight',
+            color: Color(0xff142850),
+          )
+        ),
+        subtitle: Text(
+          widget.contact,
+          style: TextStyle(
+            letterSpacing: 2.0,
+            fontFamily: 'HelveticaNeueLight',
+          )
+        ),
       ),
     );
   }
 }
+
+
+
+class EmergencyNumbersData {
+
+  static final data = [
+    {
+      'name': 'EMS-1',
+      'contact': '03000000000',
+    },
+    {
+      'name': 'EMS-2',
+      'contact': '03000000000',
+    },
+    {
+      'name': 'EMS-3',
+      'contact': '03000000000',
+    },
+    {
+      'name': 'EMS-4',
+      'contact': '03000000000',
+    },
+    {
+      'name': 'LUMS',
+      'contact': '03000000000',
+    },
+    {
+      'name': 'HAWC',
+      'contact': '03000000000',
+    },
+       {
+      'name': 'LUMS Security Desk',
+      'contact': '03000000000',
+    },
+  ];
+}
+
