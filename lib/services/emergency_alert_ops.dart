@@ -1,4 +1,5 @@
 import 'package:ems_direct/ops.dart';
+import 'package:ems_direct/services/push_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:ems_direct/models/emergency_models.dart';
@@ -16,6 +17,17 @@ class AlertOps extends StatefulWidget {
 
 class _AlertOpsState extends State<AlertOps> {
   
+    //! -------- Cloud messaging for notifications ------------------------- //
+
+  final CloudMessagingService _notificationService = CloudMessagingService();
+
+  @override
+  void initState(){
+    super.initState();
+    
+    _notificationService.getToken();
+    _notificationService.configureFirebaseListeners();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -25,6 +37,9 @@ class _AlertOpsState extends State<AlertOps> {
     var _height = screenSize.height;
     var _declinedEmergencyList = Provider.of<List<DeclinedEmergencyModel>>(context);
     var _severeEmergencyList = Provider.of<List<SevereEmergencyModel>>(context);
+
+
+
     
     //! -------------------------------------- Alert for severe emergencies --------------------------------//
 
