@@ -164,7 +164,7 @@ class MapStateOPS extends State<MapOPS> {
       _onGoingEmergenciesList.forEach((EM){
         GeoPoint location = EM.location;
         String rollNumber = EM.patientRollNo;
-        String severity = EM.severity;
+        String mfrAssigned = EM.mfr;
         var markerIdVal = allMarkers.length + 1;
         String mar = markerIdVal.toString();
         final MarkerId markerId = MarkerId(mar);
@@ -173,6 +173,10 @@ class MapStateOPS extends State<MapOPS> {
           markerId: markerId,
           position: LatLng(location.latitude, location.longitude),
           icon: EmergencyLocationIconBlue,
+          infoWindow: InfoWindow(
+            title: rollNumber,
+            snippet: mfrAssigned
+          ),
         );
         setState(() {
           allMarkers[markerId] = marker;
@@ -189,8 +193,6 @@ class MapStateOPS extends State<MapOPS> {
       _pendingEmergenciesList.forEach((EM){
         debugPrint("PENDING EMERGENCIES");
         GeoPoint location = EM.location;
-        String rollNumber = EM.patientRollNo;
-        String severity = EM.severity;
         var markerIdVal = allMarkers.length + 1;
         String mar = markerIdVal.toString();
         final MarkerId markerId = MarkerId(mar);
