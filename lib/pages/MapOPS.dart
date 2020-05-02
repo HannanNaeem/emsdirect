@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
-import 'package:ems_direct/pages/ManualAssignment.dart';
+import 'package:ems_direct/services/ops_manual_assignment_wrapper.dart';
 import 'package:flutter/services.dart';
 import 'package:location/location.dart';
 
@@ -93,9 +93,10 @@ class MapStateOPS extends State<MapOPS> {
     var screenSize = MediaQuery.of(context).size;
     var width = screenSize.width;
     var height = screenSize.height;
-  if(_availableMfrsList != null) {_availableMfrsList.forEach((mfr){print("-------------------------${mfr.name}");});}
+    if(_availableMfrsList != null) {_availableMfrsList.forEach((mfr){print("-------------------------${mfr.name}");});}
 
     Timer(Duration(seconds: 1), () {
+      allMarkers = <MarkerId, Marker>{};
       _addPendingEmergenciesMarker(_pendingEmergenciesList);
       _addAvailableMfrsMarker(_availableMfrsList);
       _addOnGoingEmergenciesMarker(_onGoingEmergenciesList);
@@ -169,7 +170,7 @@ class MapStateOPS extends State<MapOPS> {
       _onGoingEmergenciesList.forEach((EM){
         GeoPoint location = EM.location;
         String rollNumber = EM.patientRollNo;
-        String mfrAssigned = EM.mfr;
+        String contact = EM.patientContactNo;
         var markerIdVal = allMarkers.length + 1;
         String mar = markerIdVal.toString();
         final MarkerId markerId = MarkerId(mar);
@@ -180,7 +181,7 @@ class MapStateOPS extends State<MapOPS> {
           icon: EmergencyLocationIconBlue,
           infoWindow: InfoWindow(
             title: rollNumber,
-            snippet: mfrAssigned
+            snippet: contact
           ),
         );
         setState(() {
@@ -198,6 +199,8 @@ class MapStateOPS extends State<MapOPS> {
       _pendingEmergenciesList.forEach((EM){
         debugPrint("PENDING EMERGENCIES");
         GeoPoint location = EM.location;
+        String rollNumber = EM.patientRollNo;
+        String contact = EM.patientContactNo;
         var markerIdVal = allMarkers.length + 1;
         String mar = markerIdVal.toString();
         final MarkerId markerId = MarkerId(mar);
@@ -209,9 +212,7 @@ class MapStateOPS extends State<MapOPS> {
             Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => ManualAssignment(
-                      EM
-                    )
+                    builder: (context) => OpsManualAssignmentWrapper(EM)
                 )
             );
           },
@@ -233,8 +234,8 @@ class MapStateOPS extends State<MapOPS> {
       _availableMfrsList.forEach((MFR) {
         GeoPoint location = MFR.location;
         String name = MFR.name;
-        String contact = MFR.contact;
-        bool busy = _availableMfrsList.isOccupied;
+        String rollNo = MFR.rollNo;
+        bool busy = MFR.isOccupied;
         var markerIdVal = allMarkers.length + 1;
         String mar = markerIdVal.toString();
         final MarkerId markerId = MarkerId(mar);
@@ -262,6 +263,10 @@ class MapStateOPS extends State<MapOPS> {
             onTap: (){
               print('hmmm');
             },
+            infoWindow: InfoWindow(
+                title: name,
+                snippet: rollNo
+            ),
             icon: BlueMFR,
           );
           setState(() {

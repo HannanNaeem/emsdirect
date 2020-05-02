@@ -8,25 +8,41 @@ import 'package:location/location.dart';
 class MapMFR extends StatefulWidget {
   String _StudentContact = '';
   GeoPoint _locationOfEmergency;
-  MapMFR(GeoPoint locationOfEmergency, String patientContactNo) : super() {
+  String _rollNo;
+  MapMFR(GeoPoint locationOfEmergency, String patientContactNo, String rollNo) : super() {
     _StudentContact = patientContactNo;
     _locationOfEmergency = locationOfEmergency;
+    _rollNo = rollNo;
   }
 
   @override
-  MapState createState() => new MapState(_locationOfEmergency, _StudentContact);
+  MapState createState() => new MapState(_locationOfEmergency, _StudentContact, _rollNo);
 }
 
 class MapState extends State<MapMFR> {
   GeoPoint _locationOfEmergency;
   String contactNumber = '';
+  String _rollNo;
   bool _mapLoading = true;
   Map<MarkerId, Marker> emergencyMarker = <MarkerId, Marker>{};
+  final databaseReference = Firestore.instance;
 
-  MapState(GeoPoint location, String number) {
+  MapState(GeoPoint location, String number, String rollNo) {
     _locationOfEmergency = location;
     contactNumber = number;
+    _rollNo = rollNo;
   }
+
+
+  void _updateUserData(GeoPoint Newlocation) async{
+    await databaseReference
+        .collection("Mfr")
+        .document((await _rollNo).toString())
+        .updateData({
+      'location': Newlocation
+    });
+  }
+
 
   GoogleMapController _controller;
   static var Zoom = 11.0;
@@ -132,6 +148,8 @@ class MapState extends State<MapMFR> {
                   target: LatLng(newLocation.latitude, newLocation.longitude),
                   tilt: 0,
                   zoom: Zoom)));
+          GeoPoint NewGeoPoint = GeoPoint(newLocation.latitude, newLocation.longitude);
+          _updateUserData(NewGeoPoint);
           updateMarker(newLocation);
         }
       });
