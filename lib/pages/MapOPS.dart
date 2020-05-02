@@ -5,6 +5,8 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:location/location.dart';
 import 'package:flutter/services.dart';
+import 'package:ems_direct/pages/ManualAssignment.dart';
+import 'dart:async';
 
 class MapOPS extends StatefulWidget {
   MapOPS() : super();
@@ -13,6 +15,7 @@ class MapOPS extends StatefulWidget {
 }
 
 class MapStateOPS extends State<MapOPS> {
+
   GoogleMapController _controller;
   static const LatLng _loc = const LatLng(31.4700, 74.4111);
   LatLng currLoc = _loc;
@@ -45,6 +48,9 @@ class MapStateOPS extends State<MapOPS> {
           : MapType.normal;
     });
   }
+
+
+
   void getCurrentLocaion() async {
     try {
       var location = await _locationTracker.getLocation();
@@ -86,7 +92,11 @@ class MapStateOPS extends State<MapOPS> {
     var width = screenSize.width;
     var height = screenSize.height;
 
-
+    Timer(Duration(seconds: 1), () {
+      _addPendingEmergenciesMarker(_pendingEmergenciesList);
+      _addAvailableMfrsMarker(_availableMfrsList);
+      _addOnGoingEmergenciesMarker(_onGoingEmergenciesList);
+    });
     return MaterialApp(
       home: Scaffold(
         body: Stack(
@@ -117,6 +127,7 @@ class MapStateOPS extends State<MapOPS> {
             children: <Widget>[
               SizedBox(height: height*0.03),
               FloatingActionButton(
+                  heroTag: "btn1",
                   child: Icon(Icons.map),
                   onPressed: (){
                     _onMapTypeButtonPressed();
@@ -125,6 +136,7 @@ class MapStateOPS extends State<MapOPS> {
               ),
               SizedBox(height: height/2.3),
               FloatingActionButton(
+                  heroTag: "btn2",
                   child: Icon(Icons.add),
                   onPressed: (){
                     zoomIn();
@@ -133,6 +145,7 @@ class MapStateOPS extends State<MapOPS> {
               ),
               SizedBox(height: 10),
               FloatingActionButton(
+                heroTag: "btn3",
                 child: Icon(Icons.remove),
                 onPressed: (){
                   zoomOut();
@@ -146,7 +159,7 @@ class MapStateOPS extends State<MapOPS> {
   }
 
 
-  void _addOnGoingEmergenciesMarker(_onGoingEmergenciesList) async {
+  void _addOnGoingEmergenciesMarker(_onGoingEmergenciesList) {
     if (_onGoingEmergenciesList != null && _onGoingEmergenciesList.length != 0) {
       _onGoingEmergenciesList.forEach((EM){
         GeoPoint location = EM.location;
@@ -171,8 +184,10 @@ class MapStateOPS extends State<MapOPS> {
 
 
   void _addPendingEmergenciesMarker(_pendingEmergenciesList){
+    debugPrint("PENDING EMERGENCIES");
     if (_pendingEmergenciesList != null && _pendingEmergenciesList.length != 0) {
       _pendingEmergenciesList.forEach((EM){
+        debugPrint("PENDING EMERGENCIES");
         GeoPoint location = EM.location;
         String rollNumber = EM.patientRollNo;
         String severity = EM.severity;
@@ -184,12 +199,14 @@ class MapStateOPS extends State<MapOPS> {
           markerId: markerId,
           position: LatLng(location.latitude, location.longitude),
           onTap: () {
-            print('Roll Number: ');
-            print(rollNumber);
-            print('\nSeverity: ');
-            print(severity);
-            print('PLEASE ASSIGN AN MFR.');
-            // todo: assign MFR option
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => ManualAssignment(
+                      EM
+                    )
+                )
+            );
           },
           icon: EmergencyLocationIconRed,
         );
@@ -250,10 +267,7 @@ class MapStateOPS extends State<MapOPS> {
 
   _onMapCreated(GoogleMapController controller){
     _controller=controller;
-    _addAvailableMfrsMarker(_availableMfrsList);
-    _addPendingEmergenciesMarker(_pendingEmergenciesList);
-    _addOnGoingEmergenciesMarker(_onGoingEmergenciesList);
-    this.setState(() => _mapLoading = false);
+    setState(() => _mapLoading = false);
   }
 
   _onCameraMove(CameraPosition position){
