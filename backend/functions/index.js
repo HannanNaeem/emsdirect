@@ -28,6 +28,7 @@ exports.trackIgnored = functions.firestore.document('/PendingEmergencies/{id}').
     const patientId = context.params.id;
     const docRef = admin.firestore().collection('PendingEmergencies').doc(patientId);
 
+
     //sleep for 40 seconds
     sleep(30000);
 
@@ -48,3 +49,66 @@ exports.trackIgnored = functions.firestore.document('/PendingEmergencies/{id}').
     return null;
 });
 
+
+exports.notifyPendingToMfrs = functions.firestore.document('/PendingEmergencies/{id}').onCreate(async (snap, context) => {
+
+  console.log("Notifying available Mfrs");
+  //getting the patient id for payload/notification content
+  const patientId = context.params.id;
+ 
+  //querying all the mfrs that are available and adding their roll no -> doc id to this list
+  var availableMfrsList = [];
+  const availableMfrsQuery =  await admin.firestore().collection('Mfr').where('isActive', "==", true).where('isOccuped', "==", false).get();
+  availableMfrsQuery.forEach(mfrDoc => availableMfrsList.push(mfrDoc.id));
+  
+  //now get the user data for these roll no
+  const userDataQuery = await admin.firestore().collection('UserData').where('rollNo', 'in', availableMfrsList).get();
+
+  //We have the tokens in this this userDataQuery documents. We will now make a list of all tokens in these docs
+  var targetTokens = []; // send the notifications to tokens in this list
+  userDataQuery.forEach(userDoc => targetTokens.push(userDoc.data().token))
+
+  //setting up notification payload
+  const payload = {
+    notification: {title: "New emergency!", body: "There is a new emergency from ${patientId}", sound: "enabled"},
+    priority: "high",
+  }
+  
+  //send messages
+  try{
+    const response = await admin.messaging().sendToDevice(targetTokens,payload);
+    console.log("Notifications sent successfully to ", targetTokens);
+  } catch(e) {
+    console.log(e);
+  }
+
+  
+  //get all the mfrs
+  // availableMfrs.get()
+  // .then((querySnapshot)=>{
+
+  //   //now cycle through each mfr roll and get their userData token
+  //   querySnapshot.forEach((mfrDoc) => {
+  //     // get this doc from  firestore
+  //     userData.where('rollNo','==', mfrDoc.id).get()
+  //     .then((userDoc) =>{
+  //       //sent userDoc['token'] a message
+  //       try {
+
+  //         const response = admin.messaging().sendToDevice(userDoc['token'], payload);
+  //         console.log(`Nofication sent to ${userDoc['rollNo']}`);
+  //         return response;
+
+  //       } catch(err){
+  //         console.log(err);
+  //       }
+  //       return null;
+
+  //     }).catch(e => console.log(e));
+
+  //   });
+
+  //   return null;
+  // }).catch(e => console.log(e));
+
+});
