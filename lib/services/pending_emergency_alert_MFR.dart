@@ -184,6 +184,48 @@ class _AlertFunctionMfrState extends State<AlertFunctionMfr> {
     return await Future.wait(futureList);
   }
 
+  //accept: delete the pending record, create the ongoing record
+  //update status of occupied in both the database and the current thing
+  Future acceptTransaction(
+      var docId,
+      var location,
+      var genderPreference,
+      var patientRollNo,
+      var time,
+      var severityLevel,
+      var patientContactNo) async {
+    try {
+      //have a reference to the pending document
+      DocumentReference pendingRef =
+          databaseReference.collection("PendingEmergencies").document(docId);
+      //have a reference to the ongoing document
+      DocumentReference ongoingRef =
+          databaseReference.collection("OngoingEmergencies").document(docId);
+
+      return await databaseReference.runTransaction((Transaction tx) async {
+        await tx
+            .delete(pendingRef)
+            .then((_) => tx.set(ongoingRef, {
+                  'mfr': widget._userData['rollNo'],
+                  'mfrDetails': {
+                    'name': widget._userData['name'],
+                    'contact': widget._userData['contact'],
+                  },
+                  'location': location,
+                  'genderPreference': genderPreference,
+                  'patientRollNo': patientRollNo,
+                  'reportingTime': time,
+                  'severity': severityLevel,
+                  'patientContactNo': patientContactNo,
+                }))
+            .then((_) => print("deletion and creation complete"));
+      });
+    } catch (e) {
+      print(e.toString());
+      return null;
+    }
+  }
+
   //function to show a pendingEmergency alert
   Future showPendingAlert(var doc, var width, var height) async {
     //only shows alerts if there is a pending emergency document AND if MFR is available+not occupied
@@ -236,14 +278,14 @@ class _AlertFunctionMfrState extends State<AlertFunctionMfr> {
                   exist = await checkExist(doc[0].patientRollNo);
                   if (exist) {
                     print('yes');
-                    await deleteRecord(doc[0].patientRollNo);
-                    await createOngoingEmergencyDocument(
-                        doc[0].location,
-                        doc[0].genderPreference,
-                        doc[0].patientRollNo,
-                        doc[0].severity,
-                        doc[0].patientContactNo,
-                        doc[0].reportingTime);
+//                    await deleteRecord(doc[0].patientRollNo);
+//                    await createOngoingEmergencyDocument(
+//                        doc[0].location,
+//                        doc[0].genderPreference,
+//                        doc[0].patientRollNo,
+//                        doc[0].severity,
+//                        doc[0].patientContactNo,
+//                        doc[0].reportingTime);
                     _isOccupied = true;
                     mfrHomeGlobalKey.currentState.updateOccupied(true);
                     await updateOccupiedStatus(true);
