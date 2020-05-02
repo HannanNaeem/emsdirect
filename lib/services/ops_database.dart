@@ -121,8 +121,8 @@ class OpsDatabaseService {
   //get available mfrs
   Stream<List<AvailableMfrs>> get availableMfrStream {
     return availableMfrs
-        .where('isActive', isEqualTo: true)
-        .where('isOccupied', isEqualTo: false)
+        .where('isActive', isEqualTo: 1)
+        .where('isOccupied', isEqualTo: 0)
         .snapshots()
         .map(_availableMfrsListFromSnapshot);
   }
