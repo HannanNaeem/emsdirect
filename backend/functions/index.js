@@ -63,7 +63,7 @@ exports.notifyPendingToMfrs = functions.firestore.document('/PendingEmergencies/
   console.log(availableMfrsList);
   
   //if there is no availble mfr abort
-  if(availableMfrsList.length == 0){
+  if(availableMfrsList.length === 0){
     console.log("No available mfrs... aborting");
     return false;
   }
@@ -89,6 +89,6 @@ exports.notifyPendingToMfrs = functions.firestore.document('/PendingEmergencies/
     console.log(e);
   }
 
-  
+  return true;
 
 });
