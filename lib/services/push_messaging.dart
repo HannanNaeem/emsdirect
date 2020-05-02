@@ -14,13 +14,13 @@ class CloudMessagingService {
   void configureFirebaseListeners() {
     _firebaseMessaging.configure(
       onMessage: (Map<String,dynamic> message) async {
-        print('onMessage: $message');
+        //print('onMessage: $message');
       },
       onLaunch: (Map<String,dynamic> message) async {
-        print('onMessage: $message');
+        //print('onMessage: $message');
       },
       onResume: (Map<String,dynamic> message) async {
-        print('onMessage: $message');
+        //print('onMessage: $message');
       },
 
     );
