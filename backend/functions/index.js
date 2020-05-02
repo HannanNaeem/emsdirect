@@ -58,15 +58,22 @@ exports.notifyPendingToMfrs = functions.firestore.document('/PendingEmergencies/
  
   //querying all the mfrs that are available and adding their roll no -> doc id to this list
   var availableMfrsList = [];
-  const availableMfrsQuery =  await admin.firestore().collection('Mfr').where('isActive', "==", true).where('isOccuped', "==", false).get();
+  const availableMfrsQuery =  await admin.firestore().collection('Mfr').where('isActive', "==", true).where('isOccupied', "==", false).get();
   availableMfrsQuery.forEach(mfrDoc => availableMfrsList.push(mfrDoc.id));
+  console.log(availableMfrsList);
   
+  //if there is no availble mfr abort
+  if(availableMfrsList.length == 0){
+    console.log("No available mfrs... aborting");
+    return false;
+  }
   //now get the user data for these roll no
   const userDataQuery = await admin.firestore().collection('UserData').where('rollNo', 'in', availableMfrsList).get();
 
   //We have the tokens in this this userDataQuery documents. We will now make a list of all tokens in these docs
   var targetTokens = []; // send the notifications to tokens in this list
   userDataQuery.forEach(userDoc => targetTokens.push(userDoc.data().token))
+  console.log(targetTokens);
 
   //setting up notification payload
   const payload = {
@@ -83,32 +90,5 @@ exports.notifyPendingToMfrs = functions.firestore.document('/PendingEmergencies/
   }
 
   
-  //get all the mfrs
-  // availableMfrs.get()
-  // .then((querySnapshot)=>{
-
-  //   //now cycle through each mfr roll and get their userData token
-  //   querySnapshot.forEach((mfrDoc) => {
-  //     // get this doc from  firestore
-  //     userData.where('rollNo','==', mfrDoc.id).get()
-  //     .then((userDoc) =>{
-  //       //sent userDoc['token'] a message
-  //       try {
-
-  //         const response = admin.messaging().sendToDevice(userDoc['token'], payload);
-  //         console.log(`Nofication sent to ${userDoc['rollNo']}`);
-  //         return response;
-
-  //       } catch(err){
-  //         console.log(err);
-  //       }
-  //       return null;
-
-  //     }).catch(e => console.log(e));
-
-  //   });
-
-  //   return null;
-  // }).catch(e => console.log(e));
 
 });
