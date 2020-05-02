@@ -1,14 +1,19 @@
 import 'package:flutter/material.dart';
 
 class AvailableMfrCard extends StatefulWidget {
-  String text;
-  String category;
-  String time;
+  String name;
+  String contact;
+  String rollNo;
+  String gender;
+  bool isOccupied;
 
-  AvailableMfrCard(String text, String category, String time) {
-    this.text = text;
-    this.category = category;
-    this.time = time;
+
+  AvailableMfrCard(String name, String contact, String rollNo, String gender, bool isOccupied) {
+    this.name = name;
+    this.contact = contact;
+    this.rollNo = rollNo;
+    this.gender = gender;
+    this.isOccupied = isOccupied;
   }
 
   @override
@@ -16,101 +21,86 @@ class AvailableMfrCard extends StatefulWidget {
 }
 
 class _AvailableMfrCardState extends State<AvailableMfrCard> {
-  Color GenerateColor(String category) {
-    if (category == 'Equipment Restock' || category == 'Bag Restock') {
-      return Colors.green;
-    } else {
-      return Colors.red;
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
-    Color color = GenerateColor(widget.category);
-
+    Color GenerateColor(bool isOccupied)
+    {
+      if(isOccupied){
+        return Colors.red[800];
+      } else {
+        return Colors.blue[800];
+      }
+    }
     return Card(
       elevation: 6,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Flexible(
-            flex: 5,
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Padding(
-                  padding: EdgeInsets.fromLTRB(6, 24, 0, 20),
-                  child: Icon(
-                    Icons.fiber_manual_record,
-                    color: color,
-                  ),
-                ),
-                Expanded(
-                  flex: 1,
-                  child: Padding(
-                    padding: EdgeInsets.fromLTRB(10, 25, 0, 20),
-                    child: Container(                     
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Text(                        
-                            widget.category,
-                            style: TextStyle(
-                              color: const Color(0xffee0000),
-                              fontSize: 20,
-                              fontFamily: 'HelveticaNeueLight',
-                            ),
-                          ),
-                          Text(
-                            widget.text,
-                            style: TextStyle(
-                              color: const Color(0xff142850),
-                              fontSize: 14,
-                              fontFamily: 'HelveticaNeueLight',
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-                
-              ],
-            ),
-          ),
-          Flexible(
-            flex: 1,
-            child: Align(
-              alignment: Alignment.bottomCenter,
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(0,3,3,0),
-                child: Text(
-                  widget.time,
-                  style: TextStyle(
-                    color: const Color(0xff142850),
-                    fontSize: 12,
-                    fontFamily: 'HelveticaNeueLight',
-                  ),
-                ),
-              ),
-            ),
-          ),
-//           Flexible(
-//             flex: 1,
-//             child: IconButton(
-//               color: Colors.grey[700],
-//               icon: Icon(Icons.cancel),
-//               onPressed: () {
-//                 print('Delete AvailableMfr');
-// //                setState(() {
-// //                  data.removeAt(index);
-// //                });
-//               },
-//             ),
-//           ),
-        ],
+      child: ListTile(
+        isThreeLine: true,
+        leading: Icon(
+          Icons.fiber_manual_record,
+          color: GenerateColor(widget.isOccupied)
+        ),
+        title: Text(
+          widget.name,
+          style: TextStyle(
+            letterSpacing: 2.0,
+            fontFamily: 'HelveticaNeueLight',
+          )
+        ),
+        subtitle: Text(
+          "Contact: " + widget.contact + "\n" +
+          "Roll Number: " + widget.rollNo + "\n" + 
+          "Gender: " + widget.gender,
+          style: TextStyle(
+            letterSpacing: 1.0,
+            fontFamily: 'HelveticaNeueLight',
+          )
+        ),
       ),
     );
   }
 }
+
+
+
+class AvailableMfrsData {
+
+  static final data = [
+    {
+      'name': 'Hira Jamshed',
+      'contact': '03000000000',
+      'gender': 'F',
+      'rollNo': '21100141',
+      'isOccupied': true,
+    },
+    {
+      'name': 'Harum Naseem',
+      'contact': '03000000000',
+      'gender': 'F',
+      'rollNo': '21100118',
+      'isOccupied': false,
+    },
+    {
+      'name': 'Hannan Naeem',
+      'contact': '03000000000',
+      'gender': 'M',
+      'rollNo': '21100219',
+      'isOccupied': false,
+    },
+    {
+      'name': 'Mahnoor Jameel',
+      'contact': '03000000000',
+      'gender': 'F',
+      'rollNo': '21100069',
+      'isOccupied': true,
+    },
+    {
+      'name': 'Saba Rehman',
+      'contact': '03000000000',
+      'gender': 'F',
+      'rollNo': '21100129',
+      'isOccupied': false,
+    },
+  ];
+}
+
