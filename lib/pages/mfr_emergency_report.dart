@@ -28,26 +28,35 @@ class _EmergencyReportMfrState extends State<EmergencyReportMfr> {
       body: Column(
         children: <Widget>[
           //Emergency info card
-          Card(
-            elevation: 6,
-            child: Padding(
-              padding: const EdgeInsets.all(15.0),
-              child: Column(
-                children: <Widget>[
-                  //!heading
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: <Widget>[
-                      Text(
-                        'Emergency Details',
-                        style: TextStyle(
-                          color: const Color(0xff142850),
-                          fontFamily: "HelveticaNeueLight",
+          Padding(
+            padding: const EdgeInsets.all(15.0),
+            child: Card(
+              elevation: 6,
+              child: Padding(
+                padding: const EdgeInsets.all(15.0),
+                child: Column(
+                  children: <Widget>[
+                    //!heading
+                    Padding(
+                      padding: const EdgeInsets.all(10.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: <Widget>[
+                          Text(
+                            'Emergency Details',
+                            style: TextStyle(
+                              color: const Color(0xff142850),
+                              fontFamily: "HelveticaNeueLight",
+                              fontSize: 20,
 
+                              ),
                           ),
-                      ),
-                  ],)
-              ],),
+                      ],),
+                    ),
+
+                    //! Begin form 
+                ],),
+              ),
             ),
           ),
         ],)
