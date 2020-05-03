@@ -27,26 +27,64 @@ exports.trackIgnored = functions.firestore.document('/PendingEmergencies/{id}').
     console.log("emergency added");
     const patientId = context.params.id;
     const docRef = admin.firestore().collection('PendingEmergencies').doc(patientId);
+    const userData = admin.firestore().collection('UserData');
 
 
     //sleep for 40 seconds
     sleep(30000);
 
-    docRef.get().then((emergency) => {
+    var emergency = await docRef.get();
         
-        if(!emergency.exists){
-            console.log("Emergency was accepted before time limit");
-        } else {
-            console.log("incrementing declines");
-            //set data
-            return docRef.update({declines : 4});
-        }
-        return null;
-    }).catch(error => {console.log(error)});
+    if(!emergency.exists){
 
-    //Before ending notify ops about the emergency
-    //We simply need to query the userData docs that have loggedInAs : "ops" and send them a message
-    const opsQuerySnapshot = await admin.firestore.collection('UserData').where('loggedInAs', '==','ops').get();
+        console.log("Emergency was accepted before time limit");
+
+    } else if(emergency.data().severity === "low" || emergency.data().severity === "medium") {
+
+        console.log("incrementing declines");
+        //set data
+        docRef.update({declines : 4});
+
+        //Before ending notify ops about the emergency
+        //We simply need to query the userData docs that have loggedInAs : "ops" and send them a message
+        const opsQuerySnapshot = await userData.where('loggedInAs', '==','ops').get();
+
+        var targetTokens = [];
+        //filter out the tokens from the fetched userData docs
+        opsQuerySnapshot.forEach(userDoc => targetTokens.push(userDoc.data().token));
+        console.log(targetTokens);
+
+        //setting up notification payload
+        const payload = {
+        notification: {title: "Ignored emergency!", body: `There is a new Ignored Emergency!`, sound: "default"},
+        }
+
+        //send messages
+        try{
+          const response = await admin.messaging().sendToDevice(targetTokens,payload);
+          console.log("Notifications sent successfully to ", targetTokens);
+        } catch(e) {
+          console.log(e);
+        }
+    }
+     
+ 
+
+
+
+    return null;
+});
+
+exports.notifyEmergency = functions.firestore.document('/PendingEmergencies/{id}').onCreate(async (snap,context) => {
+
+  console.log("Notifying ops for severe emergency");
+  const patientId = context.params.id;
+
+  //if the emergency is severe == high or critical
+  if(snap.data().severity === "high" || snap.data().severity === "critical") { //! Notify ops
+
+    //get ops that are logged in
+    const opsQuerySnapshot = await admin.firestore().collection('UserData').where('loggedInAs', '==','ops').get();
 
     var targetTokens = [];
     //filter out the tokens from the fetched userData docs
@@ -55,7 +93,7 @@ exports.trackIgnored = functions.firestore.document('/PendingEmergencies/{id}').
 
     //setting up notification payload
     const payload = {
-    notification: {title: "Ignored emergency!", body: `There is a new Ignored Emergency!`, sound: "default"},
+    notification: {title: "Severe emergency!", body: `There is a new Severe Emergency!\nSeverity: ${snap.data().severity}`, sound: "default"},
     }
 
     //send messages
@@ -66,52 +104,88 @@ exports.trackIgnored = functions.firestore.document('/PendingEmergencies/{id}').
       console.log(e);
     }
 
-    return null;
+  } else if(snap.data().severity === "low" || snap.data().severity === "medium") { //! we need to notify MFRS instead
+ 
+    //querying all the mfrs that are available and adding their roll no -> doc id to this list
+    var availableMfrsList = [];
+    const availableMfrsQuery =  await admin.firestore().collection('Mfr').where('isActive', "==", true).where('isOccupied', "==", false).get();
+    availableMfrsQuery.forEach(mfrDoc => availableMfrsList.push(mfrDoc.id));
+    console.log(availableMfrsList);
+    
+    //if there is no availble mfr abort
+    if(availableMfrsList.length === 0){
+      console.log("No available mfrs... aborting");
+      return false;
+    }
+    //now get the user data for these roll no
+    const userDataQuery = await admin.firestore().collection('UserData').where('rollNo', 'in', availableMfrsList).get();
+
+    //We have the tokens in this this userDataQuery documents. We will now make a list of all tokens in these docs
+    var targetTokens = []; // send the notifications to tokens in this list
+    userDataQuery.forEach(userDoc => targetTokens.push(userDoc.data().token));
+    console.log(targetTokens);
+
+    //setting up notification payload
+    const payload = {
+      notification: {title: "New emergency!", body: `There is a new emergency from ${patientId}`, sound: "default"},
+    }
+    
+    //send messages
+    try{
+      const response = await admin.messaging().sendToDevice(targetTokens,payload);
+      console.log("Notifications sent successfully to ", targetTokens);
+    } catch(e) {
+      console.log(e);
+    }
+  }
+
 });
-
-
 
 
 
 // Function to notify MFRS for pending emergency
-exports.notifyPendingToMfrs = functions.firestore.document('/PendingEmergencies/{id}').onCreate(async (snap, context) => {
+// exports.notifyPendingToMfrs = functions.firestore.document('/PendingEmergencies/{id}').onCreate(async (snap, context) => {
 
-  console.log("Notifying available Mfrs");
-  //getting the patient id for payload/notification content
-  const patientId = context.params.id;
+//   console.log("Notifying available Mfrs");
+//   //getting the patient id for payload/notification content
+//   const patientId = context.params.id;
+
+//   //check if the severity is low /medium then notify
+//   if(snap.data().severity === "low" || snap.data().severity === "medium") {
  
-  //querying all the mfrs that are available and adding their roll no -> doc id to this list
-  var availableMfrsList = [];
-  const availableMfrsQuery =  await admin.firestore().collection('Mfr').where('isActive', "==", true).where('isOccupied', "==", false).get();
-  availableMfrsQuery.forEach(mfrDoc => availableMfrsList.push(mfrDoc.id));
-  console.log(availableMfrsList);
-  
-  //if there is no availble mfr abort
-  if(availableMfrsList.length === 0){
-    console.log("No available mfrs... aborting");
-    return false;
-  }
-  //now get the user data for these roll no
-  const userDataQuery = await admin.firestore().collection('UserData').where('rollNo', 'in', availableMfrsList).get();
+//     //querying all the mfrs that are available and adding their roll no -> doc id to this list
+//     var availableMfrsList = [];
+//     const availableMfrsQuery =  await admin.firestore().collection('Mfr').where('isActive', "==", true).where('isOccupied', "==", false).get();
+//     availableMfrsQuery.forEach(mfrDoc => availableMfrsList.push(mfrDoc.id));
+//     console.log(availableMfrsList);
+    
+//     //if there is no availble mfr abort
+//     if(availableMfrsList.length === 0){
+//       console.log("No available mfrs... aborting");
+//       return false;
+//     }
+//     //now get the user data for these roll no
+//     const userDataQuery = await admin.firestore().collection('UserData').where('rollNo', 'in', availableMfrsList).get();
 
-  //We have the tokens in this this userDataQuery documents. We will now make a list of all tokens in these docs
-  var targetTokens = []; // send the notifications to tokens in this list
-  userDataQuery.forEach(userDoc => targetTokens.push(userDoc.data().token));
-  console.log(targetTokens);
+//     //We have the tokens in this this userDataQuery documents. We will now make a list of all tokens in these docs
+//     var targetTokens = []; // send the notifications to tokens in this list
+//     userDataQuery.forEach(userDoc => targetTokens.push(userDoc.data().token));
+//     console.log(targetTokens);
 
-  //setting up notification payload
-  const payload = {
-    notification: {title: "New emergency!", body: `There is a new emergency from ${patientId}`, sound: "default"},
-  }
-  
-  //send messages
-  try{
-    const response = await admin.messaging().sendToDevice(targetTokens,payload);
-    console.log("Notifications sent successfully to ", targetTokens);
-  } catch(e) {
-    console.log(e);
-  }
+//     //setting up notification payload
+//     const payload = {
+//       notification: {title: "New emergency!", body: `There is a new emergency from ${patientId}`, sound: "default"},
+//     }
+    
+//     //send messages
+//     try{
+//       const response = await admin.messaging().sendToDevice(targetTokens,payload);
+//       console.log("Notifications sent successfully to ", targetTokens);
+//     } catch(e) {
+//       console.log(e);
+//     }
+//   }
 
-  return true;
+//   return true;
 
-});
+// });
