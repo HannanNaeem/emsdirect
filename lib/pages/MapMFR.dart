@@ -58,6 +58,7 @@ class MapState extends State<MapMFR> {
   LatLng _lastMapPosition = _loc;
   MapType _currentMapType = MapType.normal;
   static Location _locationTracker = Location();
+
   Marker marker;
   StreamSubscription _locationSubscription;
 
@@ -72,7 +73,7 @@ class MapState extends State<MapMFR> {
         position: LatLng(
             _locationOfEmergency.latitude, _locationOfEmergency.longitude),
         infoWindow:
-            InfoWindow(title: 'Emergency Location', snippet: contactNumber),
+            InfoWindow(title: 'Emergency Location', snippet: _patientRollNumber),
         icon: EmergencyLocationIcon);
     setState(() {
       emergencyMarker[markerId] = marker;
@@ -94,7 +95,7 @@ class MapState extends State<MapMFR> {
   }
 
   static final CameraPosition initialisation = CameraPosition(
-    target: LatLng(45.531563, -122.677433),
+    target: LatLng(122, 72),
     zoom: Zoom,
   );
 
@@ -138,7 +139,12 @@ class MapState extends State<MapMFR> {
 
       updateMarker(location);
       currLoc = LatLng(location.latitude, location.longitude);
-
+      _controller.animateCamera(CameraUpdate.newCameraPosition(
+              new CameraPosition(
+                  bearing: 192,
+                  target: LatLng(currLoc.latitude, currLoc.longitude),
+                  tilt: 0,
+                  zoom: Zoom)));
       if (_locationSubscription != null) {
         _locationSubscription.cancel();
       }
@@ -166,6 +172,9 @@ class MapState extends State<MapMFR> {
       }
     }
   }
+
+
+
 
   @override
   void dispose() {
@@ -221,23 +230,49 @@ class MapState extends State<MapMFR> {
                     ),
                   )
                 : Container(),
-            Padding(
-                padding: EdgeInsets.fromLTRB(
-                    width * 0.14, height * 0.034, width * 0.1, 10.0),
-                child: Text(
-                  'Patient Contact: ' + contactNumber,
-                  style: TextStyle(
-                    fontFamily: 'HelveticaNeueBold',
-                    letterSpacing: 2.0,
-                    fontSize: 0.012 * (height + width),
-                    color: const Color(0xff142850),
-                  ),
-                )),
+          Container(
+              margin: const EdgeInsets.fromLTRB(45, 10, 10, 10),
+          height: 38,
+          width: 240,
+          child: Card(
+            elevation: 1,
+            color: Colors.transparent,
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(0, 8, 0, 0),
+              child: Column(
+                children: <Widget>[
+                  Text(
+                    'Patient Contact: ' + contactNumber,
+                    style: TextStyle(
+                      fontFamily: 'HelveticaNeueBold',
+                      letterSpacing: 2.0,
+                      fontSize: 0.012 * (height + width),
+                      color: const Color(0xff142850),
+                    ),
+                  )
+
+                ],
+              ),
+            ),
+          )
+        ),
+//            Padding(
+//                padding: EdgeInsets.fromLTRB(
+//                    width * 0.14, height * 0.034, width * 0.1, 10.0),
+//                child: Text(
+//                  'Patient Contact: ' + contactNumber,
+//                  style: TextStyle(
+//                    fontFamily: 'HelveticaNeueBold',
+//                    letterSpacing: 2.0,
+//                    fontSize: 0.012 * (height + width),
+//                    color: const Color(0xff142850),
+//                  ),
+//                )),
             Padding(
                 padding: EdgeInsets.fromLTRB(
                     width * 0.23, height * 0.75, width * 0.16, 10.0),
                 child: SizedBox(
-                    width: (width + height) * 0.20,
+                    width: (width + height) * 0.18,
                     height: (width + height) * 0.04,
                     child: RaisedButton(
                         onPressed: () {
@@ -307,12 +342,12 @@ class MapState extends State<MapMFR> {
                               });
                         },
                         textColor: Colors.cyan[500],
-                        color: Colors.white,
+                        color: const Color(0xffee0000),
                         // todo: update occupied status
                         child: Text(
                           'End Emergency',
                           style: TextStyle(
-                            color: const Color(0xff142850),
+                            color: Colors.white,
                             fontSize: (width + height) * 0.012,
                             letterSpacing: 3.0,
                             fontFamily: 'HelveticaNeueBold',
@@ -332,7 +367,7 @@ class MapState extends State<MapMFR> {
                 _onMapTypeButtonPressed();
               },
               backgroundColor: const Color(0xff47719e)),
-          SizedBox(height: height / 2.2),
+          SizedBox(height: height / 3),
           FloatingActionButton(
               heroTag: "btn2",
               child: Icon(Icons.add),
@@ -346,6 +381,24 @@ class MapState extends State<MapMFR> {
               child: Icon(Icons.remove),
               onPressed: () {
                 zoomOut();
+              },
+              backgroundColor: const Color(0xff47719e)),
+          SizedBox(height: 10),
+          FloatingActionButton(
+              heroTag: "btn4",
+              child: Icon(Icons.location_searching),
+              onPressed: () {
+                if (_controller != null) {
+
+                  _controller.animateCamera(CameraUpdate.newCameraPosition(
+                      new CameraPosition(
+                        bearing: 192,
+                        target: LatLng(_locationOfEmergency.latitude, _locationOfEmergency.longitude),
+                        tilt: 0,
+                        zoom: 20,
+                      )));
+
+                }
               },
               backgroundColor: const Color(0xff47719e)),
         ]),
