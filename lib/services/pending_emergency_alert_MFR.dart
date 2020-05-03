@@ -184,6 +184,12 @@ class _AlertFunctionMfrState extends State<AlertFunctionMfr> {
     return await Future.wait(futureList);
   }
 
+  void updateOccupiedLocal(bool val) {
+    setState(() {
+      _isOccupied = val;
+    });
+  }
+
   //accept: delete the pending record, create the ongoing record
   //update status of occupied in both the database and the current thing
   Future acceptTransaction(
@@ -193,37 +199,49 @@ class _AlertFunctionMfrState extends State<AlertFunctionMfr> {
       var patientRollNo,
       var time,
       var severityLevel,
-      var patientContactNo) async {
-    try {
-      //have a reference to the pending document
-      DocumentReference pendingRef =
-          databaseReference.collection("PendingEmergencies").document(docId);
-      //have a reference to the ongoing document
-      DocumentReference ongoingRef =
-          databaseReference.collection("OngoingEmergencies").document(docId);
+      var patientContactNo,
+      bool newVal) async {
+    //have a reference to the pending document
+    DocumentReference pendingRef =
+        databaseReference.collection("PendingEmergencies").document(docId);
+    //have a reference to the ongoing document
+    DocumentReference ongoingRef =
+        databaseReference.collection("OngoingEmergencies").document(docId);
+    //have a reference for the mfr document
+    DocumentReference mfrRef = databaseReference
+        .collection("Mfr")
+        .document(widget._userData['rollNo']);
 
-      return await databaseReference.runTransaction((Transaction tx) async {
-        await tx
-            .delete(pendingRef)
-            .then((_) => tx.set(ongoingRef, {
-                  'mfr': widget._userData['rollNo'],
-                  'mfrDetails': {
-                    'name': widget._userData['name'],
-                    'contact': widget._userData['contact'],
-                  },
-                  'location': location,
-                  'genderPreference': genderPreference,
-                  'patientRollNo': patientRollNo,
-                  'reportingTime': time,
-                  'severity': severityLevel,
-                  'patientContactNo': patientContactNo,
-                }))
-            .then((_) => print("deletion and creation complete"));
-      });
-    } catch (e) {
-      print(e.toString());
-      return null;
-    }
+    return await databaseReference.runTransaction((Transaction tx) async {
+      await tx
+          .set(ongoingRef, {
+            'mfr': widget._userData['rollNo'],
+            'mfrDetails': {
+              'name': widget._userData['name'],
+              'contact': widget._userData['contact'],
+            },
+            'location': location,
+            'genderPreference': genderPreference,
+            'patientRollNo': patientRollNo,
+            'reportingTime': time,
+            'severity': severityLevel,
+            'patientContactNo': patientContactNo,
+          })
+          .then((_) => tx.delete(pendingRef))
+          .then((_) => tx.update(mfrRef, {'isOccupied': newVal}))
+          .then((_) => print("accept transaction complete"))
+          .then((_) {
+            updateOccupiedLocal(true);
+            mfrHomeGlobalKey.currentState.updateOccupied(true);
+          })
+          .then((_) {
+            studentContactNo = patientContactNo;
+            locationOfEmergency = location;
+          })
+          .then((_) {
+            print('relevant info updated');
+          });
+    });
   }
 
   //function to show a pendingEmergency alert
@@ -274,22 +292,21 @@ class _AlertFunctionMfrState extends State<AlertFunctionMfr> {
                   ),
                 ),
                 onPressed: () async {
+                  print('yes');
                   Navigator.of(context).pop();
-                  exist = await checkExist(doc[0].patientRollNo);
-                  if (exist) {
-                    print('yes');
-//                    await deleteRecord(doc[0].patientRollNo);
-//                    await createOngoingEmergencyDocument(
-//                        doc[0].location,
-//                        doc[0].genderPreference,
-//                        doc[0].patientRollNo,
-//                        doc[0].severity,
-//                        doc[0].patientContactNo,
-//                        doc[0].reportingTime);
-                    _isOccupied = true;
-                    mfrHomeGlobalKey.currentState.updateOccupied(true);
-                    await updateOccupiedStatus(true);
-                    return await updateDeclineOnRest(doc);
+                  try {
+                    return await acceptTransaction(
+                        doc[0].patientRollNo,
+                        doc[0].location,
+                        doc[0].genderPreference,
+                        doc[0].patientRollNo,
+                        doc[0].reportingTime,
+                        doc[0].severity,
+                        doc[0].patientContactNo,
+                        true);
+                  } catch (e) {
+                    print("Transaction failed");
+                    return null;
                   }
                 },
               ),
@@ -309,10 +326,16 @@ class _AlertFunctionMfrState extends State<AlertFunctionMfr> {
                 ),
                 onPressed: () async {
                   print('no');
-                  _isOccupied = false;
-                  mfrHomeGlobalKey.currentState.updateOccupied(false);
                   Navigator.of(context).pop();
-                  return await updateDecline(doc[0].patientRollNo);
+                  try {
+                    return await updateDecline(doc[0].patientRollNo).then((_) {
+                      updateOccupiedLocal(false);
+                      mfrHomeGlobalKey.currentState.updateOccupied(false);
+                    });
+                  } catch (e) {
+                    print(e.toString());
+                    return null;
+                  }
                 },
               ),
             ),
@@ -371,15 +394,17 @@ class _AlertFunctionMfrState extends State<AlertFunctionMfr> {
                     ),
                   ),
                   onPressed: () async {
-                    setState(() {
-                      _isOccupied = true;
-                      mfrHomeGlobalKey.currentState.updateOccupied(true);
-                      //mfrHomeGlobalKey.currentState.updateEmergencyData(doc[0].location, doc[0].patientContactNo);
-                    });
                     print('acknowledge');
                     Navigator.of(context).pop();
-                    await updateOccupiedStatus(true);
-                    //return await updateDeclineOnRest()
+                    try {
+                      return await updateOccupiedStatus(true).then((_) {
+                        updateOccupiedLocal(true);
+                        mfrHomeGlobalKey.currentState.updateOccupied(true);
+                      });
+                    } catch (e) {
+                      print('acknowledging failed');
+                      return null;
+                    }
                   },
                 ),
               ),
@@ -401,14 +426,17 @@ class _AlertFunctionMfrState extends State<AlertFunctionMfr> {
                   ),
                   onPressed: () async {
                     print('go to map');
-                    setState(() {
-                      _isOccupied = true;
-                      mfrHomeGlobalKey.currentState.updateOccupied(true);
-                    });
-                    //delete the below navigator when merging with the map file
                     Navigator.of(context).pop();
                     //Navigator.push<dynamic>(context, MaterialPageRoute(builder: (context) => MapMFR(locationOfEmergency, patientContactNo)));
-                    await updateOccupiedStatus(true);
+                    try {
+                      return await updateOccupiedStatus(true).then((_) {
+                        updateOccupiedLocal(true);
+                        mfrHomeGlobalKey.currentState.updateOccupied(true);
+                      });
+                    } catch (e) {
+                      print('acknowledging failed');
+                      return null;
+                    }
                   },
                 ),
               ),
@@ -437,15 +465,6 @@ class _AlertFunctionMfrState extends State<AlertFunctionMfr> {
         _ongoingAlertShowed = false;
       }
     });
-  }
-
-  Future ongoingAlertProcesses(
-      var pendingList, var ongoingList, var width, var height) async {
-    await showOngoingAlert(ongoingList, width, height);
-    ongoingList.removeAt(0);
-    for (int i = 0; i < pendingList.length; i++) {
-      updateDecline(pendingList[0].patientRollNo);
-    }
   }
 
   //----------------------------------------
@@ -557,13 +576,6 @@ class _AlertFunctionMfrState extends State<AlertFunctionMfr> {
           if (!alertBuffer.contains(_pendingEmergencyList[0].patientRollNo)) {
             WidgetsBinding.instance.addPostFrameCallback((_) async =>
                 await showPendingAlert(_pendingEmergencyList, _width, _height));
-//            if (decision != null) {
-//              if (decision) {
-//                print('True for ${_pendingEmergencyList[0].patientRollNo}');
-//              } else {
-//                print('False for ${_pendingEmergencyList[0].patientRollNo}');
-//              }
-//            }
           }
         }
       }
