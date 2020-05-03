@@ -11,6 +11,10 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:provider/provider.dart';
 import 'package:ems_direct/shared/loading.dart';
 import 'package:ems_direct/pages/MapMFR.dart';
+import 'package:location/location.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:flutter/services.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 GlobalKey<_MFRHomeState> mfrHomeGlobalKey = GlobalKey();
 
@@ -34,6 +38,8 @@ class MFRHome extends StatefulWidget {
 class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
   //keepMeSignedIn variable passed from login screen if successful
   bool _keepSignedIn = false;
+  static Location _locationTracker = Location();
+  StreamSubscription _locationSubscription;
 
   //user data doc
   var _userData;
@@ -70,6 +76,15 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
       _authMfr.logOut();
     }
   }
+  void _updateUserData(GeoPoint Newlocation) async{
+    await databaseReference
+        .collection("Mfr")
+        .document((await _userData['rollNo']).toString())
+        .updateData({
+      'location': Newlocation
+    });
+  }
+
   //--------------------------------------------------------------------
 
   @override
@@ -80,6 +95,7 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
     //initializing stream to null as MFR will always be unavailable unless made available by himself
     _documentStream = null;
     getInitialData(_userData['rollNo']);
+    getCurrentLocaion();
   }
 
   //////////////////////////////// FUNCTIONS /////////////////////////////////////
@@ -94,6 +110,39 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
       print(e);
     }
   }
+  void getCurrentLocaion() async {
+    try {
+      while(true) {
+          var location = await _locationTracker.getLocation();
+
+          var currLoc = LatLng(location.latitude, location.longitude);
+          GeoPoint NewGeoPoint = GeoPoint(
+            currLoc.latitude, currLoc.longitude);
+
+          if (_locationSubscription != null) {
+            _locationSubscription.cancel();
+         }
+
+          if(isAvailable){
+            _updateUserData(NewGeoPoint);
+            break;
+          }
+      }
+      _locationSubscription =
+          _locationTracker.onLocationChanged().listen((newLocation) {
+            if(isAvailable) {
+              GeoPoint NewGeoPoint = GeoPoint(
+                  newLocation.latitude, newLocation.longitude);
+              _updateUserData(NewGeoPoint);
+            }
+          });
+    } on PlatformException catch (e) {
+      if (e.code == 'PERMISSION_DENIED') {
+        debugPrint("Permission Denied");
+      }
+    }
+  }
+
 
   void updateDeclineCount(docId) async {
     try {
