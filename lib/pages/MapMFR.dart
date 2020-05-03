@@ -140,14 +140,14 @@ class MapState extends State<MapMFR> {
       _locationSubscription =
           _locationTracker.onLocationChanged().listen((newLocation) {
         if (_controller != null) {
-          currLoc = LatLng(newLocation.latitude, newLocation.longitude);
-
-          _controller.animateCamera(CameraUpdate.newCameraPosition(
-              new CameraPosition(
-                  bearing: 192,
-                  target: LatLng(newLocation.latitude, newLocation.longitude),
-                  tilt: 0,
-                  zoom: Zoom)));
+//          currLoc = LatLng(newLocation.latitude, newLocation.longitude);
+//
+//          _controller.animateCamera(CameraUpdate.newCameraPosition(
+//              new CameraPosition(
+//                  bearing: 192,
+//                  target: LatLng(newLocation.latitude, newLocation.longitude),
+//                  tilt: 0,
+//                  zoom: Zoom)));
           GeoPoint NewGeoPoint = GeoPoint(newLocation.latitude, newLocation.longitude);
           _updateUserData(NewGeoPoint);
           updateMarker(newLocation);

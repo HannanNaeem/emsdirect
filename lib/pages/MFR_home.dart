@@ -125,6 +125,7 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
   void getCurrentLocaion() async {
     try {
       while (true) {
+        if (isAvailable) {
         var location = await _locationTracker.getLocation();
 
         var currLoc = LatLng(location.latitude, location.longitude);
@@ -133,8 +134,6 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
         if (_locationSubscription != null) {
           _locationSubscription.cancel();
         }
-
-        if (isAvailable) {
           _updateUserData(NewGeoPoint);
           break;
         }

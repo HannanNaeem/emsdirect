@@ -1,4 +1,6 @@
 import 'package:ems_direct/models/emergency_models.dart';
+import 'package:ems_direct/pages/MFR_home.dart';
+import 'package:ems_direct/services/pending_emergency_alert_MFR.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'dart:async';
@@ -120,8 +122,8 @@ class _MfrInformationState extends State<MfrInformation> {
                       ),
                     ),
                     onPressed: () {
-                      //todo: assign MFR
                       Update();
+                      Navigator.of(context).pop();
                       Navigator.of(context).pop();
                       },
                   ),
@@ -149,6 +151,8 @@ class _MfrInformationState extends State<MfrInformation> {
 
   Future<bool> Update() async {
     DocumentReference document1 = Firestore.instance.collection("PendingEmergencies").document(widget._emergencyInformation.patientRollNo);
+    DocumentReference document2 = Firestore.instance.collection("OngoingEmergencies").document(widget._emergencyInformation.patientRollNo);
+    DocumentReference document3 = Firestore.instance.collection("Mfr").document(widget.rollNo);
     Map map = new Map();
     map['contact'] = widget.contact;
     map['name'] = widget.name;
@@ -157,10 +161,8 @@ class _MfrInformationState extends State<MfrInformation> {
           .delete(document1)
           .catchError((e) {})
           .whenComplete(() {});
-      await Firestore.instance
-          .collection("OngoingEmergencies")
-          .document(widget._emergencyInformation.patientRollNo)
-          .setData({
+      await transaction
+          .set(document2 ,{
             'genderPreference' : widget._emergencyInformation.genderPreference,
               'location' : widget._emergencyInformation.location,
               'mfr' : widget.rollNo,
@@ -172,11 +174,18 @@ class _MfrInformationState extends State<MfrInformation> {
           })
           .catchError((e) {})
           .whenComplete(() {});
-    }).catchError((e) {
-      return false;
-    });
+      await transaction
+          .set(document3, {
+            "isOccupied" : true,
+        })
+      .catchError((e) {})
+      .whenComplete(() {});
+      mfrHomeGlobalKey.currentState.updateOccupied(true);
+      mfrAlertFunctionGlobalKey.currentState.updateOccupiedLocal(true);
 
-    return true;
+    }).catchError((e) {
+      throw(e);
+    });
   }
 
 }
