@@ -145,6 +145,25 @@ exports.notifyEmergency = functions.firestore.document('/PendingEmergencies/{id}
 
 });
 
+exports.setIsOccupied = functions.firestore.document('/OngoingEmergencies/{id}').onCreate(async (snap,context) => {
+
+  //setting the MFR's isOccupied who accepted the emergecny to true
+  // first set reference to mfr
+  const mfrRef = admin.firestore().collection('Mfr').doc(snap.data().mfr);
+
+  try{
+    //get the document for the mfr that has just accepted the ongoing emergency
+    var mfrDoc = await mfrRef.get();
+    
+  } catch(e) {
+    console.log(e);
+  }
+
+
+});
+
+
+
 
 
 // Function to notify MFRS for pending emergency
