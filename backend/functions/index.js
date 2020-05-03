@@ -79,6 +79,8 @@ exports.notifyEmergency = functions.firestore.document('/PendingEmergencies/{id}
 
   console.log("Notifying ops for severe emergency");
   const patientId = context.params.id;
+  var targetTokens = [];
+  var payload;
 
   //if the emergency is severe == high or critical
   if(snap.data().severity === "high" || snap.data().severity === "critical") { //! Notify ops
@@ -86,13 +88,13 @@ exports.notifyEmergency = functions.firestore.document('/PendingEmergencies/{id}
     //get ops that are logged in
     const opsQuerySnapshot = await admin.firestore().collection('UserData').where('loggedInAs', '==','ops').get();
 
-    var targetTokens = [];
+    targetTokens = [];
     //filter out the tokens from the fetched userData docs
     opsQuerySnapshot.forEach(userDoc => targetTokens.push(userDoc.data().token));
     console.log(targetTokens);
 
     //setting up notification payload
-    const payload = {
+    payload = {
     notification: {title: "Severe emergency!", body: `There is a new Severe Emergency!\nSeverity: ${snap.data().severity}`, sound: "default"},
     }
 
@@ -121,12 +123,12 @@ exports.notifyEmergency = functions.firestore.document('/PendingEmergencies/{id}
     const userDataQuery = await admin.firestore().collection('UserData').where('rollNo', 'in', availableMfrsList).get();
 
     //We have the tokens in this this userDataQuery documents. We will now make a list of all tokens in these docs
-    var targetTokens = []; // send the notifications to tokens in this list
+    targetTokens = []; // send the notifications to tokens in this list
     userDataQuery.forEach(userDoc => targetTokens.push(userDoc.data().token));
     console.log(targetTokens);
 
     //setting up notification payload
-    const payload = {
+    payload = {
       notification: {title: "New emergency!", body: `There is a new emergency from ${patientId}`, sound: "default"},
     }
     
@@ -138,6 +140,8 @@ exports.notifyEmergency = functions.firestore.document('/PendingEmergencies/{id}
       console.log(e);
     }
   }
+
+  return true;
 
 });
 
