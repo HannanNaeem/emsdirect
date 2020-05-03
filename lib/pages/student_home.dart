@@ -2,9 +2,10 @@ import 'package:ems_direct/services/auth.dart';
 import 'package:ems_direct/services/push_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:geolocator/geolocator.dart';
+//import 'package:geolocator/geolocator.dart';
 import 'dart:async';
 import 'package:ems_direct/pages/live_status.dart';
+import 'package:location/location.dart';
 
 class StudentHome extends StatefulWidget {
 
@@ -48,6 +49,8 @@ class _StudentHomeState extends State<StudentHome> with WidgetsBindingObserver {
 
   //function to get current location of the student to update to the database
   _getCurrentLocation() async{
+    Geolocator geolocator = Geolocator()..forceAndroidLocationManager = true;
+
     _currentLocation = await Geolocator().getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
     _geoLocation = GeoPoint(_currentLocation.latitude,_currentLocation.longitude);
   }
@@ -545,7 +548,7 @@ class _StudentHomeState extends State<StudentHome> with WidgetsBindingObserver {
                     )),
                 SizedBox(height: height / 45),
                 Text(
-                  'TAP AND HOLD',
+                  'TAP AND HOLD TO',
                   style: TextStyle(
                     fontSize: 15.0,
                     color: Colors.red[400],
