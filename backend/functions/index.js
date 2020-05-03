@@ -21,8 +21,8 @@ function sleep(milliseconds) {
   }
 
 
-//firestore trigger for pending emergency ignored
-exports.trackIgnored = functions.firestore.document('/PendingEmergencies/{id}').onCreate((snap, context) => {
+//firestore trigger for pending emergency ignored and notify ops
+exports.trackIgnored = functions.firestore.document('/PendingEmergencies/{id}').onCreate(async (snap, context) => {
 
     console.log("emergency added");
     const patientId = context.params.id;
@@ -44,12 +44,36 @@ exports.trackIgnored = functions.firestore.document('/PendingEmergencies/{id}').
         return null;
     }).catch(error => {console.log(error)});
 
+    //Before ending notify ops about the emergency
+    //We simply need to query the userData docs that have loggedInAs : "ops" and send them a message
+    const opsQuerySnapshot = await admin.firestore.collection('UserData').where('loggedInAs', '==','ops').get();
 
+    var targetTokens = [];
+    //filter out the tokens from the fetched userData docs
+    opsQuerySnapshot.forEach(userDoc => targetTokens.push(userDoc.data().token));
+    console.log(targetTokens);
+
+    //setting up notification payload
+    const payload = {
+    notification: {title: "Ignored emergency!", body: `There is a new Ignored Emergency!`, sound: "default"},
+    }
+
+    //send messages
+    try{
+      const response = await admin.messaging().sendToDevice(targetTokens,payload);
+      console.log("Notifications sent successfully to ", targetTokens);
+    } catch(e) {
+      console.log(e);
+    }
 
     return null;
 });
 
 
+
+
+
+// Function to notify MFRS for pending emergency
 exports.notifyPendingToMfrs = functions.firestore.document('/PendingEmergencies/{id}').onCreate(async (snap, context) => {
 
   console.log("Notifying available Mfrs");
@@ -72,12 +96,12 @@ exports.notifyPendingToMfrs = functions.firestore.document('/PendingEmergencies/
 
   //We have the tokens in this this userDataQuery documents. We will now make a list of all tokens in these docs
   var targetTokens = []; // send the notifications to tokens in this list
-  userDataQuery.forEach(userDoc => targetTokens.push(userDoc.data().token))
+  userDataQuery.forEach(userDoc => targetTokens.push(userDoc.data().token));
   console.log(targetTokens);
 
   //setting up notification payload
   const payload = {
-    notification: {title: "New emergency!", body: `There is a new emergency from ${patientId}`, sound: "enabled"},
+    notification: {title: "New emergency!", body: `There is a new emergency from ${patientId}`, sound: "default"},
   }
   
   //send messages
