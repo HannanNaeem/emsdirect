@@ -77,7 +77,7 @@ class MapState extends State<MapMFR> {
     setState(() {
       emergencyMarker[markerId] = marker;
     });
-    getCurrentLocaion();
+//    getCurrentLocaion();
     this.setState(() => _mapLoading = false);
   }
 
@@ -132,40 +132,40 @@ class MapState extends State<MapMFR> {
     );
   }
 
-  void getCurrentLocaion() async {
-    try {
-      var location = await _locationTracker.getLocation();
-
-      updateMarker(location);
-      currLoc = LatLng(location.latitude, location.longitude);
-
-      if (_locationSubscription != null) {
-        _locationSubscription.cancel();
-      }
-
-      _locationSubscription =
-          _locationTracker.onLocationChanged().listen((newLocation) {
-        if (_controller != null) {
-//          currLoc = LatLng(newLocation.latitude, newLocation.longitude);
+//  void getCurrentLocaion() async {
+//    try {
+//      var location = await _locationTracker.getLocation();
 //
-//          _controller.animateCamera(CameraUpdate.newCameraPosition(
-//              new CameraPosition(
-//                  bearing: 192,
-//                  target: LatLng(newLocation.latitude, newLocation.longitude),
-//                  tilt: 0,
-//                  zoom: Zoom)));
-          GeoPoint NewGeoPoint =
-              GeoPoint(newLocation.latitude, newLocation.longitude);
-          _updateUserData(NewGeoPoint);
-          updateMarker(newLocation);
-        }
-      });
-    } on PlatformException catch (e) {
-      if (e.code == 'PERMISSION_DENIED') {
-        debugPrint("Permission Denied");
-      }
-    }
-  }
+//      updateMarker(location);
+//      currLoc = LatLng(location.latitude, location.longitude);
+//
+//      if (_locationSubscription != null) {
+//        _locationSubscription.cancel();
+//      }
+//
+//      _locationSubscription =
+//          _locationTracker.onLocationChanged().listen((newLocation) {
+//        if (_controller != null) {
+////          currLoc = LatLng(newLocation.latitude, newLocation.longitude);
+////
+////          _controller.animateCamera(CameraUpdate.newCameraPosition(
+////              new CameraPosition(
+////                  bearing: 192,
+////                  target: LatLng(newLocation.latitude, newLocation.longitude),
+////                  tilt: 0,
+////                  zoom: Zoom)));
+//          GeoPoint NewGeoPoint =
+//              GeoPoint(newLocation.latitude, newLocation.longitude);
+//          _updateUserData(NewGeoPoint);
+//          updateMarker(newLocation);
+//        }
+//      });
+//    } on PlatformException catch (e) {
+//      if (e.code == 'PERMISSION_DENIED') {
+//        debugPrint("Permission Denied");
+//      }
+//    }
+//  }
 
   @override
   void dispose() {

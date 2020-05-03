@@ -105,7 +105,7 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
     _notificationService.configureFirebaseListeners();
     mfrRef = databaseReference.collection("Mfr").document(_userData['rollNo']);
     getInitialData(_userData['rollNo']).then((_) {
-      getCurrentLocaion();
+      //getCurrentLocaion();
       print('Initial data set');
     });
   }
@@ -123,36 +123,36 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
     }
   }
 
-  void getCurrentLocaion() async {
-    try {
-      while (true) {
-        if (isAvailable) {
-        var location = await _locationTracker.getLocation();
-
-        var currLoc = LatLng(location.latitude, location.longitude);
-        GeoPoint NewGeoPoint = GeoPoint(currLoc.latitude, currLoc.longitude);
-
-        if (_locationSubscription != null) {
-          _locationSubscription.cancel();
-        }
-          _updateUserData(NewGeoPoint);
-          break;
-        }
-      }
-      _locationSubscription =
-          _locationTracker.onLocationChanged().listen((newLocation) {
-        if (isAvailable) {
-          GeoPoint NewGeoPoint =
-              GeoPoint(newLocation.latitude, newLocation.longitude);
-          _updateUserData(NewGeoPoint);
-        }
-      });
-    } on PlatformException catch (e) {
-      if (e.code == 'PERMISSION_DENIED') {
-        debugPrint("Permission Denied");
-      }
-    }
-  }
+//  void getCurrentLocaion() async {
+//    try {
+//      while (true) {
+//        if (isAvailable) {
+//        var location = await _locationTracker.getLocation();
+//
+//        var currLoc = LatLng(location.latitude, location.longitude);
+//        GeoPoint NewGeoPoint = GeoPoint(currLoc.latitude, currLoc.longitude);
+//
+//        if (_locationSubscription != null) {
+//          _locationSubscription.cancel();
+//        }
+//          _updateUserData(NewGeoPoint);
+//          break;
+//        }
+//      }
+//      _locationSubscription =
+//          _locationTracker.onLocationChanged().listen((newLocation) {
+//        if (isAvailable) {
+//          GeoPoint NewGeoPoint =
+//              GeoPoint(newLocation.latitude, newLocation.longitude);
+//          _updateUserData(NewGeoPoint);
+//        }
+//      });
+//    } on PlatformException catch (e) {
+//      if (e.code == 'PERMISSION_DENIED') {
+//        debugPrint("Permission Denied");
+//      }
+//    }
+//  }
 
   void updateDeclineCount(docId) async {
     try {
