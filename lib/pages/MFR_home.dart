@@ -555,8 +555,6 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
                                               .updateStatus(
                                                   isAvailable, isOccupied);
                                         });
-                                      }).then((_) {
-                                        print("Active status updated");
                                       });
 //                                      await upDateAvailability(
 //                                              isAvailable, _userData['rollNo'])

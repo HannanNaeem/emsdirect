@@ -93,11 +93,11 @@ class _AlertFunctionMfrState extends State<AlertFunctionMfr> {
       DocumentReference docRef = databaseReference
           .collection("Mfr")
           .document(widget._userData['rollNo']);
-      await docRef.updateData({'isOccupied': newVal}).then((_) {
-        print('Updated occupied status');
-      });
+      await docRef.updateData({'isOccupied': newVal});
+      print('updated occupied status');
     } catch (e) {
       print(e);
+      throw (e);
     }
   }
 
@@ -105,14 +105,23 @@ class _AlertFunctionMfrState extends State<AlertFunctionMfr> {
   Future updateDecline(var docID) async {
     DocumentReference docRef =
         databaseReference.collection("PendingEmergencies").document(docID);
-    DocumentSnapshot doc = await docRef.get();
+    try {
+      DocumentSnapshot doc = await docRef.get();
+      await docRef.updateData({
+        'declinedBy': FieldValue.arrayUnion([widget._userData['rollNo']]),
+        'declines': doc.data['declines'] + 1,
+      });
+    } catch (e) {
+      print("updated decline info");
+      throw (e);
+    }
 
-    return await docRef.updateData({
-      'declinedBy': FieldValue.arrayUnion([widget._userData['rollNo']]),
-      'declines': doc.data['declines'] + 1,
-    }).then((_) {
-      print('Relevant info updated');
-    });
+//    return await docRef.updateData({
+//      'declinedBy': FieldValue.arrayUnion([widget._userData['rollNo']]),
+//      'declines': doc.data['declines'] + 1,
+//    }).then((_) {
+//      print('Relevant info updated');
+//    });
   }
 
   //creates a document in OngoingEmergencies after accpetance of a pending emergency
@@ -141,22 +150,6 @@ class _AlertFunctionMfrState extends State<AlertFunctionMfr> {
     });
   }
 
-//  Future updateOnAccept(var doc) async {
-//    List<Future> futureList = List<Future>();
-//    futureList.add(await createOngoingEmergencyDocument(
-//        doc[0].location,
-//        doc[0].genderPreference,
-//        doc[0].patientRollNo,
-//        doc[0].severity,
-//        doc[0].patientContactNo));
-//    futureList.add(deleteRecord(doc[0].patientRollNo));
-//    futureList.add(updateOccupiedStatus(true));
-//    for (int i = 1; i < doc.length; i++) {
-//      futureList.add(updateDecline(doc[i].patientRollNo));
-//    }
-//    return Future.wait(futureList);
-//  }
-
   Future<bool> checkExist(String docID) async {
     bool exists = false;
     try {
@@ -176,15 +169,15 @@ class _AlertFunctionMfrState extends State<AlertFunctionMfr> {
     }
   }
 
-  Future updateDeclineOnRest(var docs) async {
-    List<Future> futureList = List<Future>();
-    for (int i = 1; i < docs.length; i++) {
-      print('UDOR ID: ${docs[i].patientRollNo}');
-      futureList.add(updateDecline(docs[i].patientRollNo));
-    }
-    return await Future.wait(futureList);
-  }
-
+//  Future updateDeclineOnRest(var docs) async {
+//    List<Future> futureList = List<Future>();
+//    for (int i = 1; i < docs.length; i++) {
+//      print('UDOR ID: ${docs[i].patientRollNo}');
+//      futureList.add(updateDecline(docs[i].patientRollNo));
+//    }
+//    return await Future.wait(futureList);
+//  }
+//
   void updateOccupiedLocal(bool val) {
     setState(() {
       _isOccupied = val;
@@ -214,35 +207,40 @@ class _AlertFunctionMfrState extends State<AlertFunctionMfr> {
         .document(widget._userData['rollNo']);
 
     try {
-      return await databaseReference.runTransaction((Transaction tx) async {
-        await tx
-            .set(ongoingRef, {
-              'mfr': widget._userData['rollNo'],
-              'mfrDetails': {
-                'name': widget._userData['name'],
-                'contact': widget._userData['contact'],
-              },
-              'location': location,
-              'genderPreference': genderPreference,
-              'patientRollNo': patientRollNo,
-              'reportingTime': time,
-              'severity': severityLevel,
-              'patientContactNo': patientContactNo,
-            })
-            .then((_) => tx.delete(pendingRef))
-            .then((_) => tx.update(mfrRef, {'isOccupied': newVal}))
-            .then((_) => print("accept transaction complete"))
-            .then((_) {
-              updateOccupiedLocal(true);
-              mfrHomeGlobalKey.currentState.updateOccupied(true);
-            })
-            .then((_) {
-              studentContactNo = patientContactNo;
-              locationOfEmergency = location;
-            })
-            .then((_) {
-              print('relevant info updated');
-            });
+      await databaseReference.runTransaction((Transaction tx) async {
+        await tx.set(ongoingRef, {
+          'mfr': widget._userData['rollNo'],
+          'mfrDetails': {
+            'name': widget._userData['name'],
+            'contact': widget._userData['contact'],
+          },
+          'location': location,
+          'genderPreference': genderPreference,
+          'patientRollNo': patientRollNo,
+          'reportingTime': time,
+          'severity': severityLevel,
+          'patientContactNo': patientContactNo,
+        });
+        await tx.delete(pendingRef);
+        await tx.update(mfrRef, {'isOccupied': newVal});
+        updateOccupiedLocal(true);
+        mfrHomeGlobalKey.currentState.updateOccupied(true);
+        studentContactNo = patientContactNo;
+        locationOfEmergency = location;
+//            .then((_) => tx.delete(pendingRef))
+//            .then((_) => tx.update(mfrRef, {'isOccupied': newVal}))
+//            .then((_) => print("accept transaction complete"))
+//            .then((_) {
+//              updateOccupiedLocal(true);
+//              mfrHomeGlobalKey.currentState.updateOccupied(true);
+//            })
+//            .then((_) {
+//              studentContactNo = patientContactNo;
+//              locationOfEmergency = location;
+//            })
+//            .then((_) {
+//              print('relevant info updated');
+//            });
       });
     } catch (e) {
       throw (e);
@@ -250,7 +248,7 @@ class _AlertFunctionMfrState extends State<AlertFunctionMfr> {
   }
 
   //function to show a pendingEmergency alert
-  Future showPendingAlert(var doc, var width, var height) async {
+  void showPendingAlert(var doc, var width, var height) async {
     //only shows alerts if there is a pending emergency document AND if MFR is available+not occupied
     //-------------- TESTING ------------------------------------
     print('ID: ${doc[0].patientRollNo}');
@@ -300,7 +298,7 @@ class _AlertFunctionMfrState extends State<AlertFunctionMfr> {
                   print('yes');
                   Navigator.of(context).pop();
                   try {
-                    return await acceptTransaction(
+                    await acceptTransaction(
                         doc[0].patientRollNo,
                         doc[0].location,
                         doc[0].genderPreference,
@@ -311,7 +309,6 @@ class _AlertFunctionMfrState extends State<AlertFunctionMfr> {
                         true);
                   } catch (e) {
                     print("Transaction failed -------------> $e");
-                    return null;
                   }
                 },
               ),
@@ -333,16 +330,17 @@ class _AlertFunctionMfrState extends State<AlertFunctionMfr> {
                   print('no');
                   Navigator.of(context).pop();
                   try {
-                    return await updateDecline(doc[0].patientRollNo).then((_) {
-                      updateOccupiedLocal(false);
-                      mfrHomeGlobalKey.currentState.updateOccupied(false);
-                    }).catchError((onError) {
-                      print(onError);
-                    });
+                    await updateDecline(doc[0].patientRollNo);
+                    updateOccupiedLocal(false);
+                    mfrHomeGlobalKey.currentState.updateOccupied(false);
                   } catch (e) {
                     print(e.toString());
-                    return null;
                   }
+//                  var success = await updateDecline(doc[0].patientRollNo);
+//                  if (success) {
+//                    updateOccupiedLocal(false);
+//                    mfrHomeGlobalKey.currentState.updateOccupied(false);
+//                  }
                 },
               ),
             ),
@@ -404,14 +402,20 @@ class _AlertFunctionMfrState extends State<AlertFunctionMfr> {
                     print('acknowledge');
                     Navigator.of(context).pop();
                     try {
-                      return await updateOccupiedStatus(true).then((_) {
-                        updateOccupiedLocal(true);
-                        mfrHomeGlobalKey.currentState.updateOccupied(true);
-                      });
+                      await updateOccupiedStatus(true);
+                      updateOccupiedLocal(true);
+                      mfrHomeGlobalKey.currentState.updateOccupied(true);
                     } catch (e) {
-                      print('acknowledging failed');
-                      return null;
+                      print(e.toString());
                     }
+//                    try {
+//                      await updateOccupiedStatus(true).then((_) {
+//                        updateOccupiedLocal(true);
+//                        mfrHomeGlobalKey.currentState.updateOccupied(true);
+//                      });
+//                    } catch (e) {
+//                      print('acknowledging failed');
+//                    }
                   },
                 ),
               ),
@@ -434,16 +438,22 @@ class _AlertFunctionMfrState extends State<AlertFunctionMfr> {
                   onPressed: () async {
                     print('go to map');
                     Navigator.of(context).pop();
-                    //Navigator.push<dynamic>(context, MaterialPageRoute(builder: (context) => MapMFR(locationOfEmergency, patientContactNo)));
                     try {
-                      return await updateOccupiedStatus(true).then((_) {
-                        updateOccupiedLocal(true);
-                        mfrHomeGlobalKey.currentState.updateOccupied(true);
-                      });
+                      await updateOccupiedStatus(true);
+                      updateOccupiedLocal(true);
+                      mfrHomeGlobalKey.currentState.updateOccupied(true);
                     } catch (e) {
-                      print('acknowledging failed');
-                      return null;
+                      print(e.toString());
                     }
+                    //Navigator.push<dynamic>(context, MaterialPageRoute(builder: (context) => MapMFR(locationOfEmergency, patientContactNo)));
+//                    try {
+//                      await updateOccupiedStatus(true).then((_) {
+//                        updateOccupiedLocal(true);
+//                        mfrHomeGlobalKey.currentState.updateOccupied(true);
+//                      });
+//                    } catch (e) {
+//                      print('acknowledging failed');
+//                    }
                   },
                 ),
               ),
@@ -567,22 +577,16 @@ class _AlertFunctionMfrState extends State<AlertFunctionMfr> {
           //call the send ongoingEmergency alert function
           if (!_ongoingAlertShowed) {
             _ongoingAlertShowed = true;
-            WidgetsBinding.instance.addPostFrameCallback((_) async =>
-                await showOngoingAlert(_ongoingEmergencyList, _width, _height));
-          }
-          //add decline updates to the rest of the pending emergencies
-          if (numPending > 0) {
-            for (int i = 0; i < numPending; i++) {
-              updateDecline(_pendingEmergencyList[0].patientRollNo);
-            }
+            WidgetsBinding.instance.addPostFrameCallback((_) =>
+                showOngoingAlert(_ongoingEmergencyList, _width, _height));
           }
         }
         //otherwise check if there is a relevant pending emergency, if so send an alert
         else if (_pendingEmergencyList != null && numPending > 0) {
           //call the send pendingEmergency alert function
           if (!alertBuffer.contains(_pendingEmergencyList[0].patientRollNo)) {
-            WidgetsBinding.instance.addPostFrameCallback((_) async =>
-                await showPendingAlert(_pendingEmergencyList, _width, _height));
+            WidgetsBinding.instance.addPostFrameCallback((_) =>
+                showPendingAlert(_pendingEmergencyList, _width, _height));
           }
         }
       }
