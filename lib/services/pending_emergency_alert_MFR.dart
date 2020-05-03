@@ -213,9 +213,12 @@ class _AlertFunctionMfrState extends State<AlertFunctionMfr> {
         dynamic snapshot = await ongoingRef.get();
         print(
             "--------------------------------------------------------------${snapshot.data}");
-        if (snapshot.data != null) {
+        if (snapshot.data != null && snapshot.data['mfr'] != widget._userData['rollNo']) {
           throw ("Cannot create emergency has already been accepted");
         }
+        // if (snapshot.data['mfr'] != widget._userData['rollNo']) {
+        //   throw ("Cannot create emergency, already has a mfr roll number");
+        // }
         await tx.set(ongoingRef, {
           'mfr': widget._userData['rollNo'],
           'mfrDetails': {
@@ -568,46 +571,48 @@ class _AlertFunctionMfrState extends State<AlertFunctionMfr> {
     //this is where the two alert functions are called depending on whether there is data AND conditions are met
     if (_isAvailable != null && _isOccupied != null) {
 //      //if available, need to check if ongoing emergency is there
-//      if (_isAvailable) {
-//        //check if there is an ongoing emergency
-//        if (_ongoingEmergencyList != null && numOngoing > 0) {
-//          //call the send ongoingEmergency alert function
-//          if (!_ongoingAlertShowed) {
-//            _ongoingAlertShowed = true;
-//            WidgetsBinding.instance.addPostFrameCallback((_) =>
-//                showOngoingAlert(_ongoingEmergencyList, _width, _height));
-//          }
-//        }
-//        //if there is no ongoing emergency then check if the person is ready to recieve pending alert
-//        else if (_isAvailable && !_isOccupied) {
-//          if (_pendingEmergencyList != null && numPending > 0) {
-//            //call the send pendingEmergency alert function
-//            if (!alertBuffer.contains(_pendingEmergencyList[0].patientRollNo)) {
-//              WidgetsBinding.instance.addPostFrameCallback((_) =>
-//                  showPendingAlert(_pendingEmergencyList, _width, _height));
-//            }
-//          }
-//        }
-      if (_isAvailable && !_isOccupied) {
-        //check if there is an ongoing emergency in the MFRs name, if so send an alert
-        if (_ongoingEmergencyList != null && numOngoing > 0) {
-          //call the send ongoingEmergency alert function
-          if (!_ongoingAlertShowed) {
-            _ongoingAlertShowed = true;
-            WidgetsBinding.instance.addPostFrameCallback((_) =>
-                showOngoingAlert(_ongoingEmergencyList, _width, _height));
-          }
-        }
-        //otherwise check if there is a relevant pending emergency, if so send an alert
-        else if (_pendingEmergencyList != null && numPending > 0) {
-          //call the send pendingEmergency alert function
-          if (!alertBuffer.contains(_pendingEmergencyList[0].patientRollNo)) {
-            WidgetsBinding.instance.addPostFrameCallback((_) =>
-                showPendingAlert(_pendingEmergencyList, _width, _height));
-          }
-        }
-      }
+     if (_isAvailable) {
+       //check if there is an ongoing emergency
+       if (_ongoingEmergencyList != null && numOngoing > 0) {
+         //call the send ongoingEmergency alert function
+         if (!_ongoingAlertShowed) {
+           _ongoingAlertShowed = true;
+           WidgetsBinding.instance.addPostFrameCallback((_) =>
+               showOngoingAlert(_ongoingEmergencyList, _width, _height));
+         }
+       }
+       //if there is no ongoing emergency then check if the person is ready to recieve pending alert
+       else if (_isAvailable && !_isOccupied) {
+         if (_pendingEmergencyList != null && numPending > 0) {
+           //call the send pendingEmergency alert function
+           if (!alertBuffer.contains(_pendingEmergencyList[0].patientRollNo)) {
+             WidgetsBinding.instance.addPostFrameCallback((_) =>
+                 showPendingAlert(_pendingEmergencyList, _width, _height));
+           }
+         }
+       }
+     }
     }
+      // if (_isAvailable && !_isOccupied) {
+      //   //check if there is an ongoing emergency in the MFRs name, if so send an alert
+      //   if (_ongoingEmergencyList != null && numOngoing > 0) {
+      //     //call the send ongoingEmergency alert function
+      //     if (!_ongoingAlertShowed) {
+      //       _ongoingAlertShowed = true;
+      //       WidgetsBinding.instance.addPostFrameCallback((_) =>
+      //           showOngoingAlert(_ongoingEmergencyList, _width, _height));
+      //     }
+      //   }
+      //   //otherwise check if there is a relevant pending emergency, if so send an alert
+      //   else if (_pendingEmergencyList != null && numPending > 0) {
+      //     //call the send pendingEmergency alert function
+      //     if (!alertBuffer.contains(_pendingEmergencyList[0].patientRollNo)) {
+      //       WidgetsBinding.instance.addPostFrameCallback((_) =>
+      //           showPendingAlert(_pendingEmergencyList, _width, _height));
+      //     }
+      //   }
+      // }
+    // }
     return Container();
   }
 }
