@@ -156,8 +156,6 @@ class MapStateOPS extends State<MapOPS> {
                 },
                 backgroundColor: const Color(0xff47719e),
               ),
-
-
             ]
         ),
       ),
@@ -216,6 +214,7 @@ class MapStateOPS extends State<MapOPS> {
                 )
             );
           },
+
           icon: EmergencyLocationIconRed,
         );
         setState(() {
@@ -246,9 +245,10 @@ class MapStateOPS extends State<MapOPS> {
             markerId: markerId,
             position: LatLng(location.latitude, location.longitude),
             icon: RedMFR,
-//              infoWindow: InfoWindow( title: name, snippet: rollNumber)
-
-
+            infoWindow: InfoWindow(
+                title: name,
+                snippet: rollNo
+            ),
           );
           setState(() {
             allMarkers[markerId] = marker;
