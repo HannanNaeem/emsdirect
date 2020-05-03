@@ -31,18 +31,20 @@ class _MfrInformationState extends State<MfrInformation> {
 
     return CupertinoButton(
       child: Container(
-        height: 0.02*height,
-        width: 0.01*width,
+        height: 0.15*height,
+        width: 0.9*width,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(12),
+          color: Colors.white,
         ),
         child: Container(
 
-          margin: EdgeInsets.fromLTRB(15, 15, 0, 0),
+          margin: EdgeInsets.fromLTRB(0, 15, 0, 0),
           child: Column(
           children: <Widget>[
             Text(
               'MFR: ' + widget.name + ' ' + widget.rollNo,
+              textAlign: TextAlign.center,
               style: TextStyle(
                 color: const Color(0xff142850),
                 fontSize: 14,
@@ -52,6 +54,7 @@ class _MfrInformationState extends State<MfrInformation> {
             ),
             Text(
               'Contact: ' + widget.contact,
+                textAlign: TextAlign.center,
               style: TextStyle(
                 color: const Color(0xff142850),
                 fontSize: 14,
@@ -61,6 +64,7 @@ class _MfrInformationState extends State<MfrInformation> {
             ),
             Text(
               'Gender: ' + widget.gender,
+                textAlign: TextAlign.center,
               style: TextStyle(
                 color: const Color(0xff142850),
                 fontSize: 14,
@@ -70,6 +74,7 @@ class _MfrInformationState extends State<MfrInformation> {
             ),
             Text(
               'Senior: ' + widget.isSenior.toString(),
+                textAlign: TextAlign.center,
               style: TextStyle(
                 color: const Color(0xff142850),
                 fontSize: 14,
@@ -85,24 +90,48 @@ class _MfrInformationState extends State<MfrInformation> {
       onPressed: () {
         showCupertinoDialog(
           context: context,
-          builder: (BuildContext context) => CupertinoAlertDialog(
-            title: const Text('Do you want to assign this MFR?'),
-            actions: <Widget>[
-              CupertinoDialogAction(
-                child: const Text('Yes'),
-                onPressed: () {
-                  Navigator.pop(context);
-                  // todo: assign MFR here
-                },
-              ),
-              CupertinoDialogAction(
-                child: const Text('No'),
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-              ),
-            ],
-          ),
+          builder: (BuildContext context) =>
+              AlertDialog(
+                title: Text(
+                  "Do you want to assign this MFR?",
+                  style: TextStyle(
+                    fontFamily: 'HelveticaNeueLight',
+                    letterSpacing: 2.0,
+                    fontSize: 20,
+                    color: Colors.grey[600],
+                  ),
+                ),
+                actions: <Widget>[
+                  FlatButton(
+                    child: Text(
+                      'YES',
+                      style: TextStyle(
+                        fontFamily: 'HelveticaNeueLight',
+                        letterSpacing: 3.0,
+                        fontSize: 20,
+                        color: const Color(0xff1a832a),
+                      ),
+                    ),
+                    onPressed: () {
+                      //todo: assign MFR
+                    },
+                  ),
+                  FlatButton(
+                    child: Text(
+                      'NO',
+                      style: TextStyle(
+                        fontFamily: 'HelveticaNeueLight',
+                        letterSpacing: 2.5,
+                        fontSize: 20,
+                        color: const Color(0xffee0000),
+                      ),
+                    ),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ],
+              )
         );
       },
     );

@@ -126,7 +126,13 @@ class OpsDatabaseService {
         .map(_availableMfrsListFromSnapshot);
   }
 
-
+  Stream<List<AvailableMfrs>> get availableMfrStream2 {
+    return availableMfrs
+        .where('isActive', isEqualTo: true)
+        .where('isOccupied', isEqualTo: false)
+        .snapshots()
+        .map(_availableMfrsListFromSnapshot);
+  }
   // streams needed for student
   Stream<List<PendingEmergencyModel>> studentPendingStream(String rollNo){
     return pendingEmergencies.where('patientRollNo', isEqualTo: rollNo).snapshots().map(_pendingEmergencyListFromSnapshot);

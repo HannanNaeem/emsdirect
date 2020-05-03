@@ -6,16 +6,22 @@ import 'package:ems_direct/pages/ManualAssignment.dart';
 
 class OpsManualAssignmentWrapper extends StatelessWidget {
   var _emergencyInformation;
-  OpsManualAssignmentWrapper(var emergencyInformation) : super() {
+  OpsManualAssignmentWrapper(var emergencyInformation){
     _emergencyInformation = emergencyInformation;
   }
+
   @override
   Widget build(BuildContext context) {
-
-    return StreamProvider<List<PendingEmergencyModel>>.value(
-        value: OpsDatabaseService().pendingStream,
-        child: ManualAssignment(_emergencyInformation)
+    return StreamProvider<List<AvailableMfrs>>.value(
+      value:  OpsDatabaseService().availableMfrStream2,
+      child: StreamProvider<List<PendingEmergencyModel>>.value(
+          value: OpsDatabaseService().pendingStream,
+          child: ManualAssignment(_emergencyInformation)
+      ),
     );
 
   }
+
+
+
 }
