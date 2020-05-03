@@ -1,4 +1,5 @@
 import 'package:ems_direct/dummy.dart';
+import 'package:ems_direct/pages/mfr_emergency_report.dart';
 import 'package:ems_direct/services/auth.dart';
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -614,6 +615,8 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
                           iconSize: height / 9,
                           onPressed: () {
                             print('Clicked');
+                            //! navigate to report emergency
+                            Navigator.push(context, MaterialPageRoute(builder: (context) => EmergencyReportMfr()));
                           },
                         ),
                         Center(
