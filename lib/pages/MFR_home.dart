@@ -2,6 +2,7 @@ import 'package:ems_direct/dummy.dart';
 import 'package:ems_direct/services/auth.dart';
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:ems_direct/services/push_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:ems_direct/services/pending_emergency_alert_MFR.dart';
@@ -64,6 +65,10 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
   //instance of auth service
   final AuthService _authMfr = AuthService();
 
+  //! -------- Cloud messaging for notifications ------------------------- //
+
+  final CloudMessagingService _notificationService = CloudMessagingService();
+
   //State management for keepsignedin ----------------------------------
   @override
   void dispose() {
@@ -94,6 +99,9 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
     WidgetsBinding.instance.addObserver(this);
     //initializing stream to null as MFR will always be unavailable unless made available by himself
     _documentStream = null;
+
+    _notificationService.getToken();
+    _notificationService.configureFirebaseListeners();
     mfrRef = databaseReference.collection("Mfr").document(_userData['rollNo']);
     getInitialData(_userData['rollNo']).then((_) {
       getCurrentLocaion();

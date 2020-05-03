@@ -1,4 +1,5 @@
 import 'package:ems_direct/services/auth.dart';
+import 'package:ems_direct/services/push_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:geolocator/geolocator.dart';
@@ -54,7 +55,11 @@ class _StudentHomeState extends State<StudentHome> with WidgetsBindingObserver {
 
   //instance of auth service
   final AuthService _authStudent = AuthService();
-  
+
+  //! ----- Cloudmessaging service for notifications ----- !//
+  final CloudMessagingService _notificationService = CloudMessagingService();
+
+
   //State management for keepsignedin ----------------------------------
   @override
   void initState() {
@@ -62,6 +67,9 @@ class _StudentHomeState extends State<StudentHome> with WidgetsBindingObserver {
     WidgetsBinding.instance.addObserver(this);
     _getCurrentLocation();
     uid = _authStudent.currentUser();
+
+    _notificationService.getToken();
+    _notificationService.configureFirebaseListeners();
   }
 
   @override
