@@ -45,6 +45,7 @@ class _AlertFunctionMfrState extends State<AlertFunctionMfr> {
   bool _ongoingAlertShowed = false;
   var locationOfEmergency;
   var studentContactNo;
+  var patientRollNumber;
   bool decision;
 
   void getInitialData(var docId) async {
@@ -210,9 +211,10 @@ class _AlertFunctionMfrState extends State<AlertFunctionMfr> {
       await databaseReference.runTransaction((Transaction tx) async {
         //TODO: check if document exists
         dynamic snapshot = await ongoingRef.get();
-        print("--------------------------------------------------------------${snapshot.data}");
+        print(
+            "--------------------------------------------------------------${snapshot.data}");
         if (snapshot.data != null) {
-          throw("Cannot create emergency has already been accepted");
+          throw ("Cannot create emergency has already been accepted");
         }
         await tx.set(ongoingRef, {
           'mfr': widget._userData['rollNo'],
@@ -233,7 +235,7 @@ class _AlertFunctionMfrState extends State<AlertFunctionMfr> {
         mfrHomeGlobalKey.currentState.updateOccupied(true);
         studentContactNo = patientContactNo;
         locationOfEmergency = location;
-
+        patientRollNumber = patientRollNo;
       });
     } catch (e) {
       throw (e);
@@ -558,6 +560,7 @@ class _AlertFunctionMfrState extends State<AlertFunctionMfr> {
       if (_ongoingEmergencyList.isNotEmpty) {
         locationOfEmergency = _ongoingEmergencyList[0].location;
         studentContactNo = _ongoingEmergencyList[0].patientContactNo;
+        patientRollNumber = _ongoingEmergencyList[0].patientRollNo;
       }
       //WidgetsBinding.instance.addPostFrameCallback((_) => printData(_ongoingEmergencyList));
     }

@@ -61,6 +61,7 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
   var gender;
   var locationOfEmergency;
   var patientContactNo;
+  var patientRollNumber;
 
   //instance of auth service
   final AuthService _authMfr = AuthService();
@@ -630,6 +631,8 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
                                           .currentState.locationOfEmergency;
                                   patientContactNo = mfrAlertFunctionGlobalKey
                                       .currentState.studentContactNo;
+                                  patientRollNumber = mfrAlertFunctionGlobalKey
+                                      .currentState.patientRollNumber;
                                 });
                                 if (locationOfEmergency != null &&
                                     patientContactNo != null) {
@@ -642,7 +645,8 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
                                               locationOfEmergency,
                                               patientContactNo,
                                               _userData.data['rollNo']
-                                                  .toString())));
+                                                  .toString(),
+                                              patientRollNumber)));
                                 }
                               }),
                       Center(

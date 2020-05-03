@@ -4,45 +4,51 @@ import 'package:flutter/services.dart';
 import 'dart:async';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
+import 'package:ems_direct/pages/MFR_home.dart';
+import 'package:ems_direct/services/pending_emergency_alert_MFR.dart';
 
 class MapMFR extends StatefulWidget {
   String _StudentContact = '';
   GeoPoint _locationOfEmergency;
   String _rollNo;
-  MapMFR(GeoPoint locationOfEmergency, String patientContactNo, String rollNo) : super() {
+  String _patientRollNumber;
+  MapMFR(GeoPoint locationOfEmergency, String patientContactNo, String rollNo,
+      String patientRollNo)
+      : super() {
     _StudentContact = patientContactNo;
     _locationOfEmergency = locationOfEmergency;
     _rollNo = rollNo;
+    _patientRollNumber = patientRollNo;
   }
 
   @override
-  MapState createState() => new MapState(_locationOfEmergency, _StudentContact, _rollNo);
+  MapState createState() => new MapState(
+      _locationOfEmergency, _StudentContact, _rollNo, _patientRollNumber);
 }
 
 class MapState extends State<MapMFR> {
   GeoPoint _locationOfEmergency;
   String contactNumber = '';
   String _rollNo;
+  String _patientRollNumber;
   bool _mapLoading = true;
   Map<MarkerId, Marker> emergencyMarker = <MarkerId, Marker>{};
   final databaseReference = Firestore.instance;
 
-  MapState(GeoPoint location, String number, String rollNo) {
+  MapState(
+      GeoPoint location, String number, String rollNo, String patientRollNo) {
     _locationOfEmergency = location;
     contactNumber = number;
     _rollNo = rollNo;
+    _patientRollNumber = patientRollNo;
   }
 
-
-  void _updateUserData(GeoPoint Newlocation) async{
+  void _updateUserData(GeoPoint Newlocation) async {
     await databaseReference
         .collection("Mfr")
         .document((await _rollNo).toString())
-        .updateData({
-      'location': Newlocation
-    });
+        .updateData({'location': Newlocation});
   }
-
 
   GoogleMapController _controller;
   static var Zoom = 11.0;
@@ -148,7 +154,8 @@ class MapState extends State<MapMFR> {
                   target: LatLng(newLocation.latitude, newLocation.longitude),
                   tilt: 0,
                   zoom: Zoom)));
-          GeoPoint NewGeoPoint = GeoPoint(newLocation.latitude, newLocation.longitude);
+          GeoPoint NewGeoPoint =
+              GeoPoint(newLocation.latitude, newLocation.longitude);
           _updateUserData(NewGeoPoint);
           updateMarker(newLocation);
         }
@@ -206,13 +213,13 @@ class MapState extends State<MapMFR> {
             ),
             (_mapLoading)
                 ? Container(
-              height: height,
-              width: width,
-              color: Colors.grey[100],
-              child: Center(
-                child: CircularProgressIndicator(),
-              ),
-            )
+                    height: height,
+                    width: width,
+                    color: Colors.grey[100],
+                    child: Center(
+                      child: CircularProgressIndicator(),
+                    ),
+                  )
                 : Container(),
             Padding(
                 padding: EdgeInsets.fromLTRB(
@@ -258,9 +265,26 @@ class MapState extends State<MapMFR> {
                                           color: const Color(0xff1a832a),
                                         ),
                                       ),
-                                      onPressed: () {
+                                      onPressed: () async {
                                         Navigator.of(context).pop();
                                         Navigator.of(context).pop();
+                                        try {
+                                          await Firestore.instance
+                                              .collection('OngoingEmergencies')
+                                              .document(_patientRollNumber)
+                                              .delete();
+                                          await Firestore.instance
+                                              .collection('Mfr')
+                                              .document(_rollNo)
+                                              .updateData(
+                                                  {'isOccupied': false});
+                                          mfrHomeGlobalKey.currentState
+                                              .updateOccupied(false);
+                                          mfrAlertFunctionGlobalKey.currentState
+                                              .updateOccupiedLocal(false);
+                                        } catch (e) {
+                                          print(e);
+                                        }
 //                                        todo: occupied status change
                                       },
                                     ),
