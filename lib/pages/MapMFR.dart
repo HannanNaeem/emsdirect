@@ -8,7 +8,7 @@ import 'package:location/location.dart';
 class MapMFR extends StatefulWidget {
   String _StudentContact = '';
   GeoPoint _locationOfEmergency;
-  MapMFR(GeoPoint locationOfEmergency, String patientContactNo): super(){
+  MapMFR(GeoPoint locationOfEmergency, String patientContactNo) : super() {
     _StudentContact = patientContactNo;
     _locationOfEmergency = locationOfEmergency;
   }
@@ -22,25 +22,19 @@ class MapState extends State<MapMFR> {
   String contactNumber = '';
   Map<MarkerId, Marker> emergencyMarker = <MarkerId, Marker>{};
 
-  MapState(GeoPoint location, String number){
+  MapState(GeoPoint location, String number) {
     _locationOfEmergency = location;
     contactNumber = number;
     var markerIdVal = emergencyMarker.length + 1;
     String mar = markerIdVal.toString();
     final MarkerId markerId = MarkerId(mar);
-    final Marker marker =
-    Marker(
+    final Marker marker = Marker(
         markerId: markerId,
         position: LatLng(location.latitude, location.longitude),
-        infoWindow: InfoWindow( title: contactNumber)
-    );
+        infoWindow: InfoWindow(title: contactNumber));
     setState(() {
       emergencyMarker[markerId] = marker;
     });
-
-
-
-
   }
 
   GoogleMapController _controller;
@@ -104,37 +98,37 @@ class MapState extends State<MapMFR> {
     );
   }
 
-  void getCurrentLocaion() async {
-    try {
-      var location = await _locationTracker.getLocation();
-
-      updateMarker(location);
-      currLoc = LatLng(location.latitude, location.longitude);
-
-      if (_locationSubscription != null) {
-        _locationSubscription.cancel();
-      }
-
-      _locationSubscription =
-          _locationTracker.onLocationChanged().listen((newLocation) {
-        if (_controller != null) {
-          currLoc = LatLng(newLocation.latitude, newLocation.longitude);
-
-          _controller.animateCamera(CameraUpdate.newCameraPosition(
-              new CameraPosition(
-                  bearing: 192,
-                  target: LatLng(newLocation.latitude, newLocation.longitude),
-                  tilt: 0,
-                  zoom: Zoom)));
-          updateMarker(newLocation);
-        }
-      });
-    } on PlatformException catch (e) {
-      if (e.code == 'PERMISSION_DENIED') {
-        debugPrint("Permission Denied");
-      }
-    }
-  }
+//  void getCurrentLocaion() async {
+//    try {
+//      var location = await _locationTracker.getLocation();
+//
+//      updateMarker(location);
+//      currLoc = LatLng(location.latitude, location.longitude);
+//
+//      if (_locationSubscription != null) {
+//        _locationSubscription.cancel();
+//      }
+//
+//      _locationSubscription =
+//          _locationTracker.onLocationChanged().listen((newLocation) {
+//        if (_controller != null) {
+//          currLoc = LatLng(newLocation.latitude, newLocation.longitude);
+//
+//          _controller.animateCamera(CameraUpdate.newCameraPosition(
+//              new CameraPosition(
+//                  bearing: 192,
+//                  target: LatLng(newLocation.latitude, newLocation.longitude),
+//                  tilt: 0,
+//                  zoom: Zoom)));
+//          updateMarker(newLocation);
+//        }
+//      });
+//    } on PlatformException catch (e) {
+//      if (e.code == 'PERMISSION_DENIED') {
+//        debugPrint("Permission Denied");
+//      }
+//    }
+//  }
 
   @override
   void dispose() {
@@ -151,7 +145,6 @@ class MapState extends State<MapMFR> {
     var width = screenSize.width;
     var height = screenSize.height;
     return MaterialApp(
-
       home: Scaffold(
         appBar: AppBar(
           backgroundColor: const Color(0xff142850),
@@ -178,7 +171,7 @@ class MapState extends State<MapMFR> {
               onMapCreated: _onMapCreated,
               initialCameraPosition: initialisation,
               mapType: _currentMapType,
-              markers:  Set<Marker>.of(emergencyMarker.values),
+              markers: Set<Marker>.of(emergencyMarker.values),
               onCameraMove: _onCameraMove,
             ),
 //              Padding(
@@ -225,7 +218,6 @@ class MapState extends State<MapMFR> {
                                         ),
                                       ),
                                       onPressed: () async {
-
                                         Navigator.pushReplacementNamed(
                                             context, '/MFR_home');
                                         Navigator.of(context).pop();
@@ -293,7 +285,7 @@ class MapState extends State<MapMFR> {
           FloatingActionButton(
             child: Icon(Icons.location_searching),
             onPressed: () {
-              getCurrentLocaion();
+              //getCurrentLocaion();
             },
           ),
         ]),
