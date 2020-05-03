@@ -208,39 +208,29 @@ class _AlertFunctionMfrState extends State<AlertFunctionMfr> {
 
     try {
       await databaseReference.runTransaction((Transaction tx) async {
-        await tx.set(ongoingRef, {
-          'mfr': widget._userData['rollNo'],
-          'mfrDetails': {
-            'name': widget._userData['name'],
-            'contact': widget._userData['contact'],
-          },
-          'location': location,
-          'genderPreference': genderPreference,
-          'patientRollNo': patientRollNo,
-          'reportingTime': time,
-          'severity': severityLevel,
-          'patientContactNo': patientContactNo,
-        });
-        await tx.delete(pendingRef);
-        await tx.update(mfrRef, {'isOccupied': newVal});
-        updateOccupiedLocal(true);
-        mfrHomeGlobalKey.currentState.updateOccupied(true);
-        studentContactNo = patientContactNo;
-        locationOfEmergency = location;
-//            .then((_) => tx.delete(pendingRef))
-//            .then((_) => tx.update(mfrRef, {'isOccupied': newVal}))
-//            .then((_) => print("accept transaction complete"))
-//            .then((_) {
-//              updateOccupiedLocal(true);
-//              mfrHomeGlobalKey.currentState.updateOccupied(true);
-//            })
-//            .then((_) {
-//              studentContactNo = patientContactNo;
-//              locationOfEmergency = location;
-//            })
-//            .then((_) {
-//              print('relevant info updated');
-//            });
+        //TODO: check if document exists
+        dynamic snapshot = await ongoingRef.get();
+        if (snapshot == null) {
+          await tx.set(ongoingRef, {
+            'mfr': widget._userData['rollNo'],
+            'mfrDetails': {
+              'name': widget._userData['name'],
+              'contact': widget._userData['contact'],
+            },
+            'location': location,
+            'genderPreference': genderPreference,
+            'patientRollNo': patientRollNo,
+            'reportingTime': time,
+            'severity': severityLevel,
+            'patientContactNo': patientContactNo,
+          });
+          await tx.delete(pendingRef);
+          await tx.update(mfrRef, {'isOccupied': newVal});
+          updateOccupiedLocal(true);
+          mfrHomeGlobalKey.currentState.updateOccupied(true);
+          studentContactNo = patientContactNo;
+          locationOfEmergency = location;
+        }
       });
     } catch (e) {
       throw (e);
