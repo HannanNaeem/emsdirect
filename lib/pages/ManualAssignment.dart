@@ -125,6 +125,7 @@ class ManualAssignmentState extends State<ManualAssignment> {
                               _availableMfrsList[index].contact,
                               _availableMfrsList[index].gender,
                               _availableMfrsList[index].isSenior,
+                              _emergencyInformation
                             ),
                           ),
                         );
