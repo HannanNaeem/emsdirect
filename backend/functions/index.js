@@ -77,8 +77,7 @@ exports.notifyPendingToMfrs = functions.firestore.document('/PendingEmergencies/
 
   //setting up notification payload
   const payload = {
-    notification: {title: "New emergency!", body: "There is a new emergency from ${patientId}", sound: "enabled"},
-    priority: "high",
+    notification: {title: "New emergency!", body: `There is a new emergency from ${patientId}`, sound: "enabled"},
   }
   
   //send messages
