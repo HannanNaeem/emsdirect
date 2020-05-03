@@ -156,6 +156,7 @@ class _AlertFunctionMfrState extends State<AlertFunctionMfr> {
 //    }
 //    return Future.wait(futureList);
 //  }
+
   Future<bool> checkExist(String docID) async {
     bool exists = false;
     try {
@@ -212,36 +213,40 @@ class _AlertFunctionMfrState extends State<AlertFunctionMfr> {
         .collection("Mfr")
         .document(widget._userData['rollNo']);
 
-    return await databaseReference.runTransaction((Transaction tx) async {
-      await tx
-          .set(ongoingRef, {
-            'mfr': widget._userData['rollNo'],
-            'mfrDetails': {
-              'name': widget._userData['name'],
-              'contact': widget._userData['contact'],
-            },
-            'location': location,
-            'genderPreference': genderPreference,
-            'patientRollNo': patientRollNo,
-            'reportingTime': time,
-            'severity': severityLevel,
-            'patientContactNo': patientContactNo,
-          })
-          .then((_) => tx.delete(pendingRef))
-          .then((_) => tx.update(mfrRef, {'isOccupied': newVal}))
-          .then((_) => print("accept transaction complete"))
-          .then((_) {
-            updateOccupiedLocal(true);
-            mfrHomeGlobalKey.currentState.updateOccupied(true);
-          })
-          .then((_) {
-            studentContactNo = patientContactNo;
-            locationOfEmergency = location;
-          })
-          .then((_) {
-            print('relevant info updated');
-          });
-    });
+    try {
+      return await databaseReference.runTransaction((Transaction tx) async {
+        await tx
+            .set(ongoingRef, {
+              'mfr': widget._userData['rollNo'],
+              'mfrDetails': {
+                'name': widget._userData['name'],
+                'contact': widget._userData['contact'],
+              },
+              'location': location,
+              'genderPreference': genderPreference,
+              'patientRollNo': patientRollNo,
+              'reportingTime': time,
+              'severity': severityLevel,
+              'patientContactNo': patientContactNo,
+            })
+            .then((_) => tx.delete(pendingRef))
+            .then((_) => tx.update(mfrRef, {'isOccupied': newVal}))
+            .then((_) => print("accept transaction complete"))
+            .then((_) {
+              updateOccupiedLocal(true);
+              mfrHomeGlobalKey.currentState.updateOccupied(true);
+            })
+            .then((_) {
+              studentContactNo = patientContactNo;
+              locationOfEmergency = location;
+            })
+            .then((_) {
+              print('relevant info updated');
+            });
+      });
+    } catch (e) {
+      throw (e);
+    }
   }
 
   //function to show a pendingEmergency alert
@@ -305,7 +310,7 @@ class _AlertFunctionMfrState extends State<AlertFunctionMfr> {
                         doc[0].patientContactNo,
                         true);
                   } catch (e) {
-                    print("Transaction failed");
+                    print("Transaction failed -------------> $e");
                     return null;
                   }
                 },
@@ -331,6 +336,8 @@ class _AlertFunctionMfrState extends State<AlertFunctionMfr> {
                     return await updateDecline(doc[0].patientRollNo).then((_) {
                       updateOccupiedLocal(false);
                       mfrHomeGlobalKey.currentState.updateOccupied(false);
+                    }).catchError((onError) {
+                      print(onError);
                     });
                   } catch (e) {
                     print(e.toString());

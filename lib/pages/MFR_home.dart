@@ -53,6 +53,7 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
   }
 
   static final databaseReference = Firestore.instance;
+  DocumentReference mfrRef;
   Stream<QuerySnapshot> _documentStream;
   var isAvailable;
   var isOccupied = false;
@@ -76,13 +77,12 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
       _authMfr.logOut();
     }
   }
-  void _updateUserData(GeoPoint Newlocation) async{
+
+  void _updateUserData(GeoPoint Newlocation) async {
     await databaseReference
         .collection("Mfr")
         .document((await _userData['rollNo']).toString())
-        .updateData({
-      'location': Newlocation
-    });
+        .updateData({'location': Newlocation});
   }
 
   //--------------------------------------------------------------------
@@ -94,8 +94,11 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
     WidgetsBinding.instance.addObserver(this);
     //initializing stream to null as MFR will always be unavailable unless made available by himself
     _documentStream = null;
-    getInitialData(_userData['rollNo']);
-    getCurrentLocaion();
+    mfrRef = databaseReference.collection("Mfr").document(_userData['rollNo']);
+    getInitialData(_userData['rollNo']).then((_) {
+      getCurrentLocaion();
+      print('Initial data set');
+    });
   }
 
   //////////////////////////////// FUNCTIONS /////////////////////////////////////
@@ -110,39 +113,38 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
       print(e);
     }
   }
+
   void getCurrentLocaion() async {
     try {
-      while(true) {
-          var location = await _locationTracker.getLocation();
+      while (true) {
+        var location = await _locationTracker.getLocation();
 
-          var currLoc = LatLng(location.latitude, location.longitude);
-          GeoPoint NewGeoPoint = GeoPoint(
-            currLoc.latitude, currLoc.longitude);
+        var currLoc = LatLng(location.latitude, location.longitude);
+        GeoPoint NewGeoPoint = GeoPoint(currLoc.latitude, currLoc.longitude);
 
-          if (_locationSubscription != null) {
-            _locationSubscription.cancel();
-         }
+        if (_locationSubscription != null) {
+          _locationSubscription.cancel();
+        }
 
-          if(isAvailable){
-            _updateUserData(NewGeoPoint);
-            break;
-          }
+        if (isAvailable) {
+          _updateUserData(NewGeoPoint);
+          break;
+        }
       }
       _locationSubscription =
           _locationTracker.onLocationChanged().listen((newLocation) {
-            if(isAvailable) {
-              GeoPoint NewGeoPoint = GeoPoint(
-                  newLocation.latitude, newLocation.longitude);
-              _updateUserData(NewGeoPoint);
-            }
-          });
+        if (isAvailable) {
+          GeoPoint NewGeoPoint =
+              GeoPoint(newLocation.latitude, newLocation.longitude);
+          _updateUserData(NewGeoPoint);
+        }
+      });
     } on PlatformException catch (e) {
       if (e.code == 'PERMISSION_DENIED') {
         debugPrint("Permission Denied");
       }
     }
   }
-
 
   void updateDeclineCount(docId) async {
     try {
@@ -161,17 +163,18 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
     try {
       DocumentReference docRef =
           databaseReference.collection("Mfr").document(docId);
-      await docRef.updateData({'isActive': val}).then((_) {
+      return await docRef.updateData({'isActive': val}).then((_) {
         print('Availability status updated');
       });
     } catch (e) {
       print(e);
+      throw (e);
     }
   }
 
-  void getInitialData(var docId) async {
+  Future getInitialData(var docId) async {
     try {
-      await databaseReference
+      return await databaseReference
           .collection("Mfr")
           .document(docId)
           .get()
@@ -500,7 +503,6 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
                 //updateOccupiedStatus(val);
               },
             ),
-            //if (isAvailable != null && isOccupied != null) AlertFunctionMfr(_userData),
             Flexible(
               flex: 3,
               child: Container(
@@ -532,18 +534,40 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
                                 scale: 2.5,
                                 child: Switch(
                                   value: isAvailable, //isAvailable,
-                                  onChanged: (bool newVal) {
-                                    setState(() {
-                                      isAvailable = newVal;
-                                      if (!isAvailable) {
-                                        isOccupied = false;
-                                      }
-                                      upDateAvailability(
-                                          isAvailable, _userData['rollNo']);
-                                      mfrAlertFunctionGlobalKey.currentState
-                                          .updateStatus(
-                                              isAvailable, isOccupied);
-                                    });
+                                  onChanged: (bool newVal) async {
+                                    try {
+                                      await mfrRef.updateData(
+                                          {'isActive': newVal}).then((_) {
+                                        setState(() {
+                                          isAvailable = newVal;
+                                          if (!isAvailable) {
+                                            isOccupied = false;
+                                          }
+                                          mfrAlertFunctionGlobalKey.currentState
+                                              .updateStatus(
+                                                  isAvailable, isOccupied);
+                                        });
+                                      }).then((_) {
+                                        print("Active status updated");
+                                      });
+//                                      await upDateAvailability(
+//                                              isAvailable, _userData['rollNo'])
+//                                          .then((_) {
+//                                        setState(() {
+//                                          isAvailable = newVal;
+//                                          if (!isAvailable) {
+//                                            isOccupied = false;
+//                                          }
+//                                          mfrAlertFunctionGlobalKey.currentState
+//                                              .updateStatus(
+//                                                  isAvailable, isOccupied);
+//                                        });
+//                                      }).then((_) {
+//                                        print("Active status updated");
+//                                      });
+                                    } catch (e) {
+                                      print(e.toString());
+                                    }
                                   },
                                   activeTrackColor: Colors.green,
                                   activeColor: Colors.green[50],
@@ -611,7 +635,8 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
                                           builder: (context) => MapMFR(
                                               locationOfEmergency,
                                               patientContactNo,
-                                              _userData.data['rollNo'].toString())));
+                                              _userData.data['rollNo']
+                                                  .toString())));
                                 }
                               }),
                       Center(
