@@ -175,7 +175,7 @@ class _MfrInformationState extends State<MfrInformation> {
           .catchError((e) {})
           .whenComplete(() {});
       await transaction
-          .set(document3, {
+          .update(document3, {
             "isOccupied" : true,
         })
       .catchError((e) {})

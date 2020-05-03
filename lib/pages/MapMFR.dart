@@ -225,7 +225,7 @@ class MapState extends State<MapMFR> {
                 padding: EdgeInsets.fromLTRB(
                     width * 0.14, height * 0.034, width * 0.1, 10.0),
                 child: Text(
-                  'Patient Number: ' + contactNumber,
+                  'Patient Contact: ' + contactNumber,
                   style: TextStyle(
                     fontFamily: 'HelveticaNeueBold',
                     letterSpacing: 2.0,
