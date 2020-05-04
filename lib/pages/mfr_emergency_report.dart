@@ -1,4 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:ems_direct/shared/loading.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
 
@@ -1116,6 +1120,8 @@ class _EmergencyReportMfrState extends State<EmergencyReportMfr> {
     return bagMap;
   }
 
+  //loafing screen boolean
+  bool _isLoading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -1391,7 +1397,7 @@ class _EmergencyReportMfrState extends State<EmergencyReportMfr> {
 
       //! submit button
       Padding(
-        padding: EdgeInsets.fromLTRB(0, 10, 0, 100),
+        padding: EdgeInsets.fromLTRB(0, 10, 0, _isLoading ? 50: 100),
         child: RaisedButton(
           child: Padding(
             padding: const EdgeInsets.all(15.0),
@@ -1416,26 +1422,150 @@ class _EmergencyReportMfrState extends State<EmergencyReportMfr> {
           //translate boolean arrays
           _emergencyReportKey.currentState.save();
           _equipmentUsedKey.currentState.save();
-          print(_patientRollNo);
-          print(_patientGender);
-          print(_patientIsHostelite);
-          print('');
-          print(_emergencyDate);
-          print(_severity);
-          print(_emergencyType);
-          print(_transportUsed);
-          print(_emergencyDetails);
-          print('');
-          print(_primaryMfrName);
-          print(_primaryMfrRollNo);
-          print(_additionalMfrs);
-          print('-------------');
-          print(_bagUsed);
-          _bagUsed == "None" ? print("No items used") : print(_getBagMap());
+          // print(_patientRollNo);
+          // print(_patientGender);
+          // print(_patientIsHostelite);
+          // print('');
+          // print(_emergencyDate);
+          // print(_severity);
+          // print(_emergencyType);
+          // print(_transportUsed);
+          // print(_emergencyDetails);
+          // print('');
+          // print(_primaryMfrName);
+          // print(_primaryMfrRollNo);
+          // print(_additionalMfrs);
+          // print('-------------');
+          // print(_bagUsed);
+          // _bagUsed == "None" ? print("No items used") : print(_getBagMap());
+          setState(() {
+            _isLoading = true;
+          });
+          try{
+            await Firestore.instance.collection('ReportedEmergencies').document(_emergencyDate.toString()).setData({
+              'patientRollNo' : _patientRollNo,
+              'patientGender' : _patientGender,
+              'patientIsHostelite' : _patientIsHostelite,
+              'date' : _emergencyDate, 
+              'severity' : _severity,
+              'type' : _emergencyType,
+              'transportUsed' : _transportUsed,
+              'details' : _emergencyDetails,
+              'primaryMfrRollNo' : _primaryMfrRollNo,
+              'primaryMfrName' :  _primaryMfrName,
+              'additionalMfrs' : _additionalMfrs,
+              'bagUsed' : _bagUsed,
+              'equipmentUsed' : _bagUsed == "None" ? null : _getBagMap(),
+            });
+
+            setState(() {
+              _isLoading = false;
+            });
+
+            //! Showing failed dialog
+            await showDialog(
+              context: context,
+              builder: (context) => AlertDialog(
+                shape:
+                    RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                title: Text(
+                  "Report Submitted!",
+                  style: TextStyle(
+                    fontFamily: 'HelveticaNeueLight',
+                    letterSpacing: 2.0,
+                    fontSize: 20,
+                    color: Colors.grey[600],
+                  ),
+                ),
+                actions: <Widget>[
+                  Center(
+                    child: Padding(
+                      //alignment: Alignment.bottomLeft,
+                      padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                      child: FlatButton(
+                        child: Text(
+                          'OK',
+                          style: TextStyle(
+                            fontFamily: 'HelveticaNeueLight',
+                            //fontWeight: FontWeight.bold,
+                            letterSpacing: 2.0,
+                            fontSize: 20,
+                            color: const Color(0xff1a832a),
+                          ),
+                        ),
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            );
+
+            Navigator.of(context).pop();
+
+          } catch (e) {
+            setState(() {
+            _isLoading = false;
+            });
+            print(e);
+            //! Showing failed dialog
+            showDialog(
+              context: context,
+              builder: (context) => AlertDialog(
+                shape:
+                    RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                title: Text(
+                  "Failed to submit!",
+                  style: TextStyle(
+                    fontFamily: 'HelveticaNeueLight',
+                    letterSpacing: 2.0,
+                    fontSize: 20,
+                    color: Colors.grey[600],
+                  ),
+                ),
+                actions: <Widget>[
+                  Center(
+                    child: Padding(
+                      //alignment: Alignment.bottomLeft,
+                      padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                      child: FlatButton(
+                        child: Text(
+                          'Try Again',
+                          style: TextStyle(
+                            fontFamily: 'HelveticaNeueLight',
+                            //fontWeight: FontWeight.bold,
+                            letterSpacing: 2.0,
+                            fontSize: 20,
+                            color: const Color(0xffee0000),
+                          ),
+                        ),
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            );
+
+          }
+          setState(() {
+            _isLoading = false;
+          });
 
         },
         ),
-      )
+      ),
+      !_isLoading ? Container() : Padding(
+        padding: EdgeInsets.fromLTRB(0, 0, 0, 100),
+        child: SpinKitThreeBounce(
+          color: Colors.grey[100],
+          size: 30,
+          ),
+        ),
       ],
       ),
       ),
