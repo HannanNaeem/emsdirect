@@ -7,7 +7,9 @@ import 'package:ems_direct/pages/login_student.dart';
 import 'package:ems_direct/pages/login_ems.dart';
 import 'package:ems_direct/pages/SplashScreen.dart';
 import 'package:ems_direct/pages/MapMFR.dart';
-import 'package:ems_direct/pages/available_MFRs.dart';
+import 'package:ems_direct/available_mfrs.dart';
+import 'package:ems_direct/senior_mfrs.dart';
+
 
 void main() => runApp(MyApp());
 
@@ -23,7 +25,8 @@ class MyApp extends StatelessWidget {
       //  '/live_status': (context) => LiveStatus(),
         '/emergencyNumbers': (context) => EmergencyNumbers(),
         '/select_login': (context) => SelectLogin(),
-        '/availableMFRs': (context) => AvailableMfrs(),
+        '/availableMfrs': (context) => AvailableMfrs(),
+        '/seniorMfrs': (context) => SeniorMfrs(),
         //'/dummy': (context) => DummyPage(),
       },
     );

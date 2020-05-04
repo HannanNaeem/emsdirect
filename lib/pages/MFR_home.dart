@@ -7,7 +7,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:ems_direct/services/pending_emergency_alert_MFR.dart';
 import 'package:ems_direct/pages/emergency_numbers.dart';
-import 'package:ems_direct/pages/available_MFRs.dart';
+import 'package:ems_direct/available_mfrs.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:provider/provider.dart';
 import 'package:ems_direct/shared/loading.dart';
@@ -332,6 +332,21 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
                 ),
                 onTap: () {
                   Navigator.of(context).pushNamed('/emergencyNumbers');
+                  //print('Emergency numbers');
+                },
+              ),
+              ListTile(
+                //the option to view emergency numbers - takes you to dummy page
+                title: Text(
+                  'Avaiable MFRs',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontFamily: 'HelveticaNeueLight',
+                    letterSpacing: 2.0,
+                  ),
+                ),
+                onTap: () {
+                  Navigator.of(context).pushNamed('/availableMfrs');
                   //print('Emergency numbers');
                 },
               ),

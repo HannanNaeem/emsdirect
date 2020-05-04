@@ -231,7 +231,7 @@ class _OpsHomeState extends State<OpsHome> with WidgetsBindingObserver {
             ListTile(
               //the option to view emergency numbers - takes you to dummy page
               title: Text(
-                'Emergency Numbers',
+                'Available MFRs',
                 style: TextStyle(
                   fontSize: 18,
                   fontFamily: 'HelveticaNeueLight',
@@ -239,7 +239,22 @@ class _OpsHomeState extends State<OpsHome> with WidgetsBindingObserver {
                 ),
               ),
               onTap: () {
-                Navigator.of(context).pushNamed('/emergencyNumbers');
+                Navigator.of(context).pushNamed('/availableMfrs');
+                //print('Emergency numbers');
+              },
+            ),
+            ListTile(
+              //the option to view emergency numbers - takes you to dummy page
+              title: Text(
+                'Senior MFRs',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontFamily: 'HelveticaNeueLight',
+                  letterSpacing: 2.0,
+                ),
+              ),
+              onTap: () {
+                Navigator.of(context).pushNamed('/seniorMfrs');
                 //print('Emergency numbers');
               },
             ),
