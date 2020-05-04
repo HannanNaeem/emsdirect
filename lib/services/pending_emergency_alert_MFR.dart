@@ -10,9 +10,11 @@ import 'package:ems_direct/pages/MFR_home.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:ems_direct/models/emergency_models.dart';
+import 'package:ems_direct/pages/MapMFR.dart';
 
 GlobalKey<_AlertFunctionMfrState> mfrAlertFunctionGlobalKey = GlobalKey();
 List<String> alertBuffer = [];
+List<String> alertBufferOngoing = [];
 
 //This is responsible for alerting MFRs of any pending emergencies with a severity level of low/medium
 class AlertFunctionMfr extends StatefulWidget {
@@ -42,7 +44,7 @@ class _AlertFunctionMfrState extends State<AlertFunctionMfr> {
   var _isOccupied;
   var _gender;
   var genderToBeIgnored;
-  bool _ongoingAlertShowed = false;
+  //bool _ongoingAlertShowed = false;
   var locationOfEmergency;
   var studentContactNo;
   var patientRollNumber;
@@ -116,13 +118,6 @@ class _AlertFunctionMfrState extends State<AlertFunctionMfr> {
       print("updated decline info");
       throw (e);
     }
-
-//    return await docRef.updateData({
-//      'declinedBy': FieldValue.arrayUnion([widget._userData['rollNo']]),
-//      'declines': doc.data['declines'] + 1,
-//    }).then((_) {
-//      print('Relevant info updated');
-//    });
   }
 
   //creates a document in OngoingEmergencies after accpetance of a pending emergency
@@ -151,34 +146,6 @@ class _AlertFunctionMfrState extends State<AlertFunctionMfr> {
     });
   }
 
-  Future<bool> checkExist(String docID) async {
-    bool exists = false;
-    try {
-      await Firestore.instance
-          .collection("PendingEmergencies")
-          .document(docID)
-          .get()
-          .then((doc) {
-        if (doc.exists)
-          exists = true;
-        else
-          exists = false;
-      });
-      return exists;
-    } catch (e) {
-      return false;
-    }
-  }
-
-//  Future updateDeclineOnRest(var docs) async {
-//    List<Future> futureList = List<Future>();
-//    for (int i = 1; i < docs.length; i++) {
-//      print('UDOR ID: ${docs[i].patientRollNo}');
-//      futureList.add(updateDecline(docs[i].patientRollNo));
-//    }
-//    return await Future.wait(futureList);
-//  }
-//
   void updateOccupiedLocal(bool val) {
     setState(() {
       _isOccupied = val;
@@ -209,7 +176,6 @@ class _AlertFunctionMfrState extends State<AlertFunctionMfr> {
 
     try {
       await databaseReference.runTransaction((Transaction tx) async {
-        //TODO: check if document exists
         dynamic snapshot = await ongoingRef.get();
         print(
             "--------------------------------------------------------------${snapshot.data}");
@@ -234,7 +200,7 @@ class _AlertFunctionMfrState extends State<AlertFunctionMfr> {
           'patientContactNo': patientContactNo,
         });
         await tx.delete(pendingRef);
-        await tx.update(mfrRef, {'isOccupied': newVal});
+        //await tx.update(mfrRef, {'isOccupied': newVal});
         updateOccupiedLocal(true);
         mfrHomeGlobalKey.currentState.updateOccupied(true);
         studentContactNo = patientContactNo;
@@ -355,6 +321,7 @@ class _AlertFunctionMfrState extends State<AlertFunctionMfr> {
     // print(widget.occupied);
     //print(doc.data);
     print('ID: ${doc[0].patientRollNo}');
+    alertBufferOngoing.add(doc[0].patientRollNo);
     //-----------------------------------------------------------
     //await updateDeclineOnRest(pending);
     showDialog(
@@ -400,20 +367,12 @@ class _AlertFunctionMfrState extends State<AlertFunctionMfr> {
                   onPressed: () async {
                     print('acknowledge');
                     Navigator.of(context).pop();
-                    try {
-                      await updateOccupiedStatus(true);
-                      updateOccupiedLocal(true);
-                      mfrHomeGlobalKey.currentState.updateOccupied(true);
-                    } catch (e) {
-                      print(e.toString());
-                    }
 //                    try {
-//                      await updateOccupiedStatus(true).then((_) {
-//                        updateOccupiedLocal(true);
-//                        mfrHomeGlobalKey.currentState.updateOccupied(true);
-//                      });
+//                      await updateOccupiedStatus(true);
+//                      updateOccupiedLocal(true);
+//                      mfrHomeGlobalKey.currentState.updateOccupied(true);
 //                    } catch (e) {
-//                      print('acknowledging failed');
+//                      print(e.toString());
 //                    }
                   },
                 ),
@@ -436,22 +395,20 @@ class _AlertFunctionMfrState extends State<AlertFunctionMfr> {
                   ),
                   onPressed: () async {
                     print('go to map');
-                    Navigator.of(context).pop();
-                    try {
-                      await updateOccupiedStatus(true);
-                      updateOccupiedLocal(true);
-                      mfrHomeGlobalKey.currentState.updateOccupied(true);
-                    } catch (e) {
-                      print(e.toString());
-                    }
-                    //Navigator.push<dynamic>(context, MaterialPageRoute(builder: (context) => MapMFR(locationOfEmergency, patientContactNo)));
+                    Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => MapMFR(
+                                locationOfEmergency,
+                                studentContactNo,
+                                _userData['rollNo'],
+                                patientRollNumber)));
 //                    try {
-//                      await updateOccupiedStatus(true).then((_) {
-//                        updateOccupiedLocal(true);
-//                        mfrHomeGlobalKey.currentState.updateOccupied(true);
-//                      });
+//                      await updateOccupiedStatus(true);
+//                      updateOccupiedLocal(true);
+//                      mfrHomeGlobalKey.currentState.updateOccupied(true);
 //                    } catch (e) {
-//                      print('acknowledging failed');
+//                      print(e.toString());
 //                    }
                   },
                 ),
@@ -477,9 +434,9 @@ class _AlertFunctionMfrState extends State<AlertFunctionMfr> {
       _isAvailable = available;
       //for testing purposes, if the status is to be switched to 'occupied = false'
       //then that means that the process is to be uhh started again
-      if (!occupied) {
-        _ongoingAlertShowed = false;
-      }
+      //if (!occupied) {
+      //_ongoingAlertShowed = false;
+      //}
     });
   }
 
@@ -517,12 +474,12 @@ class _AlertFunctionMfrState extends State<AlertFunctionMfr> {
     //handling cases for null values (this can happen in the case of null data being received from the stream)
     if (_pendingEmergencyList != null &&
         _gender != null &&
-        _pendingEmergencyList.isNotEmpty) {
+        _pendingEmergencyList.length > 0) {
       //filtering the pending emergency to make sure MFR does not get alerts for the emergencies he/she rejected
       _pendingEmergencyList.removeWhere(
           (item) => item.declinedBy.contains(widget._userData['rollNo']));
       //putting another filter of gender only if the list is not empty
-      if (_pendingEmergencyList.isNotEmpty) {
+      if (_pendingEmergencyList.length > 0) {
         if (_gender == 'M') {
           genderToBeIgnored = 'F';
         } else
@@ -555,18 +512,35 @@ class _AlertFunctionMfrState extends State<AlertFunctionMfr> {
     }
 
     //handling cases for null values (this can happen in the case of null data being received from the stream)
-    if (_ongoingEmergencyList != null && _ongoingEmergencyList.isNotEmpty) {
+    if (_ongoingEmergencyList != null && _ongoingEmergencyList.length > 0) {
       //filtering for any emergency that is in my name
       //print(_ongoingEmergencyList[0].mfr);
       _ongoingEmergencyList
           .retainWhere((item) => item.mfr.contains(widget._userData['rollNo']));
       numOngoing = _ongoingEmergencyList.length;
-      if (_ongoingEmergencyList.isNotEmpty) {
+      if (_ongoingEmergencyList.length > 0) {
         locationOfEmergency = _ongoingEmergencyList[0].location;
         studentContactNo = _ongoingEmergencyList[0].patientContactNo;
         patientRollNumber = _ongoingEmergencyList[0].patientRollNo;
       }
-      //WidgetsBinding.instance.addPostFrameCallback((_) => printData(_ongoingEmergencyList));
+    }
+
+    if (_ongoingEmergencyList != null) {
+      var toRemove = [];
+      print("alertbufferOngoing: $alertBufferOngoing");
+      if (_ongoingEmergencyList.length > 0) {
+        alertBufferOngoing.forEach((rollNumber) {
+          if (!(_ongoingEmergencyList.map(
+              (emergency) => (emergency.patientRollNo))).contains(rollNumber)) {
+            toRemove.add(rollNumber);
+          }
+        });
+        alertBufferOngoing.removeWhere((item) => toRemove.contains(item));
+      } else {
+        print('empty');
+        alertBufferOngoing = [];
+      }
+      print("alertbufferOngoing: $alertBufferOngoing");
     }
 
     //this is where the two alert functions are called depending on whether there is data AND conditions are met
@@ -576,13 +550,13 @@ class _AlertFunctionMfrState extends State<AlertFunctionMfr> {
         //check if there is an ongoing emergency
         if (_ongoingEmergencyList != null && numOngoing > 0) {
           //call the send ongoingEmergency alert function
-          if (!_ongoingAlertShowed) {
-            _ongoingAlertShowed = true;
+          if (!alertBufferOngoing
+              .contains(_ongoingEmergencyList[0].patientRollNo)) {
             WidgetsBinding.instance.addPostFrameCallback((_) =>
                 showOngoingAlert(_ongoingEmergencyList, _width, _height));
           }
         }
-        //if there is no ongoing emergency then check if the person is ready to recieve pending alert
+        //if there is no ongoing emergency then check if the person is ready to receive pending alert
         else if (_isAvailable && !_isOccupied) {
           if (_pendingEmergencyList != null && numPending > 0) {
             //call the send pendingEmergency alert function
