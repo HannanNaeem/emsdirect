@@ -17,7 +17,7 @@ class _MfrProfileState extends State<MfrProfile> {
     }
   }
   String isSenior(var mfr) {
-    if (mfr.isHostelite == true) {
+    if (mfr.isSenior == true) {
       return 'Yes';
     } else {
       return 'No';
