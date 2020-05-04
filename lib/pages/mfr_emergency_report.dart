@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 
 class EmergencyReportMfr extends StatefulWidget {
@@ -7,6 +8,186 @@ class EmergencyReportMfr extends StatefulWidget {
 }
 
 class _EmergencyReportMfrState extends State<EmergencyReportMfr> {
+
+  final GlobalKey<FormState> _emergencyReportKey = GlobalKey<FormState>();
+
+  String _patientRollNo;
+  String _patientGender;
+  DateTime _emergencyDate = DateTime.now();
+  String _primaryMfrRollNo;
+  String _primaryMfrName;
+  String _additionalMfrs;
+  String _severity;
+  bool _patientIsHostelite;
+  String _emergencyType;
+  String _emergencyLocation;
+  bool _transportUsed = false;
+  String _emergencyDetails;
+
+  bool _autoValidate = false;
+  List<bool> _isSelected = [false,false,false];
+
+
+  //! Roll no form field
+  Widget _buildRollno(bool isPatient) {
+    return Padding(
+      padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
+      child: TextFormField(
+          decoration: InputDecoration(
+            hintText: isPatient ? "Patient Roll No." : "MFR Roll No.",
+            hintStyle: TextStyle(
+              color: Colors.grey[700],
+              fontFamily: 'HelveticaNeueLight',
+              letterSpacing: 2.0,
+            ),
+            errorStyle: TextStyle(
+              color: Colors.redAccent,
+              letterSpacing: 1.0,
+            ),
+            fillColor: Colors.grey[200],
+            filled: true,
+            focusedErrorBorder: InputBorder.none,
+          ),
+          onChanged: (value) {
+            
+            setState(() {
+              _patientRollNo = value;    
+            });
+            if (value != ""){
+              setState(() {
+                _autoValidate = true;
+              });
+            }
+            else {
+              setState(() {
+                _autoValidate = false;
+              });
+            }
+            
+
+          },
+          validator: (String value) {
+            if (value.isEmpty) return 'Roll number is required!';
+
+            if (!RegExp(r"^[0-9]{8}$").hasMatch(value))
+              return 'Please enter 8 digit LUMS Roll number';
+          },
+          onSaved: (String value) {
+            if(isPatient)
+            _patientRollNo = value;
+            else
+            _primaryMfrRollNo = value;
+          }),
+    );
+  }
+
+  //! Get date and time Fucntion
+  Future<Null> _selectDateAndTime(BuildContext context) async {
+    final DateTime pickedDate = await showDatePicker(
+        context: context, 
+        initialDate: _emergencyDate, 
+        firstDate: DateTime(2020), 
+        lastDate: DateTime(2040),
+        );
+
+    if(pickedDate != null && pickedDate != _emergencyDate){
+      setState(() {
+        _emergencyDate = pickedDate;
+      });
+    }
+
+    final TimeOfDay pickedTime = await showTimePicker(context: context, initialTime: TimeOfDay.now());
+    if(pickedTime != null){
+      setState(() {
+        _emergencyDate = DateTime(_emergencyDate.year,_emergencyDate.month,_emergencyDate.day,pickedTime.hour,pickedTime.minute);
+        print(_emergencyDate.toString());
+      });
+    }
+
+  }
+
+  //! Patient gender
+  Widget _buildGenderSelector() {
+    return Padding(
+      padding: EdgeInsets.all(10),
+      child: ToggleButtons(
+
+        borderColor: Colors.grey[200],
+        disabledBorderColor: Colors.grey[200],
+        fillColor: const Color(0xff27496d),
+        selectedColor: Colors.white,
+        constraints: BoxConstraints(
+          minHeight: 30,
+          minWidth: 70,
+        ),
+
+        children: <Widget>[
+          Text(
+            "Male",
+          ),
+          Text(
+            "Female",
+          ),
+          Text(
+            "Other"
+            ),
+        ],
+
+        onPressed: (int index) {
+          setState(() {
+            _isSelected[index] = true;
+            for (int buttonIndex = 0; buttonIndex < _isSelected.length; buttonIndex++) {
+              if (buttonIndex == index) {
+                _isSelected[buttonIndex] = true;
+              } else {
+                _isSelected[buttonIndex] = false;
+              }
+            }
+          });
+        },
+        isSelected: _isSelected,
+      ),
+    );
+  }
+
+  //! Get Date and time widget
+  Widget _buildDateTimeButton(BuildContext context){
+    return Padding(
+      padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
+      child: Column(
+        children: <Widget>[
+          Text("Emergency time:",
+            style:TextStyle(
+              fontFamily: "HelveticaNeueLight",
+              fontSize: 17,
+              color: const Color(0xff142850),
+            ) ,
+            ),
+          FlatButton(
+              color: const Color(0xff27496d),
+              child: Text(
+                DateFormat.yMMMMEEEEd().format(_emergencyDate) +' - ' + DateFormat.jm().format(_emergencyDate)  ,
+                style: TextStyle(
+                  color: Colors.white,
+                  fontFamily: "HelveticaNeueLight",
+                  fontSize: 14,         
+                  ),
+              ),
+              shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(5),
+              ),
+              onPressed: () {
+                _selectDateAndTime(context);
+              },
+
+            ),
+        ],
+      )
+      );
+  }
+
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -47,14 +228,29 @@ class _EmergencyReportMfrState extends State<EmergencyReportMfr> {
                             style: TextStyle(
                               color: const Color(0xff142850),
                               fontFamily: "HelveticaNeueLight",
-                              fontSize: 20,
+                              fontSize: 24,
 
                               ),
                           ),
                       ],),
                     ),
 
-                    //! Begin form 
+                    Divider(height: 10,),
+
+                    //! Begin form for emergency Details
+                    Form(
+                      key: _emergencyReportKey,
+                      autovalidate: _autoValidate,
+                      child: Column(
+                        children: <Widget>[
+                          _buildRollno(true),
+                          _buildDateTimeButton(context),
+                          _buildGenderSelector(),
+
+                        ],
+                      ),
+                    ),
+
                 ],),
               ),
             ),
