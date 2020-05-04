@@ -3,10 +3,10 @@ import 'package:ems_direct/pages/emergency_numbers_card.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class NumbersData{
-  String _name;
-  String _contact;
+  String name;
+  String contact;
 
-  NumbersData(String name, String contact){_name =  name; _contact = contact;}
+  NumbersData(this.name, this.contact);
 }
 
 
@@ -16,31 +16,37 @@ class EmergencyNumbers extends StatefulWidget {
 }
 
 class _EmergencyNumbersState extends State<EmergencyNumbers> {
-  //var numberData = EmergencyNumbersData.data;
-  List<NumbersData> _numberList;
+  var _numberList = List<NumbersData>();
   final databaseReference = Firestore.instance;
+
 
   @override
   void initState() {
-    super.initState();
+   super.initState();
     _getEmergencyNumbers();
   }
 
-  _getEmergencyNumbers(){
+  //This function gets the emergency numbers document from the DB
+  _getEmergencyNumbers() async {
     databaseReference.collection('EmergencyNumbers')
         .document('Numbers')
         .get().then((DocumentSnapshot snapshot) =>
-        _makeList(snapshot));
+        _makeList(snapshot)
+    );
   }
 
+  //This function updates the list for listview Builder to build
   _makeList(DocumentSnapshot snapshot){
-    _numberList.add(NumbersData('EMS1', snapshot.data['ems1']));
-    _numberList.add(NumbersData('EMS2', snapshot.data['ems2']));
-    _numberList.add(NumbersData('EMS3', snapshot.data['ems3']));
-    _numberList.add(NumbersData('EMS4', snapshot.data['ems4']));
-    _numberList.add(NumbersData('lUMS', snapshot.data['lums']));
-    _numberList.add(NumbersData('HAWC', snapshot.data['hawc']));
-    _numberList.add(NumbersData('Security Office', snapshot.data['securityOffice']));
+    print(snapshot.data['ems1'].toString());
+    setState(() {
+      _numberList.add(NumbersData('EMS1', snapshot.data['ems1'].toString()));
+      _numberList.add(NumbersData('EMS2', snapshot.data['ems2']));
+      _numberList.add(NumbersData('EMS3', snapshot.data['ems3']));
+      _numberList.add(NumbersData('EMS4', snapshot.data['ems4']));
+      _numberList.add(NumbersData('LUMS', snapshot.data['lums']));
+      _numberList.add(NumbersData('HAWC', snapshot.data['hawc']));
+      _numberList.add(NumbersData('Security Office', snapshot.data['securityOffice']));
+    });
   }
 
 
@@ -81,8 +87,8 @@ class _EmergencyNumbersState extends State<EmergencyNumbers> {
                         minHeight: 80,
                       ),
                       child: EmergencyNumberCard(
-                        _numberList[index]._name,
-                        _numberList[index]._contact
+                        _numberList[index].name,
+                        _numberList[index].contact
                           ),
                     ),
                   );

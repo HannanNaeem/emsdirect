@@ -5,6 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:geolocator/geolocator.dart';
 import 'dart:async';
 import 'package:ems_direct/pages/live_status.dart';
+import 'package:ems_direct/pages/emergency_numbers.dart';
 
 class StudentHome extends StatefulWidget {
 
@@ -262,8 +263,10 @@ class _StudentHomeState extends State<StudentHome> with WidgetsBindingObserver {
                     ),
                   ),
                   onTap: () {
-                    Navigator.of(context).pushNamed('/emergencyNumbers');
-                    //print('Emergency numbers');
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => EmergencyNumbers()),
+                    );
                   },
                 ),
                 Expanded(
