@@ -263,7 +263,7 @@ class _OpsHomeState extends State<OpsHome> with WidgetsBindingObserver {
                       ListTile(
                         //the option to view emergency numbers - takes you to dummy page
                         title: Text(
-                          'List of Senior MFRs',
+                          'Senior MFRs',
                           style: TextStyle(
                             fontSize: 18,
                             fontFamily: 'HelveticaNeueLight',
@@ -271,13 +271,14 @@ class _OpsHomeState extends State<OpsHome> with WidgetsBindingObserver {
                           ),
                         ),
                         onTap: () {
-                          print('Senior Mfrs');
+                          Navigator.of(context).pushNamed('/seniorMfrs');
+                          //print('Emergency numbers');
                         },
                       ),
                       ListTile(
                         //the option to view emergency numbers - takes you to dummy page
                         title: Text(
-                          'List of Available MFRs',
+                          'Available MFRs',
                           style: TextStyle(
                             fontSize: 18,
                             fontFamily: 'HelveticaNeueLight',
@@ -285,9 +286,11 @@ class _OpsHomeState extends State<OpsHome> with WidgetsBindingObserver {
                           ),
                         ),
                         onTap: () {
-                          print('Available Mfrs');
+                          Navigator.of(context).pushNamed('/availableMfrs');
+                          //print('Emergency numbers');
                         },
                       ),
+
                       Expanded(
                         //the option to logout (bottom center aligned)
                         child: Align(
