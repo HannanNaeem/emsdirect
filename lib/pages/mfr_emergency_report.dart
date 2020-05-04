@@ -87,7 +87,7 @@ class _EmergencyReportMfrState extends State<EmergencyReportMfr> {
   String _additionalMfrs; //
   String _severity = "Low"; //
   String _patientIsHostelite = "Hostelite";//
-  String _emergencyType = "Traima"; //
+  String _emergencyType = "Trauma"; //
   String _emergencyLocation;
   String _transportUsed = "Yes"; //
   String _emergencyDetails; //
@@ -181,8 +181,10 @@ class _EmergencyReportMfrState extends State<EmergencyReportMfr> {
     if(pickedDate != null && pickedDate != _emergencyDate){
       setState(() {
         _emergencyDate = pickedDate;
+        FocusScope.of(context).requestFocus(FocusNode());
       });
     }
+    
 
   }
 
@@ -194,8 +196,10 @@ class _EmergencyReportMfrState extends State<EmergencyReportMfr> {
       setState(() {
         _emergencyDate = DateTime(_emergencyDate.year,_emergencyDate.month,_emergencyDate.day,pickedTime.hour,pickedTime.minute);
         print(_emergencyDate.toString());
+        FocusScope.of(context).requestFocus(FocusNode());
       });
     }
+    
 
   }
 
@@ -518,6 +522,7 @@ class _EmergencyReportMfrState extends State<EmergencyReportMfr> {
               onPressed: () async {
                 await _selectDate(context);
                 await _selectTime(context);
+                
               },
 
           ),
@@ -661,6 +666,7 @@ class _EmergencyReportMfrState extends State<EmergencyReportMfr> {
         onChanged: (String newValue){
           setState(() {
             _bagUsed = newValue;
+            FocusScope.of(context).requestFocus(FocusNode());
           });
         },
         items: <String>['None','B1','Pool','PDC','REDC','Library','CS Dept.','EMS Room']
@@ -1125,449 +1131,459 @@ class _EmergencyReportMfrState extends State<EmergencyReportMfr> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        backgroundColor: const Color(0xff27496d),
-        appBar: AppBar(
-        backgroundColor: const Color(0xff142850),
-        title: Text(
-          "Emergency Report",
-          style: TextStyle(
-            fontSize: 24,
-            fontFamily: 'HelveticaNeueLight',
-            color: Colors.white,
-            letterSpacing: 2,
-          ),
-        ),
-        centerTitle: true,
-        ),
+    return GestureDetector(
+        onTap: () {
+          FocusScopeNode currentFocus = FocusScope.of(context);
 
-      body: SingleChildScrollView(
-      child: Column(
-      children: <Widget>[
-        //!Emergency info card
-        Padding(
-          padding: const EdgeInsets.all(15.0),
-          child: Card(
-            elevation: 6,
-            child: Padding(
-              padding: const EdgeInsets.all(15.0),
-              child: Column(
-                children: <Widget>[
-                  //!heading
-                  Padding(
-                    padding: const EdgeInsets.all(10.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: <Widget>[
-                        Text(
-                          'Emergency Details',
-                          style: TextStyle(
-                            color: const Color(0xff142850),
-                            fontFamily: "HelveticaNeueLight",
-                            fontSize: 24,
-
-                            ),
-                        ),
-                    ],),
-                  ),
-
-                  Divider(height: 10,),
-
-                  //! Begin form for emergency Details
-                  Form(
-                    key: _emergencyReportKey,
-                    autovalidate: _autoValidate,
-                    child: Column(
-                      children: <Widget>[
-                        //! Sub heading
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: <Widget>[
-                            Padding(
-                              padding: const EdgeInsets.fromLTRB(8, 15, 0, 15),
-                              child: Text(
-                                "Patient Information",
-                                style: TextStyle(
-                                  color: const Color(0xff142850),
-                                  fontFamily: "HelveticaNeueLight",
-                                  fontSize: 20,
-
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        _buildRollno(true),
-                        _buildGenderSelector(),
-                        _buildHosteliteSelector(),
-                        SizedBox(height: 40,),
-                        Divider(height: 10),
-                        //! Sub heading
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: <Widget>[
-                            Padding(
-                              padding: const EdgeInsets.fromLTRB(8, 15, 0, 15),
-                              child: Text(
-                                "Emergency Information",
-                                style: TextStyle(
-                                  color: const Color(0xff142850),
-                                  fontFamily: "HelveticaNeueLight",
-                                  fontSize: 20,
-
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        _buildDateTimeButton(context),
-                        _buildSeveritySelector(),
-                        _buildEmergencyTypeSelector(),
-                        _buildTransportUsedSelector(),
-                        _buildDetailsBox(),
-                        SizedBox(height: 40,),
-                        Divider(height: 10),
-                        //! Sub heading
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: <Widget>[
-                            Padding(
-                              padding: const EdgeInsets.fromLTRB(8, 15, 0, 35),
-                              child: Text(
-                                "Respondant's Information",
-                                style: TextStyle(
-                                  color: const Color(0xff142850),
-                                  fontFamily: "HelveticaNeueLight",
-                                  fontSize: 20,
-
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        _buildName(),
-                        _buildRollno(false),
-                        _buildAdditionalMfrsBox(),
-
-
-                      ],
-                    ),
-                  ),
-
-              ],),
+          if (!currentFocus.hasPrimaryFocus) {
+            currentFocus.unfocus();
+          }
+        },
+        child: Scaffold(
+          backgroundColor: const Color(0xff27496d),
+          appBar: AppBar(
+          backgroundColor: const Color(0xff142850),
+          title: Text(
+            "Emergency Report",
+            style: TextStyle(
+              fontSize: 24,
+              fontFamily: 'HelveticaNeueLight',
+              color: Colors.white,
+              letterSpacing: 2,
             ),
           ),
-        ),
+          centerTitle: true,
+          ),
 
+        body: SingleChildScrollView(
+        child: Column(
+        children: <Widget>[
+          //!Emergency info card
+          Padding(
+            padding: const EdgeInsets.all(15.0),
+            child: Card(
+              elevation: 6,
+              child: Padding(
+                padding: const EdgeInsets.all(15.0),
+                child: Column(
+                  children: <Widget>[
+                    //!heading
+                    Padding(
+                      padding: const EdgeInsets.all(10.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: <Widget>[
+                          Text(
+                            'Emergency Details',
+                            style: TextStyle(
+                              color: const Color(0xff142850),
+                              fontFamily: "HelveticaNeueLight",
+                              fontSize: 24,
 
-        //! Equipment Detail card
-        Padding(
-          padding: EdgeInsets.all(15),
-          child: Card(
-            elevation: 6,
-            child: Padding(
-              padding: EdgeInsets.all(15),
-              child: Column(
-                children: <Widget> [
-                  //!Heading
-                  Padding(
-                    padding: const EdgeInsets.all(10.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: <Widget>[
-                        Text(
-                          'Equipment Used',
-                          style: TextStyle(
-                            color: const Color(0xff142850),
-                            fontFamily: "HelveticaNeueLight",
-                            fontSize: 24,
-                          ),
-                        ),
-                    ],),
-                  ),
-
-                  Divider(height: 10,),
-
-                  //! Begin Form
-                  Form(
-                    key: _equipmentUsedKey,
-                    child: Column(
-                      children: <Widget>[
-                        //! Bag used
-                        Row(
-                          children: <Widget>[
-                            Padding(
-                              padding: const EdgeInsets.fromLTRB(8, 0, 5, 0),
-                              child: Text("Bag used:",
-                                style:TextStyle(
-                                  fontFamily: "HelveticaNeueLight",
-                                  fontSize: 20,
-                                  color: const Color(0xff142850),
-                                ) ,
                               ),
-                            ),
-                            _buildBagSelector(),
-                          ],
-                        ),
-                        _bagUsed == "None" ? Container() : Column(
-                          children: <Widget>[
-                            SizedBox(height: 10,),
-                            Divider(height: 10),
-                            //! Sub heading
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: <Widget>[
-                                Padding(
-                                  padding: const EdgeInsets.fromLTRB(8, 15, 0, 15),
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: <Widget>[
-                                      Text(
-                                        "One-time Consumables",
-                                        style: TextStyle(
-                                          color: const Color(0xff142850),
-                                          fontFamily: "HelveticaNeueLight",
-                                          fontSize: 20,
-
-                                        ),
-                                      ),
-                                      //! Description hint
-                                      Text(
-                                        "Increment per instance consumed",
-                                        style: TextStyle(
-                                          color: Colors.grey[600],
-                                          fontFamily: "HelveticaNeueLight",
-                                          fontSize: 12,
-
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                            _buildConsumableItemCounterList(),
-
-                            SizedBox(height: 10,),
-                            Divider(height: 10),
-                            //! Sub heading
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: <Widget>[
-                                Padding(
-                                  padding: const EdgeInsets.fromLTRB(8, 15, 0, 15),
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: <Widget>[
-                                      Text(
-                                        "Reusable Consumables",
-                                        style: TextStyle(
-                                          color: const Color(0xff142850),
-                                          fontFamily: "HelveticaNeueLight",
-                                          fontSize: 20,
-
-                                        ),
-                                      ),
-                                      //! Description hint
-                                      Text(
-                                        "Increment only if an item needs replacement",
-                                        style: TextStyle(
-                                          color: Colors.grey[600],
-                                          fontFamily: "HelveticaNeueLight",
-                                          fontSize: 12,
-
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                            _buildReusableItemCounterList(),
-                          ],
-                        ),                   
-                      ],
+                          ),
+                      ],),
                     ),
-                   ),
-                ],
+
+                    Divider(height: 10,),
+
+                    //! Begin form for emergency Details
+                    Form(
+                      key: _emergencyReportKey,
+                      autovalidate: _autoValidate,
+                      child: Column(
+                        children: <Widget>[
+                          //! Sub heading
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: <Widget>[
+                              Padding(
+                                padding: const EdgeInsets.fromLTRB(8, 15, 0, 15),
+                                child: Text(
+                                  "Patient Information",
+                                  style: TextStyle(
+                                    color: const Color(0xff142850),
+                                    fontFamily: "HelveticaNeueLight",
+                                    fontSize: 20,
+
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          _buildRollno(true),
+                          _buildGenderSelector(),
+                          _buildHosteliteSelector(),
+                          SizedBox(height: 40,),
+                          Divider(height: 10),
+                          //! Sub heading
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: <Widget>[
+                              Padding(
+                                padding: const EdgeInsets.fromLTRB(8, 15, 0, 15),
+                                child: Text(
+                                  "Emergency Information",
+                                  style: TextStyle(
+                                    color: const Color(0xff142850),
+                                    fontFamily: "HelveticaNeueLight",
+                                    fontSize: 20,
+
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          _buildDateTimeButton(context),
+                          _buildSeveritySelector(),
+                          _buildEmergencyTypeSelector(),
+                          _buildTransportUsedSelector(),
+                          _buildDetailsBox(),
+                          SizedBox(height: 40,),
+                          Divider(height: 10),
+                          //! Sub heading
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: <Widget>[
+                              Padding(
+                                padding: const EdgeInsets.fromLTRB(8, 15, 0, 35),
+                                child: Text(
+                                  "Respondant's Information",
+                                  style: TextStyle(
+                                    color: const Color(0xff142850),
+                                    fontFamily: "HelveticaNeueLight",
+                                    fontSize: 20,
+
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          _buildName(),
+                          _buildRollno(false),
+                          _buildAdditionalMfrsBox(),
+
+
+                        ],
+                      ),
+                    ),
+
+                ],),
               ),
             ),
-           ),
-        ),
+          ),
 
-      //! submit button
-      Padding(
-        padding: EdgeInsets.fromLTRB(0, 10, 0, _isLoading ? 50: 100),
-        child: RaisedButton(
-          child: Padding(
-            padding: const EdgeInsets.all(15.0),
-            child: Text('Submit',
-              style: TextStyle(
-                color: Colors.white,
-                fontFamily: 'HelveticaNeueBold',
-                fontSize: 16,
-                letterSpacing: 1.0,
-              )),
+
+          //! Equipment Detail card
+          Padding(
+            padding: EdgeInsets.all(15),
+            child: Card(
+              elevation: 6,
+              child: Padding(
+                padding: EdgeInsets.all(15),
+                child: Column(
+                  children: <Widget> [
+                    //!Heading
+                    Padding(
+                      padding: const EdgeInsets.all(10.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: <Widget>[
+                          Text(
+                            'Equipment Used',
+                            style: TextStyle(
+                              color: const Color(0xff142850),
+                              fontFamily: "HelveticaNeueLight",
+                              fontSize: 24,
+                            ),
+                          ),
+                      ],),
+                    ),
+
+                    Divider(height: 10,),
+
+                    //! Begin Form
+                    Form(
+                      key: _equipmentUsedKey,
+                      child: Column(
+                        children: <Widget>[
+                          //! Bag used
+                          Row(
+                            children: <Widget>[
+                              Padding(
+                                padding: const EdgeInsets.fromLTRB(8, 0, 5, 0),
+                                child: Text("Bag used:",
+                                  style:TextStyle(
+                                    fontFamily: "HelveticaNeueLight",
+                                    fontSize: 20,
+                                    color: const Color(0xff142850),
+                                  ) ,
+                                ),
+                              ),
+                              _buildBagSelector(),
+                            ],
+                          ),
+                          _bagUsed == "None" ? Container() : Column(
+                            children: <Widget>[
+                              SizedBox(height: 10,),
+                              Divider(height: 10),
+                              //! Sub heading
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: <Widget>[
+                                  Padding(
+                                    padding: const EdgeInsets.fromLTRB(8, 15, 0, 15),
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: <Widget>[
+                                        Text(
+                                          "One-time Consumables",
+                                          style: TextStyle(
+                                            color: const Color(0xff142850),
+                                            fontFamily: "HelveticaNeueLight",
+                                            fontSize: 20,
+
+                                          ),
+                                        ),
+                                        //! Description hint
+                                        Text(
+                                          "Increment per instance consumed",
+                                          style: TextStyle(
+                                            color: Colors.grey[600],
+                                            fontFamily: "HelveticaNeueLight",
+                                            fontSize: 12,
+
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              _buildConsumableItemCounterList(),
+
+                              SizedBox(height: 10,),
+                              Divider(height: 10),
+                              //! Sub heading
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: <Widget>[
+                                  Padding(
+                                    padding: const EdgeInsets.fromLTRB(8, 15, 0, 15),
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: <Widget>[
+                                        Text(
+                                          "Reusable Consumables",
+                                          style: TextStyle(
+                                            color: const Color(0xff142850),
+                                            fontFamily: "HelveticaNeueLight",
+                                            fontSize: 20,
+
+                                          ),
+                                        ),
+                                        //! Description hint
+                                        Text(
+                                          "Increment only if an item needs replacement",
+                                          style: TextStyle(
+                                            color: Colors.grey[600],
+                                            fontFamily: "HelveticaNeueLight",
+                                            fontSize: 12,
+
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              _buildReusableItemCounterList(),
+                            ],
+                          ),                   
+                        ],
+                      ),
+                     ),
+                  ],
+                ),
+              ),
+             ),
           ),
-          color: const Color(0xFF73CDE8),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(5),
-            
-          ),
-        onPressed: () async {
-          //!submit
-          if (!_emergencyReportKey.currentState.validate() || !_equipmentUsedKey.currentState.validate()) {
-            return;
-          }
-          //translate boolean arrays
-          _emergencyReportKey.currentState.save();
-          _equipmentUsedKey.currentState.save();
-          // print(_patientRollNo);
-          // print(_patientGender);
-          // print(_patientIsHostelite);
-          // print('');
-          // print(_emergencyDate);
-          // print(_severity);
-          // print(_emergencyType);
-          // print(_transportUsed);
-          // print(_emergencyDetails);
-          // print('');
-          // print(_primaryMfrName);
-          // print(_primaryMfrRollNo);
-          // print(_additionalMfrs);
-          // print('-------------');
-          // print(_bagUsed);
-          // _bagUsed == "None" ? print("No items used") : print(_getBagMap());
-          setState(() {
-            _isLoading = true;
-          });
-          try{
-            await Firestore.instance.collection('ReportedEmergencies').document(_emergencyDate.toString()).setData({
-              'patientRollNo' : _patientRollNo,
-              'patientGender' : _patientGender,
-              'patientIsHostelite' : _patientIsHostelite,
-              'date' : _emergencyDate, 
-              'severity' : _severity,
-              'type' : _emergencyType,
-              'transportUsed' : _transportUsed,
-              'details' : _emergencyDetails,
-              'primaryMfrRollNo' : _primaryMfrRollNo,
-              'primaryMfrName' :  _primaryMfrName,
-              'additionalMfrs' : _additionalMfrs,
-              'bagUsed' : _bagUsed,
-              'equipmentUsed' : _bagUsed == "None" ? null : _getBagMap(),
+
+        //! submit button
+        !_isLoading ? 
+        Padding(
+          padding: EdgeInsets.fromLTRB(0, 10, 0, 100),
+          child: RaisedButton(
+            child: Padding(
+              padding: const EdgeInsets.all(15.0),
+              child: Text('Submit',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontFamily: 'HelveticaNeueBold',
+                  fontSize: 16,
+                  letterSpacing: 1.0,
+                )),
+            ),
+            color: const Color(0xFF73CDE8),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(5),
+              
+            ),
+          onPressed: () async {
+            //!submit
+            if (!_emergencyReportKey.currentState.validate() || !_equipmentUsedKey.currentState.validate()) {
+              return;
+            }
+            //translate boolean arrays
+            _emergencyReportKey.currentState.save();
+            _equipmentUsedKey.currentState.save();
+            // print(_patientRollNo);
+            // print(_patientGender);
+            // print(_patientIsHostelite);
+            // print('');
+            // print(_emergencyDate);
+            // print(_severity);
+            // print(_emergencyType);
+            // print(_transportUsed);
+            // print(_emergencyDetails);
+            // print('');
+            // print(_primaryMfrName);
+            // print(_primaryMfrRollNo);
+            // print(_additionalMfrs);
+            // print('-------------');
+            // print(_bagUsed);
+            // _bagUsed == "None" ? print("No items used") : print(_getBagMap());
+            setState(() {
+              _isLoading = true;
             });
+            try{
+              await Firestore.instance.collection('ReportedEmergencies').document(_emergencyDate.toString()).setData({
+                'patientRollNo' : _patientRollNo,
+                'patientGender' : _patientGender,
+                'patientIsHostelite' : _patientIsHostelite,
+                'date' : _emergencyDate, 
+                'severity' : _severity,
+                'type' : _emergencyType,
+                'transportUsed' : _transportUsed,
+                'details' : _emergencyDetails,
+                'primaryMfrRollNo' : _primaryMfrRollNo,
+                'primaryMfrName' :  _primaryMfrName,
+                'additionalMfrs' : _additionalMfrs,
+                'bagUsed' : _bagUsed,
+                'equipmentUsed' : _bagUsed == "None" ? null : _getBagMap(),
+              });
 
+              setState(() {
+                _isLoading = false;
+              });
+
+              //! Showing failed dialog
+              await showDialog(
+                context: context,
+                builder: (context) => AlertDialog(
+                  shape:
+                      RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                  title: Text(
+                    "Report Submitted!",
+                    style: TextStyle(
+                      fontFamily: 'HelveticaNeueLight',
+                      letterSpacing: 2.0,
+                      fontSize: 20,
+                      color: Colors.grey[600],
+                    ),
+                  ),
+                  actions: <Widget>[
+                    Center(
+                      child: Padding(
+                        //alignment: Alignment.bottomLeft,
+                        padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                        child: FlatButton(
+                          child: Text(
+                            'OK',
+                            style: TextStyle(
+                              fontFamily: 'HelveticaNeueLight',
+                              //fontWeight: FontWeight.bold,
+                              letterSpacing: 2.0,
+                              fontSize: 20,
+                              color: const Color(0xff1a832a),
+                            ),
+                          ),
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              );
+
+              Navigator.of(context).pop();
+
+            } catch (e) {
+              setState(() {
+              _isLoading = false;
+              });
+              print(e);
+              //! Showing failed dialog
+              showDialog(
+                context: context,
+                builder: (context) => AlertDialog(
+                  shape:
+                      RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                  title: Text(
+                    "Failed to submit!",
+                    style: TextStyle(
+                      fontFamily: 'HelveticaNeueLight',
+                      letterSpacing: 2.0,
+                      fontSize: 20,
+                      color: Colors.grey[600],
+                    ),
+                  ),
+                  actions: <Widget>[
+                    Center(
+                      child: Padding(
+                        //alignment: Alignment.bottomLeft,
+                        padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                        child: FlatButton(
+                          child: Text(
+                            'Try Again',
+                            style: TextStyle(
+                              fontFamily: 'HelveticaNeueLight',
+                              //fontWeight: FontWeight.bold,
+                              letterSpacing: 2.0,
+                              fontSize: 20,
+                              color: const Color(0xffee0000),
+                            ),
+                          ),
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              );
+
+            }
             setState(() {
               _isLoading = false;
             });
 
-            //! Showing failed dialog
-            await showDialog(
-              context: context,
-              builder: (context) => AlertDialog(
-                shape:
-                    RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                title: Text(
-                  "Report Submitted!",
-                  style: TextStyle(
-                    fontFamily: 'HelveticaNeueLight',
-                    letterSpacing: 2.0,
-                    fontSize: 20,
-                    color: Colors.grey[600],
-                  ),
-                ),
-                actions: <Widget>[
-                  Center(
-                    child: Padding(
-                      //alignment: Alignment.bottomLeft,
-                      padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
-                      child: FlatButton(
-                        child: Text(
-                          'OK',
-                          style: TextStyle(
-                            fontFamily: 'HelveticaNeueLight',
-                            //fontWeight: FontWeight.bold,
-                            letterSpacing: 2.0,
-                            fontSize: 20,
-                            color: const Color(0xff1a832a),
-                          ),
-                        ),
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                        },
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            );
-
-            Navigator.of(context).pop();
-
-          } catch (e) {
-            setState(() {
-            _isLoading = false;
-            });
-            print(e);
-            //! Showing failed dialog
-            showDialog(
-              context: context,
-              builder: (context) => AlertDialog(
-                shape:
-                    RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                title: Text(
-                  "Failed to submit!",
-                  style: TextStyle(
-                    fontFamily: 'HelveticaNeueLight',
-                    letterSpacing: 2.0,
-                    fontSize: 20,
-                    color: Colors.grey[600],
-                  ),
-                ),
-                actions: <Widget>[
-                  Center(
-                    child: Padding(
-                      //alignment: Alignment.bottomLeft,
-                      padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
-                      child: FlatButton(
-                        child: Text(
-                          'Try Again',
-                          style: TextStyle(
-                            fontFamily: 'HelveticaNeueLight',
-                            //fontWeight: FontWeight.bold,
-                            letterSpacing: 2.0,
-                            fontSize: 20,
-                            color: const Color(0xffee0000),
-                          ),
-                        ),
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                        },
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            );
-
-          }
-          setState(() {
-            _isLoading = false;
-          });
-
-        },
-        ),
-      ),
-      !_isLoading ? Container() : Padding(
-        padding: EdgeInsets.fromLTRB(0, 0, 0, 100),
-        child: SpinKitThreeBounce(
-          color: Colors.grey[100],
-          size: 30,
+          },
           ),
+        ) : //! OR
+        Padding(
+          padding: EdgeInsets.fromLTRB(0, 10, 0, 100),
+          child: SpinKitThreeBounce(
+            color: Colors.grey[100],
+            size: 30,
+            ),
+          ),
+        ],
         ),
-      ],
-      ),
+        ),
       ),
     );
   }
