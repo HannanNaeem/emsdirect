@@ -37,7 +37,6 @@ class _EmergencyNumbersState extends State<EmergencyNumbers> {
 
   //This function updates the list for listview Builder to build
   _makeList(DocumentSnapshot snapshot){
-    print(snapshot.data['ems1'].toString());
     setState(() {
       _numberList.add(NumbersData('EMS1', snapshot.data['ems1'].toString()));
       _numberList.add(NumbersData('EMS2', snapshot.data['ems2']));

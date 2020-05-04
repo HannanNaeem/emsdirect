@@ -12,6 +12,7 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:provider/provider.dart';
 import 'package:ems_direct/shared/loading.dart';
 import 'package:ems_direct/pages/MapMFR.dart';
+import 'package:ems_direct/pages/emergency_numbers.dart';
 
 GlobalKey<_MFRHomeState> mfrHomeGlobalKey = GlobalKey();
 
@@ -331,8 +332,10 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
                   ),
                 ),
                 onTap: () {
-                  Navigator.of(context).pushNamed('/emergencyNumbers');
-                  //print('Emergency numbers');
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => EmergencyNumbers()),
+                  );
                 },
               ),
               ListTile(
