@@ -43,6 +43,7 @@ class _AlertFunctionMfrState extends State<AlertFunctionMfr> {
   var _isOccupied;
   var _gender;
   var genderToBeIgnored;
+
   //bool _ongoingAlertShowed = false;
   var locationOfEmergency;
   var studentContactNo;
@@ -575,7 +576,7 @@ class _AlertFunctionMfrState extends State<AlertFunctionMfr> {
     //this is where the two alert functions are called depending on whether there is data AND conditions are met
     if (_isAvailable != null && _isOccupied != null) {
 //      //if available, need to check if ongoing emergency is there
-      if (_isAvailable) {
+      if (_isAvailable && !_isOccupied) {
         //check if there is an ongoing emergency
         if (_ongoingEmergencyList != null && numOngoing > 0) {
           //call the send ongoingEmergency alert function
@@ -586,13 +587,12 @@ class _AlertFunctionMfrState extends State<AlertFunctionMfr> {
           }
         }
         //if there is no ongoing emergency then check if the person is ready to receive pending alert
-        else if (_isAvailable && !_isOccupied) {
-          if (_pendingEmergencyList != null && numPending > 0) {
-            //call the send pendingEmergency alert function
-            if (!alertBuffer.contains(_pendingEmergencyList[0].patientRollNo)) {
-              WidgetsBinding.instance.addPostFrameCallback((_) =>
-                  showPendingAlert(_pendingEmergencyList, _width, _height));
-            }
+        //else if (_isAvailable && !_isOccupied) {
+        else if (_pendingEmergencyList != null && numPending > 0) {
+          //call the send pendingEmergency alert function
+          if (!alertBuffer.contains(_pendingEmergencyList[0].patientRollNo)) {
+            WidgetsBinding.instance.addPostFrameCallback((_) =>
+                showPendingAlert(_pendingEmergencyList, _width, _height));
           }
         }
       }
