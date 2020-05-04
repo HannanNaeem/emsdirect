@@ -41,39 +41,3 @@ class _EmergencyNumberCardState extends State<EmergencyNumberCard> {
   }
 }
 
-
-
-class EmergencyNumbersData {
-
-  static final data = [
-    {
-      'name': 'EMS-1',
-      'contact': '03000000000',
-    },
-    {
-      'name': 'EMS-2',
-      'contact': '03000000000',
-    },
-    {
-      'name': 'EMS-3',
-      'contact': '03000000000',
-    },
-    {
-      'name': 'EMS-4',
-      'contact': '03000000000',
-    },
-    {
-      'name': 'LUMS',
-      'contact': '03000000000',
-    },
-    {
-      'name': 'HAWC',
-      'contact': '03000000000',
-    },
-       {
-      'name': 'LUMS Security Desk',
-      'contact': '03000000000',
-    },
-  ];
-}
-
