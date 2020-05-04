@@ -55,24 +55,6 @@ class _EmergencyReportMfrState extends State<EmergencyReportMfr> {
             focusedBorder: OutlineInputBorder(),
             
           ),
-          onChanged: (value) {
-            
-            setState(() {
-              _patientRollNo = value;    
-            });
-            if (value != ""){
-              setState(() {
-                _autoValidate = true;
-              });
-            }
-            else {
-              setState(() {
-                _autoValidate = false;
-              });
-            }
-            
-
-          },
           validator: (String value) {
             if (value.isEmpty) return 'Roll number is required!';
 
@@ -88,8 +70,8 @@ class _EmergencyReportMfrState extends State<EmergencyReportMfr> {
     );
   }
 
-  //! Get date and time Fucntion
-  Future<Null> _selectDateAndTime(BuildContext context) async {
+  //! Get date Fucntion
+  Future<Null> _selectDate(BuildContext context) async {
     final DateTime pickedDate = await showDatePicker(
         context: context, 
         initialDate: _emergencyDate, 
@@ -102,6 +84,11 @@ class _EmergencyReportMfrState extends State<EmergencyReportMfr> {
         _emergencyDate = pickedDate;
       });
     }
+
+  }
+
+   //! Get time Fucntion
+  Future<Null> _selectTime(BuildContext context) async {
 
     final TimeOfDay pickedTime = await showTimePicker(context: context, initialTime: TimeOfDay.now());
     if(pickedTime != null){
@@ -423,8 +410,9 @@ class _EmergencyReportMfrState extends State<EmergencyReportMfr> {
               shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(5),
               ),
-              onPressed: () {
-                _selectDateAndTime(context);
+              onPressed: () async {
+                await _selectDate(context);
+                await _selectTime(context);
               },
 
             ),
@@ -454,23 +442,6 @@ class _EmergencyReportMfrState extends State<EmergencyReportMfr> {
             border: OutlineInputBorder(),
             focusedBorder: OutlineInputBorder(),
           ),
-          onChanged: (value) {
-            
-            setState(() {
-              _primaryMfrName = value;    
-            });
-            if (value != ""){
-              setState(() {
-                _autoValidate = true;
-              });
-            }
-            else {
-              setState(() {
-                _autoValidate = false;
-              });
-            }
-
-          },
 
           validator: (String value) {
             if (value.isEmpty) return 'Name is required!';
