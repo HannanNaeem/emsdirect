@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:ems_direct/pages/emergency_numbers_card.dart';
+import 'package:ems_direct/available_mfr_card.dart';
 
 
 
-class EmergencyNumbers extends StatefulWidget {
+class AvailableMfrs extends StatefulWidget {
   @override
-  _EmergencyNumbersState createState() => _EmergencyNumbersState();
+  _AvailableMfrsState createState() => _AvailableMfrsState();
 }
 
-class _EmergencyNumbersState extends State<EmergencyNumbers> {
-  var numberData = EmergencyNumbersData.data;
+class _AvailableMfrsState extends State<AvailableMfrs> {
+  var numberData = AvailableMfrsData.data;
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +22,7 @@ class _EmergencyNumbersState extends State<EmergencyNumbers> {
       appBar: AppBar(
         backgroundColor: const Color(0xff142850),
         title: Text(
-          'Emergency Numbers',
+          'Available MFRs',
           style: TextStyle(
             fontSize: 24,
             fontFamily: 'HelveticaNeueLight',
@@ -45,11 +45,14 @@ class _EmergencyNumbersState extends State<EmergencyNumbers> {
                     padding: EdgeInsets.fromLTRB(20, 5, 20, 5),
                     child: ConstrainedBox(
                       constraints: BoxConstraints(
-                        minHeight: 80,
+                        minHeight: 105,
                       ),
-                      child: EmergencyNumberCard(
+                      child: AvailableMfrCard(
                         numberData[index]['name'],
-                        numberData[index]['contact']
+                        numberData[index]['contact'],
+                        numberData[index]['rollNo'],
+                        numberData[index]['gender'],
+                        numberData[index]['isOccupied'],
                           ),
                     ),
                   );
