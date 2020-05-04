@@ -18,6 +18,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:flutter/services.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:ems_direct/services/mfr_database.dart';
+import 'package:configurable_expansion_tile/configurable_expansion_tile.dart';
 
 GlobalKey<_MFRHomeState> mfrHomeGlobalKey = GlobalKey();
 
@@ -320,22 +321,37 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
                     ),
                   ),
                 ),
-                ExpansionTile(
-                  leading: Icon(
-                    Icons.account_circle,
-                    color: const Color(0xff142850),
+                ConfigurableExpansionTile(
+                  animatedWidgetFollowingHeader: const Icon(
+                    Icons.expand_more,
+                    color: const Color(0xFF707070),
                   ),
-                  title: Text(
-                    _userData.data['name'].toString(),
-                    style: TextStyle(
-                      fontSize: 15,
-                      fontFamily: 'HelveticaNeueLight',
-                      letterSpacing: 1.0,
-                    ),
-                  ),
-                  children: <Widget>[
-                    Container(
-                      constraints: BoxConstraints(maxWidth: width * 0.75),
+                  //headerExpanded: Flexible(child: Center(child: Text("A Header Changed"))),
+                  header: Container(
+                      color: Colors.transparent,
+                      child: Center(
+                          child: Row(
+                        children: <Widget>[
+                          Icon(
+                            Icons.account_circle,
+                            color: const Color(0xff142850),
+                            size: height / 20,
+                          ),
+                          SizedBox(width: 10.0),
+                          Text(
+                            _userData.data['name'].toString(),
+                            style: TextStyle(
+                              fontSize: 19,
+                              fontFamily: 'HelveticaNeueLight',
+                              letterSpacing: 1.0,
+                            ),
+                          ),
+                        ],
+                      ))),
+                  children: [
+                    SizedBox(height: 10.0),
+                    Padding(
+                      padding: EdgeInsets.fromLTRB(15, 0, 0, 0),
                       child: Row(
                         children: <Widget>[
                           Text(
@@ -360,8 +376,8 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
                       ),
                     ),
                     SizedBox(height: 10.0),
-                    Container(
-                      constraints: BoxConstraints(maxWidth: width * 0.75),
+                    Padding(
+                      padding: EdgeInsets.fromLTRB(15, 0, 0, 0),
                       child: Row(
                         children: <Widget>[
                           Text(
@@ -386,8 +402,8 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
                       ),
                     ),
                     SizedBox(height: 10.0),
-                    Container(
-                      constraints: BoxConstraints(maxWidth: width * 0.75),
+                    Padding(
+                      padding: EdgeInsets.fromLTRB(15, 0, 0, 0),
                       child: Row(
                         children: <Widget>[
                           Text(
@@ -427,6 +443,20 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
                   onTap: () {
                     Navigator.of(context).pushNamed('/emergencyNumbers');
                     //print('Emergency numbers');
+                  },
+                ),
+                ListTile(
+                  //the option to view emergency numbers - takes you to dummy page
+                  title: Text(
+                    'List of Available MFRs',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontFamily: 'HelveticaNeueLight',
+                      letterSpacing: 2.0,
+                    ),
+                  ),
+                  onTap: () {
+                    print('Available MFRs');
                   },
                 ),
                 Expanded(
