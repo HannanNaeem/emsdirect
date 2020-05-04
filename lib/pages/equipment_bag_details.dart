@@ -19,7 +19,7 @@ class _bagDetailsState extends State<BagDetails> {
     var _bagData;
     var updatedYesNo = [];
     var names = ['Items', 'Bp apparatus', 'Crepe', 'Deep heat', 'Depressors', 'Face masks', 'Gauze', 'Gloves', 'ORS', 'Open wove', 'Polyfax', 'Polyfax plus', 'Pyodine', 'Saniplast', 'Scissors', 'Stethoscope', 'Tape', 'Thermometer', 'Triangular bandage', 'Wintogeno'];
-    var data = [-1];
+    var data = [];
     var _name;
     int index = 0;
     _bagDetailsState(String _Name, String Name) {
@@ -114,10 +114,20 @@ class _bagDetailsState extends State<BagDetails> {
                         }
                       }).toList(),
                     ),
+                    Padding(
+                      padding: EdgeInsets.fromLTRB(90, 0, 0, 0),
+                      child: Text(
+                        'Quantity',
+                        textAlign: TextAlign.end,
+                        style: TextStyle(
+                          fontFamily: 'HelveticaNeueBold',
+                          letterSpacing: 2.0,
+                          fontSize: 14,
+                        ),
+                      ),
+                    ),
                     Column(
                       children: data.map((value) {
-                        index = index + 1;
-                        if(value != -1){
                           return
                             Padding(
                                 padding: EdgeInsets.fromLTRB(80, 10, 0, 20),
@@ -147,22 +157,7 @@ class _bagDetailsState extends State<BagDetails> {
                                       data[index] = int.parse(value);
                                     }),
                             );
-                        }
-                        else {
-                          return
-                            Padding(
-                                padding: EdgeInsets.fromLTRB(30, 20, 0, 20),
-                                child: Text(
-                                  'Quantity',
-                                  textAlign: TextAlign.end,
-                                  style: TextStyle(
-                                    fontFamily: 'HelveticaNeueBold',
-                                    letterSpacing: 2.0,
-                                    fontSize: 14,
-                                  ),
-                                )
-                            );
-                        }
+
                       }).toList(),
                     ),
 

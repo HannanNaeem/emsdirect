@@ -16,6 +16,7 @@ import 'package:location/location.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:flutter/services.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'dart:math';
 
 GlobalKey<_MFRHomeState> mfrHomeGlobalKey = GlobalKey();
 
@@ -62,6 +63,8 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
   var locationOfEmergency;
   var patientContactNo;
   var patientRollNumber;
+  var oldLatitude;
+  var oldLongitude;
 
   //instance of auth service
   final AuthService _authMfr = AuthService();
@@ -135,6 +138,8 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
 
         var currLoc = LatLng(location.latitude, location.longitude);
         GeoPoint NewGeoPoint = GeoPoint(currLoc.latitude, currLoc.longitude);
+        oldLatitude = currLoc.latitude;
+        oldLongitude = currLoc.longitude;
 
         if (_locationSubscription != null) {
           _locationSubscription.cancel();
@@ -148,7 +153,17 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
         if (isAvailable) {
           GeoPoint NewGeoPoint =
               GeoPoint(newLocation.latitude, newLocation.longitude);
-          _updateUserData(NewGeoPoint);
+          var latitudeDifference = newLocation.latitude - oldLatitude;
+          var longitudeDifference = newLocation.longitude - oldLongitude;
+          var p = 0.017453292519943295;
+          var distance = 0.5 - cos(latitudeDifference * p)/2 + cos(newLocation.latitude * p) * cos(oldLatitude * p)  * (1 - cos(longitudeDifference * p))/2;
+          var meter = distance/1000;
+          if(meter > 5){
+            _updateUserData(NewGeoPoint);
+          }
+
+          oldLatitude = newLocation.latitude;
+          oldLongitude = newLocation.longitude;
         }
       });
     } on PlatformException catch (e) {
