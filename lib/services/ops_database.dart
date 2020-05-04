@@ -79,6 +79,18 @@ class OpsDatabaseService {
     }).toList();
   }
 
+  //Mfr List from snapshot
+  List<MfrListModel> mfrListFromSnapshot(QuerySnapshot snapshot) {
+    return snapshot.documents.map((doc) {
+      return MfrListModel(
+        name: doc.data['name'],
+        rollNo: doc.documentID,
+        gender: doc.data['gender'],
+        contact: doc.data['contact'],
+      );
+    }).toList();
+  }
+
   //Declined emergency list from snapshot
   List<AvailableMfrs> _availableMfrsListFromSnapshot(QuerySnapshot snapshot) {
     return snapshot.documents.map((doc) {

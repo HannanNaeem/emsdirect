@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
 
 class SevereEmergencyModel {
   final String patientRollNo;
@@ -105,4 +106,18 @@ class OngoingEmergencyModel {
       this.reportingTime,
       this.severity,
       this.patientContactNo});
+}
+
+class MfrListModel {
+  final String name;
+  final String rollNo;
+  final String gender;
+  final String contact;
+
+  MfrListModel(
+    {this.name,
+    this.rollNo,
+    this.gender,
+    this.contact,
+    });
 }
