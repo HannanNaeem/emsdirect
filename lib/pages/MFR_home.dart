@@ -297,8 +297,6 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
     var height = screenSize.height;
     print(height);
 
-    printData();
-
     //Defines the whole layout of the homepage
     return Scaffold(
       backgroundColor: const Color(0xff27496d),

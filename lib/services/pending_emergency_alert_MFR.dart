@@ -218,8 +218,15 @@ class _AlertFunctionMfrState extends State<AlertFunctionMfr> {
     //-------------- TESTING ------------------------------------
     print('ID: ${doc[0].patientRollNo}');
     alertBuffer.add(doc[0].patientRollNo);
-    bool exist;
+    bool manuallyClosed = false;
     //-----------------------------------------------------------
+
+    Future.delayed(Duration(seconds: 30)).then((_) {
+      if (!manuallyClosed) {
+        Navigator.of(context).pop();
+      }
+    });
+
     showDialog(
       context: context,
       builder: (context) {
@@ -261,6 +268,7 @@ class _AlertFunctionMfrState extends State<AlertFunctionMfr> {
                 ),
                 onPressed: () async {
                   print('yes');
+                  manuallyClosed = true;
                   Navigator.of(context).pop();
                   try {
                     await acceptTransaction(
@@ -293,6 +301,7 @@ class _AlertFunctionMfrState extends State<AlertFunctionMfr> {
                 ),
                 onPressed: () async {
                   print('no');
+                  manuallyClosed = true;
                   Navigator.of(context).pop();
                   try {
                     await updateDecline(doc[0].patientRollNo);
@@ -322,8 +331,27 @@ class _AlertFunctionMfrState extends State<AlertFunctionMfr> {
     //print(doc.data);
     print('ID: ${doc[0].patientRollNo}');
     alertBufferOngoing.add(doc[0].patientRollNo);
+    bool manuallyClosed = false;
     //-----------------------------------------------------------
-    //await updateDeclineOnRest(pending);
+    //await updateDeclineOnRest(pending);x
+
+    setState(() {
+      updateOccupiedLocal(true);
+      mfrHomeGlobalKey.currentState.updateOccupied(true);
+    });
+
+//    bool manuallyClosed = false;
+//    Future.delayed(Duration(seconds: 30)).then((_) {
+//      if (!manuallyClosed) {
+//        Navigator.of(context).pop());
+//    }}
+
+    Future.delayed(Duration(seconds: 30)).then((_) {
+      if (!manuallyClosed) {
+        Navigator.of(context).pop();
+      }
+    });
+
     showDialog(
       context: context,
       builder: (context) {
@@ -366,6 +394,7 @@ class _AlertFunctionMfrState extends State<AlertFunctionMfr> {
                   ),
                   onPressed: () async {
                     print('acknowledge');
+                    manuallyClosed = true;
                     Navigator.of(context).pop();
 //                    try {
 //                      await updateOccupiedStatus(true);
@@ -395,6 +424,7 @@ class _AlertFunctionMfrState extends State<AlertFunctionMfr> {
                   ),
                   onPressed: () async {
                     print('go to map');
+                    manuallyClosed = true;
                     Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(
