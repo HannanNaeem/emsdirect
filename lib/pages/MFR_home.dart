@@ -1,5 +1,6 @@
 import 'package:ems_direct/dummy.dart';
 import 'package:ems_direct/pages/mfr_emergency_report.dart';
+import 'package:ems_direct/models/emergency_models.dart';
 import 'package:ems_direct/services/auth.dart';
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -8,11 +9,17 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:ems_direct/services/pending_emergency_alert_MFR.dart';
 import 'package:ems_direct/pages/emergency_numbers.dart';
-import 'package:ems_direct/pages/available_MFRs.dart';
+import 'package:ems_direct/available_mfrs.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:provider/provider.dart';
 import 'package:ems_direct/shared/loading.dart';
 import 'package:ems_direct/pages/MapMFR.dart';
+import 'package:location/location.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:flutter/services.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:ems_direct/services/mfr_database.dart';
+import 'package:configurable_expansion_tile/configurable_expansion_tile.dart';
 
 GlobalKey<_MFRHomeState> mfrHomeGlobalKey = GlobalKey();
 
@@ -36,6 +43,8 @@ class MFRHome extends StatefulWidget {
 class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
   //keepMeSignedIn variable passed from login screen if successful
   bool _keepSignedIn = false;
+  static Location _locationTracker = Location();
+  StreamSubscription _locationSubscription;
 
   //user data doc
   var _userData;
@@ -49,12 +58,14 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
   }
 
   static final databaseReference = Firestore.instance;
+  DocumentReference mfrRef;
   Stream<QuerySnapshot> _documentStream;
   var isAvailable;
   var isOccupied = false;
   var gender;
   var locationOfEmergency;
   var patientContactNo;
+  var patientRollNumber;
 
   //instance of auth service
   final AuthService _authMfr = AuthService();
@@ -76,6 +87,14 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
       _authMfr.logOut();
     }
   }
+
+  void _updateUserData(GeoPoint Newlocation) async {
+    await databaseReference
+        .collection("Mfr")
+        .document((await _userData['rollNo']).toString())
+        .updateData({'location': Newlocation});
+  }
+
   //--------------------------------------------------------------------
 
   @override
@@ -85,10 +104,11 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
     WidgetsBinding.instance.addObserver(this);
     //initializing stream to null as MFR will always be unavailable unless made available by himself
     _documentStream = null;
-    getInitialData(_userData['rollNo']);
 
     _notificationService.getToken();
     _notificationService.configureFirebaseListeners();
+    mfrRef = databaseReference.collection("Mfr").document(_userData['rollNo']);
+    getInitialData(_userData['rollNo']);
   }
 
   //////////////////////////////// FUNCTIONS /////////////////////////////////////
@@ -103,6 +123,37 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
       print(e);
     }
   }
+
+//  void getCurrentLocaion() async {
+//    try {
+//      while (true) {
+//        if (isAvailable) {
+//        var location = await _locationTracker.getLocation();
+//
+//        var currLoc = LatLng(location.latitude, location.longitude);
+//        GeoPoint NewGeoPoint = GeoPoint(currLoc.latitude, currLoc.longitude);
+//
+//        if (_locationSubscription != null) {
+//          _locationSubscription.cancel();
+//        }
+//          _updateUserData(NewGeoPoint);
+//          break;
+//        }
+//      }
+//      _locationSubscription =
+//          _locationTracker.onLocationChanged().listen((newLocation) {
+//        if (isAvailable) {
+//          GeoPoint NewGeoPoint =
+//              GeoPoint(newLocation.latitude, newLocation.longitude);
+//          _updateUserData(NewGeoPoint);
+//        }
+//      });
+//    } on PlatformException catch (e) {
+//      if (e.code == 'PERMISSION_DENIED') {
+//        debugPrint("Permission Denied");
+//      }
+//    }
+//  }
 
   void updateDeclineCount(docId) async {
     try {
@@ -121,26 +172,35 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
     try {
       DocumentReference docRef =
           databaseReference.collection("Mfr").document(docId);
-      await docRef.updateData({'isActive': val}).then((_) {
+      return await docRef.updateData({'isActive': val}).then((_) {
         print('Availability status updated');
       });
     } catch (e) {
       print(e);
+      throw (e);
     }
   }
 
+//  void getInitialData() async {
+//    try {
+//      var mfrSnapshot = await databaseReference.collection("Mfr").getDocuments();
+//      var list = MfrDatabaseService().equipmentBagListFromSnapshot(mfrSnapshot);
+//      setState(() {
+//        mfrList = list;
+//      });
+//    } catch (e) {
+//      print(e);
+//    }
+//  }
+
   void getInitialData(var docId) async {
     try {
-      await databaseReference
-          .collection("Mfr")
-          .document(docId)
-          .get()
-          .then((onVal) {
+      databaseReference.collection("Mfr").document(docId).get().then((onVal) {
         setState(() {
           isOccupied = onVal.data['isOccupied'];
           isAvailable = onVal.data['isActive'];
           gender = onVal.data['gender'];
-          print('done!');
+          print('Initial data set done!');
         });
       }).catchError((onError) {
         print(onError.message);
@@ -199,6 +259,31 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
     }
   }
 
+//  List<mfrModel> _mfrListFromSnapshot(QuerySnapshot snapshot) {
+//    return snapshot.documents.map((doc) {
+//      //print(doc.data);
+//      return mfrModel(
+//        contact: doc.data['contact'],
+//        gender: doc.data['gender'],
+//        name: doc.data['name'],
+//      );
+//    }).toList();
+//  }
+//
+//  Future<QuerySnapshot> getSnapshot() async {
+//    var mfrSnapshot = await Firestore.instance.collection('Mfr').getDocuments();
+//    return mfrSnapshot;
+//  }
+//
+
+  void printData() async {
+    var bagSnapshot =
+        await Firestore.instance.collection('EquipmentBags').getDocuments();
+    var baglist =
+        MfrDatabaseService().equipmentBagListFromSnapshot(bagSnapshot);
+    print(baglist);
+  }
+
   ////////////////////////////////////////////////////////////////////////////////
 
   @override
@@ -212,6 +297,7 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
     var screenSize = MediaQuery.of(context).size;
     var width = screenSize.width;
     var height = screenSize.height;
+    print(height);
 
     //Defines the whole layout of the homepage
     return Scaffold(
@@ -221,206 +307,249 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
         width: width *
             0.8, //making sure drawer extends to 80% of whatever screen it is
         child: Drawer(
-          child: Column(
-            //this column contains the drawer header, the option to view profile/emergency numbers/available MFRs list
-            //also has the option to logout
-            children: <Widget>[
-              DrawerHeader(
-                //only the ems logo
-                child: Container(
-                  child: Image.asset("assets/ems_logo.png"),
-                ),
-              ),
-              ExpansionTile(
-                leading: Icon(
-                  Icons.account_circle,
-                  color: const Color(0xff142850),
-                ),
-                title: Text(
-                  _userData.data['name'].toString(),
-                  style: TextStyle(
-                    fontSize: 15,
-                    fontFamily: 'HelveticaNeueLight',
-                    letterSpacing: 1.0,
-                  ),
-                ),
-                children: <Widget>[
-                  Container(
-                    constraints: BoxConstraints(maxWidth: width * 0.75),
-                    child: Row(
-                      children: <Widget>[
-                        Text(
-                          'Rollnumber:',
-                          style: TextStyle(
-                            fontSize: 15,
-                            fontFamily: 'HelveticaNeueLight',
-                            letterSpacing: 1.0,
-                          ),
-                        ),
-                        SizedBox(width: 2.0),
-                        Text(
-                          _userData.data['rollNo'].toString(),
-                          style: TextStyle(
-                            fontSize: 15,
-                            fontFamily: 'HelveticaNeueLiight',
-                            letterSpacing: 1.0,
-                          ),
-                        ),
-                      ],
+          child: SafeArea(
+            child: Column(
+              //this column contains the drawer header, the option to view profile/emergency numbers/available MFRs list
+              //also has the option to logout
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.all(20.0),
+                  child: Container(
+                    height: height * 0.25,
+                    child: Image(
+                      image: AssetImage("assets/ems_logo.png"),
+                      fit: BoxFit.fill,
                     ),
                   ),
-                  SizedBox(height: 10.0),
-                  Container(
-                    constraints: BoxConstraints(maxWidth: width * 0.75),
-                    child: Row(
-                      children: <Widget>[
-                        Text(
-                          'Email:',
-                          style: TextStyle(
-                            fontSize: 15,
-                            fontFamily: 'HelveticaNeueLight',
-                            letterSpacing: 1.0,
-                          ),
-                        ),
-                        SizedBox(width: 2.0),
-                        Text(
-                          _userData.data['email'].toString(),
-                          style: TextStyle(
-                            fontSize: 15,
-                            fontFamily: 'HelveticaNeueLight',
-                            letterSpacing: 1.0,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  SizedBox(height: 10.0),
-                  Container(
-                    constraints: BoxConstraints(maxWidth: width * 0.75),
-                    child: Row(
-                      children: <Widget>[
-                        Text(
-                          'Contact:',
-                          style: TextStyle(
-                            fontSize: 15,
-                            fontFamily: 'HelveticaNeueLight',
-                            letterSpacing: 1.0,
-                          ),
-                        ),
-                        SizedBox(width: 1.0),
-                        Text(
-                          _userData.data['contact'].toString(),
-                          style: TextStyle(
-                            fontSize: 15,
-                            fontFamily: 'HelveticaNeueLight',
-                            letterSpacing: 1.0,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-              ListTile(
-                //the option to view emergency numbers - takes you to dummy page
-                title: Text(
-                  'Emergency Numbers',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontFamily: 'HelveticaNeueLight',
-                    letterSpacing: 2.0,
-                  ),
                 ),
-                onTap: () {
-                  Navigator.of(context).pushNamed('/emergencyNumbers');
-                  //print('Emergency numbers');
-                },
-              ),
-              Expanded(
-                //the option to logout (bottom center aligned)
-                child: Align(
-                  alignment: Alignment.bottomCenter,
-                  child: Padding(
-                    padding:
-                        EdgeInsets.fromLTRB(width * 0.8 * 0.24, 0, 0, 10.0),
-                    child: Row(
-                      //has the icon and text
-                      children: <Widget>[
-                        IconButton(
-                          icon: Image(
-                            image: AssetImage('assets/logout.png'),
-                            fit: BoxFit.fill,
+                ConfigurableExpansionTile(
+                  animatedWidgetFollowingHeader: const Icon(
+                    Icons.expand_more,
+                    color: const Color(0xFF707070),
+                  ),
+                  //headerExpanded: Flexible(child: Center(child: Text("A Header Changed"))),
+                  header: Container(
+                      color: Colors.transparent,
+                      child: Center(
+                          child: Row(
+                        children: <Widget>[
+                          Icon(
+                            Icons.account_circle,
                             color: const Color(0xff142850),
+                            size: height / 20,
                           ),
-                          color: const Color(0xff142850),
-                          onPressed: () {
-                            showDialog(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return AlertDialog(
-                                    title: Text(
-                                      "Are you sure?",
+                          SizedBox(width: 10.0),
+                          Text(
+                            _userData.data['name'].toString(),
+                            style: TextStyle(
+                              fontSize: 19,
+                              fontFamily: 'HelveticaNeueLight',
+                              letterSpacing: 1.0,
+                            ),
+                          ),
+                        ],
+                      ))),
+                  children: [
+                    SizedBox(height: 10.0),
+                    Padding(
+                      padding: EdgeInsets.fromLTRB(15, 0, 0, 0),
+                      child: Row(
+                        children: <Widget>[
+                          Text(
+                            'Roll number: ',
+                            style: TextStyle(
+                              fontSize: 15,
+                              fontFamily: 'HelveticaNeueLight',
+                              fontWeight: FontWeight.bold,
+                              letterSpacing: 1.0,
+                            ),
+                          ),
+                          SizedBox(width: 2.0),
+                          Text(
+                            _userData.data['rollNo'].toString(),
+                            style: TextStyle(
+                              fontSize: 15,
+                              fontFamily: 'HelveticaNeueLight',
+                              letterSpacing: 1.0,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(height: 10.0),
+                    Padding(
+                      padding: EdgeInsets.fromLTRB(15, 0, 0, 0),
+                      child: Row(
+                        children: <Widget>[
+                          Text(
+                            'Email: ',
+                            style: TextStyle(
+                              fontSize: 15,
+                              fontFamily: 'HelveticaNeueLight',
+                              fontWeight: FontWeight.bold,
+                              letterSpacing: 1.0,
+                            ),
+                          ),
+                          SizedBox(width: 2.0),
+                          Text(
+                            _userData.data['email'].toString(),
+                            style: TextStyle(
+                              fontSize: 15,
+                              fontFamily: 'HelveticaNeueLight',
+                              letterSpacing: 1.0,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(height: 10.0),
+                    Padding(
+                      padding: EdgeInsets.fromLTRB(15, 0, 0, 0),
+                      child: Row(
+                        children: <Widget>[
+                          Text(
+                            'Contact: ',
+                            style: TextStyle(
+                              fontSize: 15,
+                              fontFamily: 'HelveticaNeueLight',
+                              fontWeight: FontWeight.bold,
+                              letterSpacing: 1.0,
+                            ),
+                          ),
+                          SizedBox(width: 1.0),
+                          Text(
+                            _userData.data['contact'].toString(),
+                            style: TextStyle(
+                              fontSize: 15,
+                              fontFamily: 'HelveticaNeueLight',
+                              letterSpacing: 1.0,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(height: 10.0),
+                  ],
+                ),
+                ListTile(
+                  //the option to view emergency numbers - takes you to dummy page
+                  title: Text(
+                    'Emergency Numbers',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontFamily: 'HelveticaNeueLight',
+                      letterSpacing: 2.0,
+                    ),
+                  ),
+                  onTap: () {
+                    Navigator.of(context).pushNamed('/emergencyNumbers');
+                    //print('Emergency numbers');
+                  },
+                ),
+                ListTile(
+                  //the option to view emergency numbers - takes you to dummy page
+                  title: Text(
+                    'Avaiable MFRs',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontFamily: 'HelveticaNeueLight',
+                      letterSpacing: 2.0,
+                    ),
+                  ),
+                  onTap: () {
+                    Navigator.of(context).pushNamed('/availableMfrs');
+                    //print('Emergency numbers');
+                  },
+                ),
+                Expanded(
+                  //the option to logout (bottom center aligned)
+                  child: Align(
+                    alignment: Alignment.bottomCenter,
+                    child: InkWell(
+                      onTap: () {
+                        print('clicked');
+                        showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title: Text(
+                                  "Are you sure?",
+                                  style: TextStyle(
+                                    fontFamily: 'HelveticaNeueLight',
+                                    letterSpacing: 2.0,
+                                    fontSize: 20,
+                                    color: Colors.grey[600],
+                                  ),
+                                ),
+                                actions: <Widget>[
+                                  FlatButton(
+                                    child: Text(
+                                      'YES',
                                       style: TextStyle(
                                         fontFamily: 'HelveticaNeueLight',
-                                        letterSpacing: 2.0,
+                                        letterSpacing: 3.0,
                                         fontSize: 20,
-                                        color: Colors.grey[600],
+                                        color: const Color(0xff1a832a),
                                       ),
                                     ),
-                                    actions: <Widget>[
-                                      FlatButton(
-                                        child: Text(
-                                          'YES',
-                                          style: TextStyle(
-                                            fontFamily: 'HelveticaNeueLight',
-                                            letterSpacing: 3.0,
-                                            fontSize: 20,
-                                            color: const Color(0xff1a832a),
-                                          ),
-                                        ),
-                                        onPressed: () async {
-                                          //navigation to login screen
-                                          //! signout here
-                                          await _authMfr.logOut();
-                                          Navigator.of(context).pop();
-                                          Navigator.pushReplacementNamed(
-                                              context, '/select_login');
-                                        },
+                                    onPressed: () async {
+                                      //navigation to login screen
+                                      //! signout here
+                                      await _authMfr.logOut();
+                                      Navigator.of(context).pop();
+                                      Navigator.pushReplacementNamed(
+                                          context, '/select_login');
+                                    },
+                                  ),
+                                  FlatButton(
+                                    child: Text(
+                                      'NO',
+                                      style: TextStyle(
+                                        fontFamily: 'HelveticaNeueLight',
+                                        letterSpacing: 3.0,
+                                        fontSize: 20,
+                                        color: const Color(0xffee0000),
                                       ),
-                                      FlatButton(
-                                        child: Text(
-                                          'NO',
-                                          style: TextStyle(
-                                            fontFamily: 'HelveticaNeueLight',
-                                            letterSpacing: 2.5,
-                                            fontSize: 20,
-                                            color: const Color(0xffee0000),
-                                          ),
-                                        ),
-                                        onPressed: () {
-                                          Navigator.of(context).pop();
-                                        },
-                                      ),
-                                    ],
-                                  );
-                                });
-                            //print('logout');
-                          },
+                                    ),
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                    },
+                                  ),
+                                ],
+                              );
+                            });
+                      },
+                      child: Padding(
+                        padding:
+                            EdgeInsets.fromLTRB(width * 0.8 * 0.24, 0, 0, 10.0),
+                        child: Row(
+                          //has the icon and text
+                          children: <Widget>[
+                            IconButton(
+                              icon: Image(
+                                image: AssetImage('assets/logout.png'),
+                                fit: BoxFit.fill,
+                                color: const Color(0xff142850),
+                              ),
+                              color: const Color(0xff142850),
+                              onPressed: null,
+                            ),
+                            Text(
+                              'LOGOUT',
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontFamily: 'HelveticaNeueBold',
+                                color: const Color(0xff142850),
+                              ),
+                            ),
+                          ],
                         ),
-                        Text(
-                          'LOGOUT',
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontFamily: 'HelveticaNeueBold',
-                            color: const Color(0xff142850),
-                          ),
-                        ),
-                      ],
+                      ),
                     ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
@@ -442,25 +571,6 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
         child: Column(
           //everything is placed in the column
           children: <Widget>[
-            IconButton(
-              icon: Icon(Icons.cancel),
-              onPressed: () {
-                bool val;
-                if (isOccupied)
-                  val = false;
-                else
-                  val = true;
-                setState(() {
-                  isOccupied = val;
-                  mfrAlertFunctionGlobalKey.currentState
-                      .updateOccupiedStatus(val);
-                  mfrAlertFunctionGlobalKey.currentState
-                      .updateStatus(isAvailable, isOccupied);
-                });
-                //updateOccupiedStatus(val);
-              },
-            ),
-            //if (isAvailable != null && isOccupied != null) AlertFunctionMfr(_userData),
             Flexible(
               flex: 3,
               child: Container(
@@ -492,18 +602,24 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
                                 scale: 2.5,
                                 child: Switch(
                                   value: isAvailable, //isAvailable,
-                                  onChanged: (bool newVal) {
-                                    setState(() {
-                                      isAvailable = newVal;
-                                      if (!isAvailable) {
-                                        isOccupied = false;
+                                  onChanged: (bool newVal) async {
+                                    if (!isOccupied) {
+                                      try {
+                                        await mfrRef
+                                            .updateData({'isActive': newVal});
+                                        setState(() {
+                                          isAvailable = newVal;
+                                          if (!isAvailable) {
+                                            isOccupied = false;
+                                          }
+                                        });
+                                        mfrAlertFunctionGlobalKey.currentState
+                                            .updateStatus(
+                                                isAvailable, isOccupied);
+                                      } catch (e) {
+                                        print(e.toString());
                                       }
-                                      upDateAvailability(
-                                          isAvailable, _userData['rollNo']);
-                                      mfrAlertFunctionGlobalKey.currentState
-                                          .updateStatus(
-                                              isAvailable, isOccupied);
-                                    });
+                                    }
                                   },
                                   activeTrackColor: Colors.green,
                                   activeColor: Colors.green[50],
@@ -532,62 +648,100 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
                   elevation: 7,
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(15)),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: <Widget>[
-                      //if the isOccupied field is set to true, then enable map otherwise don't
-                      isOccupied == null || !isOccupied
-                          ? IconButton(
-                              icon: Icon(
-                                Icons.location_on,
-                                color: Colors.grey[800],
-                                size: height / 9,
+                  child: InkWell(
+                    onTap: () {
+                      print("tapped");
+                      if (isOccupied) {
+                        setState(() {
+                          locationOfEmergency = mfrAlertFunctionGlobalKey
+                              .currentState.locationOfEmergency;
+                          patientContactNo = mfrAlertFunctionGlobalKey
+                              .currentState.studentContactNo;
+                          patientRollNumber = mfrAlertFunctionGlobalKey
+                              .currentState.patientRollNumber;
+                        });
+                        if (locationOfEmergency != null &&
+                            patientContactNo != null) {
+                          print('location: $locationOfEmergency');
+                          print('paient contact $patientContactNo');
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => MapMFR(
+                                      locationOfEmergency,
+                                      patientContactNo,
+                                      _userData.data['rollNo'].toString(),
+                                      patientRollNumber)));
+                        }
+                      }
+                    },
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: <Widget>[
+                        //if the isOccupied field is set to true, then enable map otherwise don't
+                        isOccupied == null || !isOccupied
+//                            ? Icon(
+//                              Icons.location_on,
+//                              color: Colors.grey[800],
+//                              size: height / 9,
+//                            )
+                            ? IconButton(
+                                icon: Icon(
+                                  Icons.location_on,
+                                  color: Colors.grey[800],
+                                  size: height / 9,
+                                ),
+                                onPressed: null,
+                              )
+                            : IconButton(
+                                onPressed: null,
+                                icon: Icon(
+                                  Icons.location_on,
+                                  color: Colors.red[800],
+                                  size: height / 9,
+                                ),
+//                                onPressed: () {
+//                                  print('Clicked');
+//                                  setState(() {
+//                                    locationOfEmergency =
+//                                        mfrAlertFunctionGlobalKey
+//                                            .currentState.locationOfEmergency;
+//                                    patientContactNo = mfrAlertFunctionGlobalKey
+//                                        .currentState.studentContactNo;
+//                                    patientRollNumber =
+//                                        mfrAlertFunctionGlobalKey
+//                                            .currentState.patientRollNumber;
+//                                  });
+//                                  if (locationOfEmergency != null &&
+//                                      patientContactNo != null) {
+//                                    print('location: $locationOfEmergency');
+//                                    print('paient contact $patientContactNo');
+//                                    Navigator.push(
+//                                        context,
+//                                        MaterialPageRoute(
+//                                            builder: (context) => MapMFR(
+//                                                locationOfEmergency,
+//                                                patientContactNo,
+//                                                _userData.data['rollNo']
+//                                                    .toString(),
+//                                                patientRollNumber)));
+//                                  }}
                               ),
-                              onPressed: () {},
-                            )
-                          : IconButton(
-                              icon: Icon(
-                                Icons.location_on,
-                                color: Colors.red[800],
-                                size: height / 9,
-                              ),
-                              onPressed: () {
-                                print('Clicked');
-                                if (isOccupied) {
-                                  setState(() {
-                                    locationOfEmergency =
-                                        mfrAlertFunctionGlobalKey
-                                            .currentState.locationOfEmergency;
-                                    patientContactNo = mfrAlertFunctionGlobalKey
-                                        .currentState.studentContactNo;
-                                  });
-                                }
-                                if (locationOfEmergency != null &&
-                                    patientContactNo != null) {
-                                  print('location: $locationOfEmergency');
-                                  print('paient contact $patientContactNo');
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) => MapMFR(
-                                              locationOfEmergency,
-                                              patientContactNo)));
-                                }
-                                //
-                              }),
-                      Center(
-                        child: Text(
-                          'Map',
-                          style: TextStyle(
-                              fontSize: 22,
-                              fontFamily: 'HelveticaNeueLight',
-                              letterSpacing: 2.0,
-                              color: const Color(0xff142850) //Colors.cyan[800],
-                              ),
+                        Center(
+                          child: Text(
+                            'Map',
+                            style: TextStyle(
+                                fontSize: 22,
+                                fontFamily: 'HelveticaNeueLight',
+                                letterSpacing: 2.0,
+                                color:
+                                    const Color(0xff142850) //Colors.cyan[800],
+                                ),
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -604,14 +758,18 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
                   elevation: 7,
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(15)),
-                  child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: <Widget>[
-                        IconButton(
-                          icon: Image(
-                            image: AssetImage('assets/report.png'),
-                            fit: BoxFit.fill,
-                          ),
+                  child: InkWell(
+                    onTap: () {
+                      print('Emergency report');
+                    },
+                    child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: <Widget>[
+                          IconButton(
+                            icon: Image(
+                              image: AssetImage('assets/report.png'),
+                              fit: BoxFit.fill,
+                            ),
                           iconSize: height / 9,
                           onPressed: () {
                             print('Clicked');
@@ -633,7 +791,9 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
                             ),
                           ),
                         ),
-                      ]),
+                      ]
+                    ),
+                  ),
                 ),
               ),
             )

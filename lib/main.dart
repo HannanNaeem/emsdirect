@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ems_direct/dummy.dart';
 import 'package:ems_direct/pages/SelectLogin.dart';
 import 'package:flutter/material.dart';
@@ -7,11 +8,17 @@ import 'package:ems_direct/pages/login_student.dart';
 import 'package:ems_direct/pages/login_ems.dart';
 import 'package:ems_direct/pages/SplashScreen.dart';
 import 'package:ems_direct/pages/MapMFR.dart';
-import 'package:ems_direct/pages/available_MFRs.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:ems_direct/available_mfrs.dart';
+import 'package:ems_direct/senior_mfrs.dart';
+
+
 
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
+//  GeoPoint geoPoint = GeoPoint(31.4700, 74.4111);
+//  String number = '03132732727';
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -23,7 +30,8 @@ class MyApp extends StatelessWidget {
       //  '/live_status': (context) => LiveStatus(),
         '/emergencyNumbers': (context) => EmergencyNumbers(),
         '/select_login': (context) => SelectLogin(),
-        '/availableMFRs': (context) => AvailableMfrs(),
+        '/availableMfrs': (context) => AvailableMfrs(),
+        '/seniorMfrs': (context) => SeniorMfrs(),
         //'/dummy': (context) => DummyPage(),
       },
     );

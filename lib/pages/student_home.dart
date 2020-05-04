@@ -2,63 +2,89 @@ import 'package:ems_direct/services/auth.dart';
 import 'package:ems_direct/services/push_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:geolocator/geolocator.dart';
+//import 'package:geolocator/geolocator.dart';
 import 'dart:async';
 import 'package:ems_direct/pages/live_status.dart';
+import 'package:configurable_expansion_tile/configurable_expansion_tile.dart';
+import 'package:location/location.dart';
+
 
 class StudentHome extends StatefulWidget {
-
   var _userData;
-  StudentHome(bool keepSignedIn, var userData){
+  StudentHome(bool keepSignedIn, var userData) {
     _keepSignedIn = keepSignedIn;
     _userData = userData;
   }
 
   bool _keepSignedIn = false;
   @override
-  _StudentHomeState createState() => _StudentHomeState(_keepSignedIn,_userData);
+  _StudentHomeState createState() =>
+      _StudentHomeState(_keepSignedIn, _userData);
 }
 
-
 class _StudentHomeState extends State<StudentHome> with WidgetsBindingObserver {
-
   //keepMeSignedIn vairable passed from login screen if successful
   bool _keepSignedIn = false;
   //document for userData
   var _userData;
 
   // constructor to set keepSignedIn
-  _StudentHomeState(bool keepSignedIn, var userData){
+  _StudentHomeState(bool keepSignedIn, var userData) {
     _keepSignedIn = keepSignedIn;
     _userData = userData;
 
     print("-----------------------got ${_userData.data}");
   }
   var uid;
-  List<bool> _selections =[true, false, false,false];
-  List<bool> _selections2 = [true,false,false];
+  List<bool> _selections = [true, false, false, false];
+  List<bool> _selections2 = [true, false, false];
   List<String> _genderPreferences = ['NA', 'M', 'F'];
   List<String> _severityLevels = ['low', 'medium', 'high', 'critical'];
   int _gender = 0;
   int _severityLevel = 0;
   bool _emergency = false;
-  Position _currentLocation; //location from geolocator
   GeoPoint _geoLocation; //converted location into a geopoint
   /////////////////////////////////////////////////////////////////
 
   //function to get current location of the student to update to the database
   _getCurrentLocation() async{
-    _currentLocation = await Geolocator().getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
-    _geoLocation = GeoPoint(_currentLocation.latitude,_currentLocation.longitude);
-  }
+      Location location = new Location();
+      bool  _serviceEnabled;
+      PermissionStatus _permissionGranted;
+      LocationData _locationData;
 
+      try{
+        _serviceEnabled = await location.serviceEnabled();
+        if(!_serviceEnabled){
+          _serviceEnabled = await location.requestService();
+          if (!_serviceEnabled){
+            _serviceEnabled = await location.requestService();
+          }
+        }
+
+        _permissionGranted = await location.hasPermission();
+        if(_permissionGranted == PermissionStatus.DENIED){
+          _permissionGranted = await location.requestPermission();
+          while(_permissionGranted != PermissionStatus.GRANTED){
+            _permissionGranted = await location.requestPermission();
+          }
+        }
+
+        _locationData = await location.getLocation();
+        _geoLocation = GeoPoint(_locationData.latitude, _locationData.longitude);
+        print(_locationData.latitude);
+        print(_locationData.longitude);
+
+      }catch(e){
+        print(e);
+      }
+  }
 
   //instance of auth service
   final AuthService _authStudent = AuthService();
 
   //! ----- Cloudmessaging service for notifications ----- !//
   final CloudMessagingService _notificationService = CloudMessagingService();
-
 
   //State management for keepsignedin ----------------------------------
   @override
@@ -80,7 +106,7 @@ class _StudentHomeState extends State<StudentHome> with WidgetsBindingObserver {
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    if(_keepSignedIn == false && state == AppLifecycleState.inactive){
+    if (_keepSignedIn == false && state == AppLifecycleState.inactive) {
       _authStudent.logOut();
     }
   }
@@ -100,14 +126,19 @@ class _StudentHomeState extends State<StudentHome> with WidgetsBindingObserver {
   }
 
   //function to generate doc in the pending emergency collection for the current user
-  void _createPendingEmergencyDocument(GeoPoint location, String genderPref,
-      String severityLevel, String rollNumber, String contact, DateTime time) async {
+  void _createPendingEmergencyDocument(
+      GeoPoint location,
+      String genderPref,
+      String severityLevel,
+      String rollNumber,
+      String contact,
+      DateTime time) async {
     await databaseReference
         .collection("PendingEmergencies")
-        .document( _userData.data['rollNo'].toString())
+        .document(_userData.data['rollNo'].toString())
         .setData({
-      'patientContactNo' : contact,
-      'declinedBy' : [],
+      'patientContactNo': contact,
+      'declinedBy': [],
       'location': location,
       'genderPreference': genderPref,
       "patientRollNo": rollNumber,
@@ -118,23 +149,19 @@ class _StudentHomeState extends State<StudentHome> with WidgetsBindingObserver {
   }
 
   //function to update the user data collection of the current user to show that emergency has started
-  void _updateUserData() async{
+  void _updateUserData() async {
     await databaseReference
         .collection("UserData")
         .document((await uid).toString())
-        .updateData({
-      'loggedInAs': 'emergency'
-    });
+        .updateData({'loggedInAs': 'emergency'});
   }
 
   //function to set user collection to not emergency
-  void _setNotEmergency() async{
+  void _setNotEmergency() async {
     await databaseReference
         .collection("UserData")
         .document((await uid).toString())
-        .updateData({
-      'loggedInAs': ''
-    });
+        .updateData({'loggedInAs': ''});
   }
   /////////////////////////////////////////////////////////////////
 
@@ -155,35 +182,55 @@ class _StudentHomeState extends State<StudentHome> with WidgetsBindingObserver {
               //this column contains the drawer header, the option to view profile/emergency numbers/available MFRs list
               //also has the option to logout
               children: <Widget>[
-                DrawerHeader(
-                  //only the ems logo
+                Padding(
+                  padding: const EdgeInsets.all(20.0),
                   child: Container(
-                    child: Image.asset("assets/ems_logo.png"),
-                  ),
-                ),
-                ExpansionTile(
-                  leading: Icon(
-                    Icons.account_circle,
-                    color: const Color(0xff142850),
-                  ),
-                  title: Text(
-                    _userData.data['name'].toString(),
-                    style: TextStyle(
-                      fontSize: 15,
-                      fontFamily: 'HelveticaNeueLight',
-                      letterSpacing: 1.0,
+                    height: height * 0.25,
+                    child: Image(
+                      image: AssetImage("assets/ems_logo.png"),
+                      fit: BoxFit.fill,
                     ),
                   ),
-                  children: <Widget>[
-                    Container(
-                      constraints: BoxConstraints(maxWidth: width * 0.75),
+                ),
+                ConfigurableExpansionTile(
+                  animatedWidgetFollowingHeader: const Icon(
+                    Icons.expand_more,
+                    color: const Color(0xFF707070),
+                  ),
+                  //headerExpanded: Flexible(child: Center(child: Text("A Header Changed"))),
+                  header: Container(
+                      color: Colors.transparent,
+                      child: Center(
+                          child: Row(
+                        children: <Widget>[
+                          Icon(
+                            Icons.account_circle,
+                            color: const Color(0xff142850),
+                            size: height / 20,
+                          ),
+                          SizedBox(width: 10.0),
+                          Text(
+                            _userData.data['name'].toString(),
+                            style: TextStyle(
+                              fontSize: 19,
+                              fontFamily: 'HelveticaNeueLight',
+                              letterSpacing: 1.0,
+                            ),
+                          ),
+                        ],
+                      ))),
+                  children: [
+                    SizedBox(height: 10.0),
+                    Padding(
+                      padding: EdgeInsets.fromLTRB(15, 0, 0, 0),
                       child: Row(
                         children: <Widget>[
                           Text(
-                            'Rollnumber:',
+                            'Roll number: ',
                             style: TextStyle(
                               fontSize: 15,
                               fontFamily: 'HelveticaNeueLight',
+                              fontWeight: FontWeight.bold,
                               letterSpacing: 1.0,
                             ),
                           ),
@@ -192,7 +239,7 @@ class _StudentHomeState extends State<StudentHome> with WidgetsBindingObserver {
                             _userData.data['rollNo'].toString(),
                             style: TextStyle(
                               fontSize: 15,
-                              fontFamily: 'HelveticaNeueLiight',
+                              fontFamily: 'HelveticaNeueLight',
                               letterSpacing: 1.0,
                             ),
                           ),
@@ -200,15 +247,16 @@ class _StudentHomeState extends State<StudentHome> with WidgetsBindingObserver {
                       ),
                     ),
                     SizedBox(height: 10.0),
-                    Container(
-                      constraints: BoxConstraints(maxWidth: width * 0.75),
+                    Padding(
+                      padding: EdgeInsets.fromLTRB(15, 0, 0, 0),
                       child: Row(
                         children: <Widget>[
                           Text(
-                            'Email:',
+                            'Email: ',
                             style: TextStyle(
                               fontSize: 15,
                               fontFamily: 'HelveticaNeueLight',
+                              fontWeight: FontWeight.bold,
                               letterSpacing: 1.0,
                             ),
                           ),
@@ -225,15 +273,16 @@ class _StudentHomeState extends State<StudentHome> with WidgetsBindingObserver {
                       ),
                     ),
                     SizedBox(height: 10.0),
-                    Container(
-                      constraints: BoxConstraints(maxWidth: width * 0.75),
+                    Padding(
+                      padding: EdgeInsets.fromLTRB(15, 0, 0, 0),
                       child: Row(
                         children: <Widget>[
                           Text(
-                            'Contact:',
+                            'Contact: ',
                             style: TextStyle(
                               fontSize: 15,
                               fontFamily: 'HelveticaNeueLight',
+                              fontWeight: FontWeight.bold,
                               letterSpacing: 1.0,
                             ),
                           ),
@@ -249,6 +298,7 @@ class _StudentHomeState extends State<StudentHome> with WidgetsBindingObserver {
                         ],
                       ),
                     ),
+                    SizedBox(height: 10.0),
                   ],
                 ),
                 ListTile(
@@ -270,82 +320,84 @@ class _StudentHomeState extends State<StudentHome> with WidgetsBindingObserver {
                   //the option to logout (bottom center aligned)
                   child: Align(
                     alignment: Alignment.bottomCenter,
-                    child: Padding(
-                      padding:
-                          EdgeInsets.fromLTRB(width * 0.8 * 0.24, 0, 0, 10.0),
-                      child: Row(
-                        //has the icon and text
-                        children: <Widget>[
-                          IconButton(
-                            icon: Image(
-                              image: AssetImage('assets/logout.png'),
-                              fit: BoxFit.fill,
-                              color: const Color(0xff142850),
-                            ),
-                            color: const Color(0xff142850),
-                            onPressed: () {
-                              showDialog(
-                                  context: context,
-                                  builder: (BuildContext context) {
-                                    return AlertDialog(
-                                      title: Text(
-                                        "Are you sure?",
-                                        style: TextStyle(
-                                          fontFamily: 'HelveticaNeueLight',
-                                          letterSpacing: 2.0,
-                                          fontSize: 20,
-                                          color: Colors.grey[600],
-                                        ),
+                    child: InkWell(
+                      onTap: () {
+                        showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title: Text(
+                                  "Are you sure?",
+                                  style: TextStyle(
+                                    fontFamily: 'HelveticaNeueLight',
+                                    letterSpacing: 2.0,
+                                    fontSize: 20,
+                                    color: Colors.grey[600],
+                                  ),
+                                ),
+                                actions: <Widget>[
+                                  FlatButton(
+                                    child: Text(
+                                      'YES',
+                                      style: TextStyle(
+                                        fontFamily: 'HelveticaNeueLight',
+                                        letterSpacing: 3.0,
+                                        fontSize: 20,
+                                        color: const Color(0xff1a832a),
                                       ),
-                                      actions: <Widget>[
-                                        FlatButton(
-                                          child: Text(
-                                            'YES',
-                                            style: TextStyle(
-                                              fontFamily: 'HelveticaNeueLight',
-                                              letterSpacing: 3.0,
-                                              fontSize: 20,
-                                              color: const Color(0xff1a832a),
-                                            ),
-                                          ),
-                                          onPressed: () async {
-                                            //navigation to login screen
-                                            //! signout here
-                                            await _authStudent.logOut();
-                                            Navigator.of(context).pop();
-                                            Navigator.pushReplacementNamed(
-                                                context, '/select_login');
-                                          },
-                                        ),
-                                        FlatButton(
-                                          child: Text(
-                                            'NO',
-                                            style: TextStyle(
-                                              fontFamily: 'HelveticaNeueLight',
-                                              letterSpacing: 2.5,
-                                              fontSize: 20,
-                                              color: const Color(0xffee0000),
-                                            ),
-                                          ),
-                                          onPressed: () {
-                                            Navigator.of(context).pop();
-                                          },
-                                        ),
-                                      ],
-                                    );
-                                  });
-                              //print('logout');
-                            },
-                          ),
-                          Text(
-                            'LOGOUT',
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontFamily: 'HelveticaNeueBold',
+                                    ),
+                                    onPressed: () async {
+                                      //navigation to login screen
+                                      //! signout here
+                                      await _authStudent.logOut();
+                                      Navigator.of(context).pop();
+                                      Navigator.pushReplacementNamed(
+                                          context, '/select_login');
+                                    },
+                                  ),
+                                  FlatButton(
+                                    child: Text(
+                                      'NO',
+                                      style: TextStyle(
+                                        fontFamily: 'HelveticaNeueLight',
+                                        letterSpacing: 2.5,
+                                        fontSize: 20,
+                                        color: const Color(0xffee0000),
+                                      ),
+                                    ),
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                    },
+                                  ),
+                                ],
+                              );
+                            });
+                      },
+                      child: Padding(
+                        padding:
+                            EdgeInsets.fromLTRB(width * 0.8 * 0.24, 0, 0, 10.0),
+                        child: Row(
+                          //has the icon and text
+                          children: <Widget>[
+                            IconButton(
+                              icon: Image(
+                                image: AssetImage('assets/logout.png'),
+                                fit: BoxFit.fill,
+                                color: const Color(0xff142850),
+                              ),
                               color: const Color(0xff142850),
+                              onPressed: null,
                             ),
-                          ),
-                        ],
+                            Text(
+                              'LOGOUT',
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontFamily: 'HelveticaNeueBold',
+                                color: const Color(0xff142850),
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
@@ -516,14 +568,19 @@ class _StudentHomeState extends State<StudentHome> with WidgetsBindingObserver {
                     //A 'PendingEmergencies' document is created in the database with relevant attributes set
                     //Student is taken to the live updates screen for live feedback
                     onLongPress: () {
-                      _createPendingEmergencyDocument(_geoLocation, _genderPreferences[_gender], _severityLevels[_severityLevel],  _userData.data['rollNo'].toString(),  _userData.data['contact'].toString(), DateTime.now());
+                      _createPendingEmergencyDocument(
+                          _geoLocation,
+                          _genderPreferences[_gender],
+                          _severityLevels[_severityLevel],
+                          _userData.data['rollNo'].toString(),
+                          _userData.data['contact'].toString(),
+                          DateTime.now());
                       _updateUserData();
                       Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => LiveStatus(_keepSignedIn,_userData)
-                          )
-                      );
+                              builder: (context) =>
+                                  LiveStatus(_keepSignedIn, _userData)));
                       print("emergency initiated");
                     },
                     fillColor: Colors.red[400],
@@ -545,7 +602,7 @@ class _StudentHomeState extends State<StudentHome> with WidgetsBindingObserver {
                     )),
                 SizedBox(height: height / 45),
                 Text(
-                  'TAP AND HOLD',
+                  'TAP AND HOLD TO',
                   style: TextStyle(
                     fontSize: 15.0,
                     color: Colors.red[400],

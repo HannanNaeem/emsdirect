@@ -26,9 +26,12 @@ class MapStateOPS extends State<OpsMap> {
   var _pendingEmergenciesList;
   var _onGoingEmergenciesList;
   bool _mapLoading = true;
-
-
-
+  var EmergencyLocationIconRed = BitmapDescriptor.fromAsset(
+  'assets/redcross.png');
+  var EmergencyLocationIconBlue = BitmapDescriptor.fromAsset(
+      'assets/bluecross.png');
+  var RedMFR = BitmapDescriptor.fromAsset('assets/MFR_red.png');
+  var BlueMFR = BitmapDescriptor.fromAsset('assets/MFR_blue.png');
   static final CameraPosition _position1 = CameraPosition(
     bearing: 192.833,
     target: LatLng(31.4700, 74.4111),
@@ -146,9 +149,7 @@ class MapStateOPS extends State<OpsMap> {
 
   void _addOnGoingEmergenciesMarker(_onGoingEmergenciesList) async {
     if (_onGoingEmergenciesList != null && _onGoingEmergenciesList.length != 0) {
-      print('here lol');
       _onGoingEmergenciesList.forEach((EM){
-        debugPrint('hello');
         GeoPoint location = EM.location;
         String rollNumber = EM.patientRollNo;
         String severity = EM.severity;
@@ -159,7 +160,7 @@ class MapStateOPS extends State<OpsMap> {
             Marker(
               markerId: markerId,
               position: LatLng(location.latitude, location.longitude),
-
+              icon: EmergencyLocationIconBlue,
             );
         setState(() {
           allMarkers[markerId] = marker;
@@ -171,9 +172,7 @@ class MapStateOPS extends State<OpsMap> {
 
 
   void _addPendingEmergenciesMarker(_pendingEmergenciesList){
-
     if (_pendingEmergenciesList != null && _pendingEmergenciesList.length != 0) {
-      print('here lol2');
       _pendingEmergenciesList.forEach((EM){
         GeoPoint location = EM.location;
         String rollNumber = EM.patientRollNo;
@@ -193,6 +192,7 @@ class MapStateOPS extends State<OpsMap> {
                 print('PLEASE ASSIGN AN MFR.');
                 // todo: assign MFR option
               },
+              icon: EmergencyLocationIconRed,
             );
             setState(() {
                 allMarkers[markerId] = marker;
@@ -204,26 +204,24 @@ class MapStateOPS extends State<OpsMap> {
 
 
   void _addAvailableMfrsMarker(_availableMfrsList) {
+    print('hmmmm:(');
     if (_availableMfrsList != null && _availableMfrsList.length != 0) {
       print('here lol444');
       _availableMfrsList.forEach((MFR) {
         GeoPoint location = MFR.location;
         String name = MFR.name;
         String contact = MFR.contact;
-//        String rollNumber = MFR.roll;
         bool busy = _availableMfrsList.isOccupied;
         var markerIdVal = allMarkers.length + 1;
         String mar = markerIdVal.toString();
         final MarkerId markerId = MarkerId(mar);
-        print('BUSY: ');
         print(busy);
-        if (busy == true) {
-          print('hmmmmmmsigh');
+        if (busy) {
           final Marker marker =
           Marker(
               markerId: markerId,
               position: LatLng(location.latitude, location.longitude),
-
+              icon: RedMFR,
 //              infoWindow: InfoWindow( title: name, snippet: rollNumber)
 
 
@@ -232,7 +230,7 @@ class MapStateOPS extends State<OpsMap> {
             allMarkers[markerId] = marker;
           });
         }
-        else if(busy == false) {
+        else if(!busy) {
           print('lol');
           final Marker marker =
           Marker(
@@ -241,7 +239,7 @@ class MapStateOPS extends State<OpsMap> {
             onTap: (){
               print('hmmm');
             },
-              icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueBlue,),
+              icon: BlueMFR,
           );
           setState(() {
             allMarkers[markerId] = marker;
@@ -254,7 +252,6 @@ class MapStateOPS extends State<OpsMap> {
   _onMapCreated(GoogleMapController controller){
     _controller=controller;
     this.setState(() => _mapLoading = false);
-    print('helloooooo');
     _addAvailableMfrsMarker(_availableMfrsList);
     _addPendingEmergenciesMarker(_pendingEmergenciesList);
     _addOnGoingEmergenciesMarker(_onGoingEmergenciesList);
