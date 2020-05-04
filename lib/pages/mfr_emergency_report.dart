@@ -476,7 +476,11 @@ class _EmergencyReportMfrState extends State<EmergencyReportMfr> {
           border: OutlineInputBorder(),
           focusedBorder: OutlineInputBorder(),
           ),
-        
+        onChanged: (value){
+          setState(() {
+            _additionalMfrs = value;
+          });
+        },
 
       ),
     );
@@ -506,7 +510,12 @@ class _EmergencyReportMfrState extends State<EmergencyReportMfr> {
           border: OutlineInputBorder(),
           focusedBorder: OutlineInputBorder(),
           ),
-        
+        onChanged: (value){
+          setState(() {
+            _emergencyDetails = value;
+          });
+          
+        },
 
       ),
     );
