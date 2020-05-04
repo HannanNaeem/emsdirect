@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-
+import 'package:ems_direct/pages/EquipmentBags.dart';
 class Records extends StatelessWidget {
   //This functions makes the cards on the screen since each card follows the same template
-  Widget _GenerateCard(String title, String imageFileName, var height) {
+  Widget _GenerateCard(String title, String imageFileName, var height, BuildContext context) {
     return Card(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(15),
@@ -18,6 +18,12 @@ class Records extends StatelessWidget {
             ),
             onPressed: () {
               print(title);
+              if(title == 'Equipment bags'){
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => EquipmentBags()));
+              }
             },
             iconSize: height / 9,
           ),
@@ -64,7 +70,7 @@ class Records extends StatelessWidget {
                           aspectRatio: 2 / 2.25,
                           child: Container(
                               child: _GenerateCard('Emergencies',
-                                  'assets/emergencies.png', height)),
+                                  'assets/emergencies.png', height, context)),
                         ),
                       ),
                     ),
@@ -78,7 +84,7 @@ class Records extends StatelessWidget {
                           aspectRatio: 2 / 2.25,
                           child: Container(
                               child: _GenerateCard(
-                                  'Equipment bags', 'assets/bags.png', height)),
+                                  'Equipment bags', 'assets/bags.png', height, context)),
                         ),
                       ),
                     ),
@@ -102,7 +108,7 @@ class Records extends StatelessWidget {
                           aspectRatio: 2 / 2.25,
                           child: Container(
                               child: _GenerateCard(
-                                  'Profiles', 'assets/profile.png', height)),
+                                  'Profiles', 'assets/profile.png', height, context)),
                         ),
                       ),
                     ),
@@ -116,7 +122,7 @@ class Records extends StatelessWidget {
                             aspectRatio: 2 / 2.25,
                             child: Container(
                                 child: _GenerateCard('Inventory',
-                                    'assets/inventory.png', height))),
+                                    'assets/inventory.png', height, context))),
                       ),
                     ),
                   ),

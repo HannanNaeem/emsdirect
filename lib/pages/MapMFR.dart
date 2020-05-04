@@ -78,7 +78,7 @@ class MapState extends State<MapMFR> {
     setState(() {
       emergencyMarker[markerId] = marker;
     });
-    getCurrentLocaion();
+    //getCurrentLocaion();
     this.setState(() => _mapLoading = false);
   }
 
