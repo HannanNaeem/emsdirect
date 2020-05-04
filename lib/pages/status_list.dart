@@ -44,20 +44,19 @@ class _DisplayListState extends State<DisplayList> {
       String _status = 'pending';
       String mfrName = '';
       String mfrContact = '';
-      sleep(Duration(seconds:1));
 
       var pendingEmergency = Provider.of<List<PendingEmergencyModel>>(context);
       var onGoingEmergency = Provider.of<List<OngoingEmergencyModel>>(context);
       try{
-        if(onGoingEmergency.length == 1 && onGoingEmergency != null){
+        if(onGoingEmergency != null &&  onGoingEmergency.length == 1 ){
             _status = "onGoing";
             mfrName = (onGoingEmergency[0].mfrDetails['name']).toString();
             mfrContact = (onGoingEmergency[0].mfrDetails['contact']).toString();
           }
-        else if(pendingEmergency.length == 1 && pendingEmergency != null){
+        else if(pendingEmergency != null && pendingEmergency.length == 1 ){
           _status = "pending";
         }
-        else{
+        else if(onGoingEmergency != null && pendingEmergency != null && pendingEmergency.length == 0 && onGoingEmergency.length == 0){
             _status = "ended";
 
           //at the end of emergency, go back to home screen
