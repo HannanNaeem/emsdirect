@@ -16,13 +16,13 @@ class _EmergencyReportMfrState extends State<EmergencyReportMfr> {
   DateTime _emergencyDate = DateTime.now(); //
   String _primaryMfrRollNo; //
   String _primaryMfrName; //
-  String _additionalMfrs; 
+  String _additionalMfrs; //
   String _severity; //
   bool _patientIsHostelite;//
   String _emergencyType; //
   String _emergencyLocation;
-  bool _transportUsed = false;
-  String _emergencyDetails;
+  bool _transportUsed = false; //
+  String _emergencyDetails; //
 
   bool _autoValidate = false;
   List<bool> _isSelectedPatientGender = [false,false,true];
@@ -48,9 +48,12 @@ class _EmergencyReportMfrState extends State<EmergencyReportMfr> {
               color: Colors.redAccent,
               letterSpacing: 1.0,
             ),
-            fillColor: Colors.grey[200],
-            filled: true,
-            focusedErrorBorder: InputBorder.none,
+            fillColor: Colors.grey[1],
+            filled: false,
+            focusedErrorBorder: OutlineInputBorder(),
+            border: OutlineInputBorder(),
+            focusedBorder: OutlineInputBorder(),
+            
           ),
           onChanged: (value) {
             
@@ -127,8 +130,8 @@ class _EmergencyReportMfrState extends State<EmergencyReportMfr> {
           SizedBox(height: 7,),
           ToggleButtons(
 
-            borderColor: Colors.grey[200],
-            disabledBorderColor: Colors.grey[200],
+            borderColor: Colors.grey[400],
+            disabledBorderColor: Colors.grey[400],
             fillColor: const Color(0xff27496d),
             selectedColor: Colors.white,
             borderRadius: BorderRadius.circular(10),
@@ -185,8 +188,8 @@ class _EmergencyReportMfrState extends State<EmergencyReportMfr> {
           SizedBox(height: 7,),
           ToggleButtons(
 
-            borderColor: Colors.grey[200],
-            disabledBorderColor: Colors.grey[200],
+            borderColor: Colors.grey[400],
+            disabledBorderColor: Colors.grey[400],
             fillColor: const Color(0xff27496d),
             selectedColor: Colors.white,
             borderRadius: BorderRadius.circular(10),
@@ -240,8 +243,8 @@ class _EmergencyReportMfrState extends State<EmergencyReportMfr> {
           SizedBox(height: 7,),
           ToggleButtons(
 
-            borderColor: Colors.grey[200],
-            disabledBorderColor: Colors.grey[200],
+            borderColor: Colors.grey[400],
+            disabledBorderColor: Colors.grey[400],
             fillColor: const Color(0xff27496d),
             selectedColor: Colors.white,
             borderRadius: BorderRadius.circular(10),
@@ -295,8 +298,8 @@ class _EmergencyReportMfrState extends State<EmergencyReportMfr> {
           SizedBox(height: 7,),
           ToggleButtons(
 
-            borderColor: Colors.grey[200],
-            disabledBorderColor: Colors.grey[200],
+            borderColor: Colors.grey[400],
+            disabledBorderColor: Colors.grey[400],
             fillColor: const Color(0xff27496d),
             selectedColor: Colors.white,
             borderRadius: BorderRadius.circular(10),
@@ -350,8 +353,8 @@ class _EmergencyReportMfrState extends State<EmergencyReportMfr> {
           SizedBox(height: 7,),
           ToggleButtons(
 
-            borderColor: Colors.grey[200],
-            disabledBorderColor: Colors.grey[200],
+            borderColor: Colors.grey[400],
+            disabledBorderColor: Colors.grey[400],
             fillColor: const Color(0xff27496d),
             selectedColor: Colors.white,
             borderRadius: BorderRadius.circular(10),
@@ -435,7 +438,7 @@ class _EmergencyReportMfrState extends State<EmergencyReportMfr> {
       padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
       child: TextFormField(
           decoration: InputDecoration(
-            hintText: 'Full Name',
+            hintText: 'MFR Name',
             hintStyle: TextStyle(
               color: Colors.grey[700],
               fontFamily: 'HelveticaNeueLight',
@@ -445,9 +448,11 @@ class _EmergencyReportMfrState extends State<EmergencyReportMfr> {
               color: Colors.amber,
               letterSpacing: 1.0,
             ),
-            fillColor: Colors.grey[200],
-            filled: true,
-            focusedErrorBorder: InputBorder.none,
+            fillColor: Colors.grey[1],
+            filled: false,
+            focusedErrorBorder: OutlineInputBorder(),
+            border: OutlineInputBorder(),
+            focusedBorder: OutlineInputBorder(),
           ),
           onChanged: (value) {
             
@@ -473,6 +478,66 @@ class _EmergencyReportMfrState extends State<EmergencyReportMfr> {
           onSaved: (String value) {
             _primaryMfrName = value;
           }),
+    );
+  }
+
+  //! build text field for additional Mfrs
+  Widget _buildAdditionalMfrsBox() {
+    return Padding(
+      padding: EdgeInsets.all(10),
+      child: TextField(
+        maxLines: null,
+        maxLength: 200,
+        decoration: InputDecoration(
+          hintText: "Add backup MFR(s) info here\n\n\n",
+          hintStyle: TextStyle(
+            color: Colors.grey[700],
+            fontFamily: 'HelveticaNeueLight',
+            letterSpacing: 2.0,
+          ),
+          errorStyle: TextStyle(
+            color: Colors.redAccent,
+            letterSpacing: 1.0,
+          ),
+          fillColor: Colors.grey[1],
+          filled: false,
+          focusedErrorBorder: OutlineInputBorder(),
+          border: OutlineInputBorder(),
+          focusedBorder: OutlineInputBorder(),
+          ),
+        
+
+      ),
+    );
+  }
+
+  //! build text field for detials
+  Widget _buildDetailsBox() {
+    return Padding(
+      padding: EdgeInsets.all(10),
+      child: TextField(
+        maxLines: null,
+        maxLength: 1000,
+        decoration: InputDecoration(
+          hintText: "Add details here\n\n\n\n\n\n",
+          hintStyle: TextStyle(
+            color: Colors.grey[700],
+            fontFamily: 'HelveticaNeueLight',
+            letterSpacing: 2.0,
+          ),
+          errorStyle: TextStyle(
+            color: Colors.redAccent,
+            letterSpacing: 1.0,
+          ),
+          fillColor: Colors.grey[1],
+          filled: false,
+          focusedErrorBorder: OutlineInputBorder(),
+          border: OutlineInputBorder(),
+          focusedBorder: OutlineInputBorder(),
+          ),
+        
+
+      ),
     );
   }
 
@@ -534,15 +599,76 @@ class _EmergencyReportMfrState extends State<EmergencyReportMfr> {
                         autovalidate: _autoValidate,
                         child: Column(
                           children: <Widget>[
+                            //! Sub heading
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: <Widget>[
+                                Padding(
+                                  padding: const EdgeInsets.fromLTRB(8, 15, 0, 15),
+                                  child: Text(
+                                    "Patient Information",
+                                    style: TextStyle(
+                                      color: const Color(0xff142850),
+                                      fontFamily: "HelveticaNeueLight",
+                                      fontSize: 20,
+
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
                             _buildRollno(true),
+                            _buildGenderSelector(),
+                            _buildHosteliteSelector(),
+                            SizedBox(height: 40,),
+                            Divider(height: 10),
+                            //! Sub heading
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: <Widget>[
+                                Padding(
+                                  padding: const EdgeInsets.fromLTRB(8, 15, 0, 15),
+                                  child: Text(
+                                    "Emergency Information",
+                                    style: TextStyle(
+                                      color: const Color(0xff142850),
+                                      fontFamily: "HelveticaNeueLight",
+                                      fontSize: 20,
+
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
                             _buildDateTimeButton(context),
                             _buildSeveritySelector(),
                             _buildEmergencyTypeSelector(),
                             _buildTransportUsedSelector(),
-                            _buildGenderSelector(),
-                            _buildHosteliteSelector(),
+                            _buildDetailsBox(),
+                            SizedBox(height: 40,),
+                            Divider(height: 10),
+                            //! Sub heading
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: <Widget>[
+                                Padding(
+                                  padding: const EdgeInsets.fromLTRB(8, 15, 0, 35),
+                                  child: Text(
+                                    "Respondant's Information",
+                                    style: TextStyle(
+                                      color: const Color(0xff142850),
+                                      fontFamily: "HelveticaNeueLight",
+                                      fontSize: 20,
+
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
                             _buildName(),
                             _buildRollno(false),
+                            _buildAdditionalMfrsBox(),
+
 
                           ],
                         ),
