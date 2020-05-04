@@ -10,6 +10,7 @@ class EmergencyReportMfr extends StatefulWidget {
 class _EmergencyReportMfrState extends State<EmergencyReportMfr> {
 
   final GlobalKey<FormState> _emergencyReportKey = GlobalKey<FormState>();
+  final GlobalKey<FormState> _equipmentUsedKey = GlobalKey<FormState>();
 
   String _patientRollNo; //
   String _patientGender; //
@@ -23,6 +24,8 @@ class _EmergencyReportMfrState extends State<EmergencyReportMfr> {
   String _emergencyLocation;
   bool _transportUsed = false; //
   String _emergencyDetails; //
+
+  String _bagUsed = "None";
 
   bool _autoValidate = false;
   List<bool> _isSelectedPatientGender = [false,false,true];
@@ -73,6 +76,7 @@ class _EmergencyReportMfrState extends State<EmergencyReportMfr> {
   //! Get date Fucntion
   Future<Null> _selectDate(BuildContext context) async {
     final DateTime pickedDate = await showDatePicker(
+        
         context: context, 
         initialDate: _emergencyDate, 
         firstDate: DateTime(2020), 
@@ -397,10 +401,11 @@ class _EmergencyReportMfrState extends State<EmergencyReportMfr> {
               color: const Color(0xff142850),
             ) ,
             ),
-          FlatButton(
+          RaisedButton(
+              elevation: 5,
               color: const Color(0xff27496d),
               child: Text(
-                DateFormat.yMMMMEEEEd().format(_emergencyDate) +' - ' + DateFormat.jm().format(_emergencyDate)  ,
+                DateFormat.yMMMMEEEEd().format(_emergencyDate) +' - ' + DateFormat.jm().format(_emergencyDate) ,
                 style: TextStyle(
                   color: Colors.white,
                   fontFamily: "HelveticaNeueLight",
@@ -408,14 +413,22 @@ class _EmergencyReportMfrState extends State<EmergencyReportMfr> {
                   ),
               ),
               shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(5),
+                        borderRadius: BorderRadius.circular(10),
               ),
               onPressed: () async {
                 await _selectDate(context);
                 await _selectTime(context);
               },
 
-            ),
+          ),
+          Text(
+            "Tap to edit",
+            style: TextStyle(
+              color: Colors.grey[600],
+              fontFamily: "HelveticaNeueLight",
+              fontSize: 12,         
+              ),
+          ),
         ],
       )
       );
@@ -522,12 +535,50 @@ class _EmergencyReportMfrState extends State<EmergencyReportMfr> {
   }
 
 
+  //! Build bag selector
+  Widget _buildBagSelector() {
+    return Padding(
+      padding: EdgeInsets.all(10),
+      child: DropdownButton<String>(
+        value: _bagUsed,
+        icon: Icon(Icons.arrow_drop_down),
+        iconSize: 20,
+        style: TextStyle(
+          color: Colors.black,
+          fontFamily: "HelveticaNeueLight",
+          fontSize: 14,         
+        ),
+        onChanged: (String newValue){
+          setState(() {
+            _bagUsed = newValue;
+          });
+        },
+        items: <String>['None','B1','Pool','PDC','REDC','Library','CS Dept.','EMS Room']
+          .map<DropdownMenuItem<String>>((String value) {
+            return DropdownMenuItem<String>(
+              value: value,
+              child: Text(value),
+            );
+          })
+          .toList(),
+
+      ),
+    );
+  }
+
+  //!Build item counter list
+  Widget _buildItemCounterList() {
+    return Container();
+  }
+
+
+
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xff27496d),
-      appBar: AppBar(
+        backgroundColor: const Color(0xff27496d),
+        appBar: AppBar(
         backgroundColor: const Color(0xff142850),
         title: Text(
           "Emergency Report",
@@ -539,128 +590,204 @@ class _EmergencyReportMfrState extends State<EmergencyReportMfr> {
           ),
         ),
         centerTitle: true,
-      ),
+        ),
 
       body: SingleChildScrollView(
-          child: Column(
-          children: <Widget>[
-            //Emergency info card
-            Padding(
+      child: Column(
+      children: <Widget>[
+        //!Emergency info card
+        Padding(
+          padding: const EdgeInsets.all(15.0),
+          child: Card(
+            elevation: 6,
+            child: Padding(
               padding: const EdgeInsets.all(15.0),
-              child: Card(
-                elevation: 6,
-                child: Padding(
-                  padding: const EdgeInsets.all(15.0),
-                  child: Column(
-                    children: <Widget>[
-                      //!heading
-                      Padding(
-                        padding: const EdgeInsets.all(10.0),
-                        child: Row(
+              child: Column(
+                children: <Widget>[
+                  //!heading
+                  Padding(
+                    padding: const EdgeInsets.all(10.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: <Widget>[
+                        Text(
+                          'Emergency Details',
+                          style: TextStyle(
+                            color: const Color(0xff142850),
+                            fontFamily: "HelveticaNeueLight",
+                            fontSize: 24,
+
+                            ),
+                        ),
+                    ],),
+                  ),
+
+                  Divider(height: 10,),
+
+                  //! Begin form for emergency Details
+                  Form(
+                    key: _emergencyReportKey,
+                    autovalidate: _autoValidate,
+                    child: Column(
+                      children: <Widget>[
+                        //! Sub heading
+                        Row(
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: <Widget>[
-                            Text(
-                              'Emergency Details',
-                              style: TextStyle(
-                                color: const Color(0xff142850),
-                                fontFamily: "HelveticaNeueLight",
-                                fontSize: 24,
+                            Padding(
+                              padding: const EdgeInsets.fromLTRB(8, 15, 0, 15),
+                              child: Text(
+                                "Patient Information",
+                                style: TextStyle(
+                                  color: const Color(0xff142850),
+                                  fontFamily: "HelveticaNeueLight",
+                                  fontSize: 20,
 
                                 ),
+                              ),
                             ),
-                        ],),
-                      ),
-
-                      Divider(height: 10,),
-
-                      //! Begin form for emergency Details
-                      Form(
-                        key: _emergencyReportKey,
-                        autovalidate: _autoValidate,
-                        child: Column(
-                          children: <Widget>[
-                            //! Sub heading
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: <Widget>[
-                                Padding(
-                                  padding: const EdgeInsets.fromLTRB(8, 15, 0, 15),
-                                  child: Text(
-                                    "Patient Information",
-                                    style: TextStyle(
-                                      color: const Color(0xff142850),
-                                      fontFamily: "HelveticaNeueLight",
-                                      fontSize: 20,
-
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            _buildRollno(true),
-                            _buildGenderSelector(),
-                            _buildHosteliteSelector(),
-                            SizedBox(height: 40,),
-                            Divider(height: 10),
-                            //! Sub heading
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: <Widget>[
-                                Padding(
-                                  padding: const EdgeInsets.fromLTRB(8, 15, 0, 15),
-                                  child: Text(
-                                    "Emergency Information",
-                                    style: TextStyle(
-                                      color: const Color(0xff142850),
-                                      fontFamily: "HelveticaNeueLight",
-                                      fontSize: 20,
-
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            _buildDateTimeButton(context),
-                            _buildSeveritySelector(),
-                            _buildEmergencyTypeSelector(),
-                            _buildTransportUsedSelector(),
-                            _buildDetailsBox(),
-                            SizedBox(height: 40,),
-                            Divider(height: 10),
-                            //! Sub heading
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: <Widget>[
-                                Padding(
-                                  padding: const EdgeInsets.fromLTRB(8, 15, 0, 35),
-                                  child: Text(
-                                    "Respondant's Information",
-                                    style: TextStyle(
-                                      color: const Color(0xff142850),
-                                      fontFamily: "HelveticaNeueLight",
-                                      fontSize: 20,
-
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            _buildName(),
-                            _buildRollno(false),
-                            _buildAdditionalMfrsBox(),
-
-
                           ],
                         ),
-                      ),
+                        _buildRollno(true),
+                        _buildGenderSelector(),
+                        _buildHosteliteSelector(),
+                        SizedBox(height: 40,),
+                        Divider(height: 10),
+                        //! Sub heading
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: <Widget>[
+                            Padding(
+                              padding: const EdgeInsets.fromLTRB(8, 15, 0, 15),
+                              child: Text(
+                                "Emergency Information",
+                                style: TextStyle(
+                                  color: const Color(0xff142850),
+                                  fontFamily: "HelveticaNeueLight",
+                                  fontSize: 20,
 
-                  ],),
-                ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        _buildDateTimeButton(context),
+                        _buildSeveritySelector(),
+                        _buildEmergencyTypeSelector(),
+                        _buildTransportUsedSelector(),
+                        _buildDetailsBox(),
+                        SizedBox(height: 40,),
+                        Divider(height: 10),
+                        //! Sub heading
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: <Widget>[
+                            Padding(
+                              padding: const EdgeInsets.fromLTRB(8, 15, 0, 35),
+                              child: Text(
+                                "Respondant's Information",
+                                style: TextStyle(
+                                  color: const Color(0xff142850),
+                                  fontFamily: "HelveticaNeueLight",
+                                  fontSize: 20,
+
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        _buildName(),
+                        _buildRollno(false),
+                        _buildAdditionalMfrsBox(),
+
+
+                      ],
+                    ),
+                  ),
+
+              ],),
+            ),
+          ),
+        ),
+
+
+        //! Equipment Detail card
+        Padding(
+          padding: EdgeInsets.all(15),
+          child: Card(
+            elevation: 6,
+            child: Padding(
+              padding: EdgeInsets.all(15),
+              child: Column(
+                children: <Widget> [
+                  //!Heading
+                  Padding(
+                    padding: const EdgeInsets.all(10.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: <Widget>[
+                        Text(
+                          'Equipment Used',
+                          style: TextStyle(
+                            color: const Color(0xff142850),
+                            fontFamily: "HelveticaNeueLight",
+                            fontSize: 24,
+                          ),
+                        ),
+                    ],),
+                  ),
+
+                  Divider(height: 10,),
+
+                  //! Begin Form
+                  Form(
+                    key: _equipmentUsedKey,
+                    child: Column(
+                      children: <Widget>[
+                        // //! Sub heading
+                        // Row(
+                        //   mainAxisAlignment: MainAxisAlignment.start,
+                        //   children: <Widget>[
+                        //     Padding(
+                        //       padding: const EdgeInsets.fromLTRB(8, 15, 0, 15),
+                        //       child: Text(
+                        //         "Bag information",
+                        //         style: TextStyle(
+                        //           color: const Color(0xff142850),
+                        //           fontFamily: "HelveticaNeueLight",
+                        //           fontSize: 20,
+                        //         ),
+                        //       ),
+                        //     ),
+                        //   ],
+                        // ),
+                        Row(
+                          children: <Widget>[
+                            Padding(
+                              padding: const EdgeInsets.fromLTRB(8, 0, 5, 0),
+                              child: Text("Bag used:",
+                                style:TextStyle(
+                                  fontFamily: "HelveticaNeueLight",
+                                  fontSize: 17,
+                                  color: const Color(0xff142850),
+                                ) ,
+                              ),
+                            ),
+                            _buildBagSelector(),
+                          ],
+                        ),
+
+                      ],
+                    ),
+                   ),
+                ],
               ),
             ),
-          ],),
-      )
-      
+           ),
+        ),
+      ],
+      ),
+      ),
     );
   }
 }
