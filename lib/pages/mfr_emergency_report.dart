@@ -76,25 +76,35 @@ class _EmergencyReportMfrState extends State<EmergencyReportMfr> {
   final GlobalKey<FormState> _equipmentUsedKey = GlobalKey<FormState>();
 
   String _patientRollNo; //
-  String _patientGender; //
+  String _patientGender = "Other"; //
   DateTime _emergencyDate = DateTime.now(); //
   String _primaryMfrRollNo; //
   String _primaryMfrName; //
   String _additionalMfrs; //
-  String _severity; //
-  bool _patientIsHostelite;//
-  String _emergencyType; //
+  String _severity = "Low"; //
+  String _patientIsHostelite = "Hostelite";//
+  String _emergencyType = "Traima"; //
   String _emergencyLocation;
-  bool _transportUsed = false; //
+  String _transportUsed = "Yes"; //
   String _emergencyDetails; //
 
   String _bagUsed = "None";
 
   bool _autoValidate = false;
+
+  List<String> _pateintGenderValues = ["Male","Female","Other"];
   List<bool> _isSelectedPatientGender = [false,false,true];
+
+  List<String> _severityValues = ["Low","Medium","High","Critical"];
   List<bool> _isSelectedSeverity = [true,false,false,false];
+
+  List<String> _pateintTypeValues = ["Hostelite","Day Scholar"];
   List<bool> _isSelectedHostelite = [true,false];
+
+  List<String> _emergencyTypeValues = ["Trauma","Medical"];
   List<bool> _isSelectedEmergencyType = [true,false];
+
+  List<String> _transportUsedValues = ["Yes","No"];
   List<bool> _isSelectedTransportUsed = [true,false];
 
   // One time consumables
@@ -229,6 +239,7 @@ class _EmergencyReportMfrState extends State<EmergencyReportMfr> {
 
                 for (int buttonIndex = 0; buttonIndex < _isSelectedPatientGender.length; buttonIndex++) {
                   if (buttonIndex == index) {
+                    _patientGender = _pateintGenderValues[index];
                     _isSelectedPatientGender[buttonIndex] = true;
                   } else {
                     _isSelectedPatientGender[buttonIndex] = false;
@@ -284,6 +295,7 @@ class _EmergencyReportMfrState extends State<EmergencyReportMfr> {
 
                 for (int buttonIndex = 0; buttonIndex < _isSelectedHostelite.length; buttonIndex++) {
                   if (buttonIndex == index) {
+                    _patientIsHostelite = _pateintTypeValues[index]; 
                     _isSelectedHostelite[buttonIndex] = true;
                   } else {
                     _isSelectedHostelite[buttonIndex] = false;
@@ -298,7 +310,7 @@ class _EmergencyReportMfrState extends State<EmergencyReportMfr> {
     );
   }
 
-  //! Emergency Type = trauma or medical
+  //! Trasnport used
   Widget _buildTransportUsedSelector() {
     return Padding(
       padding: EdgeInsets.all(10),
@@ -339,6 +351,7 @@ class _EmergencyReportMfrState extends State<EmergencyReportMfr> {
 
                 for (int buttonIndex = 0; buttonIndex < _isSelectedTransportUsed.length; buttonIndex++) {
                   if (buttonIndex == index) {
+                    _transportUsed = _transportUsedValues[index];
                     _isSelectedTransportUsed[buttonIndex] = true;
                   } else {
                     _isSelectedTransportUsed[buttonIndex] = false;
@@ -394,6 +407,7 @@ class _EmergencyReportMfrState extends State<EmergencyReportMfr> {
 
                 for (int buttonIndex = 0; buttonIndex < _isSelectedEmergencyType.length; buttonIndex++) {
                   if (buttonIndex == index) {
+                    _emergencyType = _emergencyTypeValues[index];
                     _isSelectedEmergencyType[buttonIndex] = true;
                   } else {
                     _isSelectedEmergencyType[buttonIndex] = false;
@@ -455,6 +469,7 @@ class _EmergencyReportMfrState extends State<EmergencyReportMfr> {
 
                 for (int buttonIndex = 0; buttonIndex < _isSelectedSeverity.length; buttonIndex++) {
                   if (buttonIndex == index) {
+                    _severity = _severityValues[index];
                     _isSelectedSeverity[buttonIndex] = true;
                   } else {
                     _isSelectedSeverity[buttonIndex] = false;
@@ -527,7 +542,7 @@ class _EmergencyReportMfrState extends State<EmergencyReportMfr> {
               letterSpacing: 2.0,
             ),
             errorStyle: TextStyle(
-              color: Colors.amber,
+              color: Colors.redAccent,
               letterSpacing: 1.0,
             ),
             fillColor: Colors.grey[1],
@@ -618,6 +633,16 @@ class _EmergencyReportMfrState extends State<EmergencyReportMfr> {
 
   //! Build bag selector
   Widget _buildBagSelector() {
+    Map<String,String> databaseNames ={
+      "None":"None",
+      "B1":"B1",
+      "Pool":"Pool",
+      "PDC" : "PDC",
+      "REDC" : "REDC",
+      "Library" : "Library",
+      "CS Dept." : "CsDept",
+      "EMS Room" : "EmsRoom",
+    };
     return Padding(
       padding: EdgeInsets.all(10),
       child: DropdownButton<String>(
@@ -637,7 +662,7 @@ class _EmergencyReportMfrState extends State<EmergencyReportMfr> {
         items: <String>['None','B1','Pool','PDC','REDC','Library','CS Dept.','EMS Room']
           .map<DropdownMenuItem<String>>((String value) {
             return DropdownMenuItem<String>(
-              value: value,
+              value: databaseNames[value],
               child: Text(value),
             );
           })
@@ -1049,7 +1074,47 @@ class _EmergencyReportMfrState extends State<EmergencyReportMfr> {
     );
   }
 
+  // // One time consumables
+  // int _crepe = 0;
+  // int _openWove = 0;
+  // int _gauze = 0;
+  // int _saniplast = 0;
+  // int _depressors = 0;
+  // int _triangBandage = 0;
+  // int _gloves = 0;
+  // int _faceMasks = 0;
+  // int _ors = 0;
 
+  // // resuable consumables
+  // int _pyodine = 0;
+  // int _polyfax = 0;
+  // int _polyfaxPlus = 0;
+  // int _wintogeno = 0;
+  // int _deepHeat = 0;
+
+  Map<String, int> _getBagMap(){
+   
+    Map<String, int> bagMap = {};
+    
+    List<String> keys = ["crepe","openWove","gauze","saniplast","depressors","triangBandage","gloves","faceMasks",
+    "ors","pyodine","polyfax","polyfaxPlus","wintogeno","deepHeat"
+    ];
+    List<int> values = [_crepe,_openWove,_gauze,_saniplast,_depressors,_triangBandage,_gloves,_faceMasks,
+    _ors,_pyodine,_polyfax,_polyfaxPlus,_wintogeno,_deepHeat
+    ];
+    
+    List<MapEntry<String,int>> entries =[];
+    
+    for(int i = 0; i < values.length; i++){
+      if(values[i] != 0){
+        entries.add(MapEntry(keys[i], values[i]));
+      }
+    }
+
+    bagMap.addEntries(entries);
+
+    return bagMap;
+  }
 
 
   @override
@@ -1343,8 +1408,31 @@ class _EmergencyReportMfrState extends State<EmergencyReportMfr> {
             borderRadius: BorderRadius.circular(5),
             
           ),
-        onPressed: (){
-          // do stuff
+        onPressed: () async {
+          //!submit
+          if (!_emergencyReportKey.currentState.validate() || !_equipmentUsedKey.currentState.validate()) {
+            return;
+          }
+          //translate boolean arrays
+          _emergencyReportKey.currentState.save();
+          _equipmentUsedKey.currentState.save();
+          print(_patientRollNo);
+          print(_patientGender);
+          print(_patientIsHostelite);
+          print('');
+          print(_emergencyDate);
+          print(_severity);
+          print(_emergencyType);
+          print(_transportUsed);
+          print(_emergencyDetails);
+          print('');
+          print(_primaryMfrName);
+          print(_primaryMfrRollNo);
+          print(_additionalMfrs);
+          print('-------------');
+          print(_bagUsed);
+          _bagUsed == "None" ? print("No items used") : print(_getBagMap());
+
         },
         ),
       )
