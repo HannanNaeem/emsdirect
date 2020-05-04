@@ -43,7 +43,6 @@ class _StudentHomeState extends State<StudentHome> with WidgetsBindingObserver {
   int _gender = 0;
   int _severityLevel = 0;
   bool _emergency = false;
- // Position _currentLocation; //location from geolocator
   GeoPoint _geoLocation; //converted location into a geopoint
   /////////////////////////////////////////////////////////////////
 
@@ -54,26 +53,32 @@ class _StudentHomeState extends State<StudentHome> with WidgetsBindingObserver {
       PermissionStatus _permissionGranted;
       LocationData _locationData;
 
-      _serviceEnabled = await location.serviceEnabled();
-      if(!_serviceEnabled){
-        _serviceEnabled = await location.requestService();
-        while(!_serviceEnabled){
+      try{
+        _serviceEnabled = await location.serviceEnabled();
+        if(!_serviceEnabled){
           _serviceEnabled = await location.requestService();
+          if (!_serviceEnabled){
+            _serviceEnabled = await location.requestService();
+          }
         }
-      }
 
-      _permissionGranted = await location.hasPermission();
-      if(_permissionGranted == PermissionStatus.DENIED){
-        _permissionGranted = await location.requestPermission();
-        while(_permissionGranted != PermissionStatus.GRANTED){
+        _permissionGranted = await location.hasPermission();
+        if(_permissionGranted == PermissionStatus.DENIED){
           _permissionGranted = await location.requestPermission();
+          while(_permissionGranted != PermissionStatus.GRANTED){
+            _permissionGranted = await location.requestPermission();
+          }
         }
+
+        _locationData = await location.getLocation();
+        _geoLocation = GeoPoint(_locationData.latitude, _locationData.longitude);
+        print(_locationData.latitude);
+        print(_locationData.longitude);
+
+      }catch(e){
+        print(e);
       }
 
-      _locationData = await location.getLocation();
-      _geoLocation = GeoPoint(_locationData.latitude, _locationData.longitude);
-      print(_locationData.latitude);
-      print(_locationData.longitude);
   }
 
 
