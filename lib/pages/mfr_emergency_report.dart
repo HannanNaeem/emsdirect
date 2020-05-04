@@ -112,7 +112,7 @@ class _EmergencyReportMfrState extends State<EmergencyReportMfr> {
   int _pyodine = 0;
   int _polyfax = 0;
   int _polyfaxPlus = 0;
-  int _wintegebo = 0;
+  int _wintogeno = 0;
   int _deepHeat = 0;
 
 
@@ -675,21 +675,375 @@ class _EmergencyReportMfrState extends State<EmergencyReportMfr> {
                   color: const Color(0xff142850),
                 ),
               ),
+              Expanded(child: SizedBox()),
+              //!custom widget
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: <Widget>[
+                  MyCounter(
+                    initialValue: _crepe,
+                    min: 0,
+                    max: 10,
+                    onChanged: (newValue){
+                      setState(() {
+                        _crepe = newValue;
+                      });
+                      print('updated crepe $_crepe');
+                    }
+                  ),
+                ],
+              ),
+            ],
+          ),
+          Row(
+            children: <Widget>[
+              //Item name
+              Text("Open wove: ",
+                style:TextStyle(
+                  fontFamily: "HelveticaNeueLight",
+                  fontSize: 17,
+                  color: const Color(0xff142850),
+                ),
+              ),
+              Expanded(child: SizedBox()),
               //!custom widget
               MyCounter(
-                initialValue: _crepe,
+                initialValue: _openWove,
                 min: 0,
                 max: 10,
                 onChanged: (newValue){
                   setState(() {
-                    _crepe = newValue;
+                    _openWove = newValue;
                   });
-                  print('updated crepe $_crepe');
+                  print('updated openWove $_openWove');
+                }
+              ),
+            ],
+          ),
+          Row(
+            children: <Widget>[
+              //Item name
+              Text("Gauze: ",
+                style:TextStyle(
+                  fontFamily: "HelveticaNeueLight",
+                  fontSize: 17,
+                  color: const Color(0xff142850),
+                ),
+              ),
+              Expanded(child: SizedBox()),
+              //!custom widget
+              MyCounter(
+                initialValue: _gauze,
+                min: 0,
+                max: 10,
+                onChanged: (newValue){
+                  setState(() {
+                    _gauze = newValue;
+                  });
+                  print('updated gauze $_gauze');
+                }
+              ),
+            ],
+          ),
+          Row(
+            children: <Widget>[
+              //Item name
+              Text("Saniplast ",
+                style:TextStyle(
+                  fontFamily: "HelveticaNeueLight",
+                  fontSize: 17,
+                  color: const Color(0xff142850),
+                ),
+              ),
+              Expanded(child: SizedBox()),
+              //!custom widget
+              MyCounter(
+                initialValue: _saniplast,
+                min: 0,
+                max: 10,
+                onChanged: (newValue){
+                  setState(() {
+                    _saniplast = newValue;
+                  });
+                  print('updated saniplast $_saniplast');
+                }
+              ),
+            ],
+          ),
+          Row(
+            children: <Widget>[
+              //Item name
+              Text("Depressors: ",
+                style:TextStyle(
+                  fontFamily: "HelveticaNeueLight",
+                  fontSize: 17,
+                  color: const Color(0xff142850),
+                ),
+              ),
+              Expanded(child: SizedBox()),
+              //!custom widget
+              MyCounter(
+                initialValue: _depressors,
+                min: 0,
+                max: 10,
+                onChanged: (newValue){
+                  setState(() {
+                    _depressors = newValue;
+                  });
+                  print('updated depressors $_depressors');
+                }
+              ),
+            ],
+          ),
+          Row(
+            children: <Widget>[
+              //Item name
+              Text("Triang bandage: ",
+                style:TextStyle(
+                  fontFamily: "HelveticaNeueLight",
+                  fontSize: 17,
+                  color: const Color(0xff142850),
+                ),
+              ),
+              Expanded(child: SizedBox()),
+              //!custom widget
+              MyCounter(
+                initialValue: _triangBandage,
+                min: 0,
+                max: 10,
+                onChanged: (newValue){
+                  setState(() {
+                    _triangBandage = newValue;
+                  });
+                  print('updated tbandage$_triangBandage');
+                }
+              ),
+            ],
+          ),
+          Row(
+            children: <Widget>[
+              //Item name
+              Text("Gloves: ",
+                style:TextStyle(
+                  fontFamily: "HelveticaNeueLight",
+                  fontSize: 17,
+                  color: const Color(0xff142850),
+                ),
+              ),
+              Expanded(child: SizedBox()),
+              //!custom widget
+              MyCounter(
+                initialValue: _gloves,
+                min: 0,
+                max: 10,
+                onChanged: (newValue){
+                  setState(() {
+                    _gloves = newValue;
+                  });
+                  print('updated gloves $_gloves');
+                }
+              ),
+            ],
+          ),
+          Row(
+            children: <Widget>[
+              //Item name
+              Text("Face masks: ",
+                style:TextStyle(
+                  fontFamily: "HelveticaNeueLight",
+                  fontSize: 17,
+                  color: const Color(0xff142850),
+                ),
+              ),
+              Expanded(child: SizedBox()),
+              //!custom widget
+              MyCounter(
+                initialValue: _faceMasks,
+                min: 0,
+                max: 10,
+                onChanged: (newValue){
+                  setState(() {
+                    _faceMasks = newValue;
+                  });
+                  print('updated facemasks $_faceMasks');
+                }
+              ),
+            ],
+          ),
+          Row(
+            children: <Widget>[
+              //Item name
+              Text("ORS: ",
+                style:TextStyle(
+                  fontFamily: "HelveticaNeueLight",
+                  fontSize: 17,
+                  color: const Color(0xff142850),
+                ),
+              ),
+              Expanded(child: SizedBox()),
+              //!custom widget
+              MyCounter(
+                initialValue: _ors,
+                min: 0,
+                max: 10,
+                onChanged: (newValue){
+                  setState(() {
+                    _ors = newValue;
+                  });
+                  print('updated ors $_ors');
                 }
               ),
             ],
           ),
 
+        ],
+      ),
+    );
+  }
+
+  // // resuable consumables
+  // int _pyodine = 0;
+  // int _polyfax = 0;
+  // int _polyfaxPlus = 0;
+  // int _wintegebo = 0;
+  // int _deepHeat = 0;
+
+  //!Build item counter list
+  Widget _buildReusableItemCounterList() {
+    return Padding(
+      padding: const EdgeInsets.all(10.0),
+      child: Column(
+        children: <Widget> [
+          Row(
+            children: <Widget>[
+              //Item name
+              Text("Pyodine: ",
+                style:TextStyle(
+                  fontFamily: "HelveticaNeueLight",
+                  fontSize: 17,
+                  color: const Color(0xff142850),
+                ),
+              ),
+              Expanded(child: SizedBox()),
+              //!custom widget
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: <Widget>[
+                  MyCounter(
+                    initialValue: _pyodine,
+                    min: 0,
+                    max: 10,
+                    onChanged: (newValue){
+                      setState(() {
+                        _pyodine = newValue;
+                      });
+                      print('updated pyodine $_pyodine');
+                    }
+                  ),
+                ],
+              ),
+            ],
+          ),
+          Row(
+            children: <Widget>[
+              //Item name
+              Text("Polyfax: ",
+                style:TextStyle(
+                  fontFamily: "HelveticaNeueLight",
+                  fontSize: 17,
+                  color: const Color(0xff142850),
+                ),
+              ),
+              Expanded(child: SizedBox()),
+              //!custom widget
+              MyCounter(
+                initialValue: _polyfax,
+                min: 0,
+                max: 10,
+                onChanged: (newValue){
+                  setState(() {
+                    _polyfax = newValue;
+                  });
+                  print('updated polyfax $_polyfax');
+                }
+              ),
+            ],
+          ),
+          Row(
+            children: <Widget>[
+              //Item name
+              Text("Polyfax Plus: ",
+                style:TextStyle(
+                  fontFamily: "HelveticaNeueLight",
+                  fontSize: 17,
+                  color: const Color(0xff142850),
+                ),
+              ),
+              Expanded(child: SizedBox()),
+              //!custom widget
+              MyCounter(
+                initialValue: _polyfaxPlus,
+                min: 0,
+                max: 10,
+                onChanged: (newValue){
+                  setState(() {
+                    _polyfaxPlus = newValue;
+                  });
+                  print('updated P plus $_polyfaxPlus');
+                }
+              ),
+            ],
+          ),
+          Row(
+            children: <Widget>[
+              //Item name
+              Text("Wintogeno ",
+                style:TextStyle(
+                  fontFamily: "HelveticaNeueLight",
+                  fontSize: 17,
+                  color: const Color(0xff142850),
+                ),
+              ),
+              Expanded(child: SizedBox()),
+              //!custom widget
+              MyCounter(
+                initialValue: _wintogeno,
+                min: 0,
+                max: 10,
+                onChanged: (newValue){
+                  setState(() {
+                    _wintogeno = newValue;
+                  });
+                  print('updated wintogeno $_wintogeno');
+                }
+              ),
+            ],
+          ),
+          Row(
+            children: <Widget>[
+              //Item name
+              Text("Deep heat: ",
+                style:TextStyle(
+                  fontFamily: "HelveticaNeueLight",
+                  fontSize: 17,
+                  color: const Color(0xff142850),
+                ),
+              ),
+              Expanded(child: SizedBox()),
+              //!custom widget
+              MyCounter(
+                initialValue: _deepHeat,
+                min: 0,
+                max: 10,
+                onChanged: (newValue){
+                  setState(() {
+                    _deepHeat = newValue;
+                  });
+                  print('updated deepHeat $_deepHeat');
+                }
+              ),
+            ],
+          ),
         ],
       ),
     );
@@ -868,23 +1222,7 @@ class _EmergencyReportMfrState extends State<EmergencyReportMfr> {
                     key: _equipmentUsedKey,
                     child: Column(
                       children: <Widget>[
-                        // //! Sub heading
-                        // Row(
-                        //   mainAxisAlignment: MainAxisAlignment.start,
-                        //   children: <Widget>[
-                        //     Padding(
-                        //       padding: const EdgeInsets.fromLTRB(8, 15, 0, 15),
-                        //       child: Text(
-                        //         "Bag information",
-                        //         style: TextStyle(
-                        //           color: const Color(0xff142850),
-                        //           fontFamily: "HelveticaNeueLight",
-                        //           fontSize: 20,
-                        //         ),
-                        //       ),
-                        //     ),
-                        //   ],
-                        // ),
+                        //! Bag used
                         Row(
                           children: <Widget>[
                             Padding(
@@ -892,7 +1230,7 @@ class _EmergencyReportMfrState extends State<EmergencyReportMfr> {
                               child: Text("Bag used:",
                                 style:TextStyle(
                                   fontFamily: "HelveticaNeueLight",
-                                  fontSize: 17,
+                                  fontSize: 20,
                                   color: const Color(0xff142850),
                                 ) ,
                               ),
@@ -900,7 +1238,83 @@ class _EmergencyReportMfrState extends State<EmergencyReportMfr> {
                             _buildBagSelector(),
                           ],
                         ),
+                        _bagUsed == "None" ? Container() : Column(
+                          children: <Widget>[
+                            SizedBox(height: 10,),
+                            Divider(height: 10),
+                            //! Sub heading
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: <Widget>[
+                                Padding(
+                                  padding: const EdgeInsets.fromLTRB(8, 15, 0, 15),
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: <Widget>[
+                                      Text(
+                                        "One-time Consumables",
+                                        style: TextStyle(
+                                          color: const Color(0xff142850),
+                                          fontFamily: "HelveticaNeueLight",
+                                          fontSize: 20,
 
+                                        ),
+                                      ),
+                                      //! Description hint
+                                      Text(
+                                        "Increment per instance consumed",
+                                        style: TextStyle(
+                                          color: Colors.grey[600],
+                                          fontFamily: "HelveticaNeueLight",
+                                          fontSize: 12,
+
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                            _buildConsumableItemCounterList(),
+
+                            SizedBox(height: 10,),
+                            Divider(height: 10),
+                            //! Sub heading
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: <Widget>[
+                                Padding(
+                                  padding: const EdgeInsets.fromLTRB(8, 15, 0, 15),
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: <Widget>[
+                                      Text(
+                                        "Reusable Consumables",
+                                        style: TextStyle(
+                                          color: const Color(0xff142850),
+                                          fontFamily: "HelveticaNeueLight",
+                                          fontSize: 20,
+
+                                        ),
+                                      ),
+                                      //! Description hint
+                                      Text(
+                                        "Increment only if an item needs replacement",
+                                        style: TextStyle(
+                                          color: Colors.grey[600],
+                                          fontFamily: "HelveticaNeueLight",
+                                          fontSize: 12,
+
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                            _buildReusableItemCounterList(),
+                          ],
+                        ),                   
                       ],
                     ),
                    ),
@@ -909,6 +1323,31 @@ class _EmergencyReportMfrState extends State<EmergencyReportMfr> {
             ),
            ),
         ),
+
+      //! submit button
+      Padding(
+        padding: EdgeInsets.fromLTRB(0, 10, 0, 100),
+        child: RaisedButton(
+          child: Padding(
+            padding: const EdgeInsets.all(15.0),
+            child: Text('Submit',
+              style: TextStyle(
+                color: Colors.white,
+                fontFamily: 'HelveticaNeueBold',
+                fontSize: 16,
+                letterSpacing: 1.0,
+              )),
+          ),
+          color: const Color(0xFF73CDE8),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(5),
+            
+          ),
+        onPressed: (){
+          // do stuff
+        },
+        ),
+      )
       ],
       ),
       ),
