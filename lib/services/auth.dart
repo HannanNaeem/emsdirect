@@ -1,6 +1,7 @@
 import 'package:ems_direct/models/user.dart';
 import 'package:ems_direct/services/user_database.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 
 // This file contains the auth class, instead on making an instance of firebase auth
 // and using them everywhere, just create an instance of this class and call the
@@ -35,9 +36,17 @@ class AuthService {
       String uid = user.uid;
       //get firestore emsType
       var document = await UserDatabaseService(uid: uid).getData();
+      var token = await FirebaseMessaging().getToken();
+
+      //if token is null return null,
+      if(token == null)
+        return null;
+      
+
       String storedEmsType = document.data['emsType'].toString();
 
       print("----------------------STORED EMS TYPE IS $storedEmsType");
+
 
       //there are three policies we must enforce
       // -> student cannot log as someone else => emsType == ''
@@ -61,6 +70,12 @@ class AuthService {
       if (emsType == 'ops' && storedEmsType == 'mfr') {
         _auth.signOut();
         return null;
+      }
+      //before finally letting user to log in make sure the device tokens are in sync
+      if(document.data['token'] != token ) {
+        //set the token as new device token
+        await UserDatabaseService(uid:uid).updateToken(token);
+
       }
 
       //Everything else is okay! Set loggedInAs for ems users

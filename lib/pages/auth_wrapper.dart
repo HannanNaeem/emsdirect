@@ -10,6 +10,7 @@ import 'package:ems_direct/services/ops_notification_wrapper.dart';
 import 'package:ems_direct/services/mfr_database.dart';
 import 'package:ems_direct/services/user_database.dart';
 import 'package:ems_direct/shared/loading.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:ems_direct/pages/student_home.dart';
 import 'package:ems_direct/pages/SelectLogin.dart';
@@ -30,7 +31,24 @@ Future getUserDoc() async {
   try {
     FirebaseUser user = await FirebaseAuth.instance.currentUser();
     String uid = user.uid;
-    return await UserDatabaseService(uid: uid).getData();
+    
+    //before proceeding check if token is the same as stored in the back end
+    dynamic doc = await UserDatabaseService(uid: uid).getData();
+    dynamic token = await FirebaseMessaging().getToken();
+    //failing to get token results in not letting the user log in
+    if(token == null){
+      print("----------Failed to get token");
+      return null;
+    }
+
+    if(doc.data['token'] != token)
+    {
+      //set token at back end to new token
+      await UserDatabaseService(uid:uid).updateToken(token);
+    
+    }
+
+    return doc;
   } catch (e) {
     return null;
   }
