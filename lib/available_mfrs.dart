@@ -22,7 +22,6 @@ class AvailableMfrsList extends StatefulWidget {
 }
 
 class _AvailableMfrsListState extends State<AvailableMfrsList> {
-  var numberData = AvailableMfrsData.data;
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +36,6 @@ class _AvailableMfrsListState extends State<AvailableMfrsList> {
   }
 }
 
-
 class MakeList extends StatefulWidget {
   @override
   _MakeListState createState() => _MakeListState();
@@ -47,8 +45,10 @@ class _MakeListState extends State<MakeList> {
 
   @override
   Widget build(BuildContext context) {
+    var screenSize = MediaQuery.of(context).size;
+    var width = screenSize.width;
+    var height = screenSize.height;
     List<MfrData> _mfrList = [];
-    //_mfrList.add(MfrData('name','contact', 'gender', 'rollno', true));
     var _availableMfrList = Provider.of<List<AvailableMfrs>>(context);
 
     void populateList(){
