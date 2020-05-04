@@ -113,11 +113,15 @@ class MfrListModel {
   final String rollNo;
   final String gender;
   final String contact;
+  final bool isHostelite;
+  final bool isSenior;
 
   MfrListModel(
     {this.name,
     this.rollNo,
     this.gender,
     this.contact,
+    this.isHostelite,
+    this.isSenior,
     });
 }

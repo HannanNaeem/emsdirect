@@ -87,6 +87,8 @@ class OpsDatabaseService {
         rollNo: doc.documentID,
         gender: doc.data['gender'],
         contact: doc.data['contact'],
+        isHostelite: doc.data['isHostelite'],
+        isSenior: doc.data['isSenior'],
       );
     }).toList();
   }

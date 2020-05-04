@@ -27,8 +27,6 @@ class _MfrListState extends State<MfrList> {
     }
   }
 
-  var mfrListData = MfrListData.data; //ignore this for now
-
   @override
   void initState() {
     super.initState();
