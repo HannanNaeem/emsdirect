@@ -2,6 +2,69 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 
+
+class MyCounter extends StatefulWidget {
+  int initialValue; 
+  int min; 
+  int max; 
+  Function onChanged;
+  int localState;
+
+  MyCounter(
+    {this.initialValue,
+    this.min,
+    this.max,
+    this.onChanged,}
+  ){
+    this.localState = this.initialValue;
+  }
+  @override
+  _MyCounterState createState() => _MyCounterState();
+}
+
+class _MyCounterState extends State<MyCounter> {
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+        children: <Widget>[
+          //!add button
+          IconButton(
+            icon: Icon(Icons.add), 
+            onPressed: () {
+              if(widget.localState < widget.max){
+                widget.localState++;
+                widget.onChanged(widget.localState);
+              }
+            }
+          ),
+          SizedBox(width: 10,),
+          //!add number
+          Text(
+            widget.localState.toString(),
+            style: TextStyle(
+              fontFamily: "HelveticaNeueLight",
+              fontSize: 17,
+              color: const Color(0xff142850),
+            ),
+          ),
+          SizedBox(width: 10,),
+          //!add button
+          IconButton(
+            icon: Icon(Icons.remove), 
+            onPressed: () {
+              if(widget.localState > widget.min){
+                widget.localState--;
+                widget.onChanged(widget.localState);
+              }
+            }
+          ),
+        ],
+      );
+  }
+}
+
+
+
 class EmergencyReportMfr extends StatefulWidget {
   @override
   _EmergencyReportMfrState createState() => _EmergencyReportMfrState();
@@ -33,6 +96,24 @@ class _EmergencyReportMfrState extends State<EmergencyReportMfr> {
   List<bool> _isSelectedHostelite = [true,false];
   List<bool> _isSelectedEmergencyType = [true,false];
   List<bool> _isSelectedTransportUsed = [true,false];
+
+  // One time consumables
+  int _crepe = 0;
+  int _openWove = 0;
+  int _gauze = 0;
+  int _saniplast = 0;
+  int _depressors = 0;
+  int _triangBandage = 0;
+  int _gloves = 0;
+  int _faceMasks = 0;
+  int _ors = 0;
+
+  // resuable consumables
+  int _pyodine = 0;
+  int _polyfax = 0;
+  int _polyfaxPlus = 0;
+  int _wintegebo = 0;
+  int _deepHeat = 0;
 
 
   //! Roll no form field
@@ -565,10 +646,53 @@ class _EmergencyReportMfrState extends State<EmergencyReportMfr> {
       ),
     );
   }
+  // One time consumables
+  // int _crepe = 0;
+  // int _openWove = 0;
+  // int _gauze = 0;
+  // int _saniplast = 0;
+  // int _depressors = 0;
+  // int _triangBandage = 0;
+  // int _gloves = 0;
+  // int _faceMasks = 0;
+  // int _ors = 0;
+
+
 
   //!Build item counter list
-  Widget _buildItemCounterList() {
-    return Container();
+  Widget _buildConsumableItemCounterList() {
+    return Padding(
+      padding: const EdgeInsets.all(10.0),
+      child: Column(
+        children: <Widget> [
+          Row(
+            children: <Widget>[
+              //Item name
+              Text("Crepe: ",
+                style:TextStyle(
+                  fontFamily: "HelveticaNeueLight",
+                  fontSize: 17,
+                  color: const Color(0xff142850),
+                ),
+              ),
+              //!custom widget
+              MyCounter(
+                initialValue: _crepe,
+                min: 0,
+                max: 10,
+                onChanged: (newValue){
+                  setState(() {
+                    _crepe = newValue;
+                  });
+                  print('updated crepe $_crepe');
+                }
+              ),
+            ],
+          ),
+
+        ],
+      ),
+    );
   }
 
 
