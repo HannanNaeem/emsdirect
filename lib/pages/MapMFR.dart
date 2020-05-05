@@ -7,103 +7,122 @@ import 'package:location/location.dart';
 import 'package:ems_direct/pages/MFR_home.dart';
 import 'package:ems_direct/services/pending_emergency_alert_MFR.dart';
 
+// Displays the map to the MFR with their current location as well as the emergency location of the emergency they have been assigned to.
+// MFR can only see this screen if they are on an emergency.
+
 class MapMFR extends StatefulWidget {
-  String _StudentContact = '';
-  GeoPoint _locationOfEmergency;
-  String _rollNo;
-  String _patientRollNumber;
-  MapMFR(GeoPoint locationOfEmergency, String patientContactNo, String rollNo,
+  // Patient information variables
+  String patientContact;
+  String rollNumber;
+  String patientRollNumber;
+
+  // Emergency location point
+  GeoPoint locationOfEmergency;
+
+  // Constructor
+  MapMFR(GeoPoint location, String contactNo, String rollNo,
       String patientRollNo)
       : super() {
-    _StudentContact = patientContactNo;
-    _locationOfEmergency = locationOfEmergency;
-    _rollNo = rollNo;
-    _patientRollNumber = patientRollNo;
+    patientContact = contactNo;
+    locationOfEmergency = location;
+    rollNumber = rollNo;
+    patientRollNumber = patientRollNo;
   }
 
   @override
-  MapState createState() => new MapState(
-      _locationOfEmergency, _StudentContact, _rollNo, _patientRollNumber);
+  MapState createState() => new MapState();
 }
 
 class MapState extends State<MapMFR> {
-  GeoPoint _locationOfEmergency;
-  String contactNumber = '';
-  String _rollNo;
-  String _patientRollNumber;
-  bool _mapLoading = true;
+  // This is used to determine if the map has loaded or not - to display Circular Progress Indicator while the map is being loaded
+  bool mapLoading = true;
+
+  // The map view is controlled using this controller
+  GoogleMapController controller;
+
+  // Used to keep track of the current location
+  static LatLng currLoc = const LatLng(45.531563, -122.677433);
+
+  // Used to keep track of the last map position
+  LatLng lastMapPosition = currLoc;
+
+  // Used to keep track of the map type - normal or satellite.
+  // Initially its been set to normal
+  MapType currentMapType = MapType.normal;
+
+  // Used to track the location of the MFR
+  static Location locationTracker = Location();
+
+  // Used to listen on a stream using stream.list
+  StreamSubscription locationSubscription;
+
+  // Stores all markers for the map
   Map<MarkerId, Marker> emergencyMarker = <MarkerId, Marker>{};
-  final databaseReference = Firestore.instance;
 
-  MapState(
-      GeoPoint location, String number, String rollNo, String patientRollNo) {
-    _locationOfEmergency = location;
-    contactNumber = number;
-    _rollNo = rollNo;
-    _patientRollNumber = patientRollNo;
-  }
+  // initial position of the map camera
+  static final CameraPosition initialPosition = CameraPosition(
+    target: LatLng(45.531563, -122.677433),
+    zoom: 8.0,
+  );
 
-  void _updateUserData(GeoPoint Newlocation) async {
-    await databaseReference
-        .collection("Mfr")
-        .document((await _rollNo).toString())
-        .updateData({'location': Newlocation});
-  }
-
-  GoogleMapController _controller;
-  static var Zoom = 11.0;
-  static const LatLng _loc = const LatLng(45.531563, -122.677433);
-  LatLng currLoc = _loc;
-  var EmergencyLocationIcon;
-  LatLng _lastMapPosition = _loc;
-  MapType _currentMapType = MapType.normal;
-  static Location _locationTracker = Location();
-
-  Marker marker;
-  StreamSubscription _locationSubscription;
-
-  _onMapCreated(GoogleMapController controller) {
-    _controller = controller;
+  // Called when the map has been created
+  onMapCreated(GoogleMapController _controller) {
+    controller = _controller;
+    // determining marker id to add to set
     var markerIdVal = emergencyMarker.length + 1;
     String mar = markerIdVal.toString();
     final MarkerId markerId = MarkerId(mar);
-    EmergencyLocationIcon = BitmapDescriptor.fromAsset('assets/redcross.png');
+
+    // making an asset image the marker icon
+    var emergencyLocationIcon = BitmapDescriptor.fromAsset('assets/redcross.png');
+
+    // creating a marker
     final Marker marker = Marker(
         markerId: markerId,
         position: LatLng(
-            _locationOfEmergency.latitude, _locationOfEmergency.longitude),
-        infoWindow:
-            InfoWindow(title: 'Emergency Location', snippet: _patientRollNumber),
-        icon: EmergencyLocationIcon);
+            widget.locationOfEmergency.latitude, widget.locationOfEmergency.longitude),
+        infoWindow: InfoWindow(
+            title: 'Emergency Location', snippet: widget.patientRollNumber),
+        icon: emergencyLocationIcon);
+
+    // setting the marker
     setState(() {
       emergencyMarker[markerId] = marker;
     });
-    //getCurrentLocaion();
-    this.setState(() => _mapLoading = false);
+
+   // todo: uncomment
+    //getCurrentLocation();
+
+    // making mapLoading false so that the map can be displayed now
+    this.setState(() => mapLoading = false);
   }
 
-  _onCameraMove(CameraPosition position) {
-    _lastMapPosition = position.target;
+  // Called when camera is moved around so that the last map position can be updated
+  onCameraMove(CameraPosition position) {
+    lastMapPosition = position.target;
   }
 
-  _onMapTypeButtonPressed() {
+  // Called when the user wishes to change the map type
+  onMapTypeButtonPressed() {
+    // Setting the map type to the opposite to what it was previously
     setState(() {
-      _currentMapType = _currentMapType == MapType.normal
+      currentMapType = currentMapType == MapType.normal
           ? MapType.satellite
           : MapType.normal;
     });
   }
 
-  static final CameraPosition initialisation = CameraPosition(
-    target: LatLng(122, 72),
-    zoom: Zoom,
-  );
-
+  // Updating the MFR marker according to the newLocation
   void updateMarker(LocationData newLocation) {
+    // converting LocationData to LatLng
     LatLng values = LatLng(newLocation.latitude, newLocation.longitude);
+
+    // determining marker id
     var markerIdVal = emergencyMarker.length + 1;
     String mar = markerIdVal.toString();
     final MarkerId markerId = MarkerId(mar);
+
+    // creating marker
     final Marker marker = Marker(
       markerId: MarkerId("Your location"),
       infoWindow: InfoWindow(
@@ -116,61 +135,77 @@ class MapState extends State<MapMFR> {
       flat: false,
       anchor: Offset(0, 0),
     );
+
+    // setting marker
     setState(() {
       emergencyMarker[markerId] = marker;
     });
   }
 
+  // Called when the user wishes to zoom into the map
   void zoomIn() async {
-    _controller.animateCamera(
+    // changing camera position
+    controller.animateCamera(
       CameraUpdate.zoomIn(),
     );
   }
 
+  // Called when the user wishes to zoom out of the map
   void zoomOut() async {
-    _controller.animateCamera(
+    // changing camera position
+    controller.animateCamera(
       CameraUpdate.zoomOut(),
     );
   }
 
-  void getCurrentLocaion() async {
+  // Used to determine/track the current location of the MFR
+  void getCurrentLocation() async {
     try {
-      var location = await _locationTracker.getLocation();
+      //getting the current location
+      var location = await locationTracker.getLocation();
 
+      // updating the marker on the map
       updateMarker(location);
+
+      // updating the current location
       currLoc = LatLng(location.latitude, location.longitude);
-      _controller.animateCamera(CameraUpdate.newCameraPosition(
-              new CameraPosition(
-                  bearing: 192,
-                  target: LatLng(currLoc.latitude, currLoc.longitude),
-                  tilt: 0,
-                  zoom: Zoom)));
-      if (_locationSubscription != null) {
-        _locationSubscription.cancel();
+
+      // updating the camera position to where the MFR is currently
+      controller.animateCamera(CameraUpdate.newCameraPosition(
+          new CameraPosition(
+              bearing: 192,
+              target: LatLng(currLoc.latitude, currLoc.longitude),
+              tilt: 0,
+              zoom: 8.0)));
+
+      // cancelling location subscription
+      if (locationSubscription != null) {
+        locationSubscription.cancel();
       }
 
-      _locationSubscription =
-          _locationTracker.onLocationChanged().listen((newLocation) {
-        if (_controller != null) {
-          GeoPoint NewGeoPoint =
-              GeoPoint(newLocation.latitude, newLocation.longitude);
-          updateMarker(newLocation);
-        }
+      // constantly listening to see if location of MFR has updated
+      locationSubscription =
+          locationTracker.onLocationChanged().listen((newLocation) {
+            // updating marker position on map
+            if (controller != null) {
+              updateMarker(newLocation);
+            }
       });
     } on PlatformException catch (e) {
+      // exception thrown if the location permission is denied.
       if (e.code == 'PERMISSION_DENIED') {
         debugPrint("Permission Denied");
       }
+      throw(e);
     }
   }
 
-
-
-
   @override
+  // Called when this object is removed from the tree permanently
   void dispose() {
-    if (_locationSubscription != null) {
-      _locationSubscription.cancel();
+    // cancelling location subscription so that listening is stopped
+    if (locationSubscription != null) {
+      locationSubscription.cancel();
     }
 
     super.dispose();
@@ -178,9 +213,11 @@ class MapState extends State<MapMFR> {
 
   @override
   Widget build(BuildContext context) {
+    // Used to make screen responsive.
     var screenSize = MediaQuery.of(context).size;
     var width = screenSize.width;
     var height = screenSize.height;
+
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
@@ -204,14 +241,16 @@ class MapState extends State<MapMFR> {
         ),
         body: Stack(
           children: <Widget>[
+            // Google map widget is used to create map
             GoogleMap(
-              onMapCreated: _onMapCreated,
-              initialCameraPosition: initialisation,
-              mapType: _currentMapType,
+              onMapCreated: onMapCreated,
+              initialCameraPosition: initialPosition,
+              mapType: currentMapType,
               markers: Set<Marker>.of(emergencyMarker.values),
-              onCameraMove: _onCameraMove,
+              onCameraMove: onCameraMove,
             ),
-            (_mapLoading)
+            // while map is loading, a circular progress indicator is shown.
+            (mapLoading)
                 ? Container(
                     height: height,
                     width: width,
@@ -221,44 +260,32 @@ class MapState extends State<MapMFR> {
                     ),
                   )
                 : Container(),
-          Container(
-              margin: const EdgeInsets.fromLTRB(45, 10, 10, 10),
-          height: 38,
-          width: 240,
-          child: Card(
-            elevation: 1,
-            color: Colors.transparent,
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(0, 8, 0, 0),
-              child: Column(
-                children: <Widget>[
-                  Text(
-                    'Patient Contact: ' + contactNumber,
-                    style: TextStyle(
-                      fontFamily: 'HelveticaNeueBold',
-                      letterSpacing: 2.0,
-                      fontSize: 0.012 * (height + width),
-                      color: const Color(0xff142850),
+            // Showing patient contact on top of the map
+            Container(
+                margin: const EdgeInsets.fromLTRB(45, 10, 10, 10),
+                height: 38,
+                width: 240,
+                child: Card(
+                  elevation: 1,
+                  color: Colors.transparent,
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(0, 8, 0, 0),
+                    child: Column(
+                      children: <Widget>[
+                        Text(
+                          'Patient Contact: ' + widget.patientContact,
+                          style: TextStyle(
+                            fontFamily: 'HelveticaNeueBold',
+                            letterSpacing: 2.0,
+                            fontSize: 0.012 * (height + width),
+                            color: const Color(0xff142850),
+                          ),
+                        )
+                      ],
                     ),
-                  )
-
-                ],
-              ),
-            ),
-          )
-        ),
-//            Padding(
-//                padding: EdgeInsets.fromLTRB(
-//                    width * 0.14, height * 0.034, width * 0.1, 10.0),
-//                child: Text(
-//                  'Patient Contact: ' + contactNumber,
-//                  style: TextStyle(
-//                    fontFamily: 'HelveticaNeueBold',
-//                    letterSpacing: 2.0,
-//                    fontSize: 0.012 * (height + width),
-//                    color: const Color(0xff142850),
-//                  ),
-//                )),
+                  ),
+                )),
+            // End emergency button and its navigation
             Padding(
                 padding: EdgeInsets.fromLTRB(
                     width * 0.23, height * 0.75, width * 0.16, 10.0),
@@ -292,26 +319,35 @@ class MapState extends State<MapMFR> {
                                         ),
                                       ),
                                       onPressed: () async {
-                                        Navigator.of(context).pop();
-                                        Navigator.of(context).pop();
+                                        // When the MFR ends the emergency
+
+
                                         try {
+                                          // deleting emergency from ongoing emergencies collection in the database
                                           await Firestore.instance
                                               .collection('OngoingEmergencies')
-                                              .document(_patientRollNumber)
+                                              .document(widget.patientRollNumber)
                                               .delete();
+
+                                          // changing mfr's isOccupied status to false in the database
                                           await Firestore.instance
                                               .collection('Mfr')
-                                              .document(_rollNo)
+                                              .document(widget.rollNumber)
                                               .updateData(
                                                   {'isOccupied': false});
+
+                                          // setting local occupied variables to false
                                           mfrHomeGlobalKey.currentState
                                               .updateOccupied(false);
                                           mfrAlertFunctionGlobalKey.currentState
                                               .updateOccupiedLocal(false);
                                         } catch (e) {
-                                          print(e);
+                                          throw(e);
                                         }
-//                                        todo: occupied status change
+
+                                        // Navigating back to MFR home screen
+                                       Navigator.of(context).pop();
+                                        Navigator.of(context).pop();
                                       },
                                     ),
                                     FlatButton(
@@ -325,6 +361,8 @@ class MapState extends State<MapMFR> {
                                         ),
                                       ),
                                       onPressed: () {
+                                        // User doesn't wish to end emergency (for now)
+                                        // Navigating back to map screen
                                         Navigator.of(context).pop();
                                       },
                                     ),
@@ -349,16 +387,18 @@ class MapState extends State<MapMFR> {
                         )))),
           ],
         ),
+        // User can change the map type by clicking on this button
         floatingActionButton: Column(children: <Widget>[
           SizedBox(height: height * 0.16),
           FloatingActionButton(
               heroTag: "btn1",
               child: Icon(Icons.map),
               onPressed: () {
-                _onMapTypeButtonPressed();
+                onMapTypeButtonPressed();
               },
               backgroundColor: const Color(0xff47719e)),
           SizedBox(height: height / 3),
+          // User can zoom into the map by clicking on this button
           FloatingActionButton(
               heroTag: "btn2",
               child: Icon(Icons.add),
@@ -367,6 +407,7 @@ class MapState extends State<MapMFR> {
               },
               backgroundColor: const Color(0xff47719e)),
           SizedBox(height: 10),
+          // User can zoom out of the map by clicking on this button
           FloatingActionButton(
               heroTag: "btn3",
               child: Icon(Icons.remove),
@@ -375,20 +416,20 @@ class MapState extends State<MapMFR> {
               },
               backgroundColor: const Color(0xff47719e)),
           SizedBox(height: 10),
+          // User will be directed to the emergency location on the map by clicking on this button
           FloatingActionButton(
               heroTag: "btn4",
               child: Icon(Icons.location_searching),
               onPressed: () {
-                if (_controller != null) {
-
-                  _controller.animateCamera(CameraUpdate.newCameraPosition(
-                      new CameraPosition(
-                        bearing: 192,
-                        target: LatLng(_locationOfEmergency.latitude, _locationOfEmergency.longitude),
-                        tilt: 0,
-                        zoom: 20,
-                      )));
-
+                if (controller != null) {
+                  controller.animateCamera(
+                      CameraUpdate.newCameraPosition(new CameraPosition(
+                    bearing: 192,
+                    target: LatLng(widget.locationOfEmergency.latitude,
+                        widget.locationOfEmergency.longitude),
+                    tilt: 0,
+                    zoom: 20,
+                  )));
                 }
               },
               backgroundColor: const Color(0xff47719e)),

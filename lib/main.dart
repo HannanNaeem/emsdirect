@@ -13,8 +13,6 @@ import 'package:geolocator/geolocator.dart';
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
-//  GeoPoint geoPoint = GeoPoint(31.4700, 74.4111);
-//  String number = '03132732727';
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
