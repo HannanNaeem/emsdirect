@@ -52,10 +52,30 @@ class _ReportedEmergenciesOpsState extends State<ReportedEmergenciesOps> {
     }
   }
 
+  String _translateKey (String key){
+    switch (key) {
+      case "crepe": return "Crepe";
+      case "openWove" :return "Open wove";
+      case "gauze": return "Gauze";
+      case "saniplast" : return "Saniplast";
+      case "depressors" : return "Depressors";
+      case "triangBandage" : return "Triang bandage";
+      case "gloves" : return "Gloves";
+      case "faceMasks" : return "Face masks";
+      case "ors" : return "ORS";
+      case "pyodine" : return "Pyodine";
+      case "polyfax" : return "Polyfax";
+      case "polyfaxPlus" : return "Polyfax plus";
+      case "wintogeno" :return "Wintogeno";
+      case "deepHeat" :return "Deep heat";
+      default: return "";
+    }
+  }
+
   String _translateMap(Map map){
     String output = "";
     map.keys.forEach((key){
-      output = output + key.toString() + ": " + map[key].toString() +" ";
+      output = output + _translateKey(key.toString()) + ": " + map[key].toString() +", ";
     });
     return output;
   }
@@ -110,13 +130,13 @@ class _ReportedEmergenciesOpsState extends State<ReportedEmergenciesOps> {
                               emergencyDate: DateFormat.MMMd().format(_reportedEmergencies[index].emergencyDate) + ", " + DateFormat.E().format(_reportedEmergencies[index].emergencyDate) + "\n"+ DateFormat.Hm().format(_reportedEmergencies[index].emergencyDate),
                               primaryMfrRollNo: _reportedEmergencies[index].primaryMfrRollNo,
                               primaryMfrName: _reportedEmergencies[index].primaryMfrName,
-                              additionalMfrs: _reportedEmergencies[index].additionalMfrs,
+                              additionalMfrs: _reportedEmergencies[index].additionalMfrs == "" ? "None" : _reportedEmergencies[index].additionalMfrs,
                               severity: _reportedEmergencies[index].severity,
                               patientIsHostelite: _reportedEmergencies[index].patientIsHostelite,
                               emergencyType: _reportedEmergencies[index].emergencyType,
-                              emergencyLocation: _reportedEmergencies[index].emergencyLocation,
-                              transportUsed: _reportedEmergencies[index].transportUsed,
-                              emergencyDetails: _reportedEmergencies[index].emergencyDetails,
+                              emergencyLocation: _reportedEmergencies[index].emergencyLocation == "" ? "No location" :  _reportedEmergencies[index].emergencyLocation,
+                              transportUsed: _reportedEmergencies[index].transportUsed == "Yes" ? "  |  Transport Used" : "",
+                              emergencyDetails: _reportedEmergencies[index].emergencyDetails == "" ? "No details" : _reportedEmergencies[index].emergencyDetails,
                               bagUsed: _reportedEmergencies[index].bagUsed,
                               equipmentUsed: _reportedEmergencies[index].equipmentUsed == null ? "None" : _translateMap(_reportedEmergencies[index].equipmentUsed),
                             ),

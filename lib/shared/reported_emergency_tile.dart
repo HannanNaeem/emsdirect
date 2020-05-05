@@ -69,6 +69,7 @@ class _ReportedEmergencyTileState extends State<ReportedEmergencyTile> {
                     style: TextStyle(
                       fontFamily: "HelveticaNeueLight",
                       fontSize: 24,
+                      color: const Color(0xff142850),
                     )
                   ),
                 ),
@@ -107,7 +108,7 @@ class _ReportedEmergencyTileState extends State<ReportedEmergencyTile> {
         ),
 
         subtitle: Padding(
-          padding: const EdgeInsets.fromLTRB(8, 0, 10, 10),
+          padding: const EdgeInsets.fromLTRB(8, 0, 0, 10),
           child: Row(
             children: <Widget>[
               //!mfr icon
@@ -127,6 +128,7 @@ class _ReportedEmergencyTileState extends State<ReportedEmergencyTile> {
                       widget.primaryMfrName,
                       style: TextStyle(
                         fontFamily: "HelveticaNeueLight",
+                        color: const Color(0xff27496d),
                         fontSize: 15,
                       )
                     ),
@@ -142,24 +144,167 @@ class _ReportedEmergencyTileState extends State<ReportedEmergencyTile> {
                   ],
                 ),
               ),
+              //!Emergency type 
+              Expanded(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: <Widget>[
+                    widget.transportUsed == "" ? Container() :
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
+                      child: Icon(
+                        Icons.directions_bus,
+                        color: Colors.grey[500],
+                      ),
+                    ),
+
+                    Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(
+                          width: 0.1,
+                        ),
+                        
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.fromLTRB(10,5,10,5),
+                        child: Text(
+                          widget.emergencyType,
+                          style: TextStyle(
+                            fontFamily: "HelveticaNeueLight",
+                            color: const Color(0xff27496d),
+                            fontSize: 15,
+                          )
+                        ),
+                      ),
+                    ),
+                ],)
+              )
             ],
           ),
         ),
         
         children: <Widget>[
+          Divider(thickness: 1,),
           Padding(
-            padding: const EdgeInsets.fromLTRB(20, 15, 20, 15),
+            padding: const EdgeInsets.all(10.0),
             child: Column(
               children: <Widget>[
-                Text(
-                  widget.emergencyDetails,
-                  style: TextStyle(
-                    fontFamily: "HelveticaNeueLight",
-                  )
+                //! Patient Details
+                ListTile(
+                  contentPadding: EdgeInsets.fromLTRB(15, 5, 15, 5),
+                  title: Text(
+                      "Patient information",
+                      style: TextStyle(
+                        fontFamily: "HelveticaNeueLight",
+                        fontSize: 17,
+                      )
+                  ),
+                  subtitle: Text(
+                      widget.patientRollNo + "  |  " + widget.patientGender + "  |  " + widget.patientIsHostelite,
+                      style: TextStyle(
+                        fontFamily: "HelveticaNeueLight",
+                        fontSize: 15,
+                      )
+                  ), 
+                  
+                ),
+                //!Emergency Details
+                ListTile(
+                  contentPadding: EdgeInsets.fromLTRB(15, 5, 15, 5),
+                  title: Text(
+                      "Emergency details",
+                      style: TextStyle(
+                        fontFamily: "HelveticaNeueLight",
+                        fontSize: 17,
+                      )
+                  ),
+                  subtitle: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      //! Location                    
+                      widget.emergencyLocation == "No location" ? Container() :
+                      Column(
+                        children: <Widget>[
+                          SizedBox(height: 5,),
+                          Row(
+                            children: <Widget>[
+                              Padding(
+                                padding: const EdgeInsets.fromLTRB(0, 0, 5, 0),
+                                child: Icon(
+                                  Icons.location_on,
+                                  size: 15,
+                                  color: Colors.grey[600],
+                                ),
+                              ),
+                              Text(
+                                widget.emergencyLocation,
+                                style: TextStyle(
+                                  fontFamily: "HelveticaNeueLight",
+                                  fontSize: 15,
+                                )
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+
+                      //! emergency Details
+                      Text(
+                          widget.emergencyDetails,
+                          style: TextStyle(
+                            fontFamily: "HelveticaNeueLight",
+                            fontSize: 15,
+                          )
+                      ),
+                    ],
+                  ), 
+                  
+                ),
+                //!EQuipment details
+                ListTile(
+                  contentPadding: EdgeInsets.fromLTRB(15, 5, 15, 5),
+                  title: Text(
+                      "Equipment used",
+                      style: TextStyle(
+                        fontFamily: "HelveticaNeueLight",
+                        fontSize: 17,
+                      )
+                  ),
+                  subtitle: Text(
+                      widget.bagUsed == "None" ? "None": widget.bagUsed + " bag\n" + widget.equipmentUsed,
+                      style: TextStyle(
+                        fontFamily: "HelveticaNeueLight",
+                        fontSize: 15,
+                      )
+                  ), 
+                  
+                ),
+                //!Back up MFRS
+                widget.additionalMfrs == "None" ? Container() : 
+                ListTile(
+                  contentPadding: EdgeInsets.fromLTRB(15, 5, 15, 5),
+                  title: Text(
+                      "Backup MFRs",
+                      style: TextStyle(
+                        fontFamily: "HelveticaNeueLight",
+                        fontSize: 17,
+                      )
+                  ),
+                  subtitle: Text(
+                      widget.additionalMfrs,
+                      style: TextStyle(
+                        fontFamily: "HelveticaNeueLight",
+                        fontSize: 15,
+                      )
+                  ), 
+                  
                 ),
 
-            ],),
+              ],
+            ),
           ),
+
         ],
 
       ),
