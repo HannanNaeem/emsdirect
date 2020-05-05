@@ -10,12 +10,11 @@ class EquipmentBags extends StatefulWidget {
 
 
 class EquipmentBagsState extends State<EquipmentBags> {
-  var _equipmentBagList;
-  bool done = true;
+
   @override
 
-  var _equipmentBagNames = ['B1 BAG', 'POOL BAG', 'PDC BAG', 'REDC BAG', 'LIBRARY BAG', 'CS DEPT. BAG', 'EMS ROOM BAG'];
-  var indexList = ['B1 Bag', 'Pool Bag', 'PDC Bag', 'REDC Bag', 'Library Bag', 'CS Dept Bag', 'EMS Room Bag'];
+  var _equipmentBagNames = ['B1 BAG', 'CS DEPT. BAG', 'EMS ROOM BAG', 'LIBRARY BAG', 'PDC BAG', 'POOL BAG', 'REDC BAG'];
+  var indexList = ['B1', 'CsDept', 'EmsRoom', 'Library', 'PDC', 'Pool', 'REDC'];
   @override
   Widget build(BuildContext context) {
     var screenSize = MediaQuery.of(context).size;

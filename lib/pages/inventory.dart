@@ -88,11 +88,6 @@ class _inventoryState extends State<Inventory> {
         }
       });
       updatedData = data;
-      print('Data received length:');
-      print(data.length);
-      print(list.length);
-      print(names.length);
-      print(names);
     });
   }
 
@@ -458,7 +453,7 @@ class _inventoryState extends State<Inventory> {
                                 });
                           },
                           textColor: Colors.cyan[500],
-                          color: const Color(0xff142850),
+                          color: const Color(0xFF73CDE8),
                           child: Text(
                             'Save',
                             style: TextStyle(
