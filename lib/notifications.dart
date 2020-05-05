@@ -154,10 +154,10 @@ class _NotificationsState extends State<Notifications> {
     {
       if(category == 'Ignored Emergency!')
       {
-        return "An emergency has been ignored! Please manually assign a MFR via Map\n\n Patient Details:\n  ${item.patientRollNo}\n  ${item.patientContactNo}";
+        return "An emergency has been ignored! Please manually assign a MFR via Map";
       }
       else if (category == 'Severe Emergency!'){
-        return "A severe emergency has been initiated! Please manually assign a MFR via Map\n Severity: ${item.severity}\n\n Patient Details:\n  ${item.patientRollNo}\n  ${item.patientContactNo}";
+        return "A severe emergency has been initiated! Please manually assign a MFR via Map";
       }
       else if (category == 'Restock Needed!'){
         return "${item.name} Bag needs restock! Please check bag contents from Records";
@@ -203,7 +203,10 @@ class _NotificationsState extends State<Notifications> {
                           : DateFormat.jm().format(_notificationList[index].item.reportingTime),
                           _notificationList[index].category != "Restock Needed!" ?  //for emergencies pass severity
                           _notificationList[index].item.severity
-                          : "None"
+                          : "None",
+                          _notificationList[index].category != "Restock Needed!" ?  //for emergencies pass severity
+                          "Patient Details:" + "\n" +_notificationList[index].item.patientRollNo + "\n" +_notificationList[index].item.patientContactNo
+                          : "None",
                       ),
 
                     ),

@@ -5,12 +5,14 @@ class NotificationCard extends StatefulWidget {
   String category;
   String time;
   String severity;
+  String patientDetails;
 
-  NotificationCard(String text, String category, String time, String severity) {
+  NotificationCard(String text, String category, String time, String severity, String patientDetails) {
     this.text = text;
     this.category = category;
     this.time = time;
     this.severity = severity;
+    this.patientDetails = patientDetails;
   }
 
   @override
@@ -28,9 +30,9 @@ class _NotificationCardState extends State<NotificationCard> {
 
   Color _severityToColor(String inSeverity){
     switch (inSeverity) {
-      case "Low" : {return Colors.yellow[700];}
-      case "Medium" : {return Colors.amber[800];}
-      case "High" : {return Colors.orange[900];}
+      case "low" : {return Colors.yellow[700];}
+      case "medium" : {return Colors.amber[800];}
+      case "high" : {return Colors.orange[900];}
       default: {return Colors.red[800];}
     }
   }
@@ -75,34 +77,71 @@ class _NotificationCardState extends State<NotificationCard> {
                               fontFamily: 'HelveticaNeueLight',
                             ),
                           ),
-                          //! text
-                          widget.category == "Severe Emergency!" ? 
-                          Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: <Widget>[
-                            Padding(
-                              padding: const EdgeInsets.fromLTRB(10, 15, 0, 10),
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(20),
-                                  color: _severityToColor(widget.severity)
-                                ),
-                                child: Padding(
-                                  padding: const EdgeInsets.fromLTRB(10,5,10,5),
-                                  child: Text(
-                                    widget.severity,
-                                    style: TextStyle(
-                                      fontFamily: "HelveticaNeueLight",
-                                      fontSize: 15,
-                                      color: Colors.white,
-                                    )
-                                  ),
+                          //! text           
+                          widget.category != "Restock Needed!" ? 
+                          Column(
+                            children: <Widget>[
+                              //! emergency text
+                              SizedBox(height: 5),
+                              Text(
+                                widget.text,
+                                style: TextStyle(
+                                  color: const Color(0xff142850),
+                                  fontSize: 14,
+                                  fontFamily: 'HelveticaNeueLight',
                                 ),
                               ),
-                            ),
-                          ],
+                              SizedBox(height: 10,),
+                              //! bubble for severity and patient details
+                              Row(
+                                children: <Widget>[
+                                  //! Patient Details
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: <Widget>[
+                                      Text(
+                                        widget.patientDetails,
+                                        style: TextStyle(
+                                          color: const Color(0xff142850),
+                                          fontSize: 14,
+                                          fontFamily: 'HelveticaNeueLight',
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  //! bubble
+                                  Expanded(
+                                    child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    children: <Widget>[
+                                      Padding(
+                                        padding: const EdgeInsets.fromLTRB(10, 15, 0, 10),
+                                        child: Container(
+                                          decoration: BoxDecoration(
+                                            borderRadius: BorderRadius.circular(20),
+                                            color: _severityToColor(widget.severity)
+                                          ),
+                                          child: Padding(
+                                            padding: const EdgeInsets.fromLTRB(10,5,10,5),
+                                            child: Text(
+                                              widget.severity[0].toUpperCase() + widget.severity.substring(1),
+                                              style: TextStyle(
+                                                fontFamily: "HelveticaNeueLight",
+                                                fontSize: 15,
+                                                color: Colors.white,
+                                              )
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
                           )
-                          :
+                          :                  
                           Text(
                             widget.text,
                             style: TextStyle(
