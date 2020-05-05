@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ems_direct/pages/EquipmentBags.dart';
-
+import 'package:ems_direct/pages/inventory.dart';
 class Records extends StatelessWidget {
   //This functions makes the cards on the screen since each card follows the same template
   Widget _GenerateCard(
@@ -16,6 +16,9 @@ class Records extends StatelessWidget {
           if (title == 'Equipment bags') {
             Navigator.push(context,
                 MaterialPageRoute(builder: (context) => EquipmentBags()));
+          }else if(title == 'Inventory'){
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => Inventory()));
           }
         },
         child: Column(
