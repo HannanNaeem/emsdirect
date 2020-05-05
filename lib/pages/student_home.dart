@@ -263,10 +263,7 @@ class _StudentHomeState extends State<StudentHome> with WidgetsBindingObserver {
                     ),
                   ),
                   onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => EmergencyNumbers()),
-                    );
+                    Navigator.of(context).pushNamed('/emergencyNumbers');
                   },
                 ),
                 Expanded(

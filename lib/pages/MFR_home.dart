@@ -332,10 +332,7 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
                   ),
                 ),
                 onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => EmergencyNumbers()),
-                  );
+                  Navigator.of(context).pushNamed('/emergencyNumbers');
                 },
               ),
               ListTile(
