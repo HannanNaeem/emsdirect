@@ -1,12 +1,17 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:ems_direct/shared/loading.dart';
+
+// Displays the screen which shows the equipment in the inventory against the quantity
+// of each equipment which can be edited by the OPS user.
 
 class Inventory extends StatefulWidget {
   @override
-  _inventoryState createState() => _inventoryState();
+  InventoryState createState() => InventoryState();
 }
 
-class _inventoryState extends State<Inventory> {
+class InventoryState extends State<Inventory> {
+  //This list contains the name of the equipments which will be displayed on the screen.
   var names = [
     'Alcohol pad',
     'Arm sling',
@@ -37,6 +42,7 @@ class _inventoryState extends State<Inventory> {
     'Wintogeno',
   ];
 
+  //This list contains the name of the equipments in the database which will be used to retrieve data from the document.
   var dbName = [
     'alcoholPad',
     'armSling',
@@ -67,17 +73,23 @@ class _inventoryState extends State<Inventory> {
     'wintogeno'
   ];
 
+  // This list will include the quantities of the equipments which will correspond to the equipment name in the above lists.
   var data = [];
-  var list = new List<int>.generate(27, (i) => i + 1);
-  var updatedOrNot = new List<int>.generate(27, (i) => 0);
 
-  var Controller = new List<TextEditingController>.generate(
+  // This is used to determine if the page has loaded or not - to display Circular Progress Indicator while the map is being loaded
+  bool loading = true;
+
+  // This list will be used to iterate through the above lists when creating widgets.
+  var list = new List<int>.generate(27, (i) => i + 1);
+
+  // Each controller in this list corresponds to each quantity textformfield on the screen.
+  // This is used to retrieve data entered by the user in those text fields.
+  var controller = new List<TextEditingController>.generate(
       27, (i) => new TextEditingController());
 
-  var updatedData = [];
-  _inventoryState() {
-    print(list);
-    var _Data = Firestore.instance
+  // Getting data from the database and storing it in 'data'
+  void getQuantities() async {
+    var databaseData = await Firestore.instance
         .collection('Inventory')
         .document('Inventory')
         .get()
@@ -87,11 +99,25 @@ class _inventoryState extends State<Inventory> {
           data.add(doc[i]);
         }
       });
-      updatedData = data;
     });
+
+    // updating loading status
+    if(data.length == 27){
+      setState(() {
+        loading = false;
+      });
+    }
+  }
+  // Constructor
+  InventoryState() {
+    // calling getQuantities
+    getQuantities();
   }
 
-  _updateData(index, value) async {
+  // This function is used to update data in the database.
+  // index -> the index number at which the equipment name is present in 'dbName'
+  // value -> new value which is to be set for the equipment.
+  updateData(index, value) async {
     try {
       await Firestore.instance
           .collection("Inventory")
@@ -102,21 +128,29 @@ class _inventoryState extends State<Inventory> {
     }
   }
 
+  // This function is used to figure out if the string s is numeric or not.
+  // This is used for input checking of text fields.
+  // This was taken from the internet.
   bool isNumeric(String s) {
+
     if (s == null) {
       return false;
     }
-    return double.parse(s, ((e) => null)) != null;
+
+    return double.parse(s) != null;
   }
 
   @override
   Widget build(BuildContext context) {
+    // Used to make screen responsive.
     var screenSize = MediaQuery.of(context).size;
     var width = screenSize.width;
     var height = screenSize.height;
 
     return MaterialApp(
-        home: Scaffold(
+        home: loading
+            ? Loading()
+            :Scaffold(
             appBar: AppBar(
               backgroundColor: const Color(0xff142850),
               title: Text(
@@ -185,7 +219,7 @@ class _inventoryState extends State<Inventory> {
                               width: 100.0,
                               height: 45.0,
                               child: TextFormField(
-                                controller: Controller[value - 1],
+                                controller: controller[value - 1],
                                 decoration: InputDecoration(
                                   contentPadding: EdgeInsets.all(5.0),
                                   border: new OutlineInputBorder(
@@ -249,11 +283,13 @@ class _inventoryState extends State<Inventory> {
                                         ),
                                         onPressed: () async {
                                           for (var i in list) {
-                                            var data = Controller[i - 1].text;
+                                            var data = controller[i - 1].text;
 
+                                            // Checking if the user entered anything
                                             if (data != '') {
+                                              // Checking if the user input is a number or not
                                               if (!isNumeric(data)) {
-                                                print('NOT A NUMBER');
+                                                // if the user input isn't a number then a dialog box with an error message is displayed.
                                                 return showDialog(
                                                     context: context,
                                                     builder:
@@ -296,8 +332,10 @@ class _inventoryState extends State<Inventory> {
                                                         ],
                                                       );
                                                     });
-                                              } else if (double.parse(data) <
-                                                  0) {
+                                              }
+                                              // Checking if the user input is a negative number
+                                              else if (double.parse(data) < 0) {
+                                                // if the user input is a negative then a dialog box with an error message is displayed.
                                                 return showDialog(
                                                     context: context,
                                                     builder:
@@ -340,8 +378,11 @@ class _inventoryState extends State<Inventory> {
                                                         ],
                                                       );
                                                     });
-                                              } else if (RegExp(r"^(\d*\.)\d+$")
+                                              }
+                                              // Checking if the user input is a decimal number
+                                              else if (RegExp(r"^(\d*\.)\d+$")
                                                   .hasMatch(data)) {
+                                                // if the user input is a decimal number then a dialog box with an error message is displayed.
                                                 return showDialog(
                                                     context: context,
                                                     builder:
@@ -387,12 +428,16 @@ class _inventoryState extends State<Inventory> {
                                               }
                                             }
                                           }
+
+                                          // If the input is validate, iterating through the text entered and updating the database by calling _updateData
                                           for (var i in list) {
-                                            var data = Controller[i - 1].text;
+                                            var data = controller[i - 1].text;
                                             if (data != '') {
-                                              _updateData(i - 1, data);
+                                              updateData(i - 1, data);
                                             }
                                           }
+
+                                          // Displaying dialog box to show that inventory has been updated
                                           return showDialog(
                                               context: context,
                                               builder: (BuildContext context) {

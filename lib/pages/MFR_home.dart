@@ -175,7 +175,7 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
 
   void updateDeclineCount(docId) async {
     try {
-      DocumentReference docRef = await databaseReference
+      DocumentReference docRef = await Firestore.instance
           .collection("PendingEmergencies")
           .document(docId);
       DocumentSnapshot doc = await docRef.get();
