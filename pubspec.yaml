@@ -79,6 +79,9 @@ flutter:
   # example:
 
   fonts:
+    - family: MyFlutterApp
+      fonts:
+        - asset: fonts/MyFlutterApp.ttf
 
     - family: HelveticaNeue
       fonts:
