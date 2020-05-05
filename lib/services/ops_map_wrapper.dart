@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:ems_direct/pages/MapOPS.dart';
 
+
 class OpsMapWrapper extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -12,6 +13,5 @@ class OpsMapWrapper extends StatelessWidget {
       value: OpsDatabaseService().pendingStream,
       child: MapOPS()
       );
-      
   }
 }
