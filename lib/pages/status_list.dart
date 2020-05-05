@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
@@ -40,23 +41,23 @@ class _DisplayListState extends State<DisplayList> {
     var width = screenSize.width;
     var height = screenSize.height;
 
-      String _status = 'Loading';
+      String _status = 'pending';
       String mfrName = '';
       String mfrContact = '';
 
       var pendingEmergency = Provider.of<List<PendingEmergencyModel>>(context);
       var onGoingEmergency = Provider.of<List<OngoingEmergencyModel>>(context);
       try{
-        if(onGoingEmergency.length == 1 && onGoingEmergency != null){
+        if(onGoingEmergency != null &&  onGoingEmergency.length == 1 ){
             _status = "onGoing";
             mfrName = (onGoingEmergency[0].mfrDetails['name']).toString();
             mfrContact = (onGoingEmergency[0].mfrDetails['contact']).toString();
           }
-        else if(pendingEmergency.length == 1 && pendingEmergency != null){
+        else if(pendingEmergency != null && pendingEmergency.length == 1 ){
           _status = "pending";
         }
-        else{
-          _status = "ended";
+        else if(onGoingEmergency != null && pendingEmergency != null && pendingEmergency.length == 0 && onGoingEmergency.length == 0){
+            _status = "ended";
 
           //at the end of emergency, go back to home screen
           Timer(
@@ -186,9 +187,6 @@ Widget getWidget(String status, String mfrName, String mfrContact, var height, v
   }
   else if(status == 'pending'){
     answer = 'Your Emergency request is pending';
-  }
-  else if(status == 'loading'){
-    answer = 'Loading...';
   }
   else{
     answer = 'Your Emergency has ended';
