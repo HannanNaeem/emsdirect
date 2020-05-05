@@ -148,3 +148,38 @@ class EquipmentBagModel {
       this.triangularBandage,
       this.wintogeno});
 }
+
+class ReportedEmergencyModel {
+  String patientRollNo; 
+  String patientGender; 
+  String emergencyDate; 
+  String primaryMfrRollNo; 
+  String primaryMfrName; 
+  String additionalMfrs; 
+  String severity; 
+  String patientIsHostelite;
+  String emergencyType; 
+  String emergencyLocation;
+  String transportUsed;
+  String emergencyDetails; 
+  String bagUsed;
+  Map equipmentUsed;
+
+  ReportedEmergencyModel({
+    this.patientRollNo, 
+    this.patientGender, 
+    this.emergencyDate, 
+    this.primaryMfrRollNo, 
+    this.primaryMfrName, 
+    this.additionalMfrs, 
+    this.severity, 
+    this.patientIsHostelite,
+    this.emergencyType, 
+    this.emergencyLocation,
+    this.transportUsed,
+    this.emergencyDetails, 
+    this.bagUsed,
+    this.equipmentUsed,
+  });
+
+}
