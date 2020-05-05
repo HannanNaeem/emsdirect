@@ -35,6 +35,7 @@ class Records extends StatelessWidget {
               onPressed: null,
               iconSize: height / 9,
             ),
+
             Text(
               title,
               style: TextStyle(
@@ -44,6 +45,7 @@ class Records extends StatelessWidget {
                 fontFamily: 'HelveticaNeueLight',
                 fontWeight: FontWeight.bold,
               ),
+
             ),
           ],
         ),
@@ -118,6 +120,7 @@ class Records extends StatelessWidget {
                           child: Container(
                               child: _GenerateCard('Profiles',
                                   'assets/profile.png', height, context)),
+
                         ),
                       ),
                     ),

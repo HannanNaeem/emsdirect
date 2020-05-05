@@ -117,8 +117,7 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
     _notificationService.getToken();
     _notificationService.configureFirebaseListeners();
     mfrRef = databaseReference.collection("Mfr").document(_userData['rollNo']);
-    //todo: comment out
-    //getCurrentLocaion();
+
     getInitialData(_userData['rollNo']);
   }
 
@@ -134,6 +133,7 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
       print(e);
     }
   }
+
 
   void getCurrentLocaion() async {
     try {
@@ -177,6 +177,7 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
       }
     }
   }
+
 
   void updateDeclineCount(docId) async {
     try {
