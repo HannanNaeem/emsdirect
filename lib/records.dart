@@ -1,56 +1,56 @@
 import 'package:ems_direct/pages/ops_reported_emergencies.dart';
 import 'package:flutter/material.dart';
+import 'package:ems_direct/mfr_list.dart';
 import 'package:ems_direct/pages/EquipmentBags.dart';
 import 'package:ems_direct/pages/inventory.dart';
+
 class Records extends StatelessWidget {
   //This functions makes the cards on the screen since each card follows the same template
-  Widget _GenerateCard(String title, String imageFileName, var height, BuildContext context) {
+  Widget _GenerateCard(
+      String title, String imageFileName, var height, BuildContext context) {
     return Card(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(15),
-      ),
-      elevation: 10,
-      child: InkWell(
-        onTap: () {
-          print(title);
-          if (title == 'Equipment bags') {
-            Navigator.push(context,
-                MaterialPageRoute(builder: (context) => EquipmentBags()));
-          }else if(title == 'Inventory'){
-            Navigator.push(context,
-                MaterialPageRoute(builder: (context) => Inventory()));
-          }
-          if(title == "Emergencies")
-            Navigator.push(context ,MaterialPageRoute(builder: (context) => ReportedEmergenciesOps() ));
 
-        },
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            IconButton(
-              icon: Image(
-                image: AssetImage(imageFileName),
-              ),
-              onPressed: null,
-              iconSize: height / 9,
-            ),
-
-            Text(
-              title,
-              style: TextStyle(
-                color: const Color(0xff142850),
-                fontSize: 16,
-                letterSpacing: 1,
-                fontFamily: 'HelveticaNeueLight',
-                fontWeight: FontWeight.bold,
-              ),
-
-            ),
-          ],
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(15),
         ),
-      ),
-    );
+        elevation: 10,
+        child: InkWell(
+          onTap: () {
+            print(title);
+            if (title == 'MFR Profiles')
+              Navigator.push(
+                  context, MaterialPageRoute(builder: (context) => MfrList()));
+            if (title == "Emergencies")
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => ReportedEmergenciesOps()));
+          },
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              IconButton(
+                icon: Image(
+                  image: AssetImage(imageFileName),
+                ),
+                onPressed: null,
+                iconSize: height / 9,
+              ),
+              Text(
+                title,
+                style: TextStyle(
+                  color: const Color(0xff142850),
+                  fontSize: 16,
+                  letterSpacing: 1,
+                  fontFamily: 'HelveticaNeueLight',
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+        ));
+
   }
 
   @override
@@ -81,7 +81,7 @@ class Records extends StatelessWidget {
                           aspectRatio: 2 / 2.25,
                           child: Container(
                               child: _GenerateCard('Emergencies',
-                                  'assets/emergencies.png', height,context)),
+                                  'assets/emergencies.png', height, context)),
                         ),
                       ),
                     ),
@@ -120,7 +120,6 @@ class Records extends StatelessWidget {
                           child: Container(
                               child: _GenerateCard('Profiles',
                                   'assets/profile.png', height, context)),
-
                         ),
                       ),
                     ),

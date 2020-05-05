@@ -32,6 +32,9 @@ dependencies:
   cloud_firestore: ^0.13.5
   provider: ^4.0.5
   flutter_spinkit: ^4.1.2+1
+  #To add a dialog with a title and a subtitle
+  material_dialog: ^0.0.9
+  progress_dialog: ^1.2.0
   #To add a customizable expansion tile
   configurable_expansion_tile: ^1.0.0
   get: ^1.17.3
@@ -79,6 +82,9 @@ flutter:
   # example:
 
   fonts:
+    - family: MyFlutterApp
+      fonts:
+        - asset: fonts/MyFlutterApp.ttf
 
     - family: HelveticaNeue
       fonts:
