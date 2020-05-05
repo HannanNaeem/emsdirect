@@ -538,6 +538,41 @@ class _EmergencyReportMfrState extends State<EmergencyReportMfr> {
       )
       );
   }
+
+  //! build text field for Location
+  Widget _buildLocationBox() {
+    return Padding(
+      padding: EdgeInsets.all(10),
+      child: TextField(
+        maxLines: null,
+        maxLength: 20,
+        decoration: InputDecoration(
+          hintText: "Location",
+          hintStyle: TextStyle(
+            color: Colors.grey[700],
+            fontFamily: 'HelveticaNeueLight',
+            letterSpacing: 2.0,
+          ),
+          errorStyle: TextStyle(
+            color: Colors.redAccent,
+            letterSpacing: 1.0,
+          ),
+          fillColor: Colors.grey[1],
+          filled: false,
+          focusedErrorBorder: OutlineInputBorder(),
+          border: OutlineInputBorder(),
+          focusedBorder: OutlineInputBorder(),
+          ),
+        onChanged: (value){
+          setState(() {
+            _emergencyLocation = value;
+          });
+        },
+
+      ),
+    );
+  }
+
     //! Name field widget
     Widget _buildName() {
     return Padding(
@@ -1238,6 +1273,8 @@ class _EmergencyReportMfrState extends State<EmergencyReportMfr> {
                           _buildSeveritySelector(),
                           _buildEmergencyTypeSelector(),
                           _buildTransportUsedSelector(),
+                          SizedBox(height: 15,),
+                          _buildLocationBox(),
                           _buildDetailsBox(),
                           SizedBox(height: 40,),
                           Divider(height: 10),
@@ -1469,6 +1506,7 @@ class _EmergencyReportMfrState extends State<EmergencyReportMfr> {
                 'primaryMfrRollNo' : _primaryMfrRollNo,
                 'primaryMfrName' :  _primaryMfrName,
                 'additionalMfrs' : _additionalMfrs,
+                'location' : _emergencyLocation,
                 'bagUsed' : _bagUsed,
                 'equipmentUsed' : _bagUsed == "None" ? null : _getBagMap(),
               });
