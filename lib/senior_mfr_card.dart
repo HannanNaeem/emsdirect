@@ -32,7 +32,9 @@ class _SeniorMfrCardState extends State<SeniorMfrCard> {
         return Colors.blue[800];
       }
     }
+
     return Card(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
       elevation: 6,
       child: ListTile(
         isThreeLine: true,
@@ -59,34 +61,5 @@ class _SeniorMfrCardState extends State<SeniorMfrCard> {
       ),
     );
   }
-}
-
-
-
-class SeniorMfrsData {
-
-  static final data = [
-    {
-      'name': 'Hira Jamshed',
-      'contact': '03000000000',
-      'gender': 'F',
-      'rollNo': '21100141',
-      'isOccupied': true,
-    },
-    {
-      'name': 'Mahnoor Jameel',
-      'contact': '03000000000',
-      'gender': 'F',
-      'rollNo': '21100069',
-      'isOccupied': true,
-    },
-    {
-      'name': 'Saba Rehman',
-      'contact': '03000000000',
-      'gender': 'F',
-      'rollNo': '21100129',
-      'isOccupied': false,
-    },
-  ];
 }
 

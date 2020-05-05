@@ -19,6 +19,7 @@ class _EmergencyNumberCardState extends State<EmergencyNumberCard> {
   @override
   Widget build(BuildContext context) {
     return Card(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
       elevation: 6,
       child: ListTile(
         title: Text(
@@ -39,41 +40,5 @@ class _EmergencyNumberCardState extends State<EmergencyNumberCard> {
       ),
     );
   }
-}
-
-
-
-class EmergencyNumbersData {
-
-  static final data = [
-    {
-      'name': 'EMS-1',
-      'contact': '03000000000',
-    },
-    {
-      'name': 'EMS-2',
-      'contact': '03000000000',
-    },
-    {
-      'name': 'EMS-3',
-      'contact': '03000000000',
-    },
-    {
-      'name': 'EMS-4',
-      'contact': '03000000000',
-    },
-    {
-      'name': 'LUMS',
-      'contact': '03000000000',
-    },
-    {
-      'name': 'HAWC',
-      'contact': '03000000000',
-    },
-       {
-      'name': 'LUMS Security Desk',
-      'contact': '03000000000',
-    },
-  ];
 }
 

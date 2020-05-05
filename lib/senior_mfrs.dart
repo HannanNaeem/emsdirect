@@ -1,7 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:ems_direct/senior_mfr_card.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+
+class SeniorMfrData{
+  String name;
+  String contact;
+  String rollNo;
+  String gender;
+  bool isOccupied;
 
 
+  SeniorMfrData(this.name, this.contact, this.rollNo, this.gender, this.isOccupied);
+}
 
 class SeniorMfrs extends StatefulWidget {
   @override
@@ -9,7 +19,33 @@ class SeniorMfrs extends StatefulWidget {
 }
 
 class _SeniorMfrsState extends State<SeniorMfrs> {
-  var numberData = SeniorMfrsData.data;
+
+  var seniorMfrList = List<SeniorMfrData>();
+  final databaseReference = Firestore.instance;
+
+  @override
+  void initState() {
+    super.initState();
+    _getSeniorMfr();
+  }
+
+  //get documents of senior MFRs
+  _getSeniorMfr(){
+    databaseReference.collection('Mfr')
+        .where('isSenior', isEqualTo: true)
+        .getDocuments().then((QuerySnapshot snapshot) =>
+        _makeList(snapshot)
+    );
+  }
+
+  //make list of the seniorMfrs from snapshot
+  _makeList(QuerySnapshot snapshot){
+    setState(() {
+      snapshot.documents.forEach((document) =>
+          seniorMfrList.add(SeniorMfrData(document.data['name'], document.data['contact'], document.documentID, document.data['gender'], document.data['isOccupied'])));
+    });
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +75,7 @@ class _SeniorMfrsState extends State<SeniorMfrs> {
           children: <Widget>[
             Expanded(
               child: ListView.builder(
-                itemCount: numberData.length,
+                itemCount: seniorMfrList == null ? 0: seniorMfrList.length,
                 itemBuilder: (context, index) {
                   return Padding(
                     padding: EdgeInsets.fromLTRB(20, 5, 20, 5),
@@ -48,11 +84,11 @@ class _SeniorMfrsState extends State<SeniorMfrs> {
                         minHeight: 105,
                       ),
                       child: SeniorMfrCard(
-                        numberData[index]['name'],
-                        numberData[index]['contact'],
-                        numberData[index]['rollNo'],
-                        numberData[index]['gender'],
-                        numberData[index]['isOccupied'],
+                        seniorMfrList[index].name,
+                        seniorMfrList[index].contact,
+                        seniorMfrList[index].rollNo,
+                        seniorMfrList[index].gender,
+                        seniorMfrList[index].isOccupied,
                           ),
                     ),
                   );
