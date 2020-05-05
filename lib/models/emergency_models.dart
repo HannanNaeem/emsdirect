@@ -152,7 +152,7 @@ class EquipmentBagModel {
 class ReportedEmergencyModel {
   String patientRollNo; 
   String patientGender; 
-  String emergencyDate; 
+  DateTime emergencyDate; 
   String primaryMfrRollNo; 
   String primaryMfrName; 
   String additionalMfrs; 

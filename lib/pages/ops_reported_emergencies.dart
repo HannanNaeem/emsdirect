@@ -3,6 +3,7 @@ import 'package:ems_direct/models/emergency_models.dart';
 import 'package:ems_direct/shared/loading.dart';
 import 'package:ems_direct/shared/reported_emergency_tile.dart';
 import "package:flutter/material.dart";
+import 'package:intl/intl.dart';
 
 
 class ReportedEmergenciesOps extends StatefulWidget {
@@ -16,7 +17,7 @@ class _ReportedEmergenciesOpsState extends State<ReportedEmergenciesOps> {
   var collectionRef = Firestore.instance.collection('ReportedEmergencies');
   var docs;
 
-  List<ReportedEmergencyModel> _getEmergencyList(snapshot){
+  List<ReportedEmergencyModel> _getEmergencyList(QuerySnapshot snapshot){
     return snapshot.documents.map((doc){
       return ReportedEmergencyModel(
         patientRollNo: doc.data['patientRollNo'],
@@ -36,19 +37,27 @@ class _ReportedEmergenciesOpsState extends State<ReportedEmergenciesOps> {
       );
     }).toList();
 }
-  List<ReportedEmergencyModel> _reportedEmergencies = [];
+  List<ReportedEmergencyModel> _reportedEmergencies;
 
   Future _getInitialDocs() async { //used to perform the initial fetch
     try{
-      var snapshot = await collectionRef.orderBy('date').limit(20).getDocuments();
+      QuerySnapshot snapshot = await collectionRef.orderBy('date', descending: true).limit(20).getDocuments();
       if(snapshot!= null)
-        this._reportedEmergencies = _getEmergencyList(snapshot);
+        _reportedEmergencies = _getEmergencyList(snapshot);
       return snapshot;
     }
     catch(e) {
       print(e);
       return null;
     }
+  }
+
+  String _translateMap(Map map){
+    String output = "";
+    map.keys.forEach((key){
+      output = output + key.toString() + ": " + map[key].toString() +" ";
+    });
+    return output;
   }
 
 
@@ -62,7 +71,7 @@ class _ReportedEmergenciesOpsState extends State<ReportedEmergenciesOps> {
       appBar: AppBar(
         backgroundColor: const Color(0xff142850),
         title: Text(
-          "Reported Emergencies",
+          "Emergencies",
           style: TextStyle(
             fontSize: 24,
             fontFamily: 'HelveticaNeueLight',
@@ -94,11 +103,11 @@ class _ReportedEmergenciesOpsState extends State<ReportedEmergenciesOps> {
                         itemCount: _reportedEmergencies.length,
                         itemBuilder: (context, index){
                           return Padding(
-                            padding: EdgeInsets.fromLTRB(20, 5, 20, 5),
+                            padding: EdgeInsets.fromLTRB(20, 10, 20, 0),
                             child: ReportedEmergencyTile(
                               patientRollNo: _reportedEmergencies[index].patientRollNo,
                               patientGender: _reportedEmergencies[index].patientGender,
-                              emergencyDate: _reportedEmergencies[index].emergencyDate,
+                              emergencyDate: DateFormat.MMMd().format(_reportedEmergencies[index].emergencyDate) + ", " + DateFormat.E().format(_reportedEmergencies[index].emergencyDate) + "\n"+ DateFormat.Hm().format(_reportedEmergencies[index].emergencyDate),
                               primaryMfrRollNo: _reportedEmergencies[index].primaryMfrRollNo,
                               primaryMfrName: _reportedEmergencies[index].primaryMfrName,
                               additionalMfrs: _reportedEmergencies[index].additionalMfrs,
@@ -109,7 +118,7 @@ class _ReportedEmergenciesOpsState extends State<ReportedEmergenciesOps> {
                               transportUsed: _reportedEmergencies[index].transportUsed,
                               emergencyDetails: _reportedEmergencies[index].emergencyDetails,
                               bagUsed: _reportedEmergencies[index].bagUsed,
-                              equipmentUsed: "",
+                              equipmentUsed: _reportedEmergencies[index].equipmentUsed == null ? "None" : _translateMap(_reportedEmergencies[index].equipmentUsed),
                             ),
                           );
                         }
