@@ -77,16 +77,19 @@ class _DisplayListState extends State<DisplayList> {
       }
 
       return Container(
-        color:const Color(0xff840123),
+        color: const Color(0xffa2150c),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          // mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
-            SpinKitRipple(
-              color: Colors.red[200],
-              size: 120.0,
+            Padding(
+              padding: EdgeInsets.only(top: height/3.8),
+              child: SpinKitRipple(
+                color: Colors.red[100],
+                size: 100.0,
+              ),
             ),
-            SizedBox(height: height*0.03),
+            SizedBox(height: height/20),
             getWidget(_status, mfrName, mfrContact,height,width),
           ],
         )
@@ -98,7 +101,7 @@ class _DisplayListState extends State<DisplayList> {
 Widget getWidget(String status, String mfrName, String mfrContact, var height, var width){
   String answer;
   if(status == 'onGoing'){
-    answer = 'MFR has been assigned to your emergency';
+    answer = 'MFR Assigned';
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -116,67 +119,68 @@ Widget getWidget(String status, String mfrName, String mfrContact, var height, v
             ),
           ),
         ),
+        SizedBox(height: 10),
         Container(
-          constraints: BoxConstraints(maxWidth: width*0.80, maxHeight: height*0.15),
+          constraints: BoxConstraints(minWidth: 300, minHeight: 100),
           child: Card(
-            elevation: 8,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            elevation: 6,
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
-                Row(
-                  children: <Widget>[
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text(
-                        'Name:',
-                        textAlign: TextAlign.left,
-                        style: TextStyle(
-                          fontSize: 20.0,
-                          fontFamily: 'HelveticaNeue',
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black,
-                          letterSpacing: 2.0,
-                        ),
-                      ),
+                Padding(
+                  padding: EdgeInsets.fromLTRB(width/4, 10, width/4, 10),
+                  child: CircleAvatar(
+                    backgroundColor: Color(0xff142850),
+                    foregroundColor: Colors.white,
+                    child: Icon(
+                      Icons.person,
                     ),
-                    Text(
-                      '$mfrName',
-                      textAlign: TextAlign.left,
-                      style: TextStyle(
-                        fontSize: 20.0,
-                        fontFamily: 'HelveticaNeueLight',
-                        color: Colors.black,
-                        letterSpacing: 2.0,
-                      ),
-                    ),
-                  ],
+                  ),
                 ),
-                Row(
-                  children: <Widget>[
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text(
-                        'Contact:',
-                        textAlign: TextAlign.left,
-                        style: TextStyle(
-                          fontSize: 20.0,
-                          fontFamily: 'HelveticaNeue',
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black,
-                          letterSpacing: 2.0,
-                        ),
-                      ),
+                Padding(
+                  padding: EdgeInsets.fromLTRB(width/4, 5, width/4, 0),
+                  child: Text(
+                    'Name',
+                    style: TextStyle(
+                      fontFamily: 'HelveticaNeueMedium',
+                      fontSize: 16.0,
+                      letterSpacing: 1.0,
                     ),
-                    Text(
-                      '$mfrContact',
-                      textAlign: TextAlign.left,
-                      style: TextStyle(
-                        fontSize: 20.0,
-                        fontFamily: 'HelveticaNeueLight',
-                        color: Colors.black,
-                        letterSpacing: 2.0,
-                      ),
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.fromLTRB(width/4, 0, width/4, 0),
+                  child: Text(
+                    mfrName,
+                    style: TextStyle(
+                      fontFamily: 'HelveticaNeueLight',
+                      fontSize: 16.0,
+                      letterSpacing: 1.0,
                     ),
-                  ],
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.fromLTRB(width/4, 10, width/4, 0),
+                  child: Text(
+                    'Contact',
+                    style: TextStyle(
+                      fontFamily: 'HelveticaNeueMedium',
+                      fontSize: 16.0,
+                      letterSpacing: 1.0,
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.fromLTRB(width/4, 0, width/4, 10),
+                  child: Text(
+                    mfrContact,
+                    style: TextStyle(
+                      fontFamily: 'HelveticaNeueLight',
+                      fontSize: 16.0,
+                      letterSpacing: 1.0,
+                    ),
+                  ),
                 ),
               ],
             ),
@@ -186,10 +190,10 @@ Widget getWidget(String status, String mfrName, String mfrContact, var height, v
     );
   }
   else if(status == 'pending'){
-    answer = 'Your Emergency request is pending';
+    answer = 'Request Pending...';
   }
   else{
-    answer = 'Your Emergency has ended';
+    answer = 'Emergency Ended';
   }
   return Text(
     answer,
