@@ -4,43 +4,57 @@ import 'package:flutter/services.dart';
 import 'dart:async';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
+import 'package:ems_direct/pages/MFR_home.dart';
+import 'package:ems_direct/services/pending_emergency_alert_MFR.dart';
 
 class MapMFR extends StatefulWidget {
   String _StudentContact = '';
   GeoPoint _locationOfEmergency;
-  MapMFR(GeoPoint locationOfEmergency, String patientContactNo) : super() {
+  String _rollNo;
+  String _patientRollNumber;
+  MapMFR(GeoPoint locationOfEmergency, String patientContactNo, String rollNo,
+      String patientRollNo)
+      : super() {
     _StudentContact = patientContactNo;
     _locationOfEmergency = locationOfEmergency;
+    _rollNo = rollNo;
+    _patientRollNumber = patientRollNo;
   }
 
   @override
-  MapState createState() => new MapState(_locationOfEmergency, _StudentContact);
+  MapState createState() => new MapState(
+      _locationOfEmergency, _StudentContact, _rollNo, _patientRollNumber);
 }
 
 class MapState extends State<MapMFR> {
   GeoPoint _locationOfEmergency;
   String contactNumber = '';
+  String _rollNo;
+  String _patientRollNumber;
+  bool _mapLoading = true;
   Map<MarkerId, Marker> emergencyMarker = <MarkerId, Marker>{};
+  final databaseReference = Firestore.instance;
 
-  MapState(GeoPoint location, String number) {
+  MapState(
+      GeoPoint location, String number, String rollNo, String patientRollNo) {
     _locationOfEmergency = location;
     contactNumber = number;
-    var markerIdVal = emergencyMarker.length + 1;
-    String mar = markerIdVal.toString();
-    final MarkerId markerId = MarkerId(mar);
-    final Marker marker = Marker(
-        markerId: markerId,
-        position: LatLng(location.latitude, location.longitude),
-        infoWindow: InfoWindow(title: contactNumber));
-    setState(() {
-      emergencyMarker[markerId] = marker;
-    });
+    _rollNo = rollNo;
+    _patientRollNumber = patientRollNo;
+  }
+
+  void _updateUserData(GeoPoint Newlocation) async {
+    await databaseReference
+        .collection("Mfr")
+        .document((await _rollNo).toString())
+        .updateData({'location': Newlocation});
   }
 
   GoogleMapController _controller;
   static var Zoom = 11.0;
   static const LatLng _loc = const LatLng(45.531563, -122.677433);
   LatLng currLoc = _loc;
+  var EmergencyLocationIcon;
   LatLng _lastMapPosition = _loc;
   MapType _currentMapType = MapType.normal;
   static Location _locationTracker = Location();
@@ -49,6 +63,22 @@ class MapState extends State<MapMFR> {
 
   _onMapCreated(GoogleMapController controller) {
     _controller = controller;
+    var markerIdVal = emergencyMarker.length + 1;
+    String mar = markerIdVal.toString();
+    final MarkerId markerId = MarkerId(mar);
+    EmergencyLocationIcon = BitmapDescriptor.fromAsset('assets/redcross.png');
+    final Marker marker = Marker(
+        markerId: markerId,
+        position: LatLng(
+            _locationOfEmergency.latitude, _locationOfEmergency.longitude),
+        infoWindow:
+            InfoWindow(title: 'Emergency Location', snippet: contactNumber),
+        icon: EmergencyLocationIcon);
+    setState(() {
+      emergencyMarker[markerId] = marker;
+    });
+//    getCurrentLocaion();
+    this.setState(() => _mapLoading = false);
   }
 
   _onCameraMove(CameraPosition position) {
@@ -70,19 +100,23 @@ class MapState extends State<MapMFR> {
 
   void updateMarker(LocationData newLocation) {
     LatLng values = LatLng(newLocation.latitude, newLocation.longitude);
-    this.setState(() {
-      marker = Marker(
-        markerId: MarkerId("Your location"),
-        infoWindow: InfoWindow(
-          title: 'Your location',
-        ),
-        position: values,
-        rotation: newLocation.heading,
-        draggable: false,
-        zIndex: 2,
-        flat: false,
-        anchor: Offset(0, 0),
-      );
+    var markerIdVal = emergencyMarker.length + 1;
+    String mar = markerIdVal.toString();
+    final MarkerId markerId = MarkerId(mar);
+    final Marker marker = Marker(
+      markerId: MarkerId("Your location"),
+      infoWindow: InfoWindow(
+        title: 'Your location',
+      ),
+      position: values,
+      rotation: newLocation.heading,
+      draggable: false,
+      zIndex: 2,
+      flat: false,
+      anchor: Offset(0, 0),
+    );
+    setState(() {
+      emergencyMarker[markerId] = marker;
     });
   }
 
@@ -112,14 +146,17 @@ class MapState extends State<MapMFR> {
 //      _locationSubscription =
 //          _locationTracker.onLocationChanged().listen((newLocation) {
 //        if (_controller != null) {
-//          currLoc = LatLng(newLocation.latitude, newLocation.longitude);
-//
-//          _controller.animateCamera(CameraUpdate.newCameraPosition(
-//              new CameraPosition(
-//                  bearing: 192,
-//                  target: LatLng(newLocation.latitude, newLocation.longitude),
-//                  tilt: 0,
-//                  zoom: Zoom)));
+////          currLoc = LatLng(newLocation.latitude, newLocation.longitude);
+////
+////          _controller.animateCamera(CameraUpdate.newCameraPosition(
+////              new CameraPosition(
+////                  bearing: 192,
+////                  target: LatLng(newLocation.latitude, newLocation.longitude),
+////                  tilt: 0,
+////                  zoom: Zoom)));
+//          GeoPoint NewGeoPoint =
+//              GeoPoint(newLocation.latitude, newLocation.longitude);
+//          _updateUserData(NewGeoPoint);
 //          updateMarker(newLocation);
 //        }
 //      });
@@ -174,17 +211,28 @@ class MapState extends State<MapMFR> {
               markers: Set<Marker>.of(emergencyMarker.values),
               onCameraMove: _onCameraMove,
             ),
-//              Padding(
-//                  padding: EdgeInsets.fromLTRB(width*0.1, height*0.1, width*0.1, 10.0),
-//                  child: Text(
-//                    'Student Number: ',
-//                    style: TextStyle(
-//                      fontFamily: 'HelveticaNeueLight',
-//                      letterSpacing: 2.0,
-//                      fontSize: 0.014*(height+width),
-//                    ),
-//                  )
-//              ),
+            (_mapLoading)
+                ? Container(
+                    height: height,
+                    width: width,
+                    color: Colors.grey[100],
+                    child: Center(
+                      child: CircularProgressIndicator(),
+                    ),
+                  )
+                : Container(),
+            Padding(
+                padding: EdgeInsets.fromLTRB(
+                    width * 0.14, height * 0.034, width * 0.1, 10.0),
+                child: Text(
+                  'Patient Number: ' + contactNumber,
+                  style: TextStyle(
+                    fontFamily: 'HelveticaNeueBold',
+                    letterSpacing: 2.0,
+                    fontSize: 0.012 * (height + width),
+                    color: const Color(0xff142850),
+                  ),
+                )),
             Padding(
                 padding: EdgeInsets.fromLTRB(
                     width * 0.23, height * 0.75, width * 0.16, 10.0),
@@ -218,9 +266,25 @@ class MapState extends State<MapMFR> {
                                         ),
                                       ),
                                       onPressed: () async {
-                                        Navigator.pushReplacementNamed(
-                                            context, '/MFR_home');
                                         Navigator.of(context).pop();
+                                        Navigator.of(context).pop();
+                                        try {
+                                          await Firestore.instance
+                                              .collection('OngoingEmergencies')
+                                              .document(_patientRollNumber)
+                                              .delete();
+                                          await Firestore.instance
+                                              .collection('Mfr')
+                                              .document(_rollNo)
+                                              .updateData(
+                                                  {'isOccupied': false});
+                                          mfrHomeGlobalKey.currentState
+                                              .updateOccupied(false);
+                                          mfrAlertFunctionGlobalKey.currentState
+                                              .updateOccupiedLocal(false);
+                                        } catch (e) {
+                                          print(e);
+                                        }
 //                                        todo: occupied status change
                                       },
                                     ),
@@ -248,7 +312,7 @@ class MapState extends State<MapMFR> {
                         child: Text(
                           'End Emergency',
                           style: TextStyle(
-                            color: Colors.cyan[500],
+                            color: const Color(0xff142850),
                             fontSize: (width + height) * 0.012,
                             letterSpacing: 3.0,
                             fontFamily: 'HelveticaNeueBold',
@@ -262,32 +326,28 @@ class MapState extends State<MapMFR> {
         floatingActionButton: Column(children: <Widget>[
           SizedBox(height: height * 0.16),
           FloatingActionButton(
-            child: Icon(Icons.map),
-            onPressed: () {
-              _onMapTypeButtonPressed();
-            },
-          ),
-          SizedBox(height: height / 3),
+              heroTag: "btn1",
+              child: Icon(Icons.map),
+              onPressed: () {
+                _onMapTypeButtonPressed();
+              },
+              backgroundColor: const Color(0xff47719e)),
+          SizedBox(height: height / 2.2),
           FloatingActionButton(
-            child: Icon(Icons.add),
-            onPressed: () {
-              zoomIn();
-            },
-          ),
+              heroTag: "btn2",
+              child: Icon(Icons.add),
+              onPressed: () {
+                zoomIn();
+              },
+              backgroundColor: const Color(0xff47719e)),
           SizedBox(height: 10),
           FloatingActionButton(
-            child: Icon(Icons.remove),
-            onPressed: () {
-              zoomOut();
-            },
-          ),
-          SizedBox(height: 10),
-          FloatingActionButton(
-            child: Icon(Icons.location_searching),
-            onPressed: () {
-              //getCurrentLocaion();
-            },
-          ),
+              heroTag: "btn3",
+              child: Icon(Icons.remove),
+              onPressed: () {
+                zoomOut();
+              },
+              backgroundColor: const Color(0xff47719e)),
         ]),
       ),
     );

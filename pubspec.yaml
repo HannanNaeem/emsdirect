@@ -35,6 +35,8 @@ dependencies:
   #To add a dialog with a title and a subtitle
   material_dialog: ^0.0.9
   progress_dialog: ^1.2.0
+  #To add a customizable expansion tile
+  configurable_expansion_tile: ^1.0.0
   get: ^1.17.3
   intl: ^0.16.1
   firebase_messaging: ^6.0.13
