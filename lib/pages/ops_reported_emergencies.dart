@@ -13,34 +13,45 @@ class ReportedEmergenciesOps extends StatefulWidget {
 class _ReportedEmergenciesOpsState extends State<ReportedEmergenciesOps> {
 
   int _maxDocs = 20;
-  bool _isLoading = false;
   var collectionRef = Firestore.instance.collection('ReportedEmergencies');
   var docs;
 
-  Future _getInitialDocs() async {
-    return await collectionRef.orderBy('date').limit(20).getDocuments();
+  List<ReportedEmergencyModel> _getEmergencyList(snapshot){
+    return snapshot.documents.map((doc){
+      return ReportedEmergencyModel(
+        patientRollNo: doc.data['patientRollNo'],
+        patientGender: doc.data['patientGender'],
+        emergencyDate: doc.data['date'].toDate(),
+        primaryMfrRollNo: doc.data['primaryMfrRollNo'],
+        primaryMfrName: doc.data['primaryMfrName'],
+        additionalMfrs: doc.data['additionalMfrs'] ?? "",
+        severity: doc.data['severity'],
+        patientIsHostelite: doc.data['patientIsHostelite'],
+        emergencyType: doc.data['type'],
+        emergencyLocation: doc.data['location'] ?? "",
+        transportUsed: doc.data['transportUsed'],
+        emergencyDetails: doc.data['details'] ?? "",
+        bagUsed: doc.data['bagUsed'],
+        equipmentUsed: doc.data['equipmentUsed'],
+      );
+    }).toList();
+}
+  List<ReportedEmergencyModel> _reportedEmergencies = [];
+
+  Future _getInitialDocs() async { //used to perform the initial fetch
+    try{
+      var snapshot = await collectionRef.orderBy('date').limit(20).getDocuments();
+      if(snapshot!= null)
+        this._reportedEmergencies = _getEmergencyList(snapshot);
+      return snapshot;
+    }
+    catch(e) {
+      print(e);
+      return null;
+    }
   }
 
-  List<ReportedEmergencyModel> _getEmergencyList(snapshot){
-      return snapshot.documents.map((doc){
-        return ReportedEmergencyModel(
-          patientRollNo: doc.data['patientRollNo'],
-          patientGender: doc.data['patientGender'],
-          emergencyDate: doc.data['date'].toDate(),
-          primaryMfrRollNo: doc.data['primaryMfrRollNo'],
-          primaryMfrName: doc.data['primaryMfrName'],
-          additionalMfrs: doc.data['additionalMfrs'] ?? "",
-          severity: doc.data['severity'],
-          patientIsHostelite: doc.data['patientIsHostelite'],
-          emergencyType: doc.data['type'],
-          emergencyLocation: doc.data['location'] ?? "",
-          transportUsed: doc.data['transportUsed'],
-          emergencyDetails: doc.data['details'] ?? "",
-          bagUsed: doc.data['bagUsed'],
-          equipmentUsed: doc.data['equipmentUsed'],
-        );
-      }).toList();
-  }
+
 
 
   @override
@@ -69,6 +80,8 @@ class _ReportedEmergenciesOpsState extends State<ReportedEmergenciesOps> {
           if(snapshot.connectionState == ConnectionState.done) {
 
               if(snapshot.hasData){ //!if there is data retrieved
+
+                
                 
                 return Container(
                 child: Column(
@@ -78,25 +91,25 @@ class _ReportedEmergenciesOpsState extends State<ReportedEmergenciesOps> {
 
                     Expanded(
                       child: ListView.builder(
-                        itemCount: 2,//todo add here
+                        itemCount: _reportedEmergencies.length,
                         itemBuilder: (context, index){
                           return Padding(
                             padding: EdgeInsets.fromLTRB(20, 5, 20, 5),
                             child: ReportedEmergencyTile(
-                              patientRollNo: '',
-                              patientGender: '',
-                              emergencyDate: '',
-                              primaryMfrRollNo: '',
-                              primaryMfrName: '',
-                              additionalMfrs: '',
-                              severity: '',
-                              patientIsHostelite: '',
-                              emergencyType: '',
-                              emergencyLocation: '',
-                              transportUsed: '',
-                              emergencyDetails: '',
-                              bagUsed: '',
-                              equipmentUsed: '',
+                              patientRollNo: _reportedEmergencies[index].patientRollNo,
+                              patientGender: _reportedEmergencies[index].patientGender,
+                              emergencyDate: _reportedEmergencies[index].emergencyDate,
+                              primaryMfrRollNo: _reportedEmergencies[index].primaryMfrRollNo,
+                              primaryMfrName: _reportedEmergencies[index].primaryMfrName,
+                              additionalMfrs: _reportedEmergencies[index].additionalMfrs,
+                              severity: _reportedEmergencies[index].severity,
+                              patientIsHostelite: _reportedEmergencies[index].patientIsHostelite,
+                              emergencyType: _reportedEmergencies[index].emergencyType,
+                              emergencyLocation: _reportedEmergencies[index].emergencyLocation,
+                              transportUsed: _reportedEmergencies[index].transportUsed,
+                              emergencyDetails: _reportedEmergencies[index].emergencyDetails,
+                              bagUsed: _reportedEmergencies[index].bagUsed,
+                              equipmentUsed: "",
                             ),
                           );
                         }
