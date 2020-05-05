@@ -3,6 +3,7 @@ import 'package:ems_direct/models/emergency_models.dart';
 import 'package:ems_direct/shared/loading.dart';
 import 'package:ems_direct/shared/reported_emergency_tile.dart';
 import "package:flutter/material.dart";
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:intl/intl.dart';
 
 GlobalKey _globalKey = GlobalKey();
@@ -15,8 +16,8 @@ class ReportedEmergenciesOps extends StatefulWidget {
 
 class _ReportedEmergenciesOpsState extends State<ReportedEmergenciesOps> {
 
-  int _maxDocs = 1; //todo reset
-  int _step = 1; //add additional docs
+  int _maxDocs = 10; //todo reset
+  int _step = 10; //add additional docs
   bool _firstLoad = true;
   var collectionRef = Firestore.instance.collection('ReportedEmergencies');
   var docs;
@@ -160,17 +161,36 @@ class _ReportedEmergenciesOpsState extends State<ReportedEmergenciesOps> {
                             ),
                           );
                           else
-                          return(
-                            RaisedButton(
-                              child: Text("Load more"),
-                              onPressed: () async {
-                                setState(() {
-                                  _firstLoad = false;
-                                  _maxDocs++;
-                                  _getAdditionalDocs();
-                                });
-                              },
-                            )
+                          return Padding(
+                            padding: const EdgeInsets.all(10.0),
+                            child: Column(
+                              children: <Widget>[
+                              
+                                RaisedButton(                        
+                                  child: Icon(
+                                    Icons.keyboard_arrow_down,
+                                  ),
+                                  color: Colors.grey[100],//const Color(0xFF73CDE8),
+                                  shape: CircleBorder(),
+                                  onPressed: () async {
+                                    setState(() {
+                                      _firstLoad = false;
+                                      _maxDocs = _maxDocs + _step;
+                                      _getAdditionalDocs();
+                                    });
+                                  },
+                                ),
+                                Text(
+                                  "Tap to load more..",
+                                  style: TextStyle(
+                                    fontFamily: "HelveticaNeueLight",
+                                    fontSize: 13,
+                                    color: Colors.grey[300],
+                                  )
+                                )
+                                
+                              ],
+                            ),
                           );
                         }
                       ),
@@ -230,16 +250,19 @@ class _ReportedEmergenciesOpsState extends State<ReportedEmergenciesOps> {
                           );
                           else
                           return(
-                            RaisedButton(
-                              child: Text("Load more"),
-                              onPressed: () async {
-                                setState(() {
-                                  _firstLoad = false;
-                                  _maxDocs++;
-                                  _getAdditionalDocs();
-                                });
-                              },
-                            )
+                            Padding(
+                            padding: const EdgeInsets.all(10.0),
+                            child: Column(
+                              children: <Widget>[
+                              
+                                SpinKitThreeBounce(
+                                  size: 30,
+                                  color: Colors.grey[100],
+                                )
+                                
+                              ],
+                            ),
+                          )
                           );
                         }
                       ),
