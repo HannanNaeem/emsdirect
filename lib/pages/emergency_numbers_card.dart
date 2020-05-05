@@ -19,6 +19,7 @@ class _EmergencyNumberCardState extends State<EmergencyNumberCard> {
   @override
   Widget build(BuildContext context) {
     return Card(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
       elevation: 6,
       child: ListTile(
         title: Text(

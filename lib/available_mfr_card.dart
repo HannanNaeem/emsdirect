@@ -33,6 +33,7 @@ class _AvailableMfrCardState extends State<AvailableMfrCard> {
       }
     }
     return Card(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
       elevation: 6,
       child: ListTile(
         isThreeLine: true,
