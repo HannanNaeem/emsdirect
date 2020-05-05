@@ -1,4 +1,5 @@
 import 'package:ems_direct/dummy.dart';
+import 'package:ems_direct/pages/mfr_emergency_report.dart';
 import 'package:ems_direct/models/emergency_models.dart';
 import 'package:ems_direct/services/auth.dart';
 import 'dart:async';
@@ -769,25 +770,29 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
                               image: AssetImage('assets/report.png'),
                               fit: BoxFit.fill,
                             ),
-                            iconSize: height / 9,
-                            onPressed: null,
-                          ),
-                          Center(
-                            child: Padding(
-                              padding:
-                                  EdgeInsets.fromLTRB(0, 0, 0, height / 80),
-                              child: Text(
-                                'Report Emergency',
-                                style: TextStyle(
-                                  fontSize: 22,
-                                  fontFamily: 'HelveticaNeueLight',
-                                  letterSpacing: 2.0,
-                                  color: const Color(0xff142850),
-                                ),
+                          iconSize: height / 9,
+                          onPressed: () {
+                            print('Clicked');
+                            //! navigate to report emergency
+                            Navigator.push(context, MaterialPageRoute(builder: (context) => EmergencyReportMfr()));
+                          },
+                        ),
+                        Center(
+                          child: Padding(
+                            padding: EdgeInsets.fromLTRB(0, 0, 0, height / 80),
+                            child: Text(
+                              'Report Emergency',
+                              style: TextStyle(
+                                fontSize: 22,
+                                fontFamily: 'HelveticaNeueLight',
+                                letterSpacing: 2.0,
+                                color: const Color(0xff142850),
                               ),
                             ),
                           ),
-                        ]),
+                        ),
+                      ]
+                    ),
                   ),
                 ),
               ),
