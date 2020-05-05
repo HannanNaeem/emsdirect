@@ -60,7 +60,7 @@ class BagDetailsState extends State<BagDetails> {
     'scissors',
     'stethoscope',
     'tape',
-    'thermomter',
+    'thermometer',
     'triangularBandage',
     'wintogeno'
   ];

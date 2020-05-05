@@ -193,11 +193,19 @@ class _NotificationsState extends State<Notifications> {
                         minHeight: 100,
                       ),
                       child: NotificationCard(
+                          //!text
                           _getNotificationText(_notificationList[index].item, _notificationList[index].category),
+                          //!category
                           _notificationList[index].category,
+                          //!Time
                           _notificationList[index].category == "Restock Needed!" ?
-                          DateFormat.jm().format(DateTime.now())
-                          : DateFormat.jm().format(_notificationList[index].item.reportingTime)),
+                          DateFormat.jm().format(DateTime.now()) // for restock return the current time
+                          : DateFormat.jm().format(_notificationList[index].item.reportingTime),
+                          _notificationList[index].category != "Restock Needed!" ?  //for emergencies pass severity
+                          _notificationList[index].item.severity
+                          : "None"
+                      ),
+
                     ),
                   ),
 
