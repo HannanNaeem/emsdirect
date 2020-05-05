@@ -33,6 +33,7 @@ class _AvailableMfrCardState extends State<AvailableMfrCard> {
       }
     }
     return Card(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
       elevation: 6,
       child: ListTile(
         isThreeLine: true,
@@ -59,48 +60,5 @@ class _AvailableMfrCardState extends State<AvailableMfrCard> {
       ),
     );
   }
-}
-
-
-
-class AvailableMfrsData {
-
-  static final data = [
-    {
-      'name': 'Hira Jamshed',
-      'contact': '03000000000',
-      'gender': 'F',
-      'rollNo': '21100141',
-      'isOccupied': true,
-    },
-    {
-      'name': 'Harum Naseem',
-      'contact': '03000000000',
-      'gender': 'F',
-      'rollNo': '21100118',
-      'isOccupied': false,
-    },
-    {
-      'name': 'Hannan Naeem',
-      'contact': '03000000000',
-      'gender': 'M',
-      'rollNo': '21100219',
-      'isOccupied': false,
-    },
-    {
-      'name': 'Mahnoor Jameel',
-      'contact': '03000000000',
-      'gender': 'F',
-      'rollNo': '21100069',
-      'isOccupied': true,
-    },
-    {
-      'name': 'Saba Rehman',
-      'contact': '03000000000',
-      'gender': 'F',
-      'rollNo': '21100129',
-      'isOccupied': false,
-    },
-  ];
 }
 
