@@ -107,7 +107,6 @@ class OngoingEmergencyModel {
       this.patientContactNo});
 }
 
-
 class EquipmentBagModel {
   final int bpApparatus;
   final int crepe;
@@ -128,25 +127,59 @@ class EquipmentBagModel {
   final int thermometer;
   final int triangularBandage;
   final int wintogeno;
-  EquipmentBagModel({
-    this.bpApparatus,
-    this.crepe,
-    this.deepHeat,
-    this.depressors,
-    this.faceMasks,
-    this.gauze,
-    this.gloves,
-    this.ORS,
-    this.openWove,
-    this.polyfax,
-    this.polyfaxPlus,
-    this.pyodine,
-    this.saniplast,
-    this.scissors,
-    this.stethoscope,
-    this.tape,
-    this.thermometer,
-    this.triangularBandage,
-    this.wintogeno
+  EquipmentBagModel(
+      {this.bpApparatus,
+      this.crepe,
+      this.deepHeat,
+      this.depressors,
+      this.faceMasks,
+      this.gauze,
+      this.gloves,
+      this.ORS,
+      this.openWove,
+      this.polyfax,
+      this.polyfaxPlus,
+      this.pyodine,
+      this.saniplast,
+      this.scissors,
+      this.stethoscope,
+      this.tape,
+      this.thermometer,
+      this.triangularBandage,
+      this.wintogeno});
+}
+
+class ReportedEmergencyModel {
+  String patientRollNo;
+  String patientGender;
+  DateTime emergencyDate;
+  String primaryMfrRollNo;
+  String primaryMfrName;
+  String additionalMfrs;
+  String severity;
+  String patientIsHostelite;
+  String emergencyType;
+  String emergencyLocation;
+  String transportUsed;
+  String emergencyDetails;
+  String bagUsed;
+  Map equipmentUsed;
+
+  ReportedEmergencyModel({
+    this.patientRollNo,
+    this.patientGender,
+    this.emergencyDate,
+    this.primaryMfrRollNo,
+    this.primaryMfrName,
+    this.additionalMfrs,
+    this.severity,
+    this.patientIsHostelite,
+    this.emergencyType,
+    this.emergencyLocation,
+    this.transportUsed,
+    this.emergencyDetails,
+    this.bagUsed,
+    this.equipmentUsed,
   });
+
 }
