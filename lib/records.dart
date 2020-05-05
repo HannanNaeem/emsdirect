@@ -1,10 +1,10 @@
+import 'package:ems_direct/pages/ops_reported_emergencies.dart';
 import 'package:flutter/material.dart';
 import 'package:ems_direct/pages/EquipmentBags.dart';
 import 'package:ems_direct/pages/inventory.dart';
 class Records extends StatelessWidget {
   //This functions makes the cards on the screen since each card follows the same template
-  Widget _GenerateCard(
-      String title, String imageFileName, var height, BuildContext context) {
+  Widget _GenerateCard(String title, String imageFileName, var height, BuildContext context) {
     return Card(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(15),
@@ -20,6 +20,9 @@ class Records extends StatelessWidget {
             Navigator.push(context,
                 MaterialPageRoute(builder: (context) => Inventory()));
           }
+          if(title == "Emergencies")
+            Navigator.push(context ,MaterialPageRoute(builder: (context) => ReportedEmergenciesOps() ));
+
         },
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -76,7 +79,7 @@ class Records extends StatelessWidget {
                           aspectRatio: 2 / 2.25,
                           child: Container(
                               child: _GenerateCard('Emergencies',
-                                  'assets/emergencies.png', height, context)),
+                                  'assets/emergencies.png', height,context)),
                         ),
                       ),
                     ),

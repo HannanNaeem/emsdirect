@@ -21,6 +21,8 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'dart:math';
 import 'package:ems_direct/services/mfr_database.dart';
 import 'package:configurable_expansion_tile/configurable_expansion_tile.dart';
+import 'package:ems_direct/services/mfr_database.dart';
+import 'package:configurable_expansion_tile/configurable_expansion_tile.dart';
 
 GlobalKey<_MFRHomeState> mfrHomeGlobalKey = GlobalKey();
 
@@ -115,9 +117,9 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
     _notificationService.getToken();
     _notificationService.configureFirebaseListeners();
     mfrRef = databaseReference.collection("Mfr").document(_userData['rollNo']);
-    getInitialData(_userData['rollNo']);
     //todo: comment out
     //getCurrentLocaion();
+    getInitialData(_userData['rollNo']);
   }
 
   //////////////////////////////// FUNCTIONS /////////////////////////////////////
