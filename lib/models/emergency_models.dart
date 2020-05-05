@@ -107,7 +107,6 @@ class OngoingEmergencyModel {
       this.patientContactNo});
 }
 
-
 class EquipmentBagModel {
   final int bpApparatus;
   final int crepe;
@@ -128,25 +127,24 @@ class EquipmentBagModel {
   final int thermometer;
   final int triangularBandage;
   final int wintogeno;
-  EquipmentBagModel({
-    this.bpApparatus,
-    this.crepe,
-    this.deepHeat,
-    this.depressors,
-    this.faceMasks,
-    this.gauze,
-    this.gloves,
-    this.ORS,
-    this.openWove,
-    this.polyfax,
-    this.polyfaxPlus,
-    this.pyodine,
-    this.saniplast,
-    this.scissors,
-    this.stethoscope,
-    this.tape,
-    this.thermometer,
-    this.triangularBandage,
-    this.wintogeno
-  });
+  EquipmentBagModel(
+      {this.bpApparatus,
+      this.crepe,
+      this.deepHeat,
+      this.depressors,
+      this.faceMasks,
+      this.gauze,
+      this.gloves,
+      this.ORS,
+      this.openWove,
+      this.polyfax,
+      this.polyfaxPlus,
+      this.pyodine,
+      this.saniplast,
+      this.scissors,
+      this.stethoscope,
+      this.tape,
+      this.thermometer,
+      this.triangularBandage,
+      this.wintogeno});
 }
