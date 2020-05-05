@@ -18,6 +18,9 @@ import 'package:location/location.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:flutter/services.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'dart:math';
+import 'package:ems_direct/services/mfr_database.dart';
+import 'package:configurable_expansion_tile/configurable_expansion_tile.dart';
 import 'package:ems_direct/services/mfr_database.dart';
 import 'package:configurable_expansion_tile/configurable_expansion_tile.dart';
 
@@ -66,6 +69,8 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
   var locationOfEmergency;
   var patientContactNo;
   var patientRollNumber;
+  var oldLatitude;
+  var oldLongitude;
 
   //instance of auth service
   final AuthService _authMfr = AuthService();
@@ -89,10 +94,14 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
   }
 
   void _updateUserData(GeoPoint Newlocation) async {
-    await databaseReference
-        .collection("Mfr")
-        .document((await _userData['rollNo']).toString())
-        .updateData({'location': Newlocation});
+    try {
+      await databaseReference
+          .collection("Mfr")
+          .document((await _userData['rollNo']).toString())
+          .updateData({'location': Newlocation});
+    }catch(e){
+      throw(e);
+    }
   }
 
   //--------------------------------------------------------------------
@@ -108,6 +117,7 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
     _notificationService.getToken();
     _notificationService.configureFirebaseListeners();
     mfrRef = databaseReference.collection("Mfr").document(_userData['rollNo']);
+
     getInitialData(_userData['rollNo']);
   }
 
@@ -124,40 +134,54 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
     }
   }
 
-//  void getCurrentLocaion() async {
-//    try {
-//      while (true) {
-//        if (isAvailable) {
-//        var location = await _locationTracker.getLocation();
-//
-//        var currLoc = LatLng(location.latitude, location.longitude);
-//        GeoPoint NewGeoPoint = GeoPoint(currLoc.latitude, currLoc.longitude);
-//
-//        if (_locationSubscription != null) {
-//          _locationSubscription.cancel();
-//        }
-//          _updateUserData(NewGeoPoint);
-//          break;
-//        }
-//      }
-//      _locationSubscription =
-//          _locationTracker.onLocationChanged().listen((newLocation) {
-//        if (isAvailable) {
-//          GeoPoint NewGeoPoint =
-//              GeoPoint(newLocation.latitude, newLocation.longitude);
-//          _updateUserData(NewGeoPoint);
-//        }
-//      });
-//    } on PlatformException catch (e) {
-//      if (e.code == 'PERMISSION_DENIED') {
-//        debugPrint("Permission Denied");
-//      }
-//    }
-//  }
+
+  void getCurrentLocaion() async {
+    try {
+      while (true) {
+        if (isAvailable) {
+        var location = await _locationTracker.getLocation();
+
+        var currLoc = LatLng(location.latitude, location.longitude);
+        GeoPoint NewGeoPoint = GeoPoint(currLoc.latitude, currLoc.longitude);
+        oldLatitude = currLoc.latitude;
+        oldLongitude = currLoc.longitude;
+
+        if (_locationSubscription != null) {
+          _locationSubscription.cancel();
+        }
+          _updateUserData(NewGeoPoint);
+          break;
+        }
+      }
+      _locationSubscription =
+          _locationTracker.onLocationChanged().listen((newLocation) {
+        if (isAvailable) {
+          GeoPoint NewGeoPoint =
+              GeoPoint(newLocation.latitude, newLocation.longitude);
+          var latitudeDifference = newLocation.latitude - oldLatitude;
+          var longitudeDifference = newLocation.longitude - oldLongitude;
+          var p = 0.017453292519943295;
+          var distance = 0.5 - cos(latitudeDifference * p)/2 + cos(newLocation.latitude * p) * cos(oldLatitude * p)  * (1 - cos(longitudeDifference * p))/2;
+          var meter = distance/1000;
+          if(meter > 5){
+            _updateUserData(NewGeoPoint);
+          }
+
+          oldLatitude = newLocation.latitude;
+          oldLongitude = newLocation.longitude;
+        }
+      });
+    } on PlatformException catch (e) {
+      if (e.code == 'PERMISSION_DENIED') {
+        debugPrint("Permission Denied");
+      }
+    }
+  }
+
 
   void updateDeclineCount(docId) async {
     try {
-      DocumentReference docRef = await databaseReference
+      DocumentReference docRef = await Firestore.instance
           .collection("PendingEmergencies")
           .document(docId);
       DocumentSnapshot doc = await docRef.get();
