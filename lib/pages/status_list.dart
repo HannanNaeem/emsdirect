@@ -8,6 +8,7 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:provider/provider.dart';
 import 'package:ems_direct/models/emergency_models.dart';
 import 'package:ems_direct/pages/student_home.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 
 class DisplayList extends StatefulWidget {
@@ -77,16 +78,19 @@ class _DisplayListState extends State<DisplayList> {
       }
 
       return Container(
-        color:const Color(0xff840123),
+        color: const Color(0xffa2150c),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          // mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
-            SpinKitRipple(
-              color: Colors.red[200],
-              size: 120.0,
+            Padding(
+              padding: EdgeInsets.only(top: height/10),
+              child: SpinKitRipple(
+                color: Colors.red[200],
+                size: (width / 1.3),
+              ),
             ),
-            SizedBox(height: height*0.03),
+            SizedBox(height: height/20),
             getWidget(_status, mfrName, mfrContact,height,width),
           ],
         )
@@ -98,7 +102,7 @@ class _DisplayListState extends State<DisplayList> {
 Widget getWidget(String status, String mfrName, String mfrContact, var height, var width){
   String answer;
   if(status == 'onGoing'){
-    answer = 'MFR has been assigned to your emergency';
+    answer = 'A MFR is on their way!';
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -116,68 +120,93 @@ Widget getWidget(String status, String mfrName, String mfrContact, var height, v
             ),
           ),
         ),
-        Container(
-          constraints: BoxConstraints(maxWidth: width*0.80, maxHeight: height*0.15),
+        SizedBox(height: 10),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(15, 0, 15, 0),
           child: Card(
-            elevation: 8,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            elevation: 6,
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: <Widget>[
                     Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text(
-                        'Name:',
-                        textAlign: TextAlign.left,
-                        style: TextStyle(
-                          fontSize: 20.0,
-                          fontFamily: 'HelveticaNeue',
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black,
-                          letterSpacing: 2.0,
+                      padding: EdgeInsets.fromLTRB(20,10,0,20),
+                      child: CircleAvatar(
+                        backgroundColor: Color(0xff142850),
+                        foregroundColor: Colors.white,
+                        child: Icon(
+                          Icons.person,
                         ),
                       ),
                     ),
-                    Text(
-                      '$mfrName',
-                      textAlign: TextAlign.left,
-                      style: TextStyle(
-                        fontSize: 20.0,
-                        fontFamily: 'HelveticaNeueLight',
-                        color: Colors.black,
-                        letterSpacing: 2.0,
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(10, 10, 0, 0),
+                          child: Text(
+                            mfrName,
+                            style: TextStyle(
+                              fontFamily: 'HelveticaNeueLight',
+                              fontSize: 24.0,
+                              letterSpacing: 1.0,
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(10, 5, 0, 20),
+                          child: Text(
+                            mfrContact,
+                            style: TextStyle(
+                              fontFamily: 'HelveticaNeueLight',
+                              fontSize: 16.0,
+                              letterSpacing: 1.0,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    Expanded(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: <Widget>[
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(0, 0, 20, 0),
+                            child: IconButton(
+                              icon: Icon(
+                                Icons.call,
+                                size: 30,
+                                color: Colors.green,
+                              ),
+                              
+                              onPressed: () async {
+                                if(await canLaunch("tel:$mfrContact"))
+                                {
+                                  await launch("tel:$mfrContact");
+                                }
+                                else
+                                  print("could not launch");
+                              },
+                            ),
+                          )
+                        ],
                       ),
                     ),
                   ],
                 ),
-                Row(
-                  children: <Widget>[
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text(
-                        'Contact:',
-                        textAlign: TextAlign.left,
-                        style: TextStyle(
-                          fontSize: 20.0,
-                          fontFamily: 'HelveticaNeue',
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black,
-                          letterSpacing: 2.0,
-                        ),
-                      ),
-                    ),
-                    Text(
-                      '$mfrContact',
-                      textAlign: TextAlign.left,
-                      style: TextStyle(
-                        fontSize: 20.0,
-                        fontFamily: 'HelveticaNeueLight',
-                        color: Colors.black,
-                        letterSpacing: 2.0,
-                      ),
-                    ),
-                  ],
-                ),
+
+
+                // Text(
+                //   'Contact',
+                //   style: TextStyle(
+                //     fontFamily: 'HelveticaNeueMedium',
+                //     fontSize: 16.0,
+                //     letterSpacing: 1.0,
+                //   ),
+                // ),
               ],
             ),
           ),
@@ -186,10 +215,10 @@ Widget getWidget(String status, String mfrName, String mfrContact, var height, v
     );
   }
   else if(status == 'pending'){
-    answer = 'Your Emergency request is pending';
+    answer = 'Request Pending...';
   }
   else{
-    answer = 'Your Emergency has ended';
+    answer = 'Emergency Ended';
   }
   return Text(
     answer,

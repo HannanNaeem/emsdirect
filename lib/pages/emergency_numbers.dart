@@ -80,15 +80,10 @@ class _EmergencyNumbersState extends State<EmergencyNumbers> {
                 itemCount: _numberList.length,
                 itemBuilder: (context, index) {
                   return Padding(
-                    padding: EdgeInsets.fromLTRB(20, 5, 20, 5),
-                    child: ConstrainedBox(
-                      constraints: BoxConstraints(
-                        minHeight: 80,
-                      ),
-                      child: EmergencyNumberCard(
-                        _numberList[index].name,
-                        _numberList[index].contact
-                          ),
+                    padding: EdgeInsets.fromLTRB(20, 10, 20, 0),
+                    child: EmergencyNumberCard(
+                      _numberList[index].name,
+                      _numberList[index].contact
                     ),
                   );
                 },

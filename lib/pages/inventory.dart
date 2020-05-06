@@ -173,31 +173,32 @@ class InventoryState extends State<Inventory> {
             backgroundColor: const Color(0xff27496d),
             body: SingleChildScrollView(
                 child: Column(children: [
-              Container(
-                child: FittedBox(
+              FittedBox(
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(10,10,10,0),
                   child: DataTable(
                     columns: [
                       DataColumn(
                           label: Text(
                         'Items',
                         style: TextStyle(
-                          fontFamily: 'HelveticaNeueBold',
-                          letterSpacing: 2.0,
-                          fontSize: 16,
+                          fontFamily: 'HelveticaNeueLight',
+                          letterSpacing: 1.0,
+                          fontSize: 30,
                           color: Colors.white,
                         ),
                       )),
                       DataColumn(
                           label: SizedBox(
-                        width: 7,
+                        width: 1,
                       )),
                       DataColumn(
                           label: Text(
                         ' Quantity',
                         style: TextStyle(
-                          fontFamily: 'HelveticaNeueBold',
-                          letterSpacing: 2.0,
-                          fontSize: 16,
+                          fontFamily: 'HelveticaNeueLight',
+                          letterSpacing: 1.0,
+                          fontSize: 30,
                           color: Colors.white,
                         ),
                       )),
@@ -208,41 +209,43 @@ class InventoryState extends State<Inventory> {
                           names[value - 1],
                           style: TextStyle(
                             fontFamily: 'HelveticaNeueLight',
-                            letterSpacing: 2.0,
-                            fontSize: 15,
+                            letterSpacing: 1.0,
+                            fontSize: 20,
                             color: Colors.white,
                           ),
                         )),
                         DataCell(Text('')),
                         DataCell(
-                          SizedBox(
-                              width: 100.0,
-                              height: 45.0,
-                              child: TextFormField(
-                                controller: controller[value - 1],
-                                decoration: InputDecoration(
-                                  contentPadding: EdgeInsets.all(5.0),
-                                  border: new OutlineInputBorder(
-                                    borderRadius: const BorderRadius.all(
-                                      const Radius.circular(10.0),
+                          Center(
+                            child: SizedBox(
+                                width: 80.0,
+                                height: 45.0,
+                                child: TextFormField(
+                                  controller: controller[value - 1],
+                                  decoration: InputDecoration(
+                                    contentPadding: EdgeInsets.all(5.0),
+                                    border: new OutlineInputBorder(
+                                      borderRadius: const BorderRadius.all(
+                                        const Radius.circular(30.0),
+                                      ),
                                     ),
+                                    hintText: data[value - 1].toString(),
+                                    hintStyle: TextStyle(
+                                      color: Colors.grey[700],
+                                      fontFamily: 'HelveticaNeueLight',
+                                      letterSpacing: 1.0,
+                                    ),
+                                    errorStyle: TextStyle(
+                                      color: Colors.amber,
+                                      letterSpacing: 1.0,
+                                    ),
+                                    fillColor: Colors.grey[200],
+                                    filled: true,
+                                    focusedErrorBorder: InputBorder.none,
                                   ),
-                                  hintText: data[value - 1].toString(),
-                                  hintStyle: TextStyle(
-                                    color: Colors.grey[700],
-                                    fontFamily: 'HelveticaNeueLight',
-                                    letterSpacing: 2.0,
-                                  ),
-                                  errorStyle: TextStyle(
-                                    color: Colors.amber,
-                                    letterSpacing: 1.0,
-                                  ),
-                                  fillColor: Colors.grey[200],
-                                  filled: true,
-                                  focusedErrorBorder: InputBorder.none,
-                                ),
-                                textAlign: TextAlign.center,
-                              )),
+                                  textAlign: TextAlign.center,
+                                )),
+                          ),
                         ),
                       ]);
                     }).toList(),
@@ -251,9 +254,9 @@ class InventoryState extends State<Inventory> {
               ),
               Padding(
                   padding: EdgeInsets.fromLTRB(
-                      width * 0.20, height * 0.1, width * 0.16, 10.0),
+                      width * 0.16, height * 0.05, width * 0.16,height * 0.1),
                   child: SizedBox(
-                      width: (width + height) * 0.18,
+                      width: (width + height) * 0.10,
                       height: (width + height) * 0.04,
                       child: RaisedButton(
                           onPressed: () {
@@ -503,8 +506,8 @@ class InventoryState extends State<Inventory> {
                             'Save',
                             style: TextStyle(
                               color: Colors.white,
-                              fontSize: (width + height) * 0.012,
-                              letterSpacing: 3.0,
+                              fontSize: 18,
+                              letterSpacing: 2.0,
                               fontFamily: 'HelveticaNeueBold',
                             ),
                           ),
