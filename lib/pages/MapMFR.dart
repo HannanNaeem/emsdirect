@@ -93,7 +93,7 @@ class MapState extends State<MapMFR> {
     });
 
     // todo: uncomment
-    //getCurrentLocation();
+    getCurrentLocation();
 
     // making mapLoading false so that the map can be displayed now
     this.setState(() => mapLoading = false);
@@ -270,7 +270,7 @@ class MapState extends State<MapMFR> {
                   elevation: 1,
                   color: Colors.transparent,
                   child: Padding(
-                    padding: const EdgeInsets.fromLTRB(0, 8, 0, 0),
+                    padding: const EdgeInsets.fromLTRB(0, 10, 0, 0),
                     child: Column(
                       children: <Widget>[
                         Text(
