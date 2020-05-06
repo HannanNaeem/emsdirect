@@ -222,7 +222,7 @@ class _DynamicDialogState extends State<DynamicDialog> {
             borderRadius: BorderRadius.circular(10),
             constraints: BoxConstraints(
               minHeight: 30,
-              minWidth: 70,
+              minWidth: 50,
             ),
             children: <Widget>[
               Text(
@@ -280,7 +280,7 @@ class _DynamicDialogState extends State<DynamicDialog> {
             borderRadius: BorderRadius.circular(10),
             constraints: BoxConstraints(
               minHeight: 30,
-              minWidth: 110,
+              minWidth: 90,
             ),
             children: <Widget>[
               Text(
