@@ -9,7 +9,6 @@ class Records extends StatelessWidget {
   Widget _GenerateCard(
       String title, String imageFileName, var height, BuildContext context) {
     return Card(
-
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(15),
         ),
@@ -52,7 +51,6 @@ class Records extends StatelessWidget {
             ],
           ),
         ));
-
   }
 
   @override

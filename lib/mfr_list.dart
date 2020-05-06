@@ -3,6 +3,12 @@ import 'package:ems_direct/shared/loading.dart';
 import 'package:flutter/material.dart';
 import 'package:ems_direct/mfr_list_card.dart';
 import 'package:ems_direct/services/ops_database.dart';
+import 'package:ems_direct/models/emergency_models.dart';
+
+//THIS FILE HAS TWO STATEFUL WIDGET CLASSES
+//The first widget is responsible for displaying the MFR list to the user
+//The second widget is called by the first widget,
+// to take in user input dynamically when entering a new MFR
 
 GlobalKey<_MfrListState> mfrListGlobalKey = GlobalKey();
 
@@ -19,14 +25,15 @@ class MfrList extends StatefulWidget {
 
 class _MfrListState extends State<MfrList> {
   var mfrList;
-  bool error = false;
 
-  void setErrorVar(var val) {
+  //add the new MFR item to the list of cards
+  void addToMfrList(var newRecord) {
     setState(() {
-      error = val;
+      mfrList.add(newRecord);
     });
   }
 
+  //a function to get the initial data once the page loads
   void getMfrList() async {
     try {
       var mfrSnapshot =
@@ -40,36 +47,13 @@ class _MfrListState extends State<MfrList> {
     }
   }
 
+  //this returns the dynamic widget
   Widget _buildDialog() {
     showDialog(
         context: context,
         builder: (BuildContext context) {
           return DynamicDialog();
         });
-  }
-
-  Widget _errorDialog() {
-    Future.delayed(Duration(seconds: 10)).then((_) {
-      Navigator.of(context).pop();
-    });
-    showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            content: Text(
-              'This user does not exist',
-              style: TextStyle(
-                fontFamily: 'HelveticaNeueLight',
-                letterSpacing: 2.0,
-                fontSize: 20,
-                color: const Color(0xffee0000),
-              ),
-            ),
-          );
-        });
-    setState(() {
-      error = false;
-    });
   }
 
   @override
@@ -95,7 +79,9 @@ class _MfrListState extends State<MfrList> {
         centerTitle: true,
       ),
       body: mfrList == null
+          //shows a loading widget if no data has been recieved completely
           ? Loading()
+          //body with the card and the add MFR button
           : Container(
               child: Column(
                 mainAxisSize: MainAxisSize.min,
@@ -103,6 +89,7 @@ class _MfrListState extends State<MfrList> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
                   Stack(children: <Widget>[
+                    //add MFR button
                     Center(
                       child: Container(
                         padding: EdgeInsets.only(top: 20),
@@ -132,6 +119,7 @@ class _MfrListState extends State<MfrList> {
                     ),
                   ]),
                   SizedBox(height: 10),
+                  //the list view
                   Flexible(
                     child: ListView.builder(
                       itemCount: mfrList == null ? 0 : mfrList.length,
@@ -143,7 +131,6 @@ class _MfrListState extends State<MfrList> {
                       },
                     ),
                   ),
-                  error ? _errorDialog() : Container(),
                 ],
               ),
             ),
@@ -151,25 +138,28 @@ class _MfrListState extends State<MfrList> {
   }
 }
 
+//this is the dynamic dialog widget
 class DynamicDialog extends StatefulWidget {
   @override
   _DynamicDialogState createState() => _DynamicDialogState();
 }
 
 class _DynamicDialogState extends State<DynamicDialog> {
+  //variables to store the three required inputs
   var _newMfrGender = "Other";
   var _newRollNo;
   var _mfrIsHostelite = "Hostelite";
 
+  //information for the toggle button's functionality
   List<String> _mfrGenderValues = ["M", "F", "O"];
   List<bool> _isSelectedMfrGender = [false, false, true];
-
   List<String> _mfrTypeValues = ["Hostelite", "Day Scholar"];
   List<bool> _isSelectedHostelite = [true, false];
 
+  //global key to verify information
   final GlobalKey<FormState> _rollNoKey = GlobalKey<FormState>();
-  final GlobalKey<State> _genderKey = GlobalKey<State>();
 
+  //! Roll number inout
   Widget _buildRollno() {
     return Form(
       key: _rollNoKey,
@@ -205,7 +195,7 @@ class _DynamicDialogState extends State<DynamicDialog> {
     );
   }
 
-  //! Patient gender
+  //! Gender input
   Widget _buildGenderSelector() {
     return Padding(
       padding: EdgeInsets.all(10),
@@ -263,7 +253,7 @@ class _DynamicDialogState extends State<DynamicDialog> {
     );
   }
 
-  //! Patient type
+  //! Hostelite/Dayscholar input
   Widget _buildHosteliteSelector() {
     return Padding(
       padding: EdgeInsets.all(10),
@@ -321,6 +311,7 @@ class _DynamicDialogState extends State<DynamicDialog> {
 
   @override
   Widget build(BuildContext context) {
+    //getting the screen sizes
     var screenSize = MediaQuery.of(context).size;
     var width = screenSize.width;
     final height = screenSize.height;
@@ -366,6 +357,7 @@ class _DynamicDialogState extends State<DynamicDialog> {
                 SizedBox(height: 10),
                 _buildHosteliteSelector(),
                 SizedBox(height: 10),
+                //the row contains the two buttons
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -399,14 +391,42 @@ class _DynamicDialogState extends State<DynamicDialog> {
                           if (docSnaphot.documents.length == 0) {
                             print('wrong');
                             //failed - show error popup
-                            Navigator.of(context).pop();
+                            return showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                    title: Text(
+                                      "The user must be signed in as a student",
+                                      style: TextStyle(
+                                        fontFamily: 'HelveticaNeueLight',
+                                        letterSpacing: 2.0,
+                                        fontSize: 20,
+                                        color: const Color(0xffee0000),
+                                      ),
+                                    ),
+                                    actions: <Widget>[
+                                      FlatButton(
+                                        child: Text(
+                                          'OK',
+                                          style: TextStyle(
+                                            fontFamily: 'HelveticaNeueLight',
+                                            letterSpacing: 2.5,
+                                            fontSize: 20,
+                                            color: const Color(0xff1a832a),
+                                          ),
+                                        ),
+                                        onPressed: () {
+                                          Navigator.of(context).pop();
+                                          Navigator.of(context).pop();
+                                        },
+                                      ),
+                                    ],
+                                  );
+                                });
                           } else {
                             //else get relevant stuff from userDoc and make new MFR document
                             var docData = docSnaphot.documents[0].data;
-                            await Firestore.instance
-                                .collection('Mfr')
-                                .document(_newRollNo)
-                                .setData({
+                            var newData = {
                               'contact': docData['contact'],
                               'gender': _newMfrGender,
                               'isActive': false,
@@ -414,17 +434,34 @@ class _DynamicDialogState extends State<DynamicDialog> {
                                   _mfrIsHostelite == 'Hostelite' ? true : false,
                               'isOccupied': false,
                               'isSenior': false,
-                              'location': GeoPoint(31, 74),
-                              'name': docData['name'],
-                            });
+                              'location': GeoPoint(31, 76),
+                              'name': docData['name']
+                            };
+                            var mfrModelItem = MfrListModel(
+                              name: newData['name'],
+                              rollNo: _newRollNo,
+                              gender: newData['gender'],
+                              contact: newData['contact'],
+                              isHostelite: newData['isHostelite'],
+                              isSenior: newData['isSenior'],
+                            );
+                            //make the mfr doc
+                            await Firestore.instance
+                                .collection('Mfr')
+                                .document(_newRollNo)
+                                .setData(newData);
+                            //update user data
                             await Firestore.instance
                                 .collection('UserData')
                                 .document(docSnaphot.documents[0].documentID)
                                 .updateData({'emsType': 'mfr'});
+                            //add a new card to the list
+                            mfrListGlobalKey.currentState
+                                .addToMfrList(mfrModelItem);
+
                             Navigator.of(context).pop();
                           }
                         } catch (e) {
-                          print("ERROR");
                           print(e.toString());
                         }
                       },
