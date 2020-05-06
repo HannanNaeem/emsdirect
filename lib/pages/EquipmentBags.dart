@@ -13,7 +13,7 @@ class EquipmentBagsState extends State<EquipmentBags> {
     'B1 Bag',
     'CS Dept. Bag',
     'EMS Room Bag',
-    'Library BAG',
+    'Library Bag',
     'PDC Bag',
     'Pool Bag',
     'REDC Bag'
