@@ -183,26 +183,20 @@ exports.decrementEquipment = functions.firestore.document('/ReportedEmergencies/
   
   //get the equipment used map from the document created first
   var equipmentInfo = snap.data().equipmentUsed;
-  var equipmentNameList = equipmentInfo.keys();
+  var equipmentNameList = Object.keys(equipmentInfo);
 
   //proceed to get the bag used from firestore
-  const bagRef = admin.firestore().collection('EquipmetnBags').doc(bagUsed);
-  var bagState;
-  try{
-  
-    bagState = await bagRef.get();
+  const bagRef = admin.firestore().collection('EquipmentBags').doc(bagUsed);
+ 
 
-  } catch(e) {
-    console.log(e);
-    console.log("Failed to retrieve bag!");
-    return false;
-  }
+  const bagState = await bagRef.get();
+  console.log(`got ${bagState.data()}`);
 
   //Now decrement each field
   try{
     equipmentNameList.forEach(equipment => {
-      await bagRef.update({
-        equipment : bagState.data()[equipment] - equipmentInfo[equipmentInfo] < 0 ?  0 : bagState.data()[equipment] - equipmentInfo[equipmentInfo],
+      bagRef.update({
+        equipment : bagState[equipment] - equipmentInfo[equipmentInfo] < 0 ?  0 : bagState[equipment] - equipmentInfo[equipmentInfo],
       })
     });
   } catch(e){
