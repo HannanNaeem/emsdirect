@@ -3,6 +3,7 @@ import 'package:ems_direct/available_mfr_card.dart';
 import 'package:ems_direct/services/ops_database.dart';
 import 'package:provider/provider.dart';
 import 'package:ems_direct/models/emergency_models.dart';
+import 'package:ems_direct/shared/loading.dart';
 
 class MfrData{
   String name;
@@ -48,6 +49,7 @@ class _MakeListState extends State<MakeList> {
     var screenSize = MediaQuery.of(context).size;
     var width = screenSize.width;
     var height = screenSize.height;
+    bool populate = false;
     List<MfrData> _mfrList = [];
     var _availableMfrList = Provider.of<List<AvailableMfrs>>(context);
 
@@ -55,6 +57,7 @@ class _MakeListState extends State<MakeList> {
       for(var i = 0; i < _availableMfrList.length; i++){
         _mfrList.add(MfrData(_availableMfrList[i].name, _availableMfrList[i].contact, _availableMfrList[i].rollNo, _availableMfrList[i].gender, _availableMfrList[i].isOccupied));
       }
+      populate = true;
     }
 
     if(_availableMfrList != null)
@@ -77,36 +80,38 @@ class _MakeListState extends State<MakeList> {
         ),
         centerTitle: true,
       ),
-      body: Container(
-        child: Column(
-          mainAxisSize: MainAxisSize.max,
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: <Widget>[
-            Expanded(
-              child: ListView.builder(
-                itemCount: _mfrList.length,
-                itemBuilder: (context, index) {
-                  return Padding(
-                    padding: EdgeInsets.fromLTRB(20, 10, 20, 0),
-                    child: ConstrainedBox(
-                      constraints: BoxConstraints(
-                        minHeight: 105,
+      body: populate == false
+        ? Loading()
+        : Container(
+          child: Column(
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: <Widget>[
+              Expanded(
+                child: ListView.builder(
+                  itemCount: _mfrList.length,
+                  itemBuilder: (context, index) {
+                    return Padding(
+                      padding: EdgeInsets.fromLTRB(20, 10, 20, 0),
+                      child: ConstrainedBox(
+                        constraints: BoxConstraints(
+                          minHeight: 105,
+                        ),
+                        child: AvailableMfrCard(
+                          _mfrList[index].name,
+                          _mfrList[index].contact,
+                          _mfrList[index].rollNo,
+                          _mfrList[index].gender,
+                          _mfrList[index].isOccupied,
+                        ),
                       ),
-                      child: AvailableMfrCard(
-                        _mfrList[index].name,
-                        _mfrList[index].contact,
-                        _mfrList[index].rollNo,
-                        _mfrList[index].gender,
-                        _mfrList[index].isOccupied,
-                      ),
-                    ),
-                  );
-                },
+                    );
+                  },
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
-      ),
     );;
   }
 }
