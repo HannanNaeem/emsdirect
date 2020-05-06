@@ -3,7 +3,6 @@ import 'package:ems_direct/services/push_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 //import 'package:geolocator/geolocator.dart';
-import 'dart:async';
 import 'package:ems_direct/pages/live_status.dart';
 import 'package:configurable_expansion_tile/configurable_expansion_tile.dart';
 import 'package:location/location.dart';
@@ -418,210 +417,243 @@ class _StudentHomeState extends State<StudentHome> with WidgetsBindingObserver {
           centerTitle: true,
           backgroundColor: const Color(0xff142850),
         ),
-        body: Center(
-          child: Container(
-            constraints: BoxConstraints.expand(),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: <Widget>[
-                SizedBox(height: height / 50),
-                Text(
-                  'Severity Level',
-                  style: TextStyle(
-                    fontSize: 15.0,
-                    fontFamily: 'HelveticaNeueLight',
-                    color: Colors.white,
-                    letterSpacing: 2.0,
-                  ),
-                ),
-                SizedBox(height: height / 76),
-                Card(
-                  color: const Color(0xff00a8cc),
-                  child: ToggleButtons(
-                    constraints: BoxConstraints(
-                        minWidth: width / 5, minHeight: height / 11),
-                    children: <Widget>[
-                      Text(
-                        "Low",
-                        style: TextStyle(
-                          fontFamily: 'HelveticaNeueLight',
-                          letterSpacing: 2.0,
-                        ),
-                      ),
-                      Text(
-                        "Medium",
-                        style: TextStyle(
-                          fontFamily: 'HelveticaNeueLight',
-                          letterSpacing: 2.0,
-                        ),
-                      ),
-                      Text(
-                        "High",
-                        style: TextStyle(
-                          fontFamily: 'HelveticaNeueLight',
-                          letterSpacing: 2.0,
-                        ),
-                      ),
-                      Text(
-                        "Critical",
-                        style: TextStyle(
-                          fontFamily: 'HelveticaNeueLight',
-                          letterSpacing: 2.0,
-                        ),
-                      ),
-                    ],
-                    color: Colors.white,
-                    selectedColor: Colors.white,
-                    fillColor: Colors.redAccent,
-                    borderColor: Colors.white,
-                    selectedBorderColor: Colors.white,
-                    isSelected: _selections,
-                    onPressed: (int index) {
-                      setState(() {
-                        for (int buttonIndex = 0;
-                            buttonIndex < _selections.length;
-                            buttonIndex++) {
-                          if (buttonIndex == index) {
-                            _selections[buttonIndex] = true;
-                          } else {
-                            _selections[buttonIndex] = false;
-                          }
-                          _severityLevel = index;
-                        }
-                        print(_severityLevel);
-                      });
-                    },
-                  ),
-                ),
-                SizedBox(height: height / 30),
-                Text(
-                  'Prefered MFR Gender',
-                  style: TextStyle(
-                    fontSize: 15.0,
-                    color: Colors.white,
-                    letterSpacing: 2.0,
-                    fontFamily: 'HelveticaNeueLight',
-                  ),
-                ),
-                SizedBox(height: height / 76),
-                Card(
-                  color: const Color(0xff00a8cc),
-                  child: ToggleButtons(
-                    constraints: BoxConstraints(
-                        minWidth: width / 5.5, minHeight: height / 11),
-                    children: <Widget>[
-                      Text(
-                        "N/A",
-                        style: TextStyle(
-                          fontFamily: 'HelveticaNeueLight',
-                          letterSpacing: 2.0,
-                        ),
-                      ),
-                      Text(
-                        "Male",
-                        style: TextStyle(
-                          fontFamily: 'HelveticaNeueLight',
-                          letterSpacing: 2.0,
-                        ),
-                      ),
-                      Text(
-                        "Female",
-                        style: TextStyle(
-                          fontFamily: 'HelveticaNeueLight',
-                          letterSpacing: 2.0,
-                        ),
-                      ),
-                    ],
-                    color: Colors.white,
-                    selectedColor: Colors.white,
-                    fillColor: Colors.redAccent,
-                    borderColor: Colors.white,
-                    selectedBorderColor: Colors.white,
-                    isSelected: _selections2,
-                    onPressed: (int index) {
-                      setState(() {
-                        print(index);
-                        for (int buttonIndex = 0;
-                            buttonIndex < _selections2.length;
-                            buttonIndex++) {
-                          if (buttonIndex == index) {
-                            _selections2[buttonIndex] = true;
-                          } else {
-                            _selections2[buttonIndex] = false;
-                          }
-                          _gender = index;
-                          print(_gender);
-                        }
-                      });
-                    },
-                  ),
-                ),
-                SizedBox(height: height / 35),
-                RawMaterialButton(
-                    onPressed: () {
-                      setState(() {
-                        _emergency = true;
-                      });
-                    },
-                    //SOS function implemented here
-                    //A 'PendingEmergencies' document is created in the database with relevant attributes set
-                    //Student is taken to the live updates screen for live feedback
-                    onLongPress: () {
-                      _createPendingEmergencyDocument(
-                          _geoLocation,
-                          _genderPreferences[_gender],
-                          _severityLevels[_severityLevel],
-                          _userData.data['rollNo'].toString(),
-                          _userData.data['contact'].toString(),
-                          DateTime.now());
-                      _updateUserData();
-                      Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) =>
-                                  LiveStatus(_keepSignedIn, _userData)));
-                      print("emergency initiated");
-                    },
-                    fillColor: Colors.red[400],
-                    elevation: 10.0,
-                    constraints: BoxConstraints(
-                        minHeight: height / 2.7, minWidth: height / 2.7),
-                    child: Text(
-                      'SOS',
+        body: Container(
+          constraints: BoxConstraints.expand(),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              SizedBox(height: height / 30),
+              Expanded(
+                flex: 2,
+                child: Column(
+                  children: <Widget>[
+                    Text(
+                      'Severity Level',
                       style: TextStyle(
-                        fontSize: 70.0,
+                        fontSize: 18.0,
+                        fontFamily: 'HelveticaNeueLight',
                         color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                        fontFamily: 'HelveticaNeue',
+                        letterSpacing: 1.0,
+                      ),
+                    ),
+                    SizedBox(height: height / 76),
+                    Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          color: const Color(0xff00a8cc),
+                        ),
+                        
+                        child: ToggleButtons(
+                        borderRadius: BorderRadius.circular(10),
+                        constraints: BoxConstraints(
+                            minWidth: width / 5, minHeight: height / 15),
+                        children: <Widget>[
+                          Text(
+                            "Low",
+                            style: TextStyle(
+                              fontFamily: 'HelveticaNeueLight',
+                              letterSpacing: 1.0,
+                            ),
+                          ),
+                          Text(
+                            "Medium",
+                            style: TextStyle(
+                              fontFamily: 'HelveticaNeueLight',
+                              letterSpacing: 1.0,
+                            ),
+                          ),
+                          Text(
+                            "High",
+                            style: TextStyle(
+                              fontFamily: 'HelveticaNeueLight',
+                              letterSpacing: 1.0,
+                            ),
+                          ),
+                          Text(
+                            "Critical",
+                            style: TextStyle(
+                              fontFamily: 'HelveticaNeueLight',
+                              letterSpacing: 1.0,
+                            ),
+                          ),
+                        ],
+                        color: Colors.grey[300],
+                        selectedColor: Colors.white,
+                        fillColor: Colors.redAccent,
+                        borderColor: Colors.grey[350],
+                        selectedBorderColor: Colors.white,
+                        isSelected: _selections,
+                        onPressed: (int index) {
+                          setState(() {
+                            for (int buttonIndex = 0;
+                                buttonIndex < _selections.length;
+                                buttonIndex++) {
+                              if (buttonIndex == index) {
+                                _selections[buttonIndex] = true;
+                              } else {
+                                _selections[buttonIndex] = false;
+                              }
+                              _severityLevel = index;
+                            }
+                            print(_severityLevel);
+                          });
+                        },
+                      ),
+                    ),
+                    SizedBox(height: height / 30),
+                    Text(
+                      'Prefered MFR Gender',
+                      style: TextStyle(
+                        fontSize: 18.0,
+                        color: Colors.white,
+                        letterSpacing: 1.0,
+                        fontFamily: 'HelveticaNeueLight',
+                      ),
+                    ),
+                    SizedBox(height: height / 76),
+                    Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          color: const Color(0xff00a8cc),
+                        ),
+                      child: ToggleButtons(
+                        borderRadius: BorderRadius.circular(10),
+                        constraints: BoxConstraints(
+                            minWidth: width / 5, minHeight: height / 15),
+                        children: <Widget>[
+                          Text(
+                            "N/A",
+                            style: TextStyle(
+                              fontFamily: 'HelveticaNeueLight',
+                              letterSpacing: 1.0,
+                            ),
+                          ),
+                          Text(
+                            "Male",
+                            style: TextStyle(
+                              fontFamily: 'HelveticaNeueLight',
+                              letterSpacing: 1.0,
+                            ),
+                          ),
+                          Text(
+                            "Female",
+                            style: TextStyle(
+                              fontFamily: 'HelveticaNeueLight',
+                              letterSpacing: 1.0,
+                            ),
+                          ),
+                        ],
+                        color: Colors.grey[300],
+                        selectedColor: Colors.white,
+                        fillColor: Colors.redAccent,
+                        borderColor: Colors.grey[350],
+                        selectedBorderColor: Colors.white,
+                        isSelected: _selections2,
+                        onPressed: (int index) {
+                          setState(() {
+                            print(index);
+                            for (int buttonIndex = 0;
+                                buttonIndex < _selections2.length;
+                                buttonIndex++) {
+                              if (buttonIndex == index) {
+                                _selections2[buttonIndex] = true;
+                              } else {
+                                _selections2[buttonIndex] = false;
+                              }
+                              _gender = index;
+                              print(_gender);
+                            }
+                          });
+                        },
+                      ),
+                    ),
+
+                  ],
+                ),
+              ),
+          
+              Expanded(
+                flex: 3,
+                  child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Center(
+                      child: RawMaterialButton(
+                          onPressed: () {
+                            setState(() {
+                              _emergency = true;
+                            });
+                          },
+                          //SOS function implemented here
+                          //A 'PendingEmergencies' document is created in the database with relevant attributes set
+                          //Student is taken to the live updates screen for live feedback
+                          onLongPress: () {
+                            _createPendingEmergencyDocument(
+                                _geoLocation,
+                                _genderPreferences[_gender],
+                                _severityLevels[_severityLevel],
+                                _userData.data['rollNo'].toString(),
+                                _userData.data['contact'].toString(),
+                                DateTime.now());
+                            _updateUserData();
+                            Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        LiveStatus(_keepSignedIn, _userData)));
+                            print("emergency initiated");
+                          },
+                          fillColor: Colors.red[400],
+                          elevation: 10.0,
+                          constraints: BoxConstraints(
+                              minHeight: height / 2.7, minWidth: height / 2.7),
+                          child: Text(
+                            'SOS',
+                            style: TextStyle(
+                              fontSize: 70.0,
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                              fontFamily: 'HelveticaNeue',
+                              letterSpacing: 2.0,
+                            ),
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(height / 2.7),
+                          )),
+                    ),
+                  ],
+                ),
+              ),
+            
+              Expanded(
+                flex: 1,
+                child: Column(
+                  children: <Widget>[
+                    Text(
+                      'TAP AND HOLD TO',
+                      style: TextStyle(
+                        fontSize: 15.0,
+                        color: Colors.red[400],
+                        fontFamily: 'HelveticaNeueLight',
                         letterSpacing: 2.0,
                       ),
                     ),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(height / 2.7),
-                    )),
-                SizedBox(height: height / 45),
-                Text(
-                  'TAP AND HOLD TO',
-                  style: TextStyle(
-                    fontSize: 15.0,
-                    color: Colors.red[400],
-                    fontFamily: 'HelveticaNeueLight',
-                    letterSpacing: 2.0,
-                  ),
+                    Text(
+                      'INITIATE EMERGENCY',
+                      style: TextStyle(
+                        fontSize: 15.0,
+                        color: Colors.red[400],
+                        fontFamily: 'HelveticaNeueLight',
+                        letterSpacing: 2.0,
+                      ),
+                    ),
+                  ],
                 ),
-                SizedBox(height: height / 120),
-                Text(
-                  'INITIATE EMERGENCY',
-                  style: TextStyle(
-                    fontSize: 15.0,
-                    color: Colors.red[400],
-                    fontFamily: 'HelveticaNeueLight',
-                    letterSpacing: 2.0,
-                  ),
-                ),
-              ],
-            ),
+              ),
+              
+
+            ],
           ),
         ));
   }
