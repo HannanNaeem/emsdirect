@@ -94,6 +94,8 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
   }
 
   void _updateUserData(GeoPoint Newlocation) async {
+    print(Newlocation.longitude);
+    print(Newlocation.latitude);
     try {
       print(Newlocation.latitude);
       print(Newlocation.longitude);
@@ -116,11 +118,9 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
     WidgetsBinding.instance.addObserver(this);
     //initializing stream to null as MFR will always be unavailable unless made available by himself
     _documentStream = null;
-
     _notificationService.getToken();
     _notificationService.configureFirebaseListeners();
     mfrRef = databaseReference.collection("Mfr").document(_userData['rollNo']);
-
     getInitialData(_userData['rollNo']);
 
   }
@@ -142,7 +142,7 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
     try {
       while (true) {
         if (isAvailable) {
-          print('panney khan');
+
           var location = await _locationTracker.getLocation();
 
           var currLoc = LatLng(location.latitude, location.longitude);
@@ -234,6 +234,7 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
           gender = onVal.data['gender'];
           print('Initial data set done!');
         });
+        getCurrentLocation();
       }).catchError((onError) {
         print(onError.message);
       });
@@ -801,6 +802,10 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
                   child: InkWell(
                     onTap: () {
                       print('Emergency report');
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => EmergencyReportMfr()));
                     },
                     child: Column(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -814,11 +819,6 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
                             onPressed: () {
                               print('Clicked');
                               //! navigate to report emergency
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          EmergencyReportMfr()));
                             },
                           ),
                           Center(

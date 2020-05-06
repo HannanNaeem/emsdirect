@@ -460,7 +460,7 @@ class _DynamicDialogState extends State<DynamicDialog> {
                                   _mfrIsHostelite == 'Hostelite' ? true : false,
                               'isOccupied': false,
                               'isSenior': false,
-                              'location': GeoPoint(31, 76),
+                              'location': GeoPoint(31.47, 74.41),
                               'name': docData['name']
                             };
                             var mfrModelItem = MfrListModel(
