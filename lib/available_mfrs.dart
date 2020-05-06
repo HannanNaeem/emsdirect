@@ -87,7 +87,7 @@ class _MakeListState extends State<MakeList> {
                 itemCount: _mfrList.length,
                 itemBuilder: (context, index) {
                   return Padding(
-                    padding: EdgeInsets.fromLTRB(20, 5, 20, 5),
+                    padding: EdgeInsets.fromLTRB(20, 10, 20, 0),
                     child: ConstrainedBox(
                       constraints: BoxConstraints(
                         minHeight: 105,

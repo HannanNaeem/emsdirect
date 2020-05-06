@@ -36,27 +36,31 @@ class _SeniorMfrCardState extends State<SeniorMfrCard> {
     return Card(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
       elevation: 6,
-      child: ListTile(
-        isThreeLine: true,
-        leading: Icon(
-          Icons.fiber_manual_record,
-          color: GenerateColor(widget.isOccupied)
-        ),
-        title: Text(
-          widget.name,
-          style: TextStyle(
-            letterSpacing: 2.0,
-            fontFamily: 'HelveticaNeueLight',
-          )
-        ),
-        subtitle: Text(
-          "Contact: " + widget.contact + "\n" +
-          "Roll Number: " + widget.rollNo + "\n" + 
-          "Gender: " + widget.gender,
-          style: TextStyle(
-            letterSpacing: 1.0,
-            fontFamily: 'HelveticaNeueLight',
-          )
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(8, 8, 8, 13),
+        child: ListTile(
+          isThreeLine: true,
+          leading: Icon(
+            Icons.fiber_manual_record,
+            color: GenerateColor(widget.isOccupied)
+          ),
+          title: Text(
+            widget.name,
+            style: TextStyle(
+              letterSpacing: 1.0,
+              fontFamily: 'HelveticaNeueLight',
+              fontSize: 20,
+            )
+          ),
+          subtitle: Text(
+            "Contact: " + widget.contact + "\n" +
+            "Roll Number: " + widget.rollNo + "\n" + 
+            "Gender: " + widget.gender,
+            style: TextStyle(
+              letterSpacing: 1.0,
+              fontFamily: 'HelveticaNeueLight',
+            )
+          ),
         ),
       ),
     );

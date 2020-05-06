@@ -36,7 +36,7 @@ class _MfrListState extends State<MfrList> {
       appBar: AppBar(
         backgroundColor: const Color(0xff142850),
         title: Text(
-          'MFR List',
+          'MFRs',
           style: TextStyle(
             fontSize: 24,
             fontFamily: 'HelveticaNeueLight',
@@ -58,7 +58,7 @@ class _MfrListState extends State<MfrList> {
                       itemCount: mfrList == null ? 0 : mfrList.length,
                       itemBuilder: (context, index) {
                         return Padding(
-                          padding: EdgeInsets.fromLTRB(20, 5, 20, 5),
+                          padding: EdgeInsets.fromLTRB(20, 10, 20, 0),
                           child: MfrListCard(mfrList[index]),
                         );
                       },
