@@ -6,7 +6,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ems_direct/pages/live_status.dart';
 import 'package:configurable_expansion_tile/configurable_expansion_tile.dart';
 import 'package:location/location.dart';
-
+import 'package:ems_direct/pages/emergency_numbers.dart';
 
 class StudentHome extends StatefulWidget {
   var _userData;
@@ -46,37 +46,36 @@ class _StudentHomeState extends State<StudentHome> with WidgetsBindingObserver {
   /////////////////////////////////////////////////////////////////
 
   //function to get current location of the student to update to the database
-  _getCurrentLocation() async{
-      Location location = new Location();
-      bool  _serviceEnabled;
-      PermissionStatus _permissionGranted;
-      LocationData _locationData;
+  _getCurrentLocation() async {
+    Location location = new Location();
+    bool _serviceEnabled;
+    PermissionStatus _permissionGranted;
+    LocationData _locationData;
 
-      try{
-        _serviceEnabled = await location.serviceEnabled();
-        if(!_serviceEnabled){
+    try {
+      _serviceEnabled = await location.serviceEnabled();
+      if (!_serviceEnabled) {
+        _serviceEnabled = await location.requestService();
+        if (!_serviceEnabled) {
           _serviceEnabled = await location.requestService();
-          if (!_serviceEnabled){
-            _serviceEnabled = await location.requestService();
-          }
         }
-
-        _permissionGranted = await location.hasPermission();
-        if(_permissionGranted == PermissionStatus.DENIED){
-          _permissionGranted = await location.requestPermission();
-          while(_permissionGranted != PermissionStatus.GRANTED){
-            _permissionGranted = await location.requestPermission();
-          }
-        }
-
-        _locationData = await location.getLocation();
-        _geoLocation = GeoPoint(_locationData.latitude, _locationData.longitude);
-        print(_locationData.latitude);
-        print(_locationData.longitude);
-
-      }catch(e){
-        print(e);
       }
+
+      _permissionGranted = await location.hasPermission();
+      if (_permissionGranted == PermissionStatus.DENIED) {
+        _permissionGranted = await location.requestPermission();
+        while (_permissionGranted != PermissionStatus.GRANTED) {
+          _permissionGranted = await location.requestPermission();
+        }
+      }
+
+      _locationData = await location.getLocation();
+      _geoLocation = GeoPoint(_locationData.latitude, _locationData.longitude);
+      print(_locationData.latitude);
+      print(_locationData.longitude);
+    } catch (e) {
+      print(e);
+    }
   }
 
   //instance of auth service
@@ -184,7 +183,7 @@ class _StudentHomeState extends State<StudentHome> with WidgetsBindingObserver {
                 Padding(
                   padding: const EdgeInsets.all(20.0),
                   child: Container(
-                    height: height * 0.25,
+                    height: height * 0.2,
                     child: Image(
                       image: AssetImage("assets/ems_logo.png"),
                       fit: BoxFit.fill,
@@ -439,12 +438,11 @@ class _StudentHomeState extends State<StudentHome> with WidgetsBindingObserver {
                     ),
                     SizedBox(height: height / 76),
                     Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          color: const Color(0xff00a8cc),
-                        ),
-                        
-                        child: ToggleButtons(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        color: const Color(0xff00a8cc),
+                      ),
+                      child: ToggleButtons(
                         borderRadius: BorderRadius.circular(10),
                         constraints: BoxConstraints(
                             minWidth: width / 5, minHeight: height / 15),
@@ -513,10 +511,10 @@ class _StudentHomeState extends State<StudentHome> with WidgetsBindingObserver {
                     ),
                     SizedBox(height: height / 76),
                     Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          color: const Color(0xff00a8cc),
-                        ),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        color: const Color(0xff00a8cc),
+                      ),
                       child: ToggleButtons(
                         borderRadius: BorderRadius.circular(10),
                         constraints: BoxConstraints(
@@ -568,14 +566,12 @@ class _StudentHomeState extends State<StudentHome> with WidgetsBindingObserver {
                         },
                       ),
                     ),
-
                   ],
                 ),
               ),
-          
               Expanded(
                 flex: 3,
-                  child: Column(
+                child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     Center(
@@ -625,7 +621,6 @@ class _StudentHomeState extends State<StudentHome> with WidgetsBindingObserver {
                   ],
                 ),
               ),
-            
               Expanded(
                 flex: 1,
                 child: Column(
@@ -651,8 +646,6 @@ class _StudentHomeState extends State<StudentHome> with WidgetsBindingObserver {
                   ],
                 ),
               ),
-              
-
             ],
           ),
         ));

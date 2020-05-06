@@ -50,8 +50,8 @@ class MfrDatabaseService {
   List<EquipmentBagModel> equipmentBagListFromSnapshot(QuerySnapshot snapshot) {
     return snapshot.documents.map((doc) {
       return EquipmentBagModel(
-          items: doc.data,
-          name: doc.documentID,
+        items: doc.data,
+        name: doc.documentID,
       );
     }).toList();
   }

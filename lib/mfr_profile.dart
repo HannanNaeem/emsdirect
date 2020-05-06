@@ -22,7 +22,7 @@ class _MfrProfileState extends State<MfrProfile> {
     } else if (mfr.gender == 'M') {
       return 'Male';
     } else {
-      return 'NA';
+      return 'Other';
     }
   }
 
@@ -35,21 +35,21 @@ class _MfrProfileState extends State<MfrProfile> {
         padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
         child: TextFormField(
             decoration: InputDecoration(
-              hintText: 'Contact Number',
+              hintText: "Contact No.",
               hintStyle: TextStyle(
-                color: Colors.grey[800],
+                color: Colors.grey[700],
                 fontFamily: 'HelveticaNeueLight',
                 letterSpacing: 2.0,
               ),
               errorStyle: TextStyle(
-                color: Colors.black,
+                color: Colors.redAccent,
                 letterSpacing: 1.0,
-                fontFamily: 'HelveticaNeueLight',
-                fontSize: 14,
               ),
               fillColor: Colors.grey[100],
-              filled: true,
-              focusedErrorBorder: InputBorder.none,
+              filled: false,
+              focusedErrorBorder: OutlineInputBorder(),
+              border: OutlineInputBorder(),
+              focusedBorder: OutlineInputBorder(),
             ),
             validator: (String value) {
               if (value.isEmpty) return 'Contact number is required!';
@@ -67,86 +67,93 @@ class _MfrProfileState extends State<MfrProfile> {
   //edit contact information
   //this function takes in the ProgressDialog object, to let the user know that the entered information is being updated
   Widget _buildDialog(ProgressDialog pr) {
-    return Dialog(
-      shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20.0)), //this right here
-      child: Container(
-        height: 250,
-        child: Padding(
-          padding: const EdgeInsets.all(20.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Enter new contact number below:',
-                style: TextStyle(
-                  fontSize: 20,
-                  fontFamily: 'HelveticaNeueLight',
-                  color: Colors.black,
-                  letterSpacing: 2,
-                ),
-              ),
-              SizedBox(height: 20),
-              _buildContact(),
-              SizedBox(height: 20),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: <Widget>[
-                  FlatButton(
-                    child: Text(
-                      'Save',
-                      style: TextStyle(
-                        fontFamily: 'HelveticaNeueLight',
-                        letterSpacing: 2.0,
-                        fontSize: 20,
-                        color: const Color(0xff1a832a),
+    return AlertDialog(
+        shape:
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
+        content: Container(
+          height: 250,
+          child: SingleChildScrollView(
+            scrollDirection: Axis.vertical,
+            child: StatefulBuilder(
+              builder: (BuildContext context, StateSetter setState) {
+                return Padding(
+                  padding: const EdgeInsets.all(20.0),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Enter new contact number below:',
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontFamily: 'HelveticaNeueLight',
+                          color: Colors.black,
+                          letterSpacing: 2,
+                        ),
                       ),
-                    ),
-                    onPressed: () async {
-                      //validation prompted once input is entered
-                      if (!(_contactKey.currentState.validate())) {
-                        return;
-                      }
-                      _contactKey.currentState.save();
+                      SizedBox(height: 20),
+                      _buildContact(),
+                      SizedBox(height: 20),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: <Widget>[
+                          FlatButton(
+                            child: Text(
+                              'Save',
+                              style: TextStyle(
+                                fontFamily: 'HelveticaNeueLight',
+                                letterSpacing: 2.0,
+                                fontSize: 20,
+                                color: const Color(0xff1a832a),
+                              ),
+                            ),
+                            onPressed: () async {
+                              //validation prompted once input is entered
+                              if (!(_contactKey.currentState.validate())) {
+                                return;
+                              }
+                              _contactKey.currentState.save();
 
-                      pr.show();
+                              pr.show();
 
-                      //update to the database
-                      try {
-                        await Firestore.instance
-                            .collection('Mfr')
-                            .document(widget.mfr.rollNo)
-                            .updateData({'contact': _contact});
-                      } catch (e) {
-                        print(e.toString());
-                      }
-                      pr.hide();
-                      Navigator.of(context).pop();
-                    },
-                  ),
-                  FlatButton(
-                    child: Text(
-                      'Cancel',
-                      style: TextStyle(
-                        fontFamily: 'HelveticaNeueLight',
-                        letterSpacing: 2,
-                        fontSize: 20,
-                        color: const Color(0xffee0000),
+                              //update to the database
+                              try {
+                                await Firestore.instance
+                                    .collection('Mfr')
+                                    .document(widget.mfr.rollNo)
+                                    .updateData({'contact': _contact});
+                              } catch (e) {
+                                print(e.toString());
+                              }
+                              pr.hide();
+                              Navigator.of(context).pop();
+                            },
+                          ),
+                          FlatButton(
+                            child: Text(
+                              'Cancel',
+                              style: TextStyle(
+                                fontFamily: 'HelveticaNeueLight',
+                                letterSpacing: 2,
+                                fontSize: 20,
+                                color: const Color(0xffee0000),
+                              ),
+                            ),
+                            onPressed: () async {
+                              Navigator.of(context).pop();
+                            },
+                          ),
+                        ],
                       ),
-                    ),
-                    onPressed: () async {
-                      Navigator.of(context).pop();
-                    },
+                    ],
                   ),
-                ],
-              ),
-            ],
+                );
+              },
+            ),
           ),
-        ),
-      ),
-    );
+        ));
   }
 
   @override
@@ -188,237 +195,246 @@ class _MfrProfileState extends State<MfrProfile> {
 
     return Scaffold(
       backgroundColor: const Color(0xffffffff),
-      body: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: <Widget>[
-          Flexible(
-            child: Container(
-              color: const Color(0xff142850),
-              height: height * 0.4,
-              //width: width,
-              child: Stack(
-                //mainAxisAlignment: MainAxisAlignment.center,
+      body: SingleChildScrollView(
+          scrollDirection: Axis.vertical,
+          child: StatefulBuilder(
+            builder: (BuildContext context, StateSetter setState) {
+              return Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: <Widget>[
-                  SafeArea(
-                    child: IconButton(
-                      color: Colors.white,
-                      icon: Icon(Icons.arrow_back),
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                    ),
-                  ),
-                  Center(
-                    child: Column(
-                      //crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        CircleAvatar(
-                          radius: 60,
-                          //backgroundImage: AssetImage('assets/ems_logo.png'),
-                          backgroundColor: Colors.white,
-                          child: Icon(
-                            Icons.person,
-                            color: const Color(0xff27496d),
-                            size: 100,
-                          ),
-                        ),
-                        SizedBox(height: 20),
-                        Text(
-                          widget.mfr.name,
-                          style: TextStyle(
-                            fontSize: 24,
-                            fontFamily: 'HelveticaNeueLight',
-                            color: Colors.white,
-                            letterSpacing: 2,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          Flexible(
-            child: Container(
-              height: height * 0.5,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: <Widget>[
-                  Padding(
-                    padding: EdgeInsetsDirectional.only(start: 20),
-                    child: Text(
-                      'Profile Info',
-                      style: TextStyle(
-                        fontSize: 24,
-                        fontFamily: 'HelveticaNeueLight',
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black,
-                        letterSpacing: 2,
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsetsDirectional.only(start: width / 7),
+                  Flexible(
                     child: Container(
-                      //color: Colors.amber,
-                      height: 50,
+                      color: const Color(0xff142850),
+                      height: height * 0.4,
+                      //width: width,
                       child: Stack(
+                        //mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
-                          Positioned(
-                            top: 5,
-                            child: Icon(
-                              CustomIcons.MyFlutterApp.wc,
-                              color: const Color(0xff142850),
-                              size: 35,
+                          SafeArea(
+                            child: IconButton(
+                              color: Colors.white,
+                              icon: Icon(Icons.arrow_back),
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
                             ),
                           ),
-                          Positioned(
-                            left: 45,
-                            child: Text(
-                              'Gender: ',
-                              style: TextStyle(
-                                fontSize: 20,
-                                fontFamily: 'HelveticaNeueLight',
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black,
-                                letterSpacing: 2,
-                              ),
-                            ),
-                          ),
-                          Positioned(
-                            left: 55,
-                            top: 25,
-                            child: Text(
-                              gender(widget.mfr),
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontFamily: 'HelveticaNeueLight',
-                                color: Colors.black,
-                                letterSpacing: 2,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsetsDirectional.only(start: width / 7),
-                    child: Container(
-                      //color: Colors.amber,
-                      height: 50,
-                      child: Stack(
-                        children: <Widget>[
-                          Positioned(
-                            top: 5,
-                            child: Icon(
-                              Icons.email,
-                              color: const Color(0xff142850),
-                              size: 35,
-                            ),
-                          ),
-                          Positioned(
-                            left: 45,
-                            child: Text(
-                              'Email: ',
-                              style: TextStyle(
-                                fontSize: 20,
-                                fontFamily: 'HelveticaNeueLight',
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black,
-                                letterSpacing: 2,
-                              ),
-                            ),
-                          ),
-                          Positioned(
-                            left: 55,
-                            top: 25,
-                            child: Text(
-                              "${widget.mfr.rollNo}@lums.edu.pk",
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontFamily: 'HelveticaNeueLight',
-                                color: Colors.black,
-                                letterSpacing: 2,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsetsDirectional.only(start: width / 7),
-                    child: Container(
-                      //color: Colors.amber,
-                      height: 50,
-                      child: Stack(
-                        children: <Widget>[
-                          Positioned(
-                            top: 5,
-                            child: Icon(
-                              Icons.call,
-                              color: const Color(0xff142850),
-                              size: 35,
-                            ),
-                          ),
-                          Positioned(
-                            left: 45,
-                            child: Text(
-                              'Contact: ',
-                              style: TextStyle(
-                                fontSize: 20,
-                                fontFamily: 'HelveticaNeueLight',
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black,
-                                letterSpacing: 2,
-                              ),
-                            ),
-                          ),
-                          Positioned(
-                            left: 55,
-                            top: 25,
-                            child: Text(
-                              _contact,
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontFamily: 'HelveticaNeueLight',
-                                color: Colors.black,
-                                letterSpacing: 2,
-                              ),
-                            ),
-                          ),
-                          Positioned(
-                              bottom: 5,
-                              right: 55,
-                              child: IconButton(
-                                icon: Icon(
-                                  Icons.edit,
-                                  color: Colors.grey[700],
-                                  size: 35,
+                          Center(
+                            child: Column(
+                              //crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: <Widget>[
+                                CircleAvatar(
+                                  radius: 60,
+                                  //backgroundImage: AssetImage('assets/ems_logo.png'),
+                                  backgroundColor: Colors.white,
+                                  child: Icon(
+                                    Icons.person,
+                                    color: const Color(0xff27496d),
+                                    size: 100,
+                                  ),
                                 ),
-                                onPressed: () {
-                                  showDialog(
-                                      context: context,
-                                      builder: (BuildContext context) {
-                                        return _buildDialog(pr);
-                                      });
-                                },
-                              )),
+                                SizedBox(height: 20),
+                                Text(
+                                  widget.mfr.name,
+                                  style: TextStyle(
+                                    fontSize: 24,
+                                    fontFamily: 'HelveticaNeueLight',
+                                    color: Colors.white,
+                                    letterSpacing: 2,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  Flexible(
+                    child: Container(
+                      height: height * 0.5,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: <Widget>[
+                          Padding(
+                            padding: EdgeInsetsDirectional.only(start: 20),
+                            child: Text(
+                              'Profile Info',
+                              style: TextStyle(
+                                fontSize: 24,
+                                fontFamily: 'HelveticaNeueLight',
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black,
+                                letterSpacing: 2,
+                              ),
+                            ),
+                          ),
+                          Padding(
+                            padding:
+                                EdgeInsetsDirectional.only(start: width / 7),
+                            child: Container(
+                              //color: Colors.amber,
+                              height: 50,
+                              child: Stack(
+                                children: <Widget>[
+                                  Positioned(
+                                    top: 5,
+                                    child: Icon(
+                                      CustomIcons.MyFlutterApp.wc,
+                                      color: const Color(0xff142850),
+                                      size: 35,
+                                    ),
+                                  ),
+                                  Positioned(
+                                    left: 45,
+                                    child: Text(
+                                      'Gender: ',
+                                      style: TextStyle(
+                                        fontSize: 20,
+                                        fontFamily: 'HelveticaNeueLight',
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.black,
+                                        letterSpacing: 2,
+                                      ),
+                                    ),
+                                  ),
+                                  Positioned(
+                                    left: 55,
+                                    top: 25,
+                                    child: Text(
+                                      gender(widget.mfr),
+                                      style: TextStyle(
+                                        fontSize: 18,
+                                        fontFamily: 'HelveticaNeueLight',
+                                        color: Colors.black,
+                                        letterSpacing: 2,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                          Padding(
+                            padding:
+                                EdgeInsetsDirectional.only(start: width / 7),
+                            child: Container(
+                              //color: Colors.amber,
+                              height: 50,
+                              child: Stack(
+                                children: <Widget>[
+                                  Positioned(
+                                    top: 5,
+                                    child: Icon(
+                                      Icons.email,
+                                      color: const Color(0xff142850),
+                                      size: 35,
+                                    ),
+                                  ),
+                                  Positioned(
+                                    left: 45,
+                                    child: Text(
+                                      'Email: ',
+                                      style: TextStyle(
+                                        fontSize: 20,
+                                        fontFamily: 'HelveticaNeueLight',
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.black,
+                                        letterSpacing: 2,
+                                      ),
+                                    ),
+                                  ),
+                                  Positioned(
+                                    left: 55,
+                                    top: 25,
+                                    child: Text(
+                                      "${widget.mfr.rollNo}@lums.edu.pk",
+                                      style: TextStyle(
+                                        fontSize: 18,
+                                        fontFamily: 'HelveticaNeueLight',
+                                        color: Colors.black,
+                                        letterSpacing: 2,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                          Padding(
+                            padding:
+                                EdgeInsetsDirectional.only(start: width / 7),
+                            child: Container(
+                              //color: Colors.amber,
+                              height: 50,
+                              child: Stack(
+                                children: <Widget>[
+                                  Positioned(
+                                    top: 5,
+                                    child: Icon(
+                                      Icons.call,
+                                      color: const Color(0xff142850),
+                                      size: 35,
+                                    ),
+                                  ),
+                                  Positioned(
+                                    left: 45,
+                                    child: Text(
+                                      'Contact: ',
+                                      style: TextStyle(
+                                        fontSize: 20,
+                                        fontFamily: 'HelveticaNeueLight',
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.black,
+                                        letterSpacing: 2,
+                                      ),
+                                    ),
+                                  ),
+                                  Positioned(
+                                    left: 55,
+                                    top: 25,
+                                    child: Text(
+                                      _contact,
+                                      style: TextStyle(
+                                        fontSize: 18,
+                                        fontFamily: 'HelveticaNeueLight',
+                                        color: Colors.black,
+                                        letterSpacing: 2,
+                                      ),
+                                    ),
+                                  ),
+                                  Positioned(
+                                      bottom: 5,
+                                      right: 55,
+                                      child: IconButton(
+                                        icon: Icon(
+                                          Icons.edit,
+                                          color: Colors.grey[700],
+                                          size: 35,
+                                        ),
+                                        onPressed: () {
+                                          showDialog(
+                                              context: context,
+                                              builder: (BuildContext context) {
+                                                return _buildDialog(pr);
+                                              });
+                                        },
+                                      )),
+                                ],
+                              ),
+                            ),
+                          ),
                         ],
                       ),
                     ),
                   ),
                 ],
-              ),
-            ),
-          ),
-        ],
-      ),
+              );
+            },
+          )),
     );
   }
 }

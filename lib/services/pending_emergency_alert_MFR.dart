@@ -505,9 +505,16 @@ class _AlertFunctionMfrState extends State<AlertFunctionMfr> {
     if (_pendingEmergencyList != null &&
         _gender != null &&
         _pendingEmergencyList.length > 0) {
+      //filtering the pending emergency to make sure MFR does not get alerts for the emergencies he/she ignored
+      _pendingEmergencyList.removeWhere((item) {
+        int num = item.declines;
+        return num >= 4;
+      });
       //filtering the pending emergency to make sure MFR does not get alerts for the emergencies he/she rejected
-      _pendingEmergencyList.removeWhere(
-          (item) => item.declinedBy.contains(widget._userData['rollNo']));
+      if (_pendingEmergencyList.length > 0) {
+        _pendingEmergencyList.removeWhere(
+            (item) => item.declinedBy.contains(widget._userData['rollNo']));
+      }
       //putting another filter of gender only if the list is not empty
       if (_pendingEmergencyList.length > 0) {
         if (_gender == 'M') {

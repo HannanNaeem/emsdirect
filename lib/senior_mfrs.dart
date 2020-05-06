@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:ems_direct/senior_mfr_card.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:ems_direct/shared/loading.dart';
 
 class SeniorMfrData{
   String name;
@@ -22,6 +23,7 @@ class _SeniorMfrsState extends State<SeniorMfrs> {
 
   var seniorMfrList = List<SeniorMfrData>();
   final databaseReference = Firestore.instance;
+  bool populate = false;
 
   @override
   void initState() {
@@ -42,8 +44,10 @@ class _SeniorMfrsState extends State<SeniorMfrs> {
   _makeList(QuerySnapshot snapshot){
     setState(() {
       snapshot.documents.forEach((document) =>
-          seniorMfrList.add(SeniorMfrData(document.data['name'], document.data['contact'], document.documentID, document.data['gender'], document.data['isOccupied'])));
+          seniorMfrList.add(SeniorMfrData(document.data['name'], document.data['contact'], 
+          document.documentID, document.data['gender'], document.data['isOccupied'])));
     });
+    populate = true;
   }
 
 
@@ -68,36 +72,38 @@ class _SeniorMfrsState extends State<SeniorMfrs> {
         ),
         centerTitle: true,
       ),
-      body: Container(
-        child: Column(
-          mainAxisSize: MainAxisSize.max,
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: <Widget>[
-            Expanded(
-              child: ListView.builder(
-                itemCount: seniorMfrList == null ? 0: seniorMfrList.length,
-                itemBuilder: (context, index) {
-                  return Padding(
-                    padding: EdgeInsets.fromLTRB(20, 10, 20, 0),
-                    child: ConstrainedBox(
-                      constraints: BoxConstraints(
-                        minHeight: 105,
+      body: populate == false
+        ? Loading()
+        : Container(
+          child: Column(
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: <Widget>[
+              Expanded(
+                child: ListView.builder(
+                  itemCount: seniorMfrList == null ? 0: seniorMfrList.length,
+                  itemBuilder: (context, index) {
+                    return Padding(
+                      padding: EdgeInsets.fromLTRB(20, 10, 20, 0),
+                      child: ConstrainedBox(
+                        constraints: BoxConstraints(
+                          minHeight: 105,
+                        ),
+                        child: SeniorMfrCard(
+                          seniorMfrList[index].name,
+                          seniorMfrList[index].contact,
+                          seniorMfrList[index].rollNo,
+                          seniorMfrList[index].gender,
+                          seniorMfrList[index].isOccupied,
+                            ),
                       ),
-                      child: SeniorMfrCard(
-                        seniorMfrList[index].name,
-                        seniorMfrList[index].contact,
-                        seniorMfrList[index].rollNo,
-                        seniorMfrList[index].gender,
-                        seniorMfrList[index].isOccupied,
-                          ),
-                    ),
-                  );
-                },
+                    );
+                  },
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
-      ),
     );
   }
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:ems_direct/pages/emergency_numbers_card.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:ems_direct/shared/loading.dart';
 
 class NumbersData{
   String name;
@@ -18,6 +19,7 @@ class EmergencyNumbers extends StatefulWidget {
 class _EmergencyNumbersState extends State<EmergencyNumbers> {
   var _numberList = List<NumbersData>();
   final databaseReference = Firestore.instance;
+  bool populate = false;
 
 
   @override
@@ -46,6 +48,7 @@ class _EmergencyNumbersState extends State<EmergencyNumbers> {
       _numberList.add(NumbersData('HAWC', snapshot.data['hawc']));
       _numberList.add(NumbersData('Security Office', snapshot.data['securityOffice']));
     });
+    populate = true;
   }
 
 
@@ -70,28 +73,30 @@ class _EmergencyNumbersState extends State<EmergencyNumbers> {
         ),
         centerTitle: true,
       ),
-      body: Container(
-        child: Column(
-          mainAxisSize: MainAxisSize.max,
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: <Widget>[
-            Expanded(
-              child: ListView.builder(
-                itemCount: _numberList.length,
-                itemBuilder: (context, index) {
-                  return Padding(
-                    padding: EdgeInsets.fromLTRB(20, 10, 20, 0),
-                    child: EmergencyNumberCard(
-                      _numberList[index].name,
-                      _numberList[index].contact
-                    ),
-                  );
-                },
+      body: populate == false
+        ? Loading() 
+        : Container(
+          child: Column(
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: <Widget>[
+              Expanded(
+                child: ListView.builder(
+                  itemCount: _numberList.length,
+                  itemBuilder: (context, index) {
+                    return Padding(
+                      padding: EdgeInsets.fromLTRB(20, 10, 20, 0),
+                      child: EmergencyNumberCard(
+                        _numberList[index].name,
+                        _numberList[index].contact
+                      ),
+                    );
+                  },
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
-      ),
     );
   }
 }
