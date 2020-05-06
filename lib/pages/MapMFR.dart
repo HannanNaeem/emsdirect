@@ -6,6 +6,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 import 'package:ems_direct/pages/MFR_home.dart';
 import 'package:ems_direct/services/pending_emergency_alert_MFR.dart';
+import 'package:progress_dialog/progress_dialog.dart';
 
 // Displays the map to the MFR with their current location as well as the emergency location of the emergency they have been assigned to.
 // MFR can only see this screen if they are on an emergency.
@@ -20,8 +21,8 @@ class MapMFR extends StatefulWidget {
   GeoPoint locationOfEmergency;
 
   // Constructor
-  MapMFR(GeoPoint location, String contactNo, String rollNo,
-      String patientRollNo)
+  MapMFR(
+      GeoPoint location, String contactNo, String rollNo, String patientRollNo)
       : super() {
     patientContact = contactNo;
     locationOfEmergency = location;
@@ -74,13 +75,14 @@ class MapState extends State<MapMFR> {
     final MarkerId markerId = MarkerId(mar);
 
     // making an asset image the marker icon
-    var emergencyLocationIcon = BitmapDescriptor.fromAsset('assets/redcross.png');
+    var emergencyLocationIcon =
+        BitmapDescriptor.fromAsset('assets/redcross.png');
 
     // creating a marker
     final Marker marker = Marker(
         markerId: markerId,
-        position: LatLng(
-            widget.locationOfEmergency.latitude, widget.locationOfEmergency.longitude),
+        position: LatLng(widget.locationOfEmergency.latitude,
+            widget.locationOfEmergency.longitude),
         infoWindow: InfoWindow(
             title: 'Emergency Location', snippet: widget.patientRollNumber),
         icon: emergencyLocationIcon);
@@ -90,13 +92,11 @@ class MapState extends State<MapMFR> {
       emergencyMarker[markerId] = marker;
     });
 
-
-   // todo: uncomment
+    // todo: uncomment
     //getCurrentLocation();
 
     // making mapLoading false so that the map can be displayed now
     this.setState(() => mapLoading = false);
-
   }
 
   // Called when camera is moved around so that the last map position can be updated
@@ -108,9 +108,8 @@ class MapState extends State<MapMFR> {
   onMapTypeButtonPressed() {
     // Setting the map type to the opposite to what it was previously
     setState(() {
-      currentMapType = currentMapType == MapType.normal
-          ? MapType.satellite
-          : MapType.normal;
+      currentMapType =
+          currentMapType == MapType.normal ? MapType.satellite : MapType.normal;
     });
   }
 
@@ -160,7 +159,6 @@ class MapState extends State<MapMFR> {
     );
   }
 
-
   // Used to determine/track the current location of the MFR
   void getCurrentLocation() async {
     try {
@@ -189,20 +187,19 @@ class MapState extends State<MapMFR> {
       // constantly listening to see if location of MFR has updated
       locationSubscription =
           locationTracker.onLocationChanged().listen((newLocation) {
-            // updating marker position on map
-            if (controller != null) {
-              updateMarker(newLocation);
-            }
+        // updating marker position on map
+        if (controller != null) {
+          updateMarker(newLocation);
+        }
       });
     } on PlatformException catch (e) {
       // exception thrown if the location permission is denied.
       if (e.code == 'PERMISSION_DENIED') {
         debugPrint("Permission Denied");
       }
-      throw(e);
+      throw (e);
     }
   }
-
 
   @override
   // Called when this object is removed from the tree permanently
@@ -301,6 +298,31 @@ class MapState extends State<MapMFR> {
                           showDialog(
                               context: context,
                               builder: (BuildContext context) {
+                                //setting up the ProgressDialog based on the context above
+                                ProgressDialog pr = new ProgressDialog(context,
+                                    type: ProgressDialogType.Normal);
+                                pr.style(
+                                    message: 'Ending emergency...',
+                                    borderRadius: 8.0,
+                                    backgroundColor: Colors.white,
+                                    progressWidget: Padding(
+                                      padding:
+                                          EdgeInsets.fromLTRB(15, 12, 12, 12),
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 5,
+                                        //backgroundColor: Colors.red,
+                                        valueColor:
+                                            new AlwaysStoppedAnimation<Color>(
+                                                const Color(0xff27496d)),
+                                      ),
+                                    ),
+                                    elevation: 10.0,
+                                    insetAnimCurve: Curves.easeInOut,
+                                    messageTextStyle: TextStyle(
+                                        color: Colors.black,
+                                        fontSize: 20.0,
+                                        fontFamily: 'HelveticaNeueLight'));
+
                                 return AlertDialog(
                                   title: Text(
                                     "Are you sure?",
@@ -323,14 +345,14 @@ class MapState extends State<MapMFR> {
                                         ),
                                       ),
                                       onPressed: () async {
+                                        pr.show();
                                         // When the MFR ends the emergency
-
-
                                         try {
                                           // deleting emergency from ongoing emergencies collection in the database
                                           await Firestore.instance
                                               .collection('OngoingEmergencies')
-                                              .document(widget.patientRollNumber)
+                                              .document(
+                                                  widget.patientRollNumber)
                                               .delete();
 
                                           // changing mfr's isOccupied status to false in the database
@@ -346,11 +368,12 @@ class MapState extends State<MapMFR> {
                                           mfrAlertFunctionGlobalKey.currentState
                                               .updateOccupiedLocal(false);
                                         } catch (e) {
-                                          throw(e);
+                                          throw (e);
                                         }
 
+                                        pr.hide();
                                         // Navigating back to MFR home screen
-                                       Navigator.of(context).pop();
+                                        Navigator.of(context).pop();
                                         Navigator.of(context).pop();
                                       },
                                     ),
@@ -376,7 +399,6 @@ class MapState extends State<MapMFR> {
                         },
                         textColor: Colors.cyan[500],
                         color: const Color(0xffee0000),
-                        // todo: update occupied status
                         child: Text(
                           'End Emergency',
                           style: TextStyle(

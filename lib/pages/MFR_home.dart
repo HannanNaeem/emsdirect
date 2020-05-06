@@ -99,8 +99,8 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
           .collection("Mfr")
           .document((await _userData['rollNo']).toString())
           .updateData({'location': Newlocation});
-    }catch(e){
-      throw(e);
+    } catch (e) {
+      throw (e);
     }
   }
 
@@ -134,21 +134,20 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
     }
   }
 
-
   void getCurrentLocaion() async {
     try {
       while (true) {
         if (isAvailable) {
-        var location = await _locationTracker.getLocation();
+          var location = await _locationTracker.getLocation();
 
-        var currLoc = LatLng(location.latitude, location.longitude);
-        GeoPoint NewGeoPoint = GeoPoint(currLoc.latitude, currLoc.longitude);
-        oldLatitude = currLoc.latitude;
-        oldLongitude = currLoc.longitude;
+          var currLoc = LatLng(location.latitude, location.longitude);
+          GeoPoint NewGeoPoint = GeoPoint(currLoc.latitude, currLoc.longitude);
+          oldLatitude = currLoc.latitude;
+          oldLongitude = currLoc.longitude;
 
-        if (_locationSubscription != null) {
-          _locationSubscription.cancel();
-        }
+          if (_locationSubscription != null) {
+            _locationSubscription.cancel();
+          }
           _updateUserData(NewGeoPoint);
           break;
         }
@@ -161,9 +160,14 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
           var latitudeDifference = newLocation.latitude - oldLatitude;
           var longitudeDifference = newLocation.longitude - oldLongitude;
           var p = 0.017453292519943295;
-          var distance = 0.5 - cos(latitudeDifference * p)/2 + cos(newLocation.latitude * p) * cos(oldLatitude * p)  * (1 - cos(longitudeDifference * p))/2;
-          var meter = distance/1000;
-          if(meter > 5){
+          var distance = 0.5 -
+              cos(latitudeDifference * p) / 2 +
+              cos(newLocation.latitude * p) *
+                  cos(oldLatitude * p) *
+                  (1 - cos(longitudeDifference * p)) /
+                  2;
+          var meter = distance / 1000;
+          if (meter > 5) {
             _updateUserData(NewGeoPoint);
           }
 
@@ -177,7 +181,6 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
       }
     }
   }
-
 
   void updateDeclineCount(docId) async {
     try {
@@ -339,7 +342,7 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
                 Padding(
                   padding: const EdgeInsets.all(20.0),
                   child: Container(
-                    height: height * 0.25,
+                    height: height * 0.2,
                     child: Image(
                       image: AssetImage("assets/ems_logo.png"),
                       fit: BoxFit.fill,
@@ -624,32 +627,39 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
                             //isAvailable = snapshot.data['isActive'];
                             return Transform.scale(
                                 scale: 2.5,
-                                child: Switch(
-                                  value: isAvailable, //isAvailable,
-                                  onChanged: (bool newVal) async {
-                                    if (!isOccupied) {
-                                      try {
-                                        await mfrRef
-                                            .updateData({'isActive': newVal});
-                                        setState(() {
-                                          isAvailable = newVal;
-                                          if (!isAvailable) {
-                                            isOccupied = false;
+                                child: isOccupied
+                                    ? Switch(
+                                        value: true,
+                                        //activeTrackColor: Colors.green,
+                                        //activeColor: Colors.green[50],
+                                        inactiveThumbColor: Colors.green[50],
+                                        inactiveTrackColor: Colors.green,
+                                      )
+                                    : Switch(
+                                        value: isAvailable, //isAvailable,
+                                        onChanged: (bool newVal) async {
+                                          try {
+                                            await mfrRef.updateData(
+                                                {'isActive': newVal});
+                                            setState(() {
+                                              isAvailable = newVal;
+                                              if (!isAvailable) {
+                                                isOccupied = false;
+                                              }
+                                            });
+                                            mfrAlertFunctionGlobalKey
+                                                .currentState
+                                                .updateStatus(
+                                                    isAvailable, isOccupied);
+                                          } catch (e) {
+                                            print(e.toString());
                                           }
-                                        });
-                                        mfrAlertFunctionGlobalKey.currentState
-                                            .updateStatus(
-                                                isAvailable, isOccupied);
-                                      } catch (e) {
-                                        print(e.toString());
-                                      }
-                                    }
-                                  },
-                                  activeTrackColor: Colors.green,
-                                  activeColor: Colors.green[50],
-                                  inactiveThumbColor: Colors.white,
-                                  inactiveTrackColor: Colors.red[200],
-                                ));
+                                        },
+                                        activeTrackColor: Colors.green,
+                                        activeColor: Colors.green[50],
+                                        inactiveThumbColor: Colors.white,
+                                        inactiveTrackColor: Colors.red[200],
+                                      ));
                           }
                         } else {
                           return Container(
@@ -794,29 +804,33 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
                               image: AssetImage('assets/report.png'),
                               fit: BoxFit.fill,
                             ),
-                          iconSize: height / 9,
-                          onPressed: () {
-                            print('Clicked');
-                            //! navigate to report emergency
-                            Navigator.push(context, MaterialPageRoute(builder: (context) => EmergencyReportMfr()));
-                          },
-                        ),
-                        Center(
-                          child: Padding(
-                            padding: EdgeInsets.fromLTRB(0, 0, 0, height / 80),
-                            child: Text(
-                              'Report Emergency',
-                              style: TextStyle(
-                                fontSize: 22,
-                                fontFamily: 'HelveticaNeueLight',
-                                letterSpacing: 2.0,
-                                color: const Color(0xff142850),
+                            iconSize: height / 9,
+                            onPressed: () {
+                              print('Clicked');
+                              //! navigate to report emergency
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          EmergencyReportMfr()));
+                            },
+                          ),
+                          Center(
+                            child: Padding(
+                              padding:
+                                  EdgeInsets.fromLTRB(0, 0, 0, height / 80),
+                              child: Text(
+                                'Report Emergency',
+                                style: TextStyle(
+                                  fontSize: 22,
+                                  fontFamily: 'HelveticaNeueLight',
+                                  letterSpacing: 2.0,
+                                  color: const Color(0xff142850),
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                      ]
-                    ),
+                        ]),
                   ),
                 ),
               ),

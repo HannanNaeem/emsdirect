@@ -129,7 +129,7 @@ class _OpsHomeState extends State<OpsHome> with WidgetsBindingObserver {
                       Padding(
                         padding: const EdgeInsets.all(20.0),
                         child: Container(
-                          height: height * 0.25,
+                          height: height * 0.2,
                           child: Image(
                             image: AssetImage("assets/ems_logo.png"),
                             fit: BoxFit.fill,
@@ -290,7 +290,6 @@ class _OpsHomeState extends State<OpsHome> with WidgetsBindingObserver {
                           //print('Emergency numbers');
                         },
                       ),
-
                       Expanded(
                         //the option to logout (bottom center aligned)
                         child: Align(

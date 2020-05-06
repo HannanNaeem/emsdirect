@@ -22,7 +22,7 @@ class _MfrProfileState extends State<MfrProfile> {
     } else if (mfr.gender == 'M') {
       return 'Male';
     } else {
-      return 'NA';
+      return 'Other';
     }
   }
 
@@ -35,21 +35,21 @@ class _MfrProfileState extends State<MfrProfile> {
         padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
         child: TextFormField(
             decoration: InputDecoration(
-              hintText: 'Contact Number',
+              hintText: "Contact No.",
               hintStyle: TextStyle(
-                color: Colors.grey[800],
+                color: Colors.grey[700],
                 fontFamily: 'HelveticaNeueLight',
                 letterSpacing: 2.0,
               ),
               errorStyle: TextStyle(
-                color: Colors.black,
+                color: Colors.redAccent,
                 letterSpacing: 1.0,
-                fontFamily: 'HelveticaNeueLight',
-                fontSize: 14,
               ),
               fillColor: Colors.grey[100],
-              filled: true,
-              focusedErrorBorder: InputBorder.none,
+              filled: false,
+              focusedErrorBorder: OutlineInputBorder(),
+              border: OutlineInputBorder(),
+              focusedBorder: OutlineInputBorder(),
             ),
             validator: (String value) {
               if (value.isEmpty) return 'Contact number is required!';
@@ -67,86 +67,93 @@ class _MfrProfileState extends State<MfrProfile> {
   //edit contact information
   //this function takes in the ProgressDialog object, to let the user know that the entered information is being updated
   Widget _buildDialog(ProgressDialog pr) {
-    return Dialog(
-      shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20.0)), //this right here
-      child: Container(
-        height: 250,
-        child: Padding(
-          padding: const EdgeInsets.all(20.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Enter new contact number below:',
-                style: TextStyle(
-                  fontSize: 20,
-                  fontFamily: 'HelveticaNeueLight',
-                  color: Colors.black,
-                  letterSpacing: 2,
+    return AlertDialog(
+        shape:
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
+        content: SingleChildScrollView(
+          scrollDirection: Axis.vertical,
+          child: StatefulBuilder(
+            builder: (BuildContext context, StateSetter setState) {
+              return Container(
+                height: 250,
+                child: Padding(
+                  padding: const EdgeInsets.all(20.0),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Enter new contact number below:',
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontFamily: 'HelveticaNeueLight',
+                          color: Colors.black,
+                          letterSpacing: 2,
+                        ),
+                      ),
+                      SizedBox(height: 20),
+                      _buildContact(),
+                      SizedBox(height: 20),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: <Widget>[
+                          FlatButton(
+                            child: Text(
+                              'Save',
+                              style: TextStyle(
+                                fontFamily: 'HelveticaNeueLight',
+                                letterSpacing: 2.0,
+                                fontSize: 20,
+                                color: const Color(0xff1a832a),
+                              ),
+                            ),
+                            onPressed: () async {
+                              //validation prompted once input is entered
+                              if (!(_contactKey.currentState.validate())) {
+                                return;
+                              }
+                              _contactKey.currentState.save();
+
+                              pr.show();
+
+                              //update to the database
+                              try {
+                                await Firestore.instance
+                                    .collection('Mfr')
+                                    .document(widget.mfr.rollNo)
+                                    .updateData({'contact': _contact});
+                              } catch (e) {
+                                print(e.toString());
+                              }
+                              pr.hide();
+                              Navigator.of(context).pop();
+                            },
+                          ),
+                          FlatButton(
+                            child: Text(
+                              'Cancel',
+                              style: TextStyle(
+                                fontFamily: 'HelveticaNeueLight',
+                                letterSpacing: 2,
+                                fontSize: 20,
+                                color: const Color(0xffee0000),
+                              ),
+                            ),
+                            onPressed: () async {
+                              Navigator.of(context).pop();
+                            },
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-              SizedBox(height: 20),
-              _buildContact(),
-              SizedBox(height: 20),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: <Widget>[
-                  FlatButton(
-                    child: Text(
-                      'Save',
-                      style: TextStyle(
-                        fontFamily: 'HelveticaNeueLight',
-                        letterSpacing: 2.0,
-                        fontSize: 20,
-                        color: const Color(0xff1a832a),
-                      ),
-                    ),
-                    onPressed: () async {
-                      //validation prompted once input is entered
-                      if (!(_contactKey.currentState.validate())) {
-                        return;
-                      }
-                      _contactKey.currentState.save();
-
-                      pr.show();
-
-                      //update to the database
-                      try {
-                        await Firestore.instance
-                            .collection('Mfr')
-                            .document(widget.mfr.rollNo)
-                            .updateData({'contact': _contact});
-                      } catch (e) {
-                        print(e.toString());
-                      }
-                      pr.hide();
-                      Navigator.of(context).pop();
-                    },
-                  ),
-                  FlatButton(
-                    child: Text(
-                      'Cancel',
-                      style: TextStyle(
-                        fontFamily: 'HelveticaNeueLight',
-                        letterSpacing: 2,
-                        fontSize: 20,
-                        color: const Color(0xffee0000),
-                      ),
-                    ),
-                    onPressed: () async {
-                      Navigator.of(context).pop();
-                    },
-                  ),
-                ],
-              ),
-            ],
+              );
+            },
           ),
-        ),
-      ),
-    );
+        ));
   }
 
   @override

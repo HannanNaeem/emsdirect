@@ -9,7 +9,6 @@ class Records extends StatelessWidget {
   Widget _GenerateCard(
       String title, String imageFileName, var height, BuildContext context) {
     return Card(
-
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(15),
         ),
@@ -17,15 +16,17 @@ class Records extends StatelessWidget {
         child: InkWell(
           onTap: () {
             print(title);
-            if(title == "Equipment bags")
-              Navigator.push(
-                  context, MaterialPageRoute(builder: (context) => EquipmentBags()));
-            if(title == "Inventory")
-              Navigator.push(
-                  context, MaterialPageRoute(builder: (context) => Inventory()));
+            if (title == "Equipment bags")
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => EquipmentBags()));
+            if (title == "Inventory")
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => Inventory()));
             if (title == 'Profiles')
               Navigator.push(
-                  context, MaterialPageRoute(builder: (context) => MfrList()));
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => MfrList(mfrListGlobalKey)));
             if (title == "Emergencies")
               Navigator.push(
                   context,
@@ -56,7 +57,6 @@ class Records extends StatelessWidget {
             ],
           ),
         ));
-
   }
 
   @override
