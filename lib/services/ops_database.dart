@@ -6,10 +6,16 @@ class OpsDatabaseService {
 
   final CollectionReference onGoingEmergencies =
       Firestore.instance.collection('OngoingEmergencies');
+  
   final CollectionReference pendingEmergencies =
       Firestore.instance.collection('PendingEmergencies');
+  
   final CollectionReference availableMfrs =
       Firestore.instance.collection('Mfr');
+  
+  final CollectionReference equipmentBags = 
+      Firestore.instance.collection('EquipmentBags');
+
 
   //Declined emergency list from snapshot
   List<DeclinedEmergencyModel> _declinedEmergencyListFromSnapshot(
@@ -79,6 +85,20 @@ class OpsDatabaseService {
     }).toList();
   }
 
+  //Mfr List from snapshot
+  List<MfrListModel> mfrListFromSnapshot(QuerySnapshot snapshot) {
+    return snapshot.documents.map((doc) {
+      return MfrListModel(
+        name: doc.data['name'],
+        rollNo: doc.documentID,
+        gender: doc.data['gender'],
+        contact: doc.data['contact'],
+        isHostelite: doc.data['isHostelite'],
+        isSenior: doc.data['isSenior'],
+      );
+    }).toList();
+  }
+
   //Declined emergency list from snapshot
   List<AvailableMfrs> _availableMfrsListFromSnapshot(QuerySnapshot snapshot) {
     return snapshot.documents.map((doc) {
@@ -94,6 +114,21 @@ class OpsDatabaseService {
         rollNo: doc.documentID,
       );
     }).toList();
+  }
+
+  // Equipment bag list from snapshot
+  List<EquipmentBagModel> equipmentBagListFromSnapshot(QuerySnapshot snapshot) {
+    return snapshot.documents.map((doc) {
+      return EquipmentBagModel(
+          items: doc.data,
+          name: doc.documentID,
+      );
+    }).toList();
+  }
+
+  //equipment bag stream
+  Stream<List<EquipmentBagModel>> get equipmentBagsStream {
+    return equipmentBags.snapshots().map(equipmentBagListFromSnapshot);
   }
 
   //get pending emergencies

@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
 
 class SevereEmergencyModel {
   final String patientRollNo;
@@ -107,44 +108,63 @@ class OngoingEmergencyModel {
       this.patientContactNo});
 }
 
+class MfrListModel {
+  final String name;
+  final String rollNo;
+  final String gender;
+  final String contact;
+  final bool isHostelite;
+  final bool isSenior;
+
+  MfrListModel({
+    this.name,
+    this.rollNo,
+    this.gender,
+    this.contact,
+    this.isHostelite,
+    this.isSenior,
+  });
+}
+
 class EquipmentBagModel {
-  final int bpApparatus;
-  final int crepe;
-  final int deepHeat;
-  final int depressors;
-  final int faceMasks;
-  final int gauze;
-  final int gloves;
-  final int ORS;
-  final int openWove;
-  final int polyfax;
-  final int polyfaxPlus;
-  final int pyodine;
-  final int saniplast;
-  final int scissors;
-  final int stethoscope;
-  final int tape;
-  final int thermometer;
-  final int triangularBandage;
-  final int wintogeno;
+
+  final Map items;
+  final String name;
+
   EquipmentBagModel(
-      {this.bpApparatus,
-      this.crepe,
-      this.deepHeat,
-      this.depressors,
-      this.faceMasks,
-      this.gauze,
-      this.gloves,
-      this.ORS,
-      this.openWove,
-      this.polyfax,
-      this.polyfaxPlus,
-      this.pyodine,
-      this.saniplast,
-      this.scissors,
-      this.stethoscope,
-      this.tape,
-      this.thermometer,
-      this.triangularBandage,
-      this.wintogeno});
+      {this.items, this.name});
+}
+
+class ReportedEmergencyModel {
+  String patientRollNo;
+  String patientGender;
+  DateTime emergencyDate;
+  String primaryMfrRollNo;
+  String primaryMfrName;
+  String additionalMfrs;
+  String severity;
+  String patientIsHostelite;
+  String emergencyType;
+  String emergencyLocation;
+  String transportUsed;
+  String emergencyDetails;
+  String bagUsed;
+  Map equipmentUsed;
+
+  ReportedEmergencyModel({
+    this.patientRollNo,
+    this.patientGender,
+    this.emergencyDate,
+    this.primaryMfrRollNo,
+    this.primaryMfrName,
+    this.additionalMfrs,
+    this.severity,
+    this.patientIsHostelite,
+    this.emergencyType,
+    this.emergencyLocation,
+    this.transportUsed,
+    this.emergencyDetails,
+    this.bagUsed,
+    this.equipmentUsed,
+  });
 }

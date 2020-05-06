@@ -6,6 +6,8 @@ import 'package:provider/provider.dart';
 import 'package:ems_direct/pages/status_list.dart';
 import 'package:ems_direct/models/emergency_models.dart';
 import 'package:ems_direct/services/ops_database.dart';
+import 'package:configurable_expansion_tile/configurable_expansion_tile.dart';
+
 
 class LiveStatus extends StatefulWidget {
 
@@ -49,41 +51,60 @@ class _LiveStatusState extends State<LiveStatus> {
       ],
       child: Scaffold(
         drawer: Container(
+          width: width * 0.8,
           child: Drawer(
             child: Column(
               //this column contains the drawer header, the option to view profile/emergency numbers/available MFRs list
               //also has the option to logout
               children: <Widget>[
-                DrawerHeader(
-                  //only the ems logo
+                Padding(
+                  padding: const EdgeInsets.all(20.0),
                   child: Container(
-                    child: Image.asset("assets/ems_logo.png"),
-                  ),
-                ),
-                ExpansionTile(
-                  leading: Icon(
-                    Icons.account_circle,
-                    color: const Color(0xff142850),
-                  ),
-                  title: Text(
-                    _userData.data['name'].toString(),
-                    style: TextStyle(
-                      fontSize: 15,
-                      fontFamily: 'HelveticaNeue',
-                      fontWeight: FontWeight.bold,
-                      letterSpacing: 1.0,
+                    height: height * 0.25,
+                    child: Image(
+                      image: AssetImage("assets/ems_logo.png"),
+                      fit: BoxFit.fill,
                     ),
                   ),
-                  children: <Widget>[
-                    Container(
-                      constraints: BoxConstraints(maxWidth: width*0.75),
+                ),
+                ConfigurableExpansionTile(
+                  animatedWidgetFollowingHeader: const Icon(
+                    Icons.expand_more,
+                    color: const Color(0xFF707070),
+                  ),
+                  //headerExpanded: Flexible(child: Center(child: Text("A Header Changed"))),
+                  header: Container(
+                      color: Colors.transparent,
+                      child: Center(
+                          child: Row(
+                        children: <Widget>[
+                          Icon(
+                            Icons.account_circle,
+                            color: const Color(0xff142850),
+                            size: height / 20,
+                          ),
+                          SizedBox(width: 10.0),
+                          Text(
+                            _userData.data['name'].toString(),
+                            style: TextStyle(
+                              fontSize: 19,
+                              fontFamily: 'HelveticaNeueLight',
+                              letterSpacing: 1.0,
+                            ),
+                          ),
+                        ],
+                      ))),
+                  children: [
+                    SizedBox(height: 10.0),
+                    Padding(
+                      padding: EdgeInsets.fromLTRB(15, 0, 0, 0),
                       child: Row(
                         children: <Widget>[
                           Text(
-                            'Rollnumber:',
+                            'Roll number: ',
                             style: TextStyle(
                               fontSize: 15,
-                              fontFamily: 'HelveticaNeue',
+                              fontFamily: 'HelveticaNeueLight',
                               fontWeight: FontWeight.bold,
                               letterSpacing: 1.0,
                             ),
@@ -93,8 +114,7 @@ class _LiveStatusState extends State<LiveStatus> {
                             _userData.data['rollNo'].toString(),
                             style: TextStyle(
                               fontSize: 15,
-                              fontFamily: 'HelveticaNeue',
-                              fontWeight: FontWeight.bold,
+                              fontFamily: 'HelveticaNeueLight',
                               letterSpacing: 1.0,
                             ),
                           ),
@@ -102,15 +122,15 @@ class _LiveStatusState extends State<LiveStatus> {
                       ),
                     ),
                     SizedBox(height: 10.0),
-                    Container(
-                      constraints: BoxConstraints(maxWidth: width*0.75),
+                    Padding(
+                      padding: EdgeInsets.fromLTRB(15, 0, 0, 0),
                       child: Row(
                         children: <Widget>[
                           Text(
-                            'Email:',
+                            'Email: ',
                             style: TextStyle(
                               fontSize: 15,
-                              fontFamily: 'HelveticaNeue',
+                              fontFamily: 'HelveticaNeueLight',
                               fontWeight: FontWeight.bold,
                               letterSpacing: 1.0,
                             ),
@@ -120,8 +140,7 @@ class _LiveStatusState extends State<LiveStatus> {
                             _userData.data['email'].toString(),
                             style: TextStyle(
                               fontSize: 15,
-                              fontFamily: 'HelveticaNeue',
-                              fontWeight: FontWeight.bold,
+                              fontFamily: 'HelveticaNeueLight',
                               letterSpacing: 1.0,
                             ),
                           ),
@@ -129,15 +148,15 @@ class _LiveStatusState extends State<LiveStatus> {
                       ),
                     ),
                     SizedBox(height: 10.0),
-                    Container(
-                      constraints: BoxConstraints(maxWidth: width*0.75),
+                    Padding(
+                      padding: EdgeInsets.fromLTRB(15, 0, 0, 0),
                       child: Row(
                         children: <Widget>[
                           Text(
-                            'Contact:',
+                            'Contact: ',
                             style: TextStyle(
                               fontSize: 15,
-                              fontFamily: 'HelveticaNeue',
+                              fontFamily: 'HelveticaNeueLight',
                               fontWeight: FontWeight.bold,
                               letterSpacing: 1.0,
                             ),
@@ -147,14 +166,14 @@ class _LiveStatusState extends State<LiveStatus> {
                             _userData.data['contact'].toString(),
                             style: TextStyle(
                               fontSize: 15,
-                              fontFamily: 'HelveticaNeue',
-                              fontWeight: FontWeight.bold,
+                              fontFamily: 'HelveticaNeueLight',
                               letterSpacing: 1.0,
                             ),
                           ),
                         ],
                       ),
                     ),
+                    SizedBox(height: 10.0),
                   ],
                 ),
                 ListTile(
@@ -163,8 +182,7 @@ class _LiveStatusState extends State<LiveStatus> {
                     'Emergency Numbers',
                     style: TextStyle(
                       fontSize: 18,
-                      fontFamily: 'HelveticaNeue',
-                      fontWeight: FontWeight.bold,
+                      fontFamily: 'HelveticaNeueLight',
                       letterSpacing: 2.0,
                     ),
                   ),
@@ -175,12 +193,12 @@ class _LiveStatusState extends State<LiveStatus> {
                 ),
               ],
             ),
-          )
+          ),
         ),
         appBar: AppBar(
           backgroundColor: const Color(0xff142850),
           title: Text(
-            'Live Status',
+            'SOS',
             style: TextStyle(
               fontSize: 26,
               fontFamily: 'HelveticaNeue',

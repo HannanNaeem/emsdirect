@@ -17,8 +17,6 @@ import 'package:ems_direct/senior_mfrs.dart';
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
-//  GeoPoint geoPoint = GeoPoint(31.4700, 74.4111);
-//  String number = '03132732727';
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -30,7 +28,7 @@ class MyApp extends StatelessWidget {
       //  '/live_status': (context) => LiveStatus(),
         '/emergencyNumbers': (context) => EmergencyNumbers(),
         '/select_login': (context) => SelectLogin(),
-        '/availableMfrs': (context) => AvailableMfrs(),
+        '/availableMfrs': (context) => AvailableMfrsList(),
         '/seniorMfrs': (context) => SeniorMfrs(),
         //'/dummy': (context) => DummyPage(),
       },
