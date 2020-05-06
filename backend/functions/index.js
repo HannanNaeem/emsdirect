@@ -168,7 +168,130 @@ exports.setIsOccupied = functions.firestore.document('/OngoingEmergencies/{id}')
 
 });
 
+// trigger to decrement equipment on emergency reported
+exports.decrementEquipment = functions.firestore.document('/ReportedEmergencies/{id}').onCreate(async (snap,context) =>{
 
+  //get the name of bag used
+  var bagUsed = snap.data().bagUsed;
+  
+  //if no bag was used ==> no equipment was used  we can abort rightaway
+  if(bagUsed === "None" || bagUsed === null){
+    console.log("No equipment was used");
+    return false;
+  }
+  //otherwise we need to get the contents of this bag
+  
+  //get the equipment used map from the document created first
+  var equipmentInfo = snap.data().equipmentUsed;
+  var equipmentNameList = Object.keys(equipmentInfo);
+
+  console.log(`changes - ${equipmentInfo.crepe}`);
+
+  //proceed to get the bag used from firestore
+  const bagRef = admin.firestore().collection('EquipmentBags').doc(bagUsed);
+ 
+
+  const bagDoc = await bagRef.get();
+  const bagState = bagDoc.data();
+  console.log(`got ${bagState['crepe']}`);
+
+  //Now decrement each field
+
+  try{
+    equipmentNameList.forEach(equipment => {
+      if(equipment === "crepe"){
+        bagRef.update({
+          // `${equipment}` : bagState[equipment] - equipmentInfo[equipmentInfo] < 0 ?  0 : bagState[equipment] - equipmentInfo[equipmentInfo],
+          crepe : bagState[equipment] - equipmentInfo[equipment] < 0 ?  0 : bagState[equipment] - equipmentInfo[equipment],
+        });
+      }
+      else if (equipment === "openWove"){
+        bagRef.update({
+          // `${equipment}` : bagState[equipment] - equipmentInfo[equipmentInfo] < 0 ?  0 : bagState[equipment] - equipmentInfo[equipmentInfo],
+          openWove : bagState[equipment] - equipmentInfo[equipment] < 0 ?  0 : bagState[equipment] - equipmentInfo[equipment],
+        });
+      }
+      else if (equipment === "gauze"){
+        bagRef.update({
+          // `${equipment}` : bagState[equipment] - equipmentInfo[equipmentInfo] < 0 ?  0 : bagState[equipment] - equipmentInfo[equipmentInfo],
+          gauze : bagState[equipment] - equipmentInfo[equipment] < 0 ?  0 : bagState[equipment] - equipmentInfo[equipment],
+        });
+      }
+      else if (equipment === "saniplast"){
+        bagRef.update({
+          // `${equipment}` : bagState[equipment] - equipmentInfo[equipmentInfo] < 0 ?  0 : bagState[equipment] - equipmentInfo[equipmentInfo],
+          saniplast : bagState[equipment] - equipmentInfo[equipment] < 0 ?  0 : bagState[equipment] - equipmentInfo[equipment],
+        });
+      }
+      else if (equipment === "depressors"){
+        bagRef.update({
+          // `${equipment}` : bagState[equipment] - equipmentInfo[equipmentInfo] < 0 ?  0 : bagState[equipment] - equipmentInfo[equipmentInfo],
+          depressors : bagState[equipment] - equipmentInfo[equipment] < 0 ?  0 : bagState[equipment] - equipmentInfo[equipment],
+        });
+      }
+      else if (equipment === "triangularBandage"){
+        bagRef.update({
+          // `${equipment}` : bagState[equipment] - equipmentInfo[equipmentInfo] < 0 ?  0 : bagState[equipment] - equipmentInfo[equipmentInfo],
+          triangularBandage : bagState[equipment] - equipmentInfo[equipment] < 0 ?  0 : bagState[equipment] - equipmentInfo[equipment],
+        });
+      }
+      else if (equipment === "gloves"){
+        bagRef.update({
+          // `${equipment}` : bagState[equipment] - equipmentInfo[equipmentInfo] < 0 ?  0 : bagState[equipment] - equipmentInfo[equipmentInfo],
+          gloves : bagState[equipment] - equipmentInfo[equipment] < 0 ?  0 : bagState[equipment] - equipmentInfo[equipment],
+        });
+      }
+      else if (equipment === "faceMasks"){
+        bagRef.update({
+          // `${equipment}` : bagState[equipment] - equipmentInfo[equipmentInfo] < 0 ?  0 : bagState[equipment] - equipmentInfo[equipmentInfo],
+          faceMasks : bagState[equipment] - equipmentInfo[equipment] < 0 ?  0 : bagState[equipment] - equipmentInfo[equipment],
+        });
+      }
+      else if (equipment === "ors"){
+        bagRef.update({
+          // `${equipment}` : bagState[equipment] - equipmentInfo[equipmentInfo] < 0 ?  0 : bagState[equipment] - equipmentInfo[equipmentInfo],
+          ors : bagState[equipment] - equipmentInfo[equipment] < 0 ?  0 : bagState[equipment] - equipmentInfo[equipment],
+        });
+      }
+      else if (equipment === "pyodine"){
+        bagRef.update({
+          // `${equipment}` : bagState[equipment] - equipmentInfo[equipmentInfo] < 0 ?  0 : bagState[equipment] - equipmentInfo[equipmentInfo],
+          pyodine : bagState[equipment] - equipmentInfo[equipment] < 0 ?  0 : bagState[equipment] - equipmentInfo[equipment],
+        });
+      }
+      else if (equipment === "polyfax"){
+        bagRef.update({
+          // `${equipment}` : bagState[equipment] - equipmentInfo[equipmentInfo] < 0 ?  0 : bagState[equipment] - equipmentInfo[equipmentInfo],
+          polyfax : bagState[equipment] - equipmentInfo[equipment] < 0 ?  0 : bagState[equipment] - equipmentInfo[equipment],
+        });
+      }
+      else if (equipment === "polyfaxPlus"){
+        bagRef.update({
+          // `${equipment}` : bagState[equipment] - equipmentInfo[equipmentInfo] < 0 ?  0 : bagState[equipment] - equipmentInfo[equipmentInfo],
+          polyfaxPlus : bagState[equipment] - equipmentInfo[equipment] < 0 ?  0 : bagState[equipment] - equipmentInfo[equipment],
+        });
+      }
+      else if (equipment === "wintogeno"){
+        bagRef.update({
+          // `${equipment}` : bagState[equipment] - equipmentInfo[equipmentInfo] < 0 ?  0 : bagState[equipment] - equipmentInfo[equipmentInfo],
+          wintogeno : bagState[equipment] - equipmentInfo[equipment] < 0 ?  0 : bagState[equipment] - equipmentInfo[equipment],
+        });
+      }
+      else if (equipment === "deepHeat"){
+        bagRef.update({
+          // `${equipment}` : bagState[equipment] - equipmentInfo[equipmentInfo] < 0 ?  0 : bagState[equipment] - equipmentInfo[equipmentInfo],
+          deepHeat : bagState[equipment] - equipmentInfo[equipment] < 0 ?  0 : bagState[equipment] - equipmentInfo[equipment],
+        });
+      }
+    });
+  } catch(e){
+    console.log(e);
+    console.log("Bag Update failed")
+  }
+
+  return true
+
+});
 
 
 
