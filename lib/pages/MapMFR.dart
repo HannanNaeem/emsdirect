@@ -90,11 +90,13 @@ class MapState extends State<MapMFR> {
       emergencyMarker[markerId] = marker;
     });
 
+
    // todo: uncomment
     //getCurrentLocation();
 
     // making mapLoading false so that the map can be displayed now
     this.setState(() => mapLoading = false);
+
   }
 
   // Called when camera is moved around so that the last map position can be updated
@@ -158,6 +160,7 @@ class MapState extends State<MapMFR> {
     );
   }
 
+
   // Used to determine/track the current location of the MFR
   void getCurrentLocation() async {
     try {
@@ -199,6 +202,7 @@ class MapState extends State<MapMFR> {
       throw(e);
     }
   }
+
 
   @override
   // Called when this object is removed from the tree permanently

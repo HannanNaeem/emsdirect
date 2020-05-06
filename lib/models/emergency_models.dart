@@ -150,34 +150,34 @@ class EquipmentBagModel {
 }
 
 class ReportedEmergencyModel {
-  String patientRollNo;
-  String patientGender;
-  DateTime emergencyDate;
-  String primaryMfrRollNo;
-  String primaryMfrName;
-  String additionalMfrs;
-  String severity;
+  String patientRollNo; 
+  String patientGender; 
+  DateTime emergencyDate; 
+  String primaryMfrRollNo; 
+  String primaryMfrName; 
+  String additionalMfrs; 
+  String severity; 
   String patientIsHostelite;
-  String emergencyType;
+  String emergencyType; 
   String emergencyLocation;
   String transportUsed;
-  String emergencyDetails;
+  String emergencyDetails; 
   String bagUsed;
   Map equipmentUsed;
 
   ReportedEmergencyModel({
-    this.patientRollNo,
-    this.patientGender,
-    this.emergencyDate,
-    this.primaryMfrRollNo,
-    this.primaryMfrName,
-    this.additionalMfrs,
-    this.severity,
+    this.patientRollNo, 
+    this.patientGender, 
+    this.emergencyDate, 
+    this.primaryMfrRollNo, 
+    this.primaryMfrName, 
+    this.additionalMfrs, 
+    this.severity, 
     this.patientIsHostelite,
-    this.emergencyType,
+    this.emergencyType, 
     this.emergencyLocation,
     this.transportUsed,
-    this.emergencyDetails,
+    this.emergencyDetails, 
     this.bagUsed,
     this.equipmentUsed,
   });
