@@ -93,7 +93,7 @@ class MapState extends State<MapMFR> {
     });
 
     // todo: uncomment
-    //getCurrentLocation();
+    getCurrentLocation();
 
     // making mapLoading false so that the map can be displayed now
     this.setState(() => mapLoading = false);
