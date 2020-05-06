@@ -125,7 +125,7 @@ class _ReportedEmergencyTileState extends State<ReportedEmergencyTile> {
                   children: <Widget>[
                     //! name
                     Text(
-                      widget.primaryMfrName,
+                      widget.primaryMfrName.split(" ")[0],
                       style: TextStyle(
                         fontFamily: "HelveticaNeueLight",
                         color: const Color(0xff27496d),
