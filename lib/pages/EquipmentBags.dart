@@ -10,13 +10,13 @@ class EquipmentBags extends StatefulWidget {
 class EquipmentBagsState extends State<EquipmentBags> {
   // //This list contains the name of the bags which will be displayed on the screen.
   var equipmentBagNames = [
-    'B1 BAG',
-    'CS DEPT. BAG',
-    'EMS ROOM BAG',
-    'LIBRARY BAG',
-    'PDC BAG',
-    'POOL BAG',
-    'REDC BAG'
+    'B1 Bag',
+    'CS Dept. Bag',
+    'EMS Room Bag',
+    'Library BAG',
+    'PDC Bag',
+    'Pool Bag',
+    'REDC Bag'
   ];
 
   //This list contains the name of the bags in the database which will be sent
