@@ -168,7 +168,51 @@ exports.setIsOccupied = functions.firestore.document('/OngoingEmergencies/{id}')
 
 });
 
+// trigger to decrement equipment on emergency reported
+exports.decrementEquipment = functions.firestore.document('/ReportedEmergencies/{id}').onCreate(async (snap,context) =>{
 
+  //get the name of bag used
+  var bagUsed = snap.data().bagUsed;
+  
+  //if no bag was used ==> no equipment was used  we can abort rightaway
+  if(bagUsed === "None" || bagUsed === null){
+    console.log("No equipment was used");
+    return false;
+  }
+  //otherwise we need to get the contents of this bag
+  
+  //get the equipment used map from the document created first
+  var equipmentInfo = snap.data().equipmentUsed;
+  var equipmentNameList = equipmentInfo.keys();
+
+  //proceed to get the bag used from firestore
+  const bagRef = admin.firestore().collection('EquipmetnBags').doc(bagUsed);
+  var bagState;
+  try{
+  
+    bagState = await bagRef.get();
+
+  } catch(e) {
+    console.log(e);
+    console.log("Failed to retrieve bag!");
+    return false;
+  }
+
+  //Now decrement each field
+  try{
+    equipmentNameList.forEach(equipment => {
+      await bagRef.update({
+        equipment : bagState.data()[equipment] - equipmentInfo[equipmentInfo] < 0 ?  0 : bagState.data()[equipment] - equipmentInfo[equipmentInfo],
+      })
+    });
+  } catch(e){
+    console.log(e);
+    console.log("Bag Update failed")
+  }
+
+  return true
+
+});
 
 
 
