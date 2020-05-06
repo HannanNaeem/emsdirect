@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:ems_direct/mfr_list_card.dart';
 import 'package:ems_direct/services/ops_database.dart';
 import 'package:ems_direct/models/emergency_models.dart';
+import 'package:progress_dialog/progress_dialog.dart';
 
 //THIS FILE HAS TWO STATEFUL WIDGET CLASSES
 //The first widget is responsible for displaying the MFR list to the user
@@ -26,10 +27,11 @@ class MfrList extends StatefulWidget {
 class _MfrListState extends State<MfrList> {
   var mfrList;
 
-  //add the new MFR item to the list of cards
+  //add the new MFR item to the list of cards (simple check to avoid duplicates)
   void addToMfrList(var newRecord) {
     setState(() {
-      mfrList.add(newRecord);
+      if (!(mfrList.map((item) => (item.rollNo))).contains(newRecord.rollNo))
+        mfrList.add(newRecord);
     });
   }
 
@@ -316,6 +318,29 @@ class _DynamicDialogState extends State<DynamicDialog> {
     var width = screenSize.width;
     final height = screenSize.height;
 
+    //initializing the progress dialog here to respond to user's correct input
+    ProgressDialog pr =
+        new ProgressDialog(context, type: ProgressDialogType.Normal);
+    pr.style(
+        message: 'Updating info...',
+        borderRadius: 8.0,
+        backgroundColor: Colors.white,
+        progressWidget: Padding(
+          padding: EdgeInsets.fromLTRB(15, 12, 12, 12),
+          child: CircularProgressIndicator(
+            strokeWidth: 5,
+            //backgroundColor: Colors.red,
+            valueColor:
+                new AlwaysStoppedAnimation<Color>(const Color(0xff27496d)),
+          ),
+        ),
+        elevation: 10.0,
+        insetAnimCurve: Curves.easeInOut,
+        messageTextStyle: TextStyle(
+            color: Colors.black,
+            fontSize: 20.0,
+            fontFamily: 'HelveticaNeueLight'));
+
     return AlertDialog(
       shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20.0)), //this right here
@@ -424,6 +449,7 @@ class _DynamicDialogState extends State<DynamicDialog> {
                                   );
                                 });
                           } else {
+                            pr.show();
                             //else get relevant stuff from userDoc and make new MFR document
                             var docData = docSnaphot.documents[0].data;
                             var newData = {
@@ -459,6 +485,7 @@ class _DynamicDialogState extends State<DynamicDialog> {
                             mfrListGlobalKey.currentState
                                 .addToMfrList(mfrModelItem);
 
+                            pr.hide();
                             Navigator.of(context).pop();
                           }
                         } catch (e) {
