@@ -198,7 +198,7 @@ class _LiveStatusState extends State<LiveStatus> {
         appBar: AppBar(
           backgroundColor: const Color(0xff142850),
           title: Text(
-            'Live Status',
+            'SOS',
             style: TextStyle(
               fontSize: 26,
               fontFamily: 'HelveticaNeue',
