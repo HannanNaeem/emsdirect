@@ -154,10 +154,10 @@ class _NotificationsState extends State<Notifications> {
     {
       if(category == 'Ignored Emergency!')
       {
-        return "An emergency has been ignored! Please manually assign a MFR via Map\n\n Patient Details:\n  ${item.patientRollNo}\n  ${item.patientContactNo}";
+        return "An emergency has been ignored! Please manually assign a MFR via Map";
       }
       else if (category == 'Severe Emergency!'){
-        return "A severe emergency has been initiated! Please manually assign a MFR via Map\n Severity: ${item.severity}\n\n Patient Details:\n  ${item.patientRollNo}\n  ${item.patientContactNo}";
+        return "A severe emergency has been initiated! Please manually assign a MFR via Map";
       }
       else if (category == 'Restock Needed!'){
         return "${item.name} Bag needs restock! Please check bag contents from Records";
@@ -187,17 +187,28 @@ class _NotificationsState extends State<Notifications> {
                     return Column(
                     children: <Widget>[
                     Padding(
-                    padding: EdgeInsets.fromLTRB(20, 5, 20, 5),
+                    padding: EdgeInsets.fromLTRB(20, 0, 20, 10),
                     child: ConstrainedBox(
                       constraints: BoxConstraints(
                         minHeight: 100,
                       ),
                       child: NotificationCard(
+                          //!text
                           _getNotificationText(_notificationList[index].item, _notificationList[index].category),
+                          //!category
                           _notificationList[index].category,
+                          //!Time
                           _notificationList[index].category == "Restock Needed!" ?
-                          DateFormat.jm().format(DateTime.now())
-                          : DateFormat.jm().format(_notificationList[index].item.reportingTime)),
+                          DateFormat.jm().format(DateTime.now()) // for restock return the current time
+                          : DateFormat.jm().format(_notificationList[index].item.reportingTime),
+                          _notificationList[index].category != "Restock Needed!" ?  //for emergencies pass severity
+                          _notificationList[index].item.severity
+                          : "None",
+                          _notificationList[index].category != "Restock Needed!" ?  //for emergencies pass severity
+                          "Patient Details:" + "\n" +_notificationList[index].item.patientRollNo + "\n" +_notificationList[index].item.patientContactNo
+                          : "None",
+                      ),
+
                     ),
                   ),
 

@@ -7,6 +7,7 @@ class MfrListCard extends StatefulWidget {
   String contact;
   String rollNo;
   String gender;
+  bool isSenior;
   var mfr;
 
 
@@ -14,6 +15,7 @@ class MfrListCard extends StatefulWidget {
     this.mfr = mfr;
     this.name = mfr.name;
     this.rollNo = mfr.rollNo;
+    this.isSenior = mfr.isSenior;
   }
 
   @override
@@ -32,23 +34,68 @@ class _MfrListCardState extends State<MfrListCard> {
           MaterialPageRoute(builder: (context) => MfrProfile(mfr: widget.mfr)));
         },
         child: ListTile(
-          title: Center(
-            child: Text(
-              widget.name.toUpperCase(),
-              style: TextStyle(
-                letterSpacing: 2.0,
-                fontFamily: 'HelveticaNeueMedium',
+          title: Row(
+            mainAxisSize: MainAxisSize.max,
+            children: <Widget>[
+              Icon(
+                Icons.account_circle,
+                size: 50,
+                color: const Color(0xff27496d),
+              ),
+
+              Padding(
+                padding: const EdgeInsets.fromLTRB(10, 10, 10, 10 ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Text(
+                      widget.name,
+                      style: TextStyle(
+                        letterSpacing: 1.0,
+                        fontFamily: 'HelveticaNeueLight',
+                        fontSize: 24,
+                      )
+                    ),
+                    Text(
+                      widget.rollNo,
+                      style: TextStyle(
+                        letterSpacing: 1.0,
+                        fontFamily: 'HelveticaNeueLight',
+                      )
+                    ),
+                  ],
+                ),
+              ),
+              widget.isSenior ? 
+              Expanded(
+                child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(10, 15, 10, 10),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(20),
+                        color: Colors.blue[600],
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.fromLTRB(10,5,10,5),
+                        child: Text(
+                          "S",
+                          style: TextStyle(
+                            fontFamily: "HelveticaNeueLight",
+                            fontSize: 15,
+                            color: Colors.white,
+                          )
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+                  ),
               )
-            ),
-          ),
-          subtitle: Center(
-            child: Text(
-              widget.rollNo,
-              style: TextStyle(
-                letterSpacing: 1.0,
-                fontFamily: 'HelveticaNeueMedium',
-              )
-            ),
+              : Container()
+            ],
           ),
         ),
       ),
