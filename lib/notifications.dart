@@ -187,7 +187,7 @@ class _NotificationsState extends State<Notifications> {
                     return Column(
                     children: <Widget>[
                     Padding(
-                    padding: EdgeInsets.fromLTRB(20, 5, 20, 5),
+                    padding: EdgeInsets.fromLTRB(20, 0, 20, 10),
                     child: ConstrainedBox(
                       constraints: BoxConstraints(
                         minHeight: 100,
