@@ -630,6 +630,7 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
                                 child: isOccupied
                                     ? Switch(
                                         value: true,
+                                        onChanged: null,
                                         //activeTrackColor: Colors.green,
                                         //activeColor: Colors.green[50],
                                         inactiveThumbColor: Colors.green[50],

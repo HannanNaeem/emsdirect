@@ -70,13 +70,13 @@ class _MfrProfileState extends State<MfrProfile> {
     return AlertDialog(
         shape:
             RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
-        content: SingleChildScrollView(
-          scrollDirection: Axis.vertical,
-          child: StatefulBuilder(
-            builder: (BuildContext context, StateSetter setState) {
-              return Container(
-                height: 250,
-                child: Padding(
+        content: Container(
+          height: 250,
+          child: SingleChildScrollView(
+            scrollDirection: Axis.vertical,
+            child: StatefulBuilder(
+              builder: (BuildContext context, StateSetter setState) {
+                return Padding(
                   padding: const EdgeInsets.all(20.0),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
@@ -149,9 +149,9 @@ class _MfrProfileState extends State<MfrProfile> {
                       ),
                     ],
                   ),
-                ),
-              );
-            },
+                );
+              },
+            ),
           ),
         ));
   }

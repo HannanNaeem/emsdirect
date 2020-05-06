@@ -344,14 +344,14 @@ class _DynamicDialogState extends State<DynamicDialog> {
     return AlertDialog(
       shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20.0)), //this right here
-      content: SingleChildScrollView(
-        scrollDirection: Axis.vertical,
-        child: StatefulBuilder(
-            builder: (BuildContext context, StateSetter setState) {
-          return Container(
-            height: 450,
-            width: width * 0.8,
-            child: Column(
+      content: Container(
+        height: 450,
+        width: width * 0.8,
+        child: SingleChildScrollView(
+          scrollDirection: Axis.vertical,
+          child: StatefulBuilder(
+              builder: (BuildContext context, StateSetter setState) {
+            return Column(
               mainAxisSize: MainAxisSize.min,
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.center,
@@ -510,9 +510,9 @@ class _DynamicDialogState extends State<DynamicDialog> {
                   ],
                 ),
               ],
-            ),
-          );
-        }),
+            );
+          }),
+        ),
       ),
     );
   }
