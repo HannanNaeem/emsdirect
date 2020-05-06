@@ -8,6 +8,7 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:provider/provider.dart';
 import 'package:ems_direct/models/emergency_models.dart';
 import 'package:ems_direct/pages/student_home.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 
 class DisplayList extends StatefulWidget {
@@ -168,7 +169,32 @@ Widget getWidget(String status, String mfrName, String mfrContact, var height, v
                         ),
                       ],
                     ),
-
+                    Expanded(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: <Widget>[
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(0, 0, 20, 0),
+                            child: IconButton(
+                              icon: Icon(
+                                Icons.call,
+                                size: 30,
+                                color: Colors.green,
+                              ),
+                              
+                              onPressed: () async {
+                                if(await canLaunch("tel:$mfrContact"))
+                                {
+                                  await launch("tel:$mfrContact");
+                                }
+                                else
+                                  print("could not launch");
+                              },
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
                   ],
                 ),
 
