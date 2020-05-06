@@ -114,6 +114,15 @@ class InventoryState extends State<Inventory> {
     getQuantities();
   }
 
+  bool isNumeric(String s){
+    try{
+      var check = double.parse(s);
+      return true;
+    }catch(e){
+      return false;
+    }
+  }
+
   // This function is used to update data in the database.
   // index -> the index number at which the equipment name is present in 'dbName'
   // value -> new value which is to be set for the equipment.
@@ -126,18 +135,6 @@ class InventoryState extends State<Inventory> {
     } catch (e) {
       throw (e);
     }
-  }
-
-  // This function is used to figure out if the string s is numeric or not.
-  // This is used for input checking of text fields.
-  // This was taken from the internet.
-  bool isNumeric(String s) {
-
-    if (s == null) {
-      return false;
-    }
-
-    return double.parse(s) != null;
   }
 
   @override
