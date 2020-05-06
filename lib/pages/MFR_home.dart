@@ -94,6 +94,8 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
   }
 
   void _updateUserData(GeoPoint Newlocation) async {
+    print(Newlocation.longitude);
+    print(Newlocation.latitude);
     try {
       await databaseReference
           .collection("Mfr")
@@ -117,7 +119,6 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
     _notificationService.configureFirebaseListeners();
     mfrRef = databaseReference.collection("Mfr").document(_userData['rollNo']);
     getInitialData(_userData['rollNo']);
-    getCurrentLocation();
   }
 
   //////////////////////////////// FUNCTIONS /////////////////////////////////////
@@ -137,6 +138,7 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
     try {
       while (true) {
         if (isAvailable) {
+          print("panney khan");
           var location = await _locationTracker.getLocation();
 
           var currLoc = LatLng(location.latitude, location.longitude);
@@ -228,6 +230,7 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
           gender = onVal.data['gender'];
           print('Initial data set done!');
         });
+        getCurrentLocation();
       }).catchError((onError) {
         print(onError.message);
       });
