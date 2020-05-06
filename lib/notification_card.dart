@@ -75,6 +75,7 @@ class _NotificationCardState extends State<NotificationCard> {
                               color: widget.category == "Restock Needed!" ? Colors.orange[800] : const Color(0xffee0000),
                               fontSize: 20,
                               fontFamily: 'HelveticaNeueLight',
+                              letterSpacing: 1,
                             ),
                           ),
                           //! text           
@@ -89,6 +90,7 @@ class _NotificationCardState extends State<NotificationCard> {
                                   color: const Color(0xff142850),
                                   fontSize: 14,
                                   fontFamily: 'HelveticaNeueLight',
+                                  letterSpacing: 1,
                                 ),
                               ),
                               SizedBox(height: 10,),
@@ -105,6 +107,7 @@ class _NotificationCardState extends State<NotificationCard> {
                                           color: const Color(0xff142850),
                                           fontSize: 14,
                                           fontFamily: 'HelveticaNeueLight',
+                                          letterSpacing: 1,
                                           
                                         ),
                                       ),
@@ -149,6 +152,7 @@ class _NotificationCardState extends State<NotificationCard> {
                               color: const Color(0xff142850),
                               fontSize: 14,
                               fontFamily: 'HelveticaNeueLight',
+                              letterSpacing: 1,
                             ),
                           ),
                         ],
