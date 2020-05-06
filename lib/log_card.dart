@@ -27,23 +27,20 @@ class LogCard extends StatefulWidget {
 }
 
 class _LogCardState extends State<LogCard> {
-  Color GenerateColor(String severity) {
-    if (severity == 'low') {
-      return Colors.yellow[300];
-    }
-    if (severity == 'medium') {
-      return Colors.amber[600];
-    }
-    if (severity == 'high') {
-      return Colors.orange[800];
-    } else {
-      return Colors.red[800];
+  
+  Color generateColor(String severity) {
+    switch (severity) {
+      case "low" : {return Colors.yellow[700];}
+      case "medium" : {return Colors.amber[800];}
+      case "high" : {return Colors.orange[900];}
+      default: {return Colors.red[800];}
     }
   }
+  
 
   @override
   Widget build(BuildContext context) {
-    Color color = GenerateColor(widget.severity);
+    Color color = generateColor(widget.severity);
 
     return Card(
       elevation: 6,
@@ -65,27 +62,103 @@ class _LogCardState extends State<LogCard> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    Text(
-                      'MFR: ' + widget.mfrName + ' ' + widget.mfrRollNo,
-                      style: TextStyle(
-                        color: const Color(0xff142850),
-                        fontSize: 14,
-                        fontFamily: 'HelveticaNeueLight',
-                        letterSpacing: 1,
-                      ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: <Widget>[
+                        //!Mfr Icon
+                        Icon(
+                          Icons.person,
+                          size: 50,
+                          color: const Color(0xff27496d),
+                        ),
+                        //! Mfr Info
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(5,0,0,0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              Text(
+                                widget.mfrName,
+                                style: TextStyle(
+                                  fontFamily: "HelveticaNeueLight",
+                                  color: const Color(0xff27496d),
+                                  fontSize: 15,
+                                )
+                              ),
+                              Text(
+                                  widget.mfrRollNo,
+                                  style: TextStyle(
+                                    fontFamily: "HelveticaNeueLight",
+                                    fontSize: 13,
+                                    color: Colors.grey[500],
+                                  )
+                              ),
+                              Text(
+                                  widget.mfrContact,
+                                  style: TextStyle(
+                                    fontFamily: "HelveticaNeueLight",
+                                    fontSize: 13,
+                                    color: Colors.grey[500],
+                                  )
+                              ),
+                            ],
+                          ),
+                        ),
+                        //! Severity bubble
+                        Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: <Widget>[
+                                //! reported time
+                                Padding(
+                                  padding: const EdgeInsets.fromLTRB(0, 0, 30, 0),
+                                  child: Text(
+                                    widget.reportingTime,
+                                    style: TextStyle(
+                                      color: const Color(0xff142850),
+                                      fontSize: 12,
+                                      fontFamily: 'HelveticaNeueLight',
+                                    ),        
+                                  ),
+                                ),
+
+                                Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: <Widget>[
+                                  Padding(
+                                    padding: const EdgeInsets.fromLTRB(10, 5, 30, 5),
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(20),
+                                        color: generateColor(widget.severity)
+                                      ),
+                                      child: Padding(
+                                        padding: const EdgeInsets.fromLTRB(10,5,10,5),
+                                        child: Text(
+                                          widget.severity[0].toUpperCase() + widget.severity.substring(1),
+                                          style: TextStyle(
+                                            fontFamily: "HelveticaNeueLight",
+                                            fontSize: 15,
+                                            color: Colors.white,
+                                          )
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                          ),
+                              ],
+                            ),
+                        ),
+
+
+                      ],
                     ),
-                    Text(
-                      'Contact: ' + widget.mfrContact,
-                      style: TextStyle(
-                        color: const Color(0xff142850),
-                        fontSize: 14,
-                        fontFamily: 'HelveticaNeueLight',
-                        letterSpacing: 1,
-                      ),
-                    ),
+
                     Divider(),
+                    //! Patient information
                     Text(
-                      'Patient: ' + widget.patientRollNo,
+                      'Patient Details: ',
                       style: TextStyle(
                         color: const Color(0xff142850),
                         fontSize: 14,
@@ -94,7 +167,16 @@ class _LogCardState extends State<LogCard> {
                       ),
                     ),
                     Text(
-                      'Patient Contact: ' + widget.patientContactNo,
+                      widget.patientRollNo,
+                      style: TextStyle(
+                        color: const Color(0xff142850),
+                        fontSize: 14,
+                        fontFamily: 'HelveticaNeueLight',
+                        letterSpacing: 1,
+                      ),
+                    ),
+                    Text(
+                      widget.patientContactNo,
                       style: TextStyle(
                         color: const Color(0xff142850),
                         fontSize: 14,
@@ -104,24 +186,6 @@ class _LogCardState extends State<LogCard> {
                     ),
                     Text(
                       'Gender Preference: ' + widget.genderPreference,
-                      style: TextStyle(
-                        color: const Color(0xff142850),
-                        fontSize: 14,
-                        fontFamily: 'HelveticaNeueLight',
-                        letterSpacing: 1,
-                      ),
-                    ),
-                    Text(
-                      'Severity: ' + widget.severity,
-                      style: TextStyle(
-                        color: const Color(0xff142850),
-                        fontSize: 14,
-                        fontFamily: 'HelveticaNeueLight',
-                        letterSpacing: 1,
-                      ),
-                    ),
-                    Text(
-                      'Reporting time: ' + widget.reportingTime,
                       style: TextStyle(
                         color: const Color(0xff142850),
                         fontSize: 14,

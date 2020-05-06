@@ -1,6 +1,9 @@
+import 'package:ems_direct/models/emergency_models.dart';
 import 'package:ems_direct/ops.dart';
 import 'package:ems_direct/services/emergency_alert_ops.dart';
+import 'package:ems_direct/services/ops_database.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 
 class OpsWrapper extends StatelessWidget {
@@ -19,7 +22,10 @@ class OpsWrapper extends StatelessWidget {
     return Stack(
       children: <Widget>[
         AlertOps(),
-        OpsHome(_keepSignedIn, _userData, opsGlobalKey)
+        StreamProvider<List<EquipmentBagModel>>.value(
+          value:OpsDatabaseService().equipmentBagsStream,
+          child: OpsHome(_keepSignedIn, _userData, opsGlobalKey)
+        )
       ],
       
     );

@@ -1,8 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:ems_direct/shared/loading.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
 class MyCounter extends StatefulWidget {
@@ -444,7 +442,7 @@ class _EmergencyReportMfrState extends State<EmergencyReportMfr> {
             borderRadius: BorderRadius.circular(10),
             constraints: BoxConstraints(
               minHeight: 30,
-              minWidth: 70,
+              minWidth: 63,
             ),
             children: <Widget>[
               Text(
@@ -1128,7 +1126,7 @@ class _EmergencyReportMfrState extends State<EmergencyReportMfr> {
       "gauze",
       "saniplast",
       "depressors",
-      "triangBandage",
+      "triangularBandage",
       "gloves",
       "faceMasks",
       "ors",

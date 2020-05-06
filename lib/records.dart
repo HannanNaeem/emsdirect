@@ -16,6 +16,12 @@ class Records extends StatelessWidget {
         child: InkWell(
           onTap: () {
             print(title);
+            if (title == "Equipment bags")
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => EquipmentBags()));
+            if (title == "Inventory")
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => Inventory()));
             if (title == 'Profiles')
               Navigator.push(
                   context,

@@ -50,25 +50,9 @@ class MfrDatabaseService {
   List<EquipmentBagModel> equipmentBagListFromSnapshot(QuerySnapshot snapshot) {
     return snapshot.documents.map((doc) {
       return EquipmentBagModel(
-          bpApparatus: doc.data['Bp apparatus'],
-          crepe: doc.data['Crepe'],
-          deepHeat: doc.data['Deep heat'],
-          depressors: doc.data['Depressors'],
-          faceMasks: doc.data['Face masks'],
-          gauze: doc.data['Gauze'],
-          gloves: doc.data['Gloves'],
-          ORS: doc.data['ORS'],
-          openWove: doc.data['Open wove'],
-          polyfax: doc.data['Polyfax'],
-          polyfaxPlus: doc.data['Polyfax plus'],
-          pyodine: doc.data['Pyodine'],
-          saniplast: doc.data['Saniplast'],
-          scissors: doc.data['Scissors'],
-          stethoscope: doc.data['Stethoscope'],
-          tape: doc.data['Tape'],
-          thermometer: doc.data['Thermometer'],
-          triangularBandage: doc.data['Triangular bandage'],
-          wintogeno: doc.data['wintogeno']);
+        items: doc.data,
+        name: doc.documentID,
+      );
     }).toList();
   }
 

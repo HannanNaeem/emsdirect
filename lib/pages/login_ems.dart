@@ -130,7 +130,7 @@ class _LoginEmsState extends State<LoginEms> {
 
   Widget _buildForm(final height) {
     return Container(
-      height: height / 2,
+      height: 355,
       child: Form(
         key: _formKey,
         child: Column(

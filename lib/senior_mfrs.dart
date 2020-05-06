@@ -78,7 +78,7 @@ class _SeniorMfrsState extends State<SeniorMfrs> {
                 itemCount: seniorMfrList == null ? 0: seniorMfrList.length,
                 itemBuilder: (context, index) {
                   return Padding(
-                    padding: EdgeInsets.fromLTRB(20, 5, 20, 5),
+                    padding: EdgeInsets.fromLTRB(20, 10, 20, 0),
                     child: ConstrainedBox(
                       constraints: BoxConstraints(
                         minHeight: 105,
