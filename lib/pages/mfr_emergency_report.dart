@@ -452,7 +452,7 @@ class _EmergencyReportMfrState extends State<EmergencyReportMfr> {
             borderRadius: BorderRadius.circular(10),
             constraints: BoxConstraints(
               minHeight: 30,
-              minWidth: 70,
+              minWidth: 63,
             ),
 
             children: <Widget>[
@@ -1139,7 +1139,7 @@ class _EmergencyReportMfrState extends State<EmergencyReportMfr> {
    
     Map<String, int> bagMap = {};
     
-    List<String> keys = ["crepe","openWove","gauze","saniplast","depressors","triangBandage","gloves","faceMasks",
+    List<String> keys = ["crepe","openWove","gauze","saniplast","depressors","triangularBandage","gloves","faceMasks",
     "ors","pyodine","polyfax","polyfaxPlus","wintogeno","deepHeat"
     ];
     List<int> values = [_crepe,_openWove,_gauze,_saniplast,_depressors,_triangBandage,_gloves,_faceMasks,
