@@ -322,7 +322,7 @@ class _DynamicDialogState extends State<DynamicDialog> {
     ProgressDialog pr =
         new ProgressDialog(context, type: ProgressDialogType.Normal);
     pr.style(
-        message: 'Updating info...',
+        message: 'Adding record...',
         borderRadius: 8.0,
         backgroundColor: Colors.white,
         progressWidget: Padding(
@@ -421,7 +421,7 @@ class _DynamicDialogState extends State<DynamicDialog> {
                                 builder: (BuildContext context) {
                                   return AlertDialog(
                                     title: Text(
-                                      "The user must be signed in as a student",
+                                      "The user must be registered as a student",
                                       style: TextStyle(
                                         fontFamily: 'HelveticaNeueLight',
                                         letterSpacing: 2.0,
