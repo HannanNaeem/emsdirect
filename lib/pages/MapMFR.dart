@@ -273,7 +273,7 @@ class MapState extends State<MapMFR> {
                   elevation: 1,
                   color: Colors.transparent,
                   child: Padding(
-                    padding: const EdgeInsets.fromLTRB(0, 8, 0, 0),
+                    padding: const EdgeInsets.fromLTRB(0, 10, 0, 0),
                     child: Column(
                       children: <Widget>[
                         Text(
@@ -281,7 +281,7 @@ class MapState extends State<MapMFR> {
                           style: TextStyle(
                             fontFamily: 'HelveticaNeueBold',
                             letterSpacing: 2.0,
-                            fontSize: 0.012 * (height + width),
+                            fontSize: 0.0085 * (height + width),
                             color: const Color(0xff142850),
                           ),
                         )
