@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class EmergencyNumberCard extends StatefulWidget {
   String name;
@@ -22,24 +23,57 @@ class _EmergencyNumberCardState extends State<EmergencyNumberCard> {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
       elevation: 6,
       child: Padding(
-        padding: const EdgeInsets.all(5.0),
+        padding: const EdgeInsets.fromLTRB(5, 10, 5, 10),
         child: ListTile(
-          title: Text(
-            widget.name,
-            style: TextStyle(
-              letterSpacing: 1.0,
-              fontFamily: 'HelveticaNeueLight',
-              color: Color(0xff142850),
-              fontSize: 18,
-            )
-          ),
-          subtitle: Text(
-            widget.contact,
-            style: TextStyle(
-              letterSpacing: 3.0,
-              fontFamily: 'HelveticaNeueLight',
-              fontSize: 24,
-            )
+          title: Row(
+            children: <Widget>[
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Text(
+                    widget.name,
+                    style: TextStyle(
+                      letterSpacing: 1.0,
+                      fontFamily: 'HelveticaNeueLight',
+                      color: Color(0xff142850),
+                      fontSize: 22,
+                    )
+                  ),
+                  Text(
+                    widget.contact,
+                    style: TextStyle(
+                      letterSpacing: 3.0,
+                      fontFamily: 'HelveticaNeueLight',
+                      fontSize: 18,
+                    )
+                  ),
+                ],
+              ),
+              Expanded(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: <Widget>[
+                    IconButton(
+                      icon: Icon(
+                        Icons.call,
+                        size: 30,
+                        color: Colors.green,
+                      ),
+                      
+                      onPressed: () async {
+                        if(await canLaunch("tel:${widget.contact}"))
+                        {
+                          await launch("tel:${widget.contact}");
+                        }
+                        else
+                          print("could not launch");
+                      },
+                    ),
+
+                 ],
+                ),
+              ),
+            ],
           ),
         ),
       ),
