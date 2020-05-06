@@ -105,6 +105,7 @@ class _NotificationCardState extends State<NotificationCard> {
                                           color: const Color(0xff142850),
                                           fontSize: 14,
                                           fontFamily: 'HelveticaNeueLight',
+                                          
                                         ),
                                       ),
                                     ],
@@ -163,6 +164,7 @@ class _NotificationCardState extends State<NotificationCard> {
             flex: 1,
             child: Align(
               alignment: Alignment.bottomCenter,
+              //! Time
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(0,3,3,0),
                 child: Text(
@@ -171,6 +173,7 @@ class _NotificationCardState extends State<NotificationCard> {
                     color: const Color(0xff142850),
                     fontSize: 12,
                     fontFamily: 'HelveticaNeueLight',
+                    letterSpacing: 1,
                   ),
                 ),
               ),
