@@ -266,9 +266,9 @@ class MapState extends State<MapMFR> {
                 : Container(),
             // Showing patient contact on top of the map
             Container(
-                margin: const EdgeInsets.fromLTRB(45, 10, 10, 10),
+                margin: const EdgeInsets.fromLTRB(43, 10, 10, 10),
                 height: 38,
-                width: 240,
+                width: 248,
                 child: Card(
                   elevation: 1,
                   color: Colors.transparent,
@@ -281,7 +281,7 @@ class MapState extends State<MapMFR> {
                           style: TextStyle(
                             fontFamily: 'HelveticaNeueBold',
                             letterSpacing: 2.0,
-                            fontSize: 0.0085 * (height + width),
+                            fontSize: 0.01 * (height + width),
                             color: const Color(0xff142850),
                           ),
                         )
