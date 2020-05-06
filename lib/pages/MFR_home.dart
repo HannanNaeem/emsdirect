@@ -97,7 +97,7 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
     try {
       await databaseReference
           .collection("Mfr")
-          .document((await _userData['rollNo']).toString())
+          .document(_userData['rollNo'])
           .updateData({'location': Newlocation});
     } catch (e) {
       throw (e);
@@ -113,12 +113,11 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
     WidgetsBinding.instance.addObserver(this);
     //initializing stream to null as MFR will always be unavailable unless made available by himself
     _documentStream = null;
-
     _notificationService.getToken();
     _notificationService.configureFirebaseListeners();
     mfrRef = databaseReference.collection("Mfr").document(_userData['rollNo']);
-
     getInitialData(_userData['rollNo']);
+    getCurrentLocation();
   }
 
   //////////////////////////////// FUNCTIONS /////////////////////////////////////
@@ -134,7 +133,7 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
     }
   }
 
-  void getCurrentLocaion() async {
+  void getCurrentLocation() async {
     try {
       while (true) {
         if (isAvailable) {
@@ -796,6 +795,10 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
                   child: InkWell(
                     onTap: () {
                       print('Emergency report');
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => EmergencyReportMfr()));
                     },
                     child: Column(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -809,11 +812,6 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
                             onPressed: () {
                               print('Clicked');
                               //! navigate to report emergency
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          EmergencyReportMfr()));
                             },
                           ),
                           Center(
