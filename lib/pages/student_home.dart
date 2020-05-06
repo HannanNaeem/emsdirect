@@ -8,7 +8,6 @@ import 'package:ems_direct/pages/live_status.dart';
 import 'package:configurable_expansion_tile/configurable_expansion_tile.dart';
 import 'package:location/location.dart';
 
-
 class StudentHome extends StatefulWidget {
   var _userData;
   StudentHome(bool keepSignedIn, var userData) {
@@ -47,37 +46,36 @@ class _StudentHomeState extends State<StudentHome> with WidgetsBindingObserver {
   /////////////////////////////////////////////////////////////////
 
   //function to get current location of the student to update to the database
-  _getCurrentLocation() async{
-      Location location = new Location();
-      bool  _serviceEnabled;
-      PermissionStatus _permissionGranted;
-      LocationData _locationData;
+  _getCurrentLocation() async {
+    Location location = new Location();
+    bool _serviceEnabled;
+    PermissionStatus _permissionGranted;
+    LocationData _locationData;
 
-      try{
-        _serviceEnabled = await location.serviceEnabled();
-        if(!_serviceEnabled){
+    try {
+      _serviceEnabled = await location.serviceEnabled();
+      if (!_serviceEnabled) {
+        _serviceEnabled = await location.requestService();
+        if (!_serviceEnabled) {
           _serviceEnabled = await location.requestService();
-          if (!_serviceEnabled){
-            _serviceEnabled = await location.requestService();
-          }
         }
-
-        _permissionGranted = await location.hasPermission();
-        if(_permissionGranted == PermissionStatus.DENIED){
-          _permissionGranted = await location.requestPermission();
-          while(_permissionGranted != PermissionStatus.GRANTED){
-            _permissionGranted = await location.requestPermission();
-          }
-        }
-
-        _locationData = await location.getLocation();
-        _geoLocation = GeoPoint(_locationData.latitude, _locationData.longitude);
-        print(_locationData.latitude);
-        print(_locationData.longitude);
-
-      }catch(e){
-        print(e);
       }
+
+      _permissionGranted = await location.hasPermission();
+      if (_permissionGranted == PermissionStatus.DENIED) {
+        _permissionGranted = await location.requestPermission();
+        while (_permissionGranted != PermissionStatus.GRANTED) {
+          _permissionGranted = await location.requestPermission();
+        }
+      }
+
+      _locationData = await location.getLocation();
+      _geoLocation = GeoPoint(_locationData.latitude, _locationData.longitude);
+      print(_locationData.latitude);
+      print(_locationData.longitude);
+    } catch (e) {
+      print(e);
+    }
   }
 
   //instance of auth service
@@ -185,7 +183,7 @@ class _StudentHomeState extends State<StudentHome> with WidgetsBindingObserver {
                 Padding(
                   padding: const EdgeInsets.all(20.0),
                   child: Container(
-                    height: height * 0.25,
+                    height: height * 0.2,
                     child: Image(
                       image: AssetImage("assets/ems_logo.png"),
                       fit: BoxFit.fill,

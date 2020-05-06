@@ -22,7 +22,7 @@ class _MfrProfileState extends State<MfrProfile> {
     } else if (mfr.gender == 'M') {
       return 'Male';
     } else {
-      return 'NA';
+      return 'Other';
     }
   }
 
@@ -35,21 +35,21 @@ class _MfrProfileState extends State<MfrProfile> {
         padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
         child: TextFormField(
             decoration: InputDecoration(
-              hintText: 'Contact Number',
+              hintText: "MFR Roll No.",
               hintStyle: TextStyle(
-                color: Colors.grey[800],
+                color: Colors.grey[700],
                 fontFamily: 'HelveticaNeueLight',
                 letterSpacing: 2.0,
               ),
               errorStyle: TextStyle(
-                color: Colors.black,
+                color: Colors.redAccent,
                 letterSpacing: 1.0,
-                fontFamily: 'HelveticaNeueLight',
-                fontSize: 14,
               ),
               fillColor: Colors.grey[100],
-              filled: true,
-              focusedErrorBorder: InputBorder.none,
+              filled: false,
+              focusedErrorBorder: OutlineInputBorder(),
+              border: OutlineInputBorder(),
+              focusedBorder: OutlineInputBorder(),
             ),
             validator: (String value) {
               if (value.isEmpty) return 'Contact number is required!';

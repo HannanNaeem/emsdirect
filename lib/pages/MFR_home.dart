@@ -315,7 +315,7 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
                 Padding(
                   padding: const EdgeInsets.all(20.0),
                   child: Container(
-                    height: height * 0.25,
+                    height: height * 0.2,
                     child: Image(
                       image: AssetImage("assets/ems_logo.png"),
                       fit: BoxFit.fill,
@@ -770,29 +770,33 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
                               image: AssetImage('assets/report.png'),
                               fit: BoxFit.fill,
                             ),
-                          iconSize: height / 9,
-                          onPressed: () {
-                            print('Clicked');
-                            //! navigate to report emergency
-                            Navigator.push(context, MaterialPageRoute(builder: (context) => EmergencyReportMfr()));
-                          },
-                        ),
-                        Center(
-                          child: Padding(
-                            padding: EdgeInsets.fromLTRB(0, 0, 0, height / 80),
-                            child: Text(
-                              'Report Emergency',
-                              style: TextStyle(
-                                fontSize: 22,
-                                fontFamily: 'HelveticaNeueLight',
-                                letterSpacing: 2.0,
-                                color: const Color(0xff142850),
+                            iconSize: height / 9,
+                            onPressed: () {
+                              print('Clicked');
+                              //! navigate to report emergency
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          EmergencyReportMfr()));
+                            },
+                          ),
+                          Center(
+                            child: Padding(
+                              padding:
+                                  EdgeInsets.fromLTRB(0, 0, 0, height / 80),
+                              child: Text(
+                                'Report Emergency',
+                                style: TextStyle(
+                                  fontSize: 22,
+                                  fontFamily: 'HelveticaNeueLight',
+                                  letterSpacing: 2.0,
+                                  color: const Color(0xff142850),
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                      ]
-                    ),
+                        ]),
                   ),
                 ),
               ),

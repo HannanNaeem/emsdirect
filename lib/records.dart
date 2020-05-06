@@ -14,9 +14,11 @@ class Records extends StatelessWidget {
         child: InkWell(
           onTap: () {
             print(title);
-            if (title == 'MFR Profiles')
+            if (title == 'Profiles')
               Navigator.push(
-                  context, MaterialPageRoute(builder: (context) => MfrList()));
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => MfrList(mfrListGlobalKey)));
             if (title == "Emergencies")
               Navigator.push(
                   context,
