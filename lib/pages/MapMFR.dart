@@ -92,7 +92,6 @@ class MapState extends State<MapMFR> {
       emergencyMarker[markerId] = marker;
     });
 
-    // todo: uncomment
     getCurrentLocation();
 
     // making mapLoading false so that the map can be displayed now
