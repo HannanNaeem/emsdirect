@@ -25,7 +25,7 @@ class LoginEms extends StatefulWidget {
 }
 
 class _LoginEmsState extends State<LoginEms> {
-  String _emsType = null;
+  String _emsType;
 
   _LoginEmsState(String emsType) {
     _emsType = emsType;
@@ -44,8 +44,8 @@ class _LoginEmsState extends State<LoginEms> {
 
   //! Build email textfield
   Widget _buildEmail() {
-    var screenSize = MediaQuery.of(context).size;
-    final height = screenSize.height;
+  
+
     return Padding(
       padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
       child: TextFormField(
@@ -80,8 +80,7 @@ class _LoginEmsState extends State<LoginEms> {
   }
   //! build password text field
   Widget _buildPassword() {
-    var screenSize = MediaQuery.of(context).size;
-    final height = screenSize.height;
+
     return Padding(
       padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
       child: TextFormField(

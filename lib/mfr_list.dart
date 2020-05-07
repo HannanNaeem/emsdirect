@@ -50,7 +50,7 @@ class _MfrListState extends State<MfrList> {
   }
 
   //this returns the dynamic widget
-  Widget _buildDialog() {
+  void _buildDialog() {
     showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -316,7 +316,7 @@ class _DynamicDialogState extends State<DynamicDialog> {
     //getting the screen sizes
     var screenSize = MediaQuery.of(context).size;
     var width = screenSize.width;
-    final height = screenSize.height;
+
 
     //initializing the progress dialog here to respond to user's correct input
     ProgressDialog pr =

@@ -18,9 +18,7 @@ class _LogState extends State<EmergencyLog> {
 
   @override
   Widget build(BuildContext context) {
-    var screenSize = MediaQuery.of(context).size;
-    var width = screenSize.width;
-    var height = screenSize.height;
+
 
     var _onGoingEmergencyList = Provider.of<List<OngoingEmergencyModel>>(context);
 

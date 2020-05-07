@@ -59,9 +59,7 @@ class _EmergencyNumbersState extends State<EmergencyNumbers> {
 
   @override
   Widget build(BuildContext context) {
-    var screenSize = MediaQuery.of(context).size;
-    var width = screenSize.width;
-    var height = screenSize.height;
+
 
     return Scaffold(
       backgroundColor: const Color(0xff27496d),

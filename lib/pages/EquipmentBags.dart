@@ -26,9 +26,7 @@ class EquipmentBagsState extends State<EquipmentBags> {
   @override
   Widget build(BuildContext context) {
     // Used to make screen responsive.
-    var screenSize = MediaQuery.of(context).size;
-    var width = screenSize.width;
-    var height = screenSize.height;
+
 
     return MaterialApp(
         home: Scaffold(

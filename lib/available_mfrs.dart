@@ -32,9 +32,7 @@ class _AvailableMfrsListState extends State<AvailableMfrsList> {
 
   @override
   Widget build(BuildContext context) {
-    var screenSize = MediaQuery.of(context).size;
-    var width = screenSize.width;
-    var height = screenSize.height;
+
 
     return StreamProvider<List<AvailableMfrs>>.value(
       value: OpsDatabaseService().availableMfrStream,
@@ -52,9 +50,8 @@ class _MakeListState extends State<MakeList> {
 
   @override
   Widget build(BuildContext context) {
-    var screenSize = MediaQuery.of(context).size;
-    var width = screenSize.width;
-    var height = screenSize.height;
+
+
     bool populate = false;
     List<MfrData> _mfrList = [];
     var _availableMfrList = Provider.of<List<AvailableMfrs>>(context);
@@ -118,7 +115,7 @@ class _MakeListState extends State<MakeList> {
             ],
           ),
         ),
-    );;
+    );
   }
 }
 
