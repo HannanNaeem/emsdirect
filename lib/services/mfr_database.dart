@@ -47,15 +47,6 @@ class MfrDatabaseService {
     }).toList();
   }
 
-  List<EquipmentBagModel> equipmentBagListFromSnapshot(QuerySnapshot snapshot) {
-    return snapshot.documents.map((doc) {
-      return EquipmentBagModel(
-        items: doc.data,
-        name: doc.documentID,
-      );
-    }).toList();
-  }
-
   //get pending emergencies
   Stream<List<PendingEmergencyModel>> get pendingStream {
     return pendingEmergencies

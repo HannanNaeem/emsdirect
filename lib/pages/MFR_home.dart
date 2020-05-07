@@ -47,10 +47,10 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
   _MFRHomeState(bool keepSignedIn, var userData) {
     _keepSignedIn = keepSignedIn;
     _userData = userData;
-
-    print("--------------got ${_userData.data}");
+    //print("--------------got ${_userData.data}");
   }
 
+  //required variables
   static final databaseReference = Firestore.instance;
   DocumentReference mfrRef;
   Stream<QuerySnapshot> _documentStream;
@@ -66,11 +66,10 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
   //instance of auth service
   final AuthService _authMfr = AuthService();
 
-  //! -------- Cloud messaging for notifications ------------------------- //
-
+  //cloud messaging for notifications
   final CloudMessagingService _notificationService = CloudMessagingService();
 
-  //State management for keepsignedin ----------------------------------
+  //state management for keepsignedin ------------------------------------
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
@@ -84,13 +83,12 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
     }
   }
 
+  //--------------------------------------------------------------------
+
   void _updateUserData(GeoPoint Newlocation) async {
     print(Newlocation.longitude);
     print(Newlocation.latitude);
     try {
-      print(Newlocation.latitude);
-      print(Newlocation.longitude);
-
       await databaseReference
           .collection("Mfr")
           .document(_userData['rollNo'])
@@ -99,8 +97,6 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
       throw (e);
     }
   }
-
-  //--------------------------------------------------------------------
 
   @override
   void initState() {
@@ -111,29 +107,16 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
     _documentStream = null;
     _notificationService.getToken();
     _notificationService.configureFirebaseListeners();
+    //setting initial data to be used in the widget below
     mfrRef = databaseReference.collection("Mfr").document(_userData['rollNo']);
     getInitialData(_userData['rollNo']);
-
   }
 
-  //////////////////////////////// FUNCTIONS /////////////////////////////////////
-  Future getEmergencyData(var docId) async {
-    try {
-      var querySnap = await databaseReference
-          .collection('OngoingEmergencies')
-          .where('mfr', isEqualTo: docId)
-          .getDocuments();
-      return querySnap.documents;
-    } catch (e) {
-      print(e);
-    }
-  }
-
+  //this is the function responsible for getting user's current location to be used in map
   void getCurrentLocation() async {
     try {
       while (true) {
         if (isAvailable) {
-
           var location = await _locationTracker.getLocation();
 
           var currLoc = LatLng(location.latitude, location.longitude);
@@ -178,44 +161,7 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
     }
   }
 
-  void updateDeclineCount(docId) async {
-    try {
-      DocumentReference docRef = await Firestore.instance
-          .collection("PendingEmergencies")
-          .document(docId);
-      DocumentSnapshot doc = await docRef.get();
-      var num = await doc.data['declines'];
-      await docRef.updateData({'declines': num + 1});
-    } catch (e) {
-      print(e);
-    }
-  }
-
-  Future upDateAvailability(bool val, var docId) async {
-    try {
-      DocumentReference docRef =
-          databaseReference.collection("Mfr").document(docId);
-      return await docRef.updateData({'isActive': val}).then((_) {
-        print('Availability status updated');
-      });
-    } catch (e) {
-      print(e);
-      throw (e);
-    }
-  }
-
-//  void getInitialData() async {
-//    try {
-//      var mfrSnapshot = await databaseReference.collection("Mfr").getDocuments();
-//      var list = MfrDatabaseService().equipmentBagListFromSnapshot(mfrSnapshot);
-//      setState(() {
-//        mfrList = list;
-//      });
-//    } catch (e) {
-//      print(e);
-//    }
-//  }
-
+  //this is the function which gets the initial data from the MFR's profile
   void getInitialData(var docId) async {
     try {
       databaseReference.collection("Mfr").document(docId).get().then((onVal) {
@@ -235,6 +181,7 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
     }
   }
 
+  //returning the document to determine state of the toggle button
   Future getInitialData2(var docId) async {
     try {
       return await databaseReference.collection("Mfr").document(docId).get();
@@ -243,9 +190,8 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
     }
   }
 
+  //setting the stream value based on the availability status
   Stream<QuerySnapshot> setStreamValue(bool available, bool occupied) {
-    //print('getting value');
-    //available = false;
     if (available == null || occupied == null) {
       return null;
     }
@@ -258,12 +204,14 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
     }
   }
 
+  //function call to set local occupied variable -> to be used by the pending_emergency_alert file
   void updateOccupied(bool val) {
     setState(() {
       isOccupied = val;
     });
   }
 
+  //function call to set local emergency data variables -> to be used by the pending_emergency_alert file
   void updateEmergencyData(var location, var contact) {
     setState(() {
       locationOfEmergency = location;
@@ -271,59 +219,19 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
     });
   }
 
-  Future updateOccupiedStatus(bool newVal) async {
-    try {
-      DocumentReference docRef =
-          databaseReference.collection("Mfr").document(_userData['rollNo']);
-      await docRef.updateData({'isOccupied': newVal}).then((_) {
-        print('Updated occupied status');
-      });
-    } catch (e) {
-      print(e);
-    }
-  }
-
-//  List<mfrModel> _mfrListFromSnapshot(QuerySnapshot snapshot) {
-//    return snapshot.documents.map((doc) {
-//      //print(doc.data);
-//      return mfrModel(
-//        contact: doc.data['contact'],
-//        gender: doc.data['gender'],
-//        name: doc.data['name'],
-//      );
-//    }).toList();
-//  }
-//
-//  Future<QuerySnapshot> getSnapshot() async {
-//    var mfrSnapshot = await Firestore.instance.collection('Mfr').getDocuments();
-//    return mfrSnapshot;
-//  }
-//
-
-  void printData() async {
-    var bagSnapshot =
-        await Firestore.instance.collection('EquipmentBags').getDocuments();
-    var baglist =
-        MfrDatabaseService().equipmentBagListFromSnapshot(bagSnapshot);
-    print(baglist);
-  }
-
-  ////////////////////////////////////////////////////////////////////////////////
-
   @override
   Widget build(BuildContext context) {
     //------- TESTING PURPOSES ------------------
-    print('Context rebuit');
-    print(isAvailable);
-    print(isOccupied);
+    //print('Context rebuit');
+    //print(isAvailable);
+    //print(isOccupied);
+    //-------------------------------------------
 
     //Getting screen dimensions to adjust widgets accordingly
     var screenSize = MediaQuery.of(context).size;
     var width = screenSize.width;
     var height = screenSize.height;
-    print(height);
 
-    //Defines the whole layout of the homepage
     return Scaffold(
       backgroundColor: const Color(0xff27496d),
       //This contains the widgets seen in the drawer - also has navigation included
@@ -482,7 +390,6 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
                   ),
                   onTap: () {
                     Navigator.of(context).pushNamed('/availableMfrs');
-                    //print('Emergency numbers');
                   },
                 ),
                 Expanded(
@@ -491,7 +398,7 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
                     alignment: Alignment.bottomCenter,
                     child: InkWell(
                       onTap: () {
-                        print('clicked');
+                        //print('clicked');
                         showDialog(
                             context: context,
                             builder: (BuildContext context) {
@@ -518,7 +425,6 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
                                     ),
                                     onPressed: () async {
                                       //navigation to login screen
-                                      //! signout here
                                       await _authMfr.logOut();
                                       Navigator.of(context).pop();
                                       Navigator.pushReplacementNamed(
@@ -620,16 +526,12 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
                           if (snapshot.hasError) {
                             return Text('----- ERROR -> ${snapshot.error}');
                           } else {
-                            //print(snapshot.data['isActive']);
-                            //isAvailable = snapshot.data['isActive'];
                             return Transform.scale(
                                 scale: 2.5,
                                 child: isOccupied
                                     ? Switch(
                                         value: true,
                                         onChanged: null,
-                                        //activeTrackColor: Colors.green,
-                                        //activeColor: Colors.green[50],
                                         inactiveThumbColor: Colors.green[50],
                                         inactiveTrackColor: Colors.green,
                                       )
@@ -682,7 +584,7 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
                       borderRadius: BorderRadius.circular(15)),
                   child: InkWell(
                     onTap: () {
-                      print("tapped");
+                      //print("tapped");
                       if (isOccupied) {
                         setState(() {
                           locationOfEmergency = mfrAlertFunctionGlobalKey
@@ -713,11 +615,6 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
                       children: <Widget>[
                         //if the isOccupied field is set to true, then enable map otherwise don't
                         isOccupied == null || !isOccupied
-//                            ? Icon(
-//                              Icons.location_on,
-//                              color: Colors.grey[800],
-//                              size: height / 9,
-//                            )
                             ? IconButton(
                                 icon: Icon(
                                   Icons.location_on,
@@ -733,32 +630,6 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
                                   color: Colors.red[800],
                                   size: height / 9,
                                 ),
-//                                onPressed: () {
-//                                  print('Clicked');
-//                                  setState(() {
-//                                    locationOfEmergency =
-//                                        mfrAlertFunctionGlobalKey
-//                                            .currentState.locationOfEmergency;
-//                                    patientContactNo = mfrAlertFunctionGlobalKey
-//                                        .currentState.studentContactNo;
-//                                    patientRollNumber =
-//                                        mfrAlertFunctionGlobalKey
-//                                            .currentState.patientRollNumber;
-//                                  });
-//                                  if (locationOfEmergency != null &&
-//                                      patientContactNo != null) {
-//                                    print('location: $locationOfEmergency');
-//                                    print('paient contact $patientContactNo');
-//                                    Navigator.push(
-//                                        context,
-//                                        MaterialPageRoute(
-//                                            builder: (context) => MapMFR(
-//                                                locationOfEmergency,
-//                                                patientContactNo,
-//                                                _userData.data['rollNo']
-//                                                    .toString(),
-//                                                patientRollNumber)));
-//                                  }}
                               ),
                         Center(
                           child: Text(
@@ -792,7 +663,6 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
                       borderRadius: BorderRadius.circular(15)),
                   child: InkWell(
                     onTap: () {
-                      print('Emergency report');
                       Navigator.push(
                           context,
                           MaterialPageRoute(
@@ -807,10 +677,7 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
                               fit: BoxFit.fill,
                             ),
                             iconSize: height / 9,
-                            onPressed: () {
-                              print('Clicked');
-                              //! navigate to report emergency
-                            },
+                            onPressed: null,
                           ),
                           Center(
                             child: Padding(
