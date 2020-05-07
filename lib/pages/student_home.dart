@@ -174,231 +174,233 @@ class _StudentHomeState extends State<StudentHome> with WidgetsBindingObserver {
         drawer: Container(
           width: width * 0.8, //drawer covers 80% of the screen
           child: Drawer(
-            child: Column(
-              //this column contains the drawer header, the option to view profile/emergency numbers/available MFRs list
-              //also has the option to logout
-              children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.all(20.0),
-                  child: Container(
-                    height: height * 0.2,
-                    child: Image(
-                      image: AssetImage("assets/ems_logo.png"),
-                      fit: BoxFit.fill,
-                    ),
-                  ),
-                ),
-                ConfigurableExpansionTile(
-                  animatedWidgetFollowingHeader: const Icon(
-                    Icons.expand_more,
-                    color: const Color(0xFF707070),
-                  ),
-                  //headerExpanded: Flexible(child: Center(child: Text("A Header Changed"))),
-                  header: Container(
-                      color: Colors.transparent,
-                      child: Center(
-                          child: Row(
-                        children: <Widget>[
-                          Icon(
-                            Icons.account_circle,
-                            color: const Color(0xff142850),
-                            size: height / 20,
-                          ),
-                          SizedBox(width: 10.0),
-                          Text(
-                            _userData.data['name'].toString(),
-                            style: TextStyle(
-                              fontSize: 19,
-                              fontFamily: 'HelveticaNeueLight',
-                              letterSpacing: 1.0,
-                            ),
-                          ),
-                        ],
-                      ))),
-                  children: [
-                    SizedBox(height: 10.0),
-                    Padding(
-                      padding: EdgeInsets.fromLTRB(15, 0, 0, 0),
-                      child: Row(
-                        children: <Widget>[
-                          Text(
-                            'Roll number: ',
-                            style: TextStyle(
-                              fontSize: 15,
-                              fontFamily: 'HelveticaNeueLight',
-                              fontWeight: FontWeight.bold,
-                              letterSpacing: 1.0,
-                            ),
-                          ),
-                          SizedBox(width: 2.0),
-                          Text(
-                            _userData.data['rollNo'].toString(),
-                            style: TextStyle(
-                              fontSize: 15,
-                              fontFamily: 'HelveticaNeueLight',
-                              letterSpacing: 1.0,
-                            ),
-                          ),
-                        ],
+            child: SafeArea(
+              child: Column(
+                //this column contains the drawer header, the option to view profile/emergency numbers/available MFRs list
+                //also has the option to logout
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.all(20.0),
+                    child: Container(
+                      height: height * 0.2,
+                      child: Image(
+                        image: AssetImage("assets/ems_logo.png"),
+                        fit: BoxFit.fill,
                       ),
                     ),
-                    SizedBox(height: 10.0),
-                    Padding(
-                      padding: EdgeInsets.fromLTRB(15, 0, 0, 0),
-                      child: Row(
-                        children: <Widget>[
-                          Text(
-                            'Email: ',
-                            style: TextStyle(
-                              fontSize: 15,
-                              fontFamily: 'HelveticaNeueLight',
-                              fontWeight: FontWeight.bold,
-                              letterSpacing: 1.0,
-                            ),
-                          ),
-                          SizedBox(width: 2.0),
-                          Text(
-                            _userData.data['email'].toString(),
-                            style: TextStyle(
-                              fontSize: 15,
-                              fontFamily: 'HelveticaNeueLight',
-                              letterSpacing: 1.0,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    SizedBox(height: 10.0),
-                    Padding(
-                      padding: EdgeInsets.fromLTRB(15, 0, 0, 0),
-                      child: Row(
-                        children: <Widget>[
-                          Text(
-                            'Contact: ',
-                            style: TextStyle(
-                              fontSize: 15,
-                              fontFamily: 'HelveticaNeueLight',
-                              fontWeight: FontWeight.bold,
-                              letterSpacing: 1.0,
-                            ),
-                          ),
-                          SizedBox(width: 1.0),
-                          Text(
-                            _userData.data['contact'].toString(),
-                            style: TextStyle(
-                              fontSize: 15,
-                              fontFamily: 'HelveticaNeueLight',
-                              letterSpacing: 1.0,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    SizedBox(height: 10.0),
-                  ],
-                ),
-                ListTile(
-                  //the option to view emergency numbers - takes you to dummy page
-                  title: Text(
-                    'Emergency Numbers',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontFamily: 'HelveticaNeueLight',
-                      letterSpacing: 2.0,
-                    ),
                   ),
-                  onTap: () {
-                    Navigator.of(context).pushNamed('/emergencyNumbers');
-                    //print('Emergency numbers');
-                  },
-                ),
-                Expanded(
-                  //the option to logout (bottom center aligned)
-                  child: Align(
-                    alignment: Alignment.bottomCenter,
-                    child: InkWell(
-                      onTap: () {
-                        showDialog(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return AlertDialog(
-                                title: Text(
-                                  "Are you sure?",
-                                  style: TextStyle(
-                                    fontFamily: 'HelveticaNeueLight',
-                                    letterSpacing: 2.0,
-                                    fontSize: 20,
-                                    color: Colors.grey[600],
-                                  ),
-                                ),
-                                actions: <Widget>[
-                                  FlatButton(
-                                    child: Text(
-                                      'YES',
-                                      style: TextStyle(
-                                        fontFamily: 'HelveticaNeueLight',
-                                        letterSpacing: 3.0,
-                                        fontSize: 20,
-                                        color: const Color(0xff1a832a),
-                                      ),
-                                    ),
-                                    onPressed: () async {
-                                      //navigation to login screen
-                                      //! signout here
-                                      await _authStudent.logOut();
-                                      Navigator.of(context).pop();
-                                      Navigator.pushReplacementNamed(
-                                          context, '/select_login');
-                                    },
-                                  ),
-                                  FlatButton(
-                                    child: Text(
-                                      'NO',
-                                      style: TextStyle(
-                                        fontFamily: 'HelveticaNeueLight',
-                                        letterSpacing: 2.5,
-                                        fontSize: 20,
-                                        color: const Color(0xffee0000),
-                                      ),
-                                    ),
-                                    onPressed: () {
-                                      Navigator.of(context).pop();
-                                    },
-                                  ),
-                                ],
-                              );
-                            });
-                      },
-                      child: Padding(
-                        padding:
-                            EdgeInsets.fromLTRB(width * 0.8 * 0.24, 0, 0, 10.0),
-                        child: Row(
-                          //has the icon and text
+                  ConfigurableExpansionTile(
+                    animatedWidgetFollowingHeader: const Icon(
+                      Icons.expand_more,
+                      color: const Color(0xFF707070),
+                    ),
+                    //headerExpanded: Flexible(child: Center(child: Text("A Header Changed"))),
+                    header: Container(
+                        color: Colors.transparent,
+                        child: Center(
+                            child: Row(
                           children: <Widget>[
-                            IconButton(
-                              icon: Image(
-                                image: AssetImage('assets/logout.png'),
-                                fit: BoxFit.fill,
-                                color: const Color(0xff142850),
-                              ),
+                            Icon(
+                              Icons.account_circle,
                               color: const Color(0xff142850),
-                              onPressed: null,
+                              size: height / 20,
                             ),
+                            SizedBox(width: 10.0),
                             Text(
-                              'LOGOUT',
+                              _userData.data['name'].toString(),
                               style: TextStyle(
-                                fontSize: 18,
-                                fontFamily: 'HelveticaNeueBold',
-                                color: const Color(0xff142850),
+                                fontSize: 19,
+                                fontFamily: 'HelveticaNeueLight',
+                                letterSpacing: 1.0,
+                              ),
+                            ),
+                          ],
+                        ))),
+                    children: [
+                      SizedBox(height: 10.0),
+                      Padding(
+                        padding: EdgeInsets.fromLTRB(15, 0, 0, 0),
+                        child: Row(
+                          children: <Widget>[
+                            Text(
+                              'Roll number: ',
+                              style: TextStyle(
+                                fontSize: 15,
+                                fontFamily: 'HelveticaNeueLight',
+                                fontWeight: FontWeight.bold,
+                                letterSpacing: 1.0,
+                              ),
+                            ),
+                            SizedBox(width: 2.0),
+                            Text(
+                              _userData.data['rollNo'].toString(),
+                              style: TextStyle(
+                                fontSize: 15,
+                                fontFamily: 'HelveticaNeueLight',
+                                letterSpacing: 1.0,
                               ),
                             ),
                           ],
                         ),
                       ),
+                      SizedBox(height: 10.0),
+                      Padding(
+                        padding: EdgeInsets.fromLTRB(15, 0, 0, 0),
+                        child: Row(
+                          children: <Widget>[
+                            Text(
+                              'Email: ',
+                              style: TextStyle(
+                                fontSize: 15,
+                                fontFamily: 'HelveticaNeueLight',
+                                fontWeight: FontWeight.bold,
+                                letterSpacing: 1.0,
+                              ),
+                            ),
+                            SizedBox(width: 2.0),
+                            Text(
+                              _userData.data['email'].toString(),
+                              style: TextStyle(
+                                fontSize: 15,
+                                fontFamily: 'HelveticaNeueLight',
+                                letterSpacing: 1.0,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      SizedBox(height: 10.0),
+                      Padding(
+                        padding: EdgeInsets.fromLTRB(15, 0, 0, 0),
+                        child: Row(
+                          children: <Widget>[
+                            Text(
+                              'Contact: ',
+                              style: TextStyle(
+                                fontSize: 15,
+                                fontFamily: 'HelveticaNeueLight',
+                                fontWeight: FontWeight.bold,
+                                letterSpacing: 1.0,
+                              ),
+                            ),
+                            SizedBox(width: 1.0),
+                            Text(
+                              _userData.data['contact'].toString(),
+                              style: TextStyle(
+                                fontSize: 15,
+                                fontFamily: 'HelveticaNeueLight',
+                                letterSpacing: 1.0,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      SizedBox(height: 10.0),
+                    ],
+                  ),
+                  ListTile(
+                    //the option to view emergency numbers - takes you to dummy page
+                    title: Text(
+                      'Emergency Numbers',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontFamily: 'HelveticaNeueLight',
+                        letterSpacing: 2.0,
+                      ),
+                    ),
+                    onTap: () {
+                      Navigator.of(context).pushNamed('/emergencyNumbers');
+                      //print('Emergency numbers');
+                    },
+                  ),
+                  Expanded(
+                    //the option to logout (bottom center aligned)
+                    child: Align(
+                      alignment: Alignment.bottomCenter,
+                      child: InkWell(
+                        onTap: () {
+                          showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  title: Text(
+                                    "Are you sure?",
+                                    style: TextStyle(
+                                      fontFamily: 'HelveticaNeueLight',
+                                      letterSpacing: 2.0,
+                                      fontSize: 20,
+                                      color: Colors.grey[600],
+                                    ),
+                                  ),
+                                  actions: <Widget>[
+                                    FlatButton(
+                                      child: Text(
+                                        'YES',
+                                        style: TextStyle(
+                                          fontFamily: 'HelveticaNeueLight',
+                                          letterSpacing: 3.0,
+                                          fontSize: 20,
+                                          color: const Color(0xff1a832a),
+                                        ),
+                                      ),
+                                      onPressed: () async {
+                                        //navigation to login screen
+                                        //! signout here
+                                        await _authStudent.logOut();
+                                        Navigator.of(context).pop();
+                                        Navigator.pushReplacementNamed(
+                                            context, '/select_login');
+                                      },
+                                    ),
+                                    FlatButton(
+                                      child: Text(
+                                        'NO',
+                                        style: TextStyle(
+                                          fontFamily: 'HelveticaNeueLight',
+                                          letterSpacing: 2.5,
+                                          fontSize: 20,
+                                          color: const Color(0xffee0000),
+                                        ),
+                                      ),
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                      },
+                                    ),
+                                  ],
+                                );
+                              });
+                        },
+                        child: Padding(
+                          padding:
+                              EdgeInsets.fromLTRB(width * 0.8 * 0.24, 0, 0, 10.0),
+                          child: Row(
+                            //has the icon and text
+                            children: <Widget>[
+                              IconButton(
+                                icon: Image(
+                                  image: AssetImage('assets/logout.png'),
+                                  fit: BoxFit.fill,
+                                  color: const Color(0xff142850),
+                                ),
+                                color: const Color(0xff142850),
+                                onPressed: null,
+                              ),
+                              Text(
+                                'LOGOUT',
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontFamily: 'HelveticaNeueBold',
+                                  color: const Color(0xff142850),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),
