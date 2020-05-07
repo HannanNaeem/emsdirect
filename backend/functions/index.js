@@ -196,97 +196,130 @@ exports.decrementEquipment = functions.firestore.document('/ReportedEmergencies/
   console.log(`got ${bagState['crepe']}`);
 
   //Now decrement each field
+  var notify = false;
 
   try{
     equipmentNameList.forEach(equipment => {
+
+      if(bagState[equipment] - equipmentInfo[equipment] <= 0){
+        notify = true;
+      }
+
       if(equipment === "crepe"){
         bagRef.update({
           // `${equipment}` : bagState[equipment] - equipmentInfo[equipmentInfo] < 0 ?  0 : bagState[equipment] - equipmentInfo[equipmentInfo],
-          crepe : bagState[equipment] - equipmentInfo[equipment] < 0 ?  0 : bagState[equipment] - equipmentInfo[equipment],
+          crepe : bagState[equipment] - equipmentInfo[equipment] <= 0 ?  0 : bagState[equipment] - equipmentInfo[equipment],
         });
       }
       else if (equipment === "openWove"){
         bagRef.update({
           // `${equipment}` : bagState[equipment] - equipmentInfo[equipmentInfo] < 0 ?  0 : bagState[equipment] - equipmentInfo[equipmentInfo],
-          openWove : bagState[equipment] - equipmentInfo[equipment] < 0 ?  0 : bagState[equipment] - equipmentInfo[equipment],
+          openWove : bagState[equipment] - equipmentInfo[equipment] <= 0 ?  0 : bagState[equipment] - equipmentInfo[equipment],
         });
       }
       else if (equipment === "gauze"){
         bagRef.update({
           // `${equipment}` : bagState[equipment] - equipmentInfo[equipmentInfo] < 0 ?  0 : bagState[equipment] - equipmentInfo[equipmentInfo],
-          gauze : bagState[equipment] - equipmentInfo[equipment] < 0 ?  0 : bagState[equipment] - equipmentInfo[equipment],
+          gauze : bagState[equipment] - equipmentInfo[equipment] <= 0 ?  0 : bagState[equipment] - equipmentInfo[equipment],
         });
       }
       else if (equipment === "saniplast"){
         bagRef.update({
           // `${equipment}` : bagState[equipment] - equipmentInfo[equipmentInfo] < 0 ?  0 : bagState[equipment] - equipmentInfo[equipmentInfo],
-          saniplast : bagState[equipment] - equipmentInfo[equipment] < 0 ?  0 : bagState[equipment] - equipmentInfo[equipment],
+          saniplast : bagState[equipment] - equipmentInfo[equipment] <= 0 ?  0 : bagState[equipment] - equipmentInfo[equipment],
         });
       }
       else if (equipment === "depressors"){
         bagRef.update({
           // `${equipment}` : bagState[equipment] - equipmentInfo[equipmentInfo] < 0 ?  0 : bagState[equipment] - equipmentInfo[equipmentInfo],
-          depressors : bagState[equipment] - equipmentInfo[equipment] < 0 ?  0 : bagState[equipment] - equipmentInfo[equipment],
+          depressors : bagState[equipment] - equipmentInfo[equipment] <= 0 ?  0 : bagState[equipment] - equipmentInfo[equipment],
         });
       }
       else if (equipment === "triangularBandage"){
         bagRef.update({
           // `${equipment}` : bagState[equipment] - equipmentInfo[equipmentInfo] < 0 ?  0 : bagState[equipment] - equipmentInfo[equipmentInfo],
-          triangularBandage : bagState[equipment] - equipmentInfo[equipment] < 0 ?  0 : bagState[equipment] - equipmentInfo[equipment],
+          triangularBandage : bagState[equipment] - equipmentInfo[equipment] <= 0 ?  0 : bagState[equipment] - equipmentInfo[equipment],
         });
       }
       else if (equipment === "gloves"){
         bagRef.update({
           // `${equipment}` : bagState[equipment] - equipmentInfo[equipmentInfo] < 0 ?  0 : bagState[equipment] - equipmentInfo[equipmentInfo],
-          gloves : bagState[equipment] - equipmentInfo[equipment] < 0 ?  0 : bagState[equipment] - equipmentInfo[equipment],
+          gloves : bagState[equipment] - equipmentInfo[equipment] <= 0 ?  0 : bagState[equipment] - equipmentInfo[equipment],
         });
       }
       else if (equipment === "faceMasks"){
         bagRef.update({
           // `${equipment}` : bagState[equipment] - equipmentInfo[equipmentInfo] < 0 ?  0 : bagState[equipment] - equipmentInfo[equipmentInfo],
-          faceMasks : bagState[equipment] - equipmentInfo[equipment] < 0 ?  0 : bagState[equipment] - equipmentInfo[equipment],
+          faceMasks : bagState[equipment] - equipmentInfo[equipment] <= 0 ?  0 : bagState[equipment] - equipmentInfo[equipment],
         });
       }
       else if (equipment === "ors"){
         bagRef.update({
           // `${equipment}` : bagState[equipment] - equipmentInfo[equipmentInfo] < 0 ?  0 : bagState[equipment] - equipmentInfo[equipmentInfo],
-          ors : bagState[equipment] - equipmentInfo[equipment] < 0 ?  0 : bagState[equipment] - equipmentInfo[equipment],
+          ors : bagState[equipment] - equipmentInfo[equipment] <= 0 ?  0 : bagState[equipment] - equipmentInfo[equipment],
         });
       }
       else if (equipment === "pyodine"){
         bagRef.update({
           // `${equipment}` : bagState[equipment] - equipmentInfo[equipmentInfo] < 0 ?  0 : bagState[equipment] - equipmentInfo[equipmentInfo],
-          pyodine : bagState[equipment] - equipmentInfo[equipment] < 0 ?  0 : bagState[equipment] - equipmentInfo[equipment],
+          pyodine : bagState[equipment] - equipmentInfo[equipment] <= 0 ?  0 : bagState[equipment] - equipmentInfo[equipment],
         });
       }
       else if (equipment === "polyfax"){
         bagRef.update({
           // `${equipment}` : bagState[equipment] - equipmentInfo[equipmentInfo] < 0 ?  0 : bagState[equipment] - equipmentInfo[equipmentInfo],
-          polyfax : bagState[equipment] - equipmentInfo[equipment] < 0 ?  0 : bagState[equipment] - equipmentInfo[equipment],
+          polyfax : bagState[equipment] - equipmentInfo[equipment] <= 0 ?  0 : bagState[equipment] - equipmentInfo[equipment],
         });
       }
       else if (equipment === "polyfaxPlus"){
         bagRef.update({
           // `${equipment}` : bagState[equipment] - equipmentInfo[equipmentInfo] < 0 ?  0 : bagState[equipment] - equipmentInfo[equipmentInfo],
-          polyfaxPlus : bagState[equipment] - equipmentInfo[equipment] < 0 ?  0 : bagState[equipment] - equipmentInfo[equipment],
+          polyfaxPlus : bagState[equipment] - equipmentInfo[equipment] <= 0 ?  0 : bagState[equipment] - equipmentInfo[equipment],
         });
       }
       else if (equipment === "wintogeno"){
         bagRef.update({
           // `${equipment}` : bagState[equipment] - equipmentInfo[equipmentInfo] < 0 ?  0 : bagState[equipment] - equipmentInfo[equipmentInfo],
-          wintogeno : bagState[equipment] - equipmentInfo[equipment] < 0 ?  0 : bagState[equipment] - equipmentInfo[equipment],
+          wintogeno : bagState[equipment] - equipmentInfo[equipment] <= 0 ?  0 : bagState[equipment] - equipmentInfo[equipment],
         });
       }
       else if (equipment === "deepHeat"){
         bagRef.update({
           // `${equipment}` : bagState[equipment] - equipmentInfo[equipmentInfo] < 0 ?  0 : bagState[equipment] - equipmentInfo[equipmentInfo],
-          deepHeat : bagState[equipment] - equipmentInfo[equipment] < 0 ?  0 : bagState[equipment] - equipmentInfo[equipment],
+          deepHeat : bagState[equipment] - equipmentInfo[equipment] <= 0 ?  0 : bagState[equipment] - equipmentInfo[equipment],
         });
       }
     });
   } catch(e){
     console.log(e);
     console.log("Bag Update failed")
+  }
+
+
+  // Now proceed to notify the ops users is notify == true
+  if (notify === true){
+
+    //get ops that are logged in
+    const opsQuerySnapshot = await admin.firestore().collection('UserData').where('loggedInAs', '==','ops').get();
+
+    targetTokens = [];
+    //filter out the tokens from the fetched userData docs
+    opsQuerySnapshot.forEach(userDoc => targetTokens.push(userDoc.data().token));
+    console.log(targetTokens);
+
+    //setting up notification payload
+    payload = {
+    notification: {title: "Restock Needed!", body: `${bagUsed} needs restock! Please check records`, sound: "default"},
+    }
+
+    //send messages
+    try{
+      const response = await admin.messaging().sendToDevice(targetTokens,payload);
+      console.log("Notifications sent successfully to ", targetTokens);
+    } catch(e) {
+      console.log(e);
+    }
+
   }
 
   return true

@@ -1,4 +1,6 @@
+import 'package:ems_direct/dummy.dart';
 import 'package:ems_direct/pages/mfr_emergency_report.dart';
+import 'package:ems_direct/models/emergency_models.dart';
 import 'package:ems_direct/services/auth.dart';
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -6,12 +8,20 @@ import 'package:ems_direct/services/push_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:ems_direct/services/pending_emergency_alert_MFR.dart';
+import 'package:ems_direct/pages/emergency_numbers.dart';
+import 'package:ems_direct/available_mfrs.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:provider/provider.dart';
+import 'package:ems_direct/shared/loading.dart';
 import 'package:ems_direct/pages/MapMFR.dart';
 import 'package:location/location.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:flutter/services.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'dart:math';
+import 'package:ems_direct/services/mfr_database.dart';
+import 'package:configurable_expansion_tile/configurable_expansion_tile.dart';
+import 'package:ems_direct/services/mfr_database.dart';
 import 'package:configurable_expansion_tile/configurable_expansion_tile.dart';
 
 GlobalKey<_MFRHomeState> mfrHomeGlobalKey = GlobalKey();
@@ -81,7 +91,21 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
       _authMfr.logOut();
     }
   }
-  //------------------------------------------------------------------------
+
+  //--------------------------------------------------------------------
+
+  void _updateUserData(GeoPoint Newlocation) async {
+    print(Newlocation.longitude);
+    print(Newlocation.latitude);
+    try {
+      await databaseReference
+          .collection("Mfr")
+          .document(_userData['rollNo'])
+          .updateData({'location': Newlocation});
+    } catch (e) {
+      throw (e);
+    }
+  }
 
   @override
   void initState() {
@@ -97,26 +121,11 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
     getInitialData(_userData['rollNo']);
   }
 
-  //this is used to update the location of the user in the database
-  void _updateUserData(GeoPoint Newlocation) async {
-    print(Newlocation.longitude);
-    print(Newlocation.latitude);
-    try {
-      await databaseReference
-          .collection("Mfr")
-          .document(_userData['rollNo'])
-          .updateData({'location': Newlocation});
-    } catch (e) {
-      throw (e);
-    }
-  }
-
   //this is the function responsible for getting user's current location to be used in map
   void getCurrentLocation() async {
     try {
       while (true) {
         if (isAvailable) {
-          print("panney khan");
           var location = await _locationTracker.getLocation();
 
           var currLoc = LatLng(location.latitude, location.longitude);

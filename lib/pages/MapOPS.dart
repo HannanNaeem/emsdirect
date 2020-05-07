@@ -51,11 +51,11 @@ class MapStateOPS extends State<MapOPS> {
 
   // stores the marker icon to represent pending emergencies
   var emergencyLocationIconPending = BitmapDescriptor.fromAsset(
-      'assets/redcross.png');
+      'assets/greycross.png');
 
   // stores the marker icon to represent ongoing emergencies
   var emergencyLocationIconOngoing = BitmapDescriptor.fromAsset(
-      'assets/bluecross.png');
+      'assets/redcross.png');
 
   // stores the marker icon to represent MFRs which are busy in an emergency but are marked available
   var occupiedMFR = BitmapDescriptor.fromAsset('assets/MFR_red.png');
