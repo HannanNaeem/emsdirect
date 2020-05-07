@@ -151,8 +151,8 @@ class MapStateOPS extends State<OpsMap> {
     if (_onGoingEmergenciesList != null && _onGoingEmergenciesList.length != 0) {
       _onGoingEmergenciesList.forEach((EM){
         GeoPoint location = EM.location;
-        String rollNumber = EM.patientRollNo;
-        String severity = EM.severity;
+        // String rollNumber = EM.patientRollNo;
+        // String severity = EM.severity;
         var markerIdVal = allMarkers.length + 1;
         String mar = markerIdVal.toString();
         final MarkerId markerId = MarkerId(mar);
@@ -185,11 +185,11 @@ class MapStateOPS extends State<OpsMap> {
             markerId: markerId,
             position: LatLng(location.latitude, location.longitude),
             onTap: () {
-                print('Roll Number: ');
-                print(rollNumber);
-                print('\nSeverity: ');
-                print(severity);
-                print('PLEASE ASSIGN AN MFR.');
+                // print('Roll Number: ');
+                // print(rollNumber);
+                // print('\nSeverity: ');
+                // print(severity);
+                // print('PLEASE ASSIGN AN MFR.');
                 // todo: assign MFR option
               },
               icon: EmergencyLocationIconRed,
@@ -204,13 +204,13 @@ class MapStateOPS extends State<OpsMap> {
 
 
   void _addAvailableMfrsMarker(_availableMfrsList) {
-    print('hmmmm:(');
+    //print('hmmmm:(');
     if (_availableMfrsList != null && _availableMfrsList.length != 0) {
-      print('here lol444');
+      //print('here lol444');
       _availableMfrsList.forEach((MFR) {
         GeoPoint location = MFR.location;
-        String name = MFR.name;
-        String contact = MFR.contact;
+        // String name = MFR.name;
+        // String contact = MFR.contact;
         bool busy = _availableMfrsList.isOccupied;
         var markerIdVal = allMarkers.length + 1;
         String mar = markerIdVal.toString();
@@ -231,13 +231,13 @@ class MapStateOPS extends State<OpsMap> {
           });
         }
         else if(!busy) {
-          print('lol');
+          //print('lol');
           final Marker marker =
           Marker(
             markerId: markerId,
             position: LatLng(location.latitude, location.longitude),
             onTap: (){
-              print('hmmm');
+              //print('hmmm');
             },
               icon: BlueMFR,
           );

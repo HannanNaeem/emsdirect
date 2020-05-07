@@ -20,7 +20,7 @@ class NotificationCard extends StatefulWidget {
 }
 
 class _NotificationCardState extends State<NotificationCard> {
-  Color GenerateColor(String category) {
+  Color _generateColor(String category) {
     if (category == 'Restock Needed!' || category == 'Bag Restock') {
       return Colors.orange[800];
     } else {
@@ -39,7 +39,7 @@ class _NotificationCardState extends State<NotificationCard> {
 
   @override
   Widget build(BuildContext context) {
-    Color color = GenerateColor(widget.category);
+    Color color = _generateColor(widget.category);
 
     return Card(
       elevation: 6,

@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 
+// cLass and set for the individial card displayed on the Log screen of Ops
+
+
 class LogCard extends StatefulWidget {
   String mfrName;
   String mfrRollNo;

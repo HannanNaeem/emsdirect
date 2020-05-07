@@ -4,6 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:ems_direct/pages/ManualAssignment.dart';
 
+//------------------------------------------
+// Setting up providers the OPS will be listening to on top of their maunal assignment screen- > available mfrs that are also occupied
+// this is needed because this is a separate query stream
+//------------------------------------------
+
+
 class OpsManualAssignmentWrapper extends StatelessWidget {
   var _emergencyInformation;
   OpsManualAssignmentWrapper(var emergencyInformation){

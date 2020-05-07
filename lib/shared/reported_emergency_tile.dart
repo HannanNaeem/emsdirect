@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-
+// Contains the single Tile class that is displayed on the Emergencies section of Ops records.
 
 class ReportedEmergencyTile extends StatefulWidget {
   String patientRollNo; 

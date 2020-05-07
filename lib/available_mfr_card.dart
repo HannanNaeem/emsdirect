@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 
+
+// The card displayed on the availablle Mfrs list
+
 class AvailableMfrCard extends StatefulWidget {
   String name;
   String contact;
@@ -24,7 +27,7 @@ class _AvailableMfrCardState extends State<AvailableMfrCard> {
 
   @override
   Widget build(BuildContext context) {
-    Color GenerateColor(bool isOccupied)
+    Color _generateColor(bool isOccupied)
     {
       if(isOccupied){
         return Colors.red[800];
@@ -41,7 +44,7 @@ class _AvailableMfrCardState extends State<AvailableMfrCard> {
           isThreeLine: true,
           leading: Icon(
             Icons.fiber_manual_record,
-            color: GenerateColor(widget.isOccupied)
+            color: _generateColor(widget.isOccupied)
           ),
           title: Text(
             widget.name,

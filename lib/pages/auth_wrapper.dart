@@ -1,10 +1,5 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+
 import 'package:ems_direct/models/emergency_models.dart';
-import 'package:ems_direct/models/emergency_models.dart';
-import 'package:ems_direct/models/user.dart';
-import 'package:ems_direct/ops.dart';
-import 'package:ems_direct/pages/MFR_home.dart';
-import 'package:ems_direct/services/auth.dart';
 import 'package:ems_direct/services/ops_database.dart';
 import 'package:ems_direct/services/ops_notification_wrapper.dart';
 import 'package:ems_direct/services/mfr_database.dart';
@@ -12,7 +7,6 @@ import 'package:ems_direct/services/user_database.dart';
 import 'package:ems_direct/shared/loading.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
-import 'package:ems_direct/pages/student_home.dart';
 import 'package:ems_direct/pages/SelectLogin.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';

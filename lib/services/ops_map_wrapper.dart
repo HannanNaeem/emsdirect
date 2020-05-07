@@ -4,6 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:ems_direct/pages/MapOPS.dart';
 
+//------------------------------------------
+// Provider for pending emergencies is put on top of Map screen
+// when it is called as it is not needed elsewhere
+//----------------------------------------
 
 class OpsMapWrapper extends StatelessWidget {
   @override

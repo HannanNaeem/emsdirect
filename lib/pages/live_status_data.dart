@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
 
+// Used to retrieve the text displayed on each emergency update for student live status updated screen
 
 class StatusData {
   static final Data = [

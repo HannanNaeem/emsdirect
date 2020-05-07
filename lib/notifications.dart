@@ -36,9 +36,7 @@ class _NotificationsState extends State<Notifications> {
 
   @override
   Widget build(BuildContext context) {
-    var screenSize = MediaQuery.of(context).size;
-    var width = screenSize.width;
-    var height = screenSize.height;
+
 
     //providers
     var _declinedEmergenciesList = Provider.of<List<DeclinedEmergencyModel>>(context);
