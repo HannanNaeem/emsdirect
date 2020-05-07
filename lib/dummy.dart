@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+// For testin purposes
 class DummyPage extends StatefulWidget {
   var location;
   var number;

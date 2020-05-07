@@ -1,7 +1,4 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ems_direct/models/emergency_models.dart';
-import 'package:ems_direct/ops.dart';
-import 'package:ems_direct/pages/MFR_home.dart';
 import 'package:ems_direct/services/auth.dart';
 import 'package:ems_direct/services/mfr_database.dart';
 import 'package:ems_direct/services/ops_database.dart';
@@ -10,7 +7,11 @@ import 'package:ems_direct/shared/loading.dart';
 import 'package:flutter/material.dart';
 import 'package:ems_direct/mfr_home_wrapper.dart';
 import 'package:provider/provider.dart';
-import 'package:ems_direct/services/mfr_database.dart';
+
+//-----------------------------
+// Ems Login Logic + screen
+//-----------------------------
+
 
 class LoginEms extends StatefulWidget {
   String _emsType = '';
@@ -30,14 +31,18 @@ class _LoginEmsState extends State<LoginEms> {
     _emsType = emsType;
   }
 
-  bool _loading = false;
+  bool _loading = false; //to detect if we need to show loading screen
   String _email;
   String _password;
-  bool _keepSignedIn = false;
+  bool _keepSignedIn = false; 
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  
+  // Auth service defined in auth.dart to communicate and perform auth functions
   final AuthService _authEms = AuthService();
 
+
+  //! Build email textfield
   Widget _buildEmail() {
     var screenSize = MediaQuery.of(context).size;
     final height = screenSize.height;
@@ -73,7 +78,7 @@ class _LoginEmsState extends State<LoginEms> {
           }),
     );
   }
-
+  //! build password text field
   Widget _buildPassword() {
     var screenSize = MediaQuery.of(context).size;
     final height = screenSize.height;
@@ -105,7 +110,7 @@ class _LoginEmsState extends State<LoginEms> {
           }),
     );
   }
-
+  //! build keep me signed in check box
   Widget _buildKeepSignedIn() {
     return Row(children: <Widget>[
       Checkbox(
@@ -127,7 +132,7 @@ class _LoginEmsState extends State<LoginEms> {
       ),
     ]);
   }
-
+  //! Put together all text fields and build a form
   Widget _buildForm(final height) {
     return Container(
       height: 355,
@@ -157,23 +162,23 @@ class _LoginEmsState extends State<LoginEms> {
                   _formKey.currentState.save();
 
                   setState(() {
-                    _loading = true;
+                    _loading = true;  // Loading is triggered as await is about to be called
                   });
 
-                  // login
+                  // login = wait for result meanwhile show the loading screen
                   dynamic result =
                       await _authEms.signIn(_email, _password, _emsType);
 
-                  //! TESTING
-                  print(_email);
-                  print(_password);
-                  print(_keepSignedIn);
+                  //! TESTING -----------------------------------------
+                  // print(_email);
+                  // print(_password);
+                  // print(_keepSignedIn);
 
                   if (result == null) {
                     setState(() {
                       _loading = false;
                     });
-
+                    // Login has failed show an error dialog
                     showDialog(
                         context: context,
                         builder: (BuildContext context) {
@@ -206,14 +211,16 @@ class _LoginEmsState extends State<LoginEms> {
                           );
                         });
 
-                    print("Error signing in!");
+                    //print("Error signing in!");
                   } else {
-                    print("User signed in!");
-
+                    //print("User signed in!");
+                    
+                    // Login was successful - Take to the home screen
                     Navigator.pop(context);
-                    if (_emsType == 'ops') {
+                    if (_emsType == 'ops') { // if selected user is ops
                       Navigator.pushReplacement(
                           context,
+                          // NAfigate but set the proper providers for data streams
                           MaterialPageRoute(
                               builder: (context) => StreamProvider<
                                       List<OngoingEmergencyModel>>.value(
@@ -234,7 +241,7 @@ class _LoginEmsState extends State<LoginEms> {
                                             child: OpsWrapper(
                                                 _keepSignedIn, result),
                                           ))))));
-                    } else if (_emsType == 'mfr') {
+                    } else if (_emsType == 'mfr') { // if selected user is mfr
                       Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
@@ -275,6 +282,8 @@ class _LoginEmsState extends State<LoginEms> {
     var screenSize = MediaQuery.of(context).size;
     final height = screenSize.height;
 
+
+    // The Overall widget tree
     return _loading
         ? Loading()
         : Scaffold(

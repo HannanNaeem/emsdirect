@@ -1,14 +1,17 @@
 import 'dart:async';
-import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:provider/provider.dart';
 import 'package:ems_direct/models/emergency_models.dart';
 import 'package:ems_direct/pages/student_home.dart';
 import 'package:url_launcher/url_launcher.dart';
+
+//------------------------------------------------------
+// Returns the dynamic widget tree showed on the live status screen 
+// The structure is a "top down" list
+//------------------------------------------------------
 
 
 class DisplayList extends StatefulWidget {

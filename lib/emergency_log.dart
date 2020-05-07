@@ -5,6 +5,9 @@ import 'package:ems_direct/log_data.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 
+// Cotains a simple widget tree with list builder of cards for emergency logs Ops screen
+
+
 class EmergencyLog extends StatefulWidget {
   @override
   _LogState createState() => _LogState();

@@ -3,6 +3,10 @@ import 'package:ems_direct/shared/loading.dart';
 import 'package:flutter/material.dart';
 import 'package:ems_direct/services/auth.dart';
 
+//--------------------------------------------------------------------------
+// Contains the login screen code and logic for student signup and logins screen
+// -------------------------------------------------------------------------
+
 class LoginStudent extends StatefulWidget {
   @override
   _LoginStudentState createState() => _LoginStudentState();
@@ -21,6 +25,8 @@ class _LoginStudentState extends State<LoginStudent>
 
   final GlobalKey<FormState> _loginformKey = GlobalKey<FormState>();
   final GlobalKey<FormState> _signupformKey = GlobalKey<FormState>();
+
+  // Authentication service from auth.dart
   final AuthService _authStudent = AuthService();
 
   TabController _controller;
@@ -36,7 +42,7 @@ class _LoginStudentState extends State<LoginStudent>
     _controller.dispose();
     super.dispose();
   }
-
+  //! build email text field
   Widget _buildEmail() {
     return Padding(
       padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
@@ -70,7 +76,7 @@ class _LoginStudentState extends State<LoginStudent>
           }),
     );
   }
-
+  //! build password text field
   Widget _buildPassword() {
     return Padding(
       padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
@@ -100,7 +106,7 @@ class _LoginStudentState extends State<LoginStudent>
           }),
     );
   }
-
+  //! build keepme signed in check box
   Widget _buildKeepSignedIn() {
     return Row(children: <Widget>[
       Checkbox(
@@ -122,7 +128,7 @@ class _LoginStudentState extends State<LoginStudent>
       ),
     ]);
   }
-
+  //! build name text field
   Widget _buildName() {
     return Padding(
       padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
@@ -150,7 +156,7 @@ class _LoginStudentState extends State<LoginStudent>
           }),
     );
   }
-
+  //! build roll no text field
   Widget _buildRollno() {
     return Padding(
       padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
@@ -181,7 +187,7 @@ class _LoginStudentState extends State<LoginStudent>
           }),
     );
   }
-
+  //! build contact text field
   Widget _buildContact() {
     return Padding(
       padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
@@ -212,7 +218,7 @@ class _LoginStudentState extends State<LoginStudent>
           }),
     );
   }
-
+  //! if index is 1 return the form for login else for sign up using the builds above
   Widget _buildForm(int index) {
     var screenSize = MediaQuery.of(context).size;
     final height = screenSize.height;
@@ -243,24 +249,27 @@ class _LoginStudentState extends State<LoginStudent>
                     }
 
                     _loginformKey.currentState.save();
-
+                    
+                    //set loading to true to show the loading screen
                     setState(() {
                       _loading = true;
                     });
 
                     //! TESTING
-                    print(_email);
-                    print(_password);
-                    print(_keepSignedIn);
+                    // print(_email);
+                    // print(_password);
+                    // print(_keepSignedIn);
 
+                    //use the auth service to call signIn function and wait
                     dynamic result =
                         await _authStudent.signIn(_email, _password, '');
 
+                    //if there the future isnt resolved
                     if (result == null) {
                       setState(() {
                         _loading = false;
                       });
-
+                        // Not loading anymore and show the failed dialog
                       showDialog(
                           context: context,
                           builder: (BuildContext context) {
@@ -293,9 +302,9 @@ class _LoginStudentState extends State<LoginStudent>
                             );
                           });
 
-                      print("Error signing in");
-                    } else {
-                      print("User signed in!");
+                      // print("Error signing in");
+                    } else {   // The login was successful navigate to login screen
+                      // print("User signed in!");
 
                       Navigator.pop(context);
                       Navigator.pushReplacement(
@@ -322,7 +331,7 @@ class _LoginStudentState extends State<LoginStudent>
           ),
         ),
       );
-    } else if (index == 1)
+    } else if (index == 1)  // returning the sign up form
       return Form(
         key: _signupformKey,
         child: Column(
@@ -356,22 +365,22 @@ class _LoginStudentState extends State<LoginStudent>
                   setState(() {
                     _loading = true;
                   });
-
+                  //wait for signup response
                   dynamic result = await _authStudent.signUp(
                       _email, _password, _name, _rollno, _contact);
 
                   //! TESTING
-                  print(_name);
-                  print(_rollno);
-                  print(_contact);
-                  print(_email);
-                  print(_password);
+                  // print(_name);
+                  // print(_rollno);
+                  // print(_contact);
+                  // print(_email);
+                  // print(_password);
 
                   setState(() {
                     _loading = false;
                   });
 
-                  if (result == null) {
+                  if (result == null) { // signup failed show error
                     showDialog(
                         context: context,
                         builder: (BuildContext context) {
@@ -404,8 +413,9 @@ class _LoginStudentState extends State<LoginStudent>
                           );
                         });
 
-                    print("Error signing up!");
+                    // print("Error signing up!");
                   } else {
+                    //Signup was successful take to login screeen after showing a email sent dialog
                     showDialog(
                         context: context,
                         builder: (BuildContext context) {
@@ -438,9 +448,10 @@ class _LoginStudentState extends State<LoginStudent>
                             ],
                           );
                         });
-                    print("User created!");
+                    // print("User created!");
                   }
                 },
+                //button properties
                 child: Text('SIGN UP',
                     style: TextStyle(
                       color: Colors.white,
@@ -464,7 +475,7 @@ class _LoginStudentState extends State<LoginStudent>
   Widget build(BuildContext context) {
     var screenSize = MediaQuery.of(context).size;
     final height = screenSize.height;
-
+    //over all widget tree.returns loading if isloading is set to true otherwise normal form screens
     return _loading
         ? Loading()
         : Scaffold(
@@ -495,6 +506,7 @@ class _LoginStudentState extends State<LoginStudent>
                             scale: (height/100)/2,
                           ),
                           SizedBox(height: 40),
+                          // The tab bar to switch between forms
                           TabBar(
                             controller: _controller,
                             indicatorColor: Colors.white,

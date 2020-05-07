@@ -3,6 +3,11 @@ import 'package:ems_direct/pages/emergency_numbers_card.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ems_direct/shared/loading.dart';
 
+// ---------------------------------------------------------------------------
+// This file contains the wiget tree for displaying the emergency numbers screen
+// Below is the widget tree for a list that holds emergency numbers card.
+// -----------------------------------------------------------------------------
+
 class NumbersData{
   String name;
   String contact;

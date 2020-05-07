@@ -1,15 +1,10 @@
-import 'package:ems_direct/services/emergency_alert_ops.dart';
+
 import 'package:ems_direct/services/ops_map_wrapper.dart';
 import 'package:flutter/material.dart';
 import 'package:ems_direct/records.dart';
-import 'package:ems_direct/map.dart';
 import 'package:ems_direct/notifications.dart';
 import 'package:ems_direct/emergency_log.dart';
 import 'package:ems_direct/services/auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:ems_direct/services/ops_database.dart';
-import 'package:get/get.dart';
-import 'package:provider/provider.dart';
 import 'package:configurable_expansion_tile/configurable_expansion_tile.dart';
 
 // ---------------------- GLOBAL KEY TO SET OPS HOMEPAGE --------------//

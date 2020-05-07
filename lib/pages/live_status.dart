@@ -1,12 +1,15 @@
-import 'package:ems_direct/models/user.dart';
 import 'package:flutter/material.dart';
-import 'package:ems_direct/pages/live_status_data.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:provider/provider.dart';
 import 'package:ems_direct/pages/status_list.dart';
 import 'package:ems_direct/models/emergency_models.dart';
 import 'package:ems_direct/services/ops_database.dart';
 import 'package:configurable_expansion_tile/configurable_expansion_tile.dart';
+
+//----------------------------------------------------------
+// Contains the code for The student SOS or live status update screen
+// Displays a ripply animation and update of live status of emergency along with mfr info
+// if a mfr is assigned
+//--------------------------------------------------------
 
 
 class LiveStatus extends StatefulWidget {

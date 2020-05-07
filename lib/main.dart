@@ -1,18 +1,14 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:ems_direct/dummy.dart';
+
 import 'package:ems_direct/pages/SelectLogin.dart';
 import 'package:flutter/material.dart';
-import 'package:ems_direct/pages/live_status.dart';
 import 'package:ems_direct/pages/emergency_numbers.dart';
 import 'package:ems_direct/pages/login_student.dart';
 import 'package:ems_direct/pages/login_ems.dart';
 import 'package:ems_direct/pages/SplashScreen.dart';
-import 'package:ems_direct/pages/MapMFR.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:ems_direct/available_mfrs.dart';
 import 'package:ems_direct/senior_mfrs.dart';
 
-
+// Main file sets intial route
 
 void main() => runApp(MyApp());
 

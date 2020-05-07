@@ -2,11 +2,9 @@ import 'package:ems_direct/services/auth.dart';
 import 'package:ems_direct/services/push_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-//import 'package:geolocator/geolocator.dart';
 import 'package:ems_direct/pages/live_status.dart';
 import 'package:configurable_expansion_tile/configurable_expansion_tile.dart';
 import 'package:location/location.dart';
-import 'package:ems_direct/pages/emergency_numbers.dart';
 
 class StudentHome extends StatefulWidget {
   var _userData;

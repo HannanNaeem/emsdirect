@@ -1,6 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+//---------------------------------------------------------------------------
+// Below is the widget tree for the card that is displayed on the emergency numbers
+// screen. 
+//----------------------------------------------------------------------------
+
+
 class EmergencyNumberCard extends StatefulWidget {
   String name;
   String contact;
@@ -60,6 +66,7 @@ class _EmergencyNumberCardState extends State<EmergencyNumberCard> {
                         color: Colors.green,
                       ),
                       
+                      // On pressing the phone icon try calling the number
                       onPressed: () async {
                         if(await canLaunch("tel:${widget.contact}"))
                         {

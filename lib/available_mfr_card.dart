@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 
+
+// The card displayed on the availablle Mfrs list
+
 class AvailableMfrCard extends StatefulWidget {
   String name;
   String contact;

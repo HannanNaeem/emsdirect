@@ -5,6 +5,12 @@ import 'package:provider/provider.dart';
 import 'package:ems_direct/models/emergency_models.dart';
 import 'package:ems_direct/shared/loading.dart';
 
+//---------------------------------------------
+// Contains the widget tree for the available mfrs screen
+// -------------------------------------------
+
+
+
 class MfrData{
   String name;
   String contact;
