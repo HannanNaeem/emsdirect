@@ -302,14 +302,14 @@ exports.decrementEquipment = functions.firestore.document('/ReportedEmergencies/
     //get ops that are logged in
     const opsQuerySnapshot = await admin.firestore().collection('UserData').where('loggedInAs', '==','ops').get();
 
-    targetTokens = [];
+    var targetTokens = [];
     //filter out the tokens from the fetched userData docs
     opsQuerySnapshot.forEach(userDoc => targetTokens.push(userDoc.data().token));
     console.log(targetTokens);
 
     //setting up notification payload
-    payload = {
-    notification: {title: "Restock Needed!", body: `${bagUsed} needs restock! Please check records`, sound: "default"},
+    var payload = {
+    notification: {title: "Restock Needed!", body: `${bagUsed} bag needs restock! Please check records`, sound: "default"},
     }
 
     //send messages
