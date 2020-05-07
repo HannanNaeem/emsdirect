@@ -164,6 +164,7 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
   //this is the function which gets the initial data from the MFR's profile
   void getInitialData(var docId) async {
     try {
+      getCurrentLocation();
       databaseReference.collection("Mfr").document(docId).get().then((onVal) {
         setState(() {
           isOccupied = onVal.data['isOccupied'];
@@ -171,7 +172,7 @@ class _MFRHomeState extends State<MFRHome> with WidgetsBindingObserver {
           gender = onVal.data['gender'];
           print('Initial data set done!');
         });
-        getCurrentLocation();
+        
       }).catchError((onError) {
         print(onError.message);
       });
