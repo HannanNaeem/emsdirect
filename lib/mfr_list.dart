@@ -9,7 +9,7 @@ import 'package:progress_dialog/progress_dialog.dart';
 //THIS FILE HAS TWO STATEFUL WIDGET CLASSES
 //The first widget is responsible for displaying the MFR list to the user
 //The second widget is called by the first widget,
-// to take in user input dynamically when entering a new MFR
+//to take in user input dynamically in the form of an alert dialog widget when entering a new MFR
 
 GlobalKey<_MfrListState> mfrListGlobalKey = GlobalKey();
 
@@ -148,7 +148,7 @@ class DynamicDialog extends StatefulWidget {
 
 class _DynamicDialogState extends State<DynamicDialog> {
   //variables to store the three required inputs
-  var _newMfrGender = "Other";
+  var _newMfrGender = "O";
   var _newRollNo;
   var _mfrIsHostelite = "Hostelite";
 
@@ -382,7 +382,7 @@ class _DynamicDialogState extends State<DynamicDialog> {
                 SizedBox(height: 10),
                 _buildHosteliteSelector(),
                 SizedBox(height: 10),
-                //the row contains the two buttons
+                //the row contains the two buttons - save and cancel
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -404,9 +404,9 @@ class _DynamicDialogState extends State<DynamicDialog> {
                         }
                         _rollNoKey.currentState.save();
                         //store all values
-                        print(_newRollNo);
-                        print(_newMfrGender);
-                        print(_mfrIsHostelite);
+                        //print(_newRollNo);
+                        //print(_newMfrGender);
+                        //print(_mfrIsHostelite);
                         //see if document exists
                         try {
                           QuerySnapshot docSnaphot = await Firestore.instance
