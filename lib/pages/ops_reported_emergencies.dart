@@ -6,6 +6,13 @@ import "package:flutter/material.dart";
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:intl/intl.dart';
 
+//---------------------------------------------------------------------------------------------//
+// This file contains the code for the "emergencies" section of the records screen for ops
+// A list of expandable cards is shown for the recent emergencies that were reported by the mfrs
+
+//---------------------------------------------------------------------------------------------//
+
+
 GlobalKey _globalKey = GlobalKey();
 
 class ReportedEmergenciesOps extends StatefulWidget {
@@ -16,12 +23,14 @@ class ReportedEmergenciesOps extends StatefulWidget {
 
 class _ReportedEmergenciesOpsState extends State<ReportedEmergenciesOps> {
 
-  int _maxDocs = 10; //todo reset
-  int _step = 10; //add additional docs
+  int _maxDocs = 10; // documents loaded initially
+  int _step = 10; //add additional docs when user wants to load more
   bool _firstLoad = true;
   var collectionRef = Firestore.instance.collection('ReportedEmergencies');
   var docs;
 
+  //A utility function to map the snapshot of documents received from cloud firestore to 
+  // ReportedEmergenceyModel = A list is outputted that contains all the Model objects
   List<ReportedEmergencyModel> _getEmergencyList(QuerySnapshot snapshot){
     return snapshot.documents.map((doc){
       return ReportedEmergencyModel(
@@ -42,7 +51,13 @@ class _ReportedEmergenciesOpsState extends State<ReportedEmergenciesOps> {
       );
     }).toList();
 }
+  // to store the converted snapshot into a list
   List<ReportedEmergencyModel> _reportedEmergencies;
+
+
+  // Althought the code is same as _getAdditionalDocs, this function is being used as an argument to Future builder,
+  // When loading for the first time we show a loading screen until this future is resolved. Once resolved it is never
+  // re-resolved or it would trigger the loading screen until fetch is complete
 
   Future _getInitialDocs() async { //used to perform the initial fetch
     try{
@@ -56,6 +71,9 @@ class _ReportedEmergenciesOpsState extends State<ReportedEmergenciesOps> {
       return null;
     }
   }
+
+  //This function is used to fetch additional documents requested by user. Note unlike above, this function wont
+  // trigger a loading screen as it is not an argument to future builder
 
   Future _getAdditionalDocs() async { //used to perform the initial fetch
     try{
@@ -71,7 +89,7 @@ class _ReportedEmergenciesOpsState extends State<ReportedEmergenciesOps> {
       return null;
     }
   }
-
+  // switch case 'dictionary' to translate database names to readable UI names
   String _translateKey (String key){
     switch (key) {
       case "crepe": return "Crepe";
@@ -91,7 +109,7 @@ class _ReportedEmergenciesOpsState extends State<ReportedEmergenciesOps> {
       default: return "";
     }
   }
-
+  // A utlity function to prepare a String for the used equipment map. e.g {crepe: 4, faceMasks: 2} => "Crepe: 5, Face Masks: 2"
   String _translateMap(Map map){
     String output = "";
     map.keys.forEach((key){
@@ -119,16 +137,17 @@ class _ReportedEmergenciesOpsState extends State<ReportedEmergenciesOps> {
         centerTitle: true,
       ),
       
+      // Future builder waits on inital fetch. if its not resolved show loading screen
       body: FutureBuilder(
         future: _getInitialDocs(),
         builder: (BuildContext context, AsyncSnapshot snapshot){
 
+          // if the connection state is done => there is a reply from the backend
           if(snapshot.connectionState == ConnectionState.done) {
 
               if(snapshot.hasData){ //!if there is data retrieved
-
                 
-                
+                // display the data in a cards and mass appropriate data
                 return Container(
                 child: Column(
                   mainAxisSize: MainAxisSize.max,
@@ -137,10 +156,10 @@ class _ReportedEmergenciesOpsState extends State<ReportedEmergenciesOps> {
 
                     Expanded(
                       child: ListView.builder(
-                        itemCount: _reportedEmergencies.length + 1,
+                        itemCount: _reportedEmergencies.length + 1,  // +1 because we add the button to load more to the list which is an additional item
                         itemBuilder: (context, index){
                           
-                          if(index < _reportedEmergencies.length)
+                          if(index < _reportedEmergencies.length)   // Everything above the button is cards
                           return Padding(
                             padding: EdgeInsets.fromLTRB(20, 10, 20, 0),
                             child: ReportedEmergencyTile(
@@ -159,9 +178,9 @@ class _ReportedEmergenciesOpsState extends State<ReportedEmergenciesOps> {
                               bagUsed: _reportedEmergencies[index].bagUsed,
                               equipmentUsed: _reportedEmergencies[index].equipmentUsed == null ? "None" : _translateMap(_reportedEmergencies[index].equipmentUsed),
                             ),
-                          );
-                          else
-                          return Padding(
+                          ); 
+                          else                  // On the last index load the button to showmore
+                          return Padding(       
                             padding: const EdgeInsets.all(10.0),
                             child: Column(
                               children: <Widget>[
@@ -172,14 +191,15 @@ class _ReportedEmergenciesOpsState extends State<ReportedEmergenciesOps> {
                                   ),
                                   color: Colors.grey[100],//const Color(0xFF73CDE8),
                                   shape: CircleBorder(),
-                                  onPressed: () async {
-                                    setState(() {
+                                  onPressed: () async {  // when pressed toggle the first load boolean as we dont
+                                    setState(() {        // want to display the loading screen
                                       _firstLoad = false;
                                       _maxDocs = _maxDocs + _step;
                                       _getAdditionalDocs();
                                     });
                                   },
                                 ),
+                                //!Hit text
                                 Text(
                                   "Tap to load more..",
                                   style: TextStyle(
@@ -199,7 +219,7 @@ class _ReportedEmergenciesOpsState extends State<ReportedEmergenciesOps> {
                   ],)
                 );
               }
-              else{ //! There is no data in snapshot
+              else{ //! There is no data in snapshot but there was a reply from the backend show sad face :(
                 return Padding(
                   padding: EdgeInsets.all(20),
                   child: Text(
@@ -212,7 +232,7 @@ class _ReportedEmergenciesOpsState extends State<ReportedEmergenciesOps> {
                   ),
                 );
               }
-          } else { //!display loading as fetch isnt compelete
+          } else { //!display loading as fetch isnt compelete 
             if(_firstLoad){
               return Loading();
             }
